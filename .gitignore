@@ -3,3 +3,6 @@
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/ipch
+.travis.yml
+platformio.ini
+.vscode/extensions.json
