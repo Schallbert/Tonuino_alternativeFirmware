@@ -132,9 +132,16 @@ int16_t UserInput_ClickEncoder::get_encoder_diff()
 // USERINPUT___CLICKENCODER ---------------------------------------------------------------
 
 // USERINPUT___3BUTTONS     ---------------------------------------------------------------
-UserInput_3Buttons::UserInput_3Buttons(){}
+//UserInput_3Buttons::UserInput_3Buttons() = default;
 
-
+// Constructor: DigitalButton_SupportsLongPress
+UserInput_3Buttons::DigitalButton_SupportsLongPress::DigitalButton_SupportsLongPress(
+    int8_t pinId, bool active) :
+    longPressTime(1000), longPressRepeatInterval(400), DigitalButton(pinId, active)
+{
+    this->longPressTime = longPressTime; //mSec
+    this->longPressRepeatInterval = longPressRepeatInterval; //mSec
+}
 
 void UserInput_3Buttons::set_input_pins(uint8_t  pinPlayPauseAbort, uint8_t pinPrev, uint8_t pinNext)
 {
@@ -161,14 +168,14 @@ void UserInput_3Buttons::init()
 {
     if (!(pinPrev && pinNext && pinPlayPauseAbort))
     {
-        //Error: Need valid arduino input pins for encoder pins A, B, and switch!
+        //Error: Need valid arduino input pi ns for encoder pins A, B, and switch!
         return;
     }
     
     // Call constructors of button class
-    this->prevButton = DigitalButton(pinPrev, switchActiveState);
-    plpsButton = DigitalButton(pinPlayPauseAbort, switchActiveState);
-    nextButton = DigitalButton(pinNext, switchActiveState);
+    prevButton = DigitalButton_SupportsLongPress(pinPrev, switchActiveState);
+    plpsButton = DigitalButton_SupportsLongPress(pinPlayPauseAbort, switchActiveState);
+    nextButton = DigitalButton_SupportsLongPress(pinNext, switchActiveState);
     //Set defaults
     prevButton.setDoubleClickTime(doubleClickTime);
     plpsButton.setDoubleClickTime(doubleClickTime);
@@ -180,8 +187,6 @@ void UserInput_3Buttons::userinput_service_isr()
     prevButton.service();
     plpsButton.service();
     nextButton.service();
-    prevButton.increment_ctr_long_pressed();
-    nextButtonLongPress.increment_ctr_long_pressed();
 }
 
 UserInput::UserRequest_e UserInput_3Buttons::get_user_request(bool cardDetected)
@@ -192,9 +197,9 @@ UserInput::UserRequest_e UserInput_3Buttons::get_user_request(bool cardDetected)
     }
     
     //Get current button's states
-    plpsBtnState = plpsButton.getButton();
-    nextBtnState = nextButton.getButton();
-    prevBtnState = prevButton.getButton();
+    ClickEncoder::Button plpsBtnState = plpsButton.getButton();
+    ClickEncoder::Button nextBtnState = nextButton.getButton();
+    ClickEncoder::Button prevBtnState = prevButton.getButton();
     
     // --- PlayPauAbort button handler -----------------------------
     if (plpsBtnState == ClickEncoder::Clicked) 
@@ -234,15 +239,15 @@ UserInput::UserRequest_e UserInput_3Buttons::get_user_request(bool cardDetected)
     
     if (nextBtnState == ClickEncoder::Held) 
     {
-        nextButtonLongPress.set_long_press_active(true);
-        if (nextButtonLongPress.handle_repeat_long_pressed())
+        nextButton.set_long_press_active(true);
+        if (nextButton.handle_repeat_long_pressed())
         {
             return IncVolume;
         }
     }
     else
     {
-        nextButtonLongPress.set_long_press_active(false);
+        nextButton.set_long_press_active(false);
     }
     // --- Previous button handler ----------------------------------
     if ((prevBtnState == ClickEncoder::Clicked) && cardDetected)
@@ -252,30 +257,22 @@ UserInput::UserRequest_e UserInput_3Buttons::get_user_request(bool cardDetected)
     
     if (prevBtnState == ClickEncoder::Held) 
     {
-        prevButtonLongPress.set_long_press_active(true);
-        if (prevButtonLongPress.handle_repeat_long_pressed())
+        prevButton.set_long_press_active(true);
+        if (prevButton.handle_repeat_long_pressed())
         {
             return IncVolume;
         }
     }
     else 
     {
-        prevButtonLongPress.set_long_press_active(false);
+        prevButton.set_long_press_active(false);
     }    
        
     return NoAction;
 }
 
-UserInput_3Buttons::DigitalButton_SupportsLongPress::DigitalButton_SupportsLongPress(
-    int8_t pinId, bool active = false, 
-    uint16_t longPressTime=1000, uint16_t longPressRepeatInterval=400) :
-    : DigitalButton(pinId, active)
-{
-    this->longPressTime = longPressTime; //mSec
-    this->longPressRepeatInterval = longPressRepeatInterval; //mSec
-}
 
-UserInput_3Buttons::DigitalButton_SupportsLongPress::service(void)
+void UserInput_3Buttons::DigitalButton_SupportsLongPress::service(void)
 {
     DigitalButton::service();
     if (longPressActive)
