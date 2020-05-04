@@ -217,7 +217,7 @@ static DFMiniMp3<SoftwareSerial, Mp3Notify> mp3(mySoftwareSerial);
 KeepAlive aKeepAlive = KeepAlive(KEEPALIVE, false);
 
 // userInput interface
-UserInput *aUserInput = UserInput_Factory::getInstance(UserInput_Factory::ThreeButtons);
+UserInput *aUserInput = UserInput_Factory::getInstance(UserInput_Factory::Encoder);
 
 StatusLed aLed = StatusLed(LED_PIN, 500, 200, HIGH);
 
@@ -324,6 +324,8 @@ void loop()
               break;
           case UserInput::Help:
               mp3.playMp3FolderTrack(MSG_HELP);
+              break;
+          case UserInput::Abort:
               break;
       }
 

@@ -31,7 +31,8 @@ public:
     };
 
 protected:
-    UserInput();
+    //UserInput();
+    //~UserInput();
     bool userInputLocked = false;
 
 public:
@@ -62,7 +63,7 @@ class UserInput_ClickEncoder : public UserInput
 
 public:
     UserInput_ClickEncoder();
-    //~UserInput_ClickEncoder();
+    ~UserInput_ClickEncoder();
 
     // pinA, pinB, pinSwitch are the pins of the encoder that are connected to the uC.
     void set_input_pins(uint8_t pinA, uint8_t pinB, uint8_t pinSwitch);
@@ -78,13 +79,15 @@ private:
     int16_t get_encoder_diff();
 
 private:
-    //Objects
-    ClickEncoder encoder;
-    // Input pins
+    //OBJECTS
+    // have to use pointer as object would have to be initialized 
+    // using its constructor while not all constructor's init variables are defined yet
+    ClickEncoder* encoder; 
+    // INPUT PINS
     uint8_t pinA = 0;
     uint8_t pinB = 0;
     uint8_t pinSwitch = 0;
-    // Parameters and their default values
+    // PARAMETERS AND DEFAULT VALUES
     bool switchActiveState = false;
     uint16_t doubleClickTime = 300;
     uint8_t encStepsPerNotch = 4;
@@ -117,7 +120,7 @@ public:
             Second call set_parameters if you want encoder parameters deviatin from standards
             Then call init to finally instantiate the encoder.
         */
-    UserInput_3Buttons();
+    //UserInput_3Buttons();
     //~UserInput_3Buttons();
 
     // pinPrev, pinePlayPause, pinNext are the pins of the buttons that are connected to the uC.
@@ -158,15 +161,15 @@ private:
     };                                    //  DigitalButton_SupportsLongPress
 
 private:
-    //Objects
-    DigitalButton_SupportsLongPress prevButton;
-    DigitalButton_SupportsLongPress plpsButton;
-    DigitalButton_SupportsLongPress nextButton;
-    // Input pins
+    //OBJECTS
+    DigitalButton_SupportsLongPress* prevButton;
+    DigitalButton_SupportsLongPress* plpsButton;
+    DigitalButton_SupportsLongPress* nextButton;
+    // INPUT PINS
     uint8_t pinPrev;
     uint8_t pinPlayPauseAbort;
     uint8_t pinNext;
-    // Parameters and their default values
+    // PARAMETERS
     bool switchActiveState;
     uint16_t doubleClickTime;         //mSec
     uint16_t longPressTime;           //mSec

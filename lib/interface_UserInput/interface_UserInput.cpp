@@ -2,10 +2,8 @@
 #include "ClickEncoder.h"
 
 // USERINPUT___CLICKENCODER ---------------------------------------------------------------
-//UserInput_ClickEncoder::UserInput_ClickEncoder()// : public UserInput()
-//{
-//    
-//}
+UserInput_ClickEncoder::UserInput_ClickEncoder(){}// : public UserInput(){}
+UserInput_ClickEncoder::~UserInput_ClickEncoder(){}
 
 void UserInput_ClickEncoder::set_input_pins(uint8_t pinA, uint8_t pinB, uint8_t pinSwitch)
 {
@@ -34,17 +32,17 @@ void UserInput_ClickEncoder::init()
     }
     
     //Call constructor of encoder class
-    encoder = ClickEncoder(pinA, pinB, pinSwitch, encStepsPerNotch, switchActiveState);
+    encoder = new ClickEncoder(pinA, pinB, pinSwitch, encStepsPerNotch, switchActiveState);
     //set defaults
     encoderPosition = 0;
-    encoder.setAccelerationEnabled(false);
-    encoder.setDoubleClickTime(doubleClickTime);
+    encoder->setAccelerationEnabled(false);
+    encoder->setDoubleClickTime(doubleClickTime);
    
 }  
 
 void UserInput_ClickEncoder::userinput_service_isr()
 {
-    encoder.service();
+    encoder->service();
 }
 
 UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request(bool cardDetected)
@@ -55,8 +53,8 @@ UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request(bool cardDetec
     }
     
     //Poll for current encoder position and button state
-    encoderPosition += encoder.getValue();
-    buttonState = encoder.getButton();
+    encoderPosition += encoder->getValue();
+    buttonState = encoder->getButton();
     if (buttonState == ClickEncoder::Clicked)
     {
         return PlayPause;
@@ -132,15 +130,15 @@ int16_t UserInput_ClickEncoder::get_encoder_diff()
 // USERINPUT___CLICKENCODER ---------------------------------------------------------------
 
 // USERINPUT___3BUTTONS     ---------------------------------------------------------------
-//UserInput_3Buttons::UserInput_3Buttons() = default;
+//UserInput_3Buttons::UserInput_3Buttons(){}
 
 // Constructor: DigitalButton_SupportsLongPress
 UserInput_3Buttons::DigitalButton_SupportsLongPress::DigitalButton_SupportsLongPress(
     int8_t pinId, bool active) :
-    longPressTime(1000), longPressRepeatInterval(400), DigitalButton(pinId, active)
+    DigitalButton(pinId, active), longPressTime(1000), longPressRepeatInterval(400)
 {
-    this->longPressTime = longPressTime; //mSec
-    this->longPressRepeatInterval = longPressRepeatInterval; //mSec
+    //this->longPressTime = longPressTime; //mSec
+    //this->longPressRepeatInterval = longPressRepeatInterval; //mSec
 }
 
 void UserInput_3Buttons::set_input_pins(uint8_t  pinPlayPauseAbort, uint8_t pinPrev, uint8_t pinNext)
@@ -173,20 +171,20 @@ void UserInput_3Buttons::init()
     }
     
     // Call constructors of button class
-    prevButton = DigitalButton_SupportsLongPress(pinPrev, switchActiveState);
-    plpsButton = DigitalButton_SupportsLongPress(pinPlayPauseAbort, switchActiveState);
-    nextButton = DigitalButton_SupportsLongPress(pinNext, switchActiveState);
+    prevButton = new DigitalButton_SupportsLongPress(pinPrev, switchActiveState);
+    plpsButton = new DigitalButton_SupportsLongPress(pinPlayPauseAbort, switchActiveState);
+    nextButton = new DigitalButton_SupportsLongPress(pinNext, switchActiveState);
     //Set defaults
-    prevButton.setDoubleClickTime(doubleClickTime);
-    plpsButton.setDoubleClickTime(doubleClickTime);
-    nextButton.setDoubleClickTime(doubleClickTime);     
+    prevButton->setDoubleClickTime(doubleClickTime);
+    plpsButton->setDoubleClickTime(doubleClickTime);
+    nextButton->setDoubleClickTime(doubleClickTime);     
 }   
 
 void UserInput_3Buttons::userinput_service_isr()
 {
-    prevButton.service();
-    plpsButton.service();
-    nextButton.service();
+    prevButton->service();
+    plpsButton->service();
+    nextButton->service();
 }
 
 UserInput::UserRequest_e UserInput_3Buttons::get_user_request(bool cardDetected)
@@ -197,9 +195,9 @@ UserInput::UserRequest_e UserInput_3Buttons::get_user_request(bool cardDetected)
     }
     
     //Get current button's states
-    ClickEncoder::Button plpsBtnState = plpsButton.getButton();
-    ClickEncoder::Button nextBtnState = nextButton.getButton();
-    ClickEncoder::Button prevBtnState = prevButton.getButton();
+    ClickEncoder::Button plpsBtnState = plpsButton->getButton();
+    ClickEncoder::Button nextBtnState = nextButton->getButton();
+    ClickEncoder::Button prevBtnState = prevButton->getButton();
     
     // --- PlayPauAbort button handler -----------------------------
     if (plpsBtnState == ClickEncoder::Clicked) 
@@ -239,15 +237,15 @@ UserInput::UserRequest_e UserInput_3Buttons::get_user_request(bool cardDetected)
     
     if (nextBtnState == ClickEncoder::Held) 
     {
-        nextButton.set_long_press_active(true);
-        if (nextButton.handle_repeat_long_pressed())
+        nextButton->set_long_press_active(true);
+        if (nextButton->handle_repeat_long_pressed())
         {
             return IncVolume;
         }
     }
     else
     {
-        nextButton.set_long_press_active(false);
+        nextButton->set_long_press_active(false);
     }
     // --- Previous button handler ----------------------------------
     if ((prevBtnState == ClickEncoder::Clicked) && cardDetected)
@@ -257,15 +255,15 @@ UserInput::UserRequest_e UserInput_3Buttons::get_user_request(bool cardDetected)
     
     if (prevBtnState == ClickEncoder::Held) 
     {
-        prevButton.set_long_press_active(true);
-        if (prevButton.handle_repeat_long_pressed())
+        prevButton->set_long_press_active(true);
+        if (prevButton->handle_repeat_long_pressed())
         {
             return IncVolume;
         }
     }
     else 
     {
-        prevButton.set_long_press_active(false);
+        prevButton->set_long_press_active(false);
     }    
        
     return NoAction;

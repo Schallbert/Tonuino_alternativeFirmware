@@ -303,7 +303,7 @@ private:
 
     void sendPacket(uint8_t command, uint16_t arg = 0, uint16_t sendSpaceNeeded = c_msSendSpace)
     {
-        uint8_t out[DfMp3_Packet_SIZE] = { 0x7E, 0xFF, 06, command, 00, (arg >> 8), (arg & 0x00ff), 00, 00, 0xEF };
+        uint8_t out[DfMp3_Packet_SIZE] = { 0x7E, 0xFF, 06, command, 00, uint8_t(arg >> 8), uint8_t(arg & 0x00ff), 00, 00, 0xEF };
 
         setChecksum(out);
 
@@ -460,6 +460,6 @@ private:
     bool validateChecksum(uint8_t* in)
     {
         uint16_t sum = calcChecksum(in);
-        return (sum == ((in[DfMp3_Packet_HiByteCheckSum] << 8) | in[DfMp3_Packet_LowByteCheckSum]));
+        return (sum == (uint16_t((in[DfMp3_Packet_HiByteCheckSum] << 8) | in[DfMp3_Packet_LowByteCheckSum])));
     }
 };
