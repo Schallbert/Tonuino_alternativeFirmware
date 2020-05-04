@@ -217,7 +217,7 @@ static DFMiniMp3<SoftwareSerial, Mp3Notify> mp3(mySoftwareSerial);
 KeepAlive aKeepAlive = KeepAlive(KEEPALIVE, false);
 
 // userInput interface
-UserInput *aUserInput = UserInput_Factory::getInstance(UserInput_Factory::Encoder);
+UserInput *aUserInput = UserInput_Factory::getInstance(UserInput_Factory::ThreeButtons);
 
 StatusLed aLed = StatusLed(LED_PIN, 500, 200, HIGH);
 
@@ -266,7 +266,7 @@ void setup()
   Timer1.attachInterrupt(timer1_task_1ms);
 
   //init UserInput
-  //aUserInput->set_input_pins(PINPLPS, PINPREV, PINNEXT);
+  aUserInput->set_input_pins(PINPLPS, PINPREV, PINNEXT);
   //aUserInput->init();
 }
 

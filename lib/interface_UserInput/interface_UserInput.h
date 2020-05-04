@@ -37,8 +37,8 @@ protected:
 
 public:
     // methods
-    virtual void set_input_pins(); //different arguments of implementation therefore not purely virtual
-    virtual void set_parameters(); //different arguments of implementation therefore not purely virtual
+    virtual void set_input_pins(uint8_t, uint8_t, uint8_t) = 0; //Must have same signature as derived methods
+    virtual void override_parameters() = 0; //overrides standard header-defined parameters
     virtual void init(void) = 0;
     virtual UserRequest_e get_user_request(bool) = 0;
     virtual void userinput_service_isr(void) = 0;
@@ -70,7 +70,7 @@ public:
     // encStepsPerNotch is the resolution of the encoder (datasheet).
     // switchActiveState is the uC input level the switch shall be detected as pressed.
     // doubleClickTime is the time interval [ms] in which two clicks must be detected to count as doubleclick event.
-    void set_parameters(bool switchActiveState, uint16_t doubleClickTime, uint8_t encStepsPerNotch);
+    void override_parameters();
     void init();
     void userinput_service_isr();
     UserRequest_e get_user_request(bool cardDetected);
@@ -89,7 +89,7 @@ private:
     uint8_t pinSwitch = 0;
     // PARAMETERS AND DEFAULT VALUES
     bool switchActiveState = false;
-    uint16_t doubleClickTime = 300;
+    uint16_t doubleClickTime = 400;
     uint8_t encStepsPerNotch = 4;
     // Business logic variables
     volatile int16_t encoderPosition;
@@ -125,12 +125,7 @@ public:
 
     // pinPrev, pinePlayPause, pinNext are the pins of the buttons that are connected to the uC.
     void set_input_pins(uint8_t pinPlayPauseAbort, uint8_t pinPrev, uint8_t pinNext);
-    // longPressTime and longPressRepeatInterval are how long a switch must be pressed to detect a longPress event
-    // and if longPressed, what the repeat time should be to trigger events.
-    // switchActiveState is the uC input level the switch shall be detected as pressed.
-    // doubleClickTime is the time interval [ms] in which two clicks must be detected to count as doubleclick event.
-    void set_parameters(bool switchActiveState, uint16_t doubleClickTime,
-                        uint16_t longPressTime, uint16_t longPressRepeatInterval);
+    void override_parameters();
     void init();
     // Service routine to update button status (use 1ms task)
     void userinput_service_isr(void);

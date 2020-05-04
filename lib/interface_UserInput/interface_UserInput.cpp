@@ -13,14 +13,18 @@ void UserInput_ClickEncoder::set_input_pins(uint8_t pinA, uint8_t pinB, uint8_t 
     this->pinSwitch = pinSwitch;
 }
 
-void UserInput_ClickEncoder::set_parameters(bool switchActiveState, uint16_t doubleClickTime, uint8_t encStepsPerNotch)
+void UserInput_ClickEncoder::override_parameters()
 {
+    // This function is for compile-time override of parameter standard values.
     // encStepsPerNotch is the resolution of the encoder (datasheet).
     // switchActiveState is the uC input level the switch shall be detected as pressed.
     // doubleClickTime is the time interval [ms] in which two clicks must be detected to count as doubleclick event.
-    this->encStepsPerNotch = encStepsPerNotch;
-    this->switchActiveState = switchActiveState;
-    this->doubleClickTime = doubleClickTime;
+    #define ENCSTEPS 4
+    #define ACTIVESTATE false
+    #define DOUBLECLICKTIME 400
+    encStepsPerNotch = ENCSTEPS;
+    switchActiveState = ACTIVESTATE;
+    doubleClickTime = DOUBLECLICKTIME;
 }
 
 void UserInput_ClickEncoder::init()
@@ -135,11 +139,8 @@ int16_t UserInput_ClickEncoder::get_encoder_diff()
 // Constructor: DigitalButton_SupportsLongPress
 UserInput_3Buttons::DigitalButton_SupportsLongPress::DigitalButton_SupportsLongPress(
     int8_t pinId, bool active) :
-    DigitalButton(pinId, active), longPressTime(1000), longPressRepeatInterval(400)
-{
-    //this->longPressTime = longPressTime; //mSec
-    //this->longPressRepeatInterval = longPressRepeatInterval; //mSec
-}
+    DigitalButton{pinId, active}, longPressTime(800), longPressRepeatInterval(400)
+{}
 
 void UserInput_3Buttons::set_input_pins(uint8_t  pinPlayPauseAbort, uint8_t pinPrev, uint8_t pinNext)
 {
@@ -149,17 +150,20 @@ void UserInput_3Buttons::set_input_pins(uint8_t  pinPlayPauseAbort, uint8_t pinP
     this->pinNext = pinNext;
 }
 
-void UserInput_3Buttons::set_parameters(bool switchActiveState, uint16_t doubleClickTime, 
-                                        uint16_t longPressTime, uint16_t longPressRepeatInterval)
+void UserInput_3Buttons::override_parameters()
 {
     // longPressTime and longPressRepeatInterval are how long a switch must be pressed to detect a longPress event 
     // and if longPressed, what the repeat time should be to trigger events.
     // switchActiveState is the uC input level the switch shall be detected as pressed.
     // doubleClickTime is the time interval [ms] in which two clicks must be detected to count as doubleclick event.
-    this->switchActiveState = switchActiveState;
-    this->doubleClickTime = doubleClickTime;
-    this->longPressTime = longPressTime;
-    this->longPressRepeatInterval = longPressRepeatInterval; 
+    #define ACTIVESTATE false
+    #define DOUBLECLICKTIME 400
+    #define LONGPRESSTIME 800
+    #define LONGPRESSREPEAT 400
+    switchActiveState = ACTIVESTATE;
+    doubleClickTime = DOUBLECLICKTIME;
+    longPressTime = LONGPRESSTIME;
+    longPressRepeatInterval = LONGPRESSREPEAT; 
 }
 
 void UserInput_3Buttons::init()
