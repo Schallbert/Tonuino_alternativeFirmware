@@ -2,8 +2,8 @@
 #include "ClickEncoder.h"
 
 // USERINPUT___CLICKENCODER ---------------------------------------------------------------
-UserInput_ClickEncoder::UserInput_ClickEncoder(){}// : public UserInput(){}
-UserInput_ClickEncoder::~UserInput_ClickEncoder(){}
+UserInput_ClickEncoder::UserInput_ClickEncoder() {} // : public UserInput(){}
+UserInput_ClickEncoder::~UserInput_ClickEncoder() {}
 
 void UserInput_ClickEncoder::set_input_pins(uint8_t pinA, uint8_t pinB, uint8_t pinSwitch)
 {
@@ -15,13 +15,13 @@ void UserInput_ClickEncoder::set_input_pins(uint8_t pinA, uint8_t pinB, uint8_t 
 
 void UserInput_ClickEncoder::override_parameters()
 {
-    // This function is for compile-time override of parameter standard values.
-    // encStepsPerNotch is the resolution of the encoder (datasheet).
-    // switchActiveState is the uC input level the switch shall be detected as pressed.
-    // doubleClickTime is the time interval [ms] in which two clicks must be detected to count as doubleclick event.
-    #define ENCSTEPS 4
-    #define ACTIVESTATE false
-    #define DOUBLECLICKTIME 400
+// This function is for compile-time override of parameter standard values.
+// encStepsPerNotch is the resolution of the encoder (datasheet).
+// switchActiveState is the uC input level the switch shall be detected as pressed.
+// doubleClickTime is the time interval [ms] in which two clicks must be detected to count as doubleclick event.
+#define ENCSTEPS 4
+#define ACTIVESTATE false
+#define DOUBLECLICKTIME 400
     encStepsPerNotch = ENCSTEPS;
     switchActiveState = ACTIVESTATE;
     doubleClickTime = DOUBLECLICKTIME;
@@ -34,15 +34,14 @@ void UserInput_ClickEncoder::init()
         //Error: Need valid arduino input pins for encoder pins A, B, and switch!
         return;
     }
-    
+
     //Call constructor of encoder class
     encoder = new ClickEncoder(pinA, pinB, pinSwitch, encStepsPerNotch, switchActiveState);
     //set defaults
     encoderPosition = 0;
     encoder->setAccelerationEnabled(false);
     encoder->setDoubleClickTime(doubleClickTime);
-   
-}  
+}
 
 void UserInput_ClickEncoder::userinput_service_isr()
 {
@@ -55,7 +54,7 @@ UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request(bool cardDetec
     {
         return NoAction;
     }
-    
+
     //Poll for current encoder position and button state
     encoderPosition += encoder->getValue();
     buttonState = encoder->getButton();
@@ -63,7 +62,7 @@ UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request(bool cardDetec
     {
         return PlayPause;
     }
-    
+
     if (get_encoder_diff() > 0)
     {
         //encoder turned right
@@ -71,13 +70,13 @@ UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request(bool cardDetec
         {
             return IncVolume; //while button was pressed/held: volume up
         }
-        
+
         if (cardDetected)
         {
             return NextTrack; //no button press: next track
         }
     }
-    
+
     if (get_encoder_diff() < 0)
     {
         //encoder turned left
@@ -85,26 +84,26 @@ UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request(bool cardDetec
         {
             return DecVolume; //while button was pressed/held: volume up
         }
-        
+
         if (cardDetected)
         {
             return PrevTrack; //no button press: next track
         }
     }
-    
+
     if (buttonState == ClickEncoder::Held)
     {
         // Button held but not turned
         if (cardDetected)
         {
-            return Abort; 
+            return Abort;
         }
         else
         {
             return Help;
         }
     }
-    
+
     if (buttonState == ClickEncoder::DoubleClicked)
     {
         if (cardDetected)
@@ -116,7 +115,7 @@ UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request(bool cardDetec
             return DelCard; // Doubleclick without card: delete card
         }
     }
-    
+
     return NoAction;
 }
 
@@ -124,13 +123,13 @@ int16_t UserInput_ClickEncoder::get_encoder_diff()
 {
     static int16_t oldEncPos = 0;
     int16_t encDiff = 0;
-    if (encoderPosition != oldEncPos) 
+    if (encoderPosition != oldEncPos)
     {
         encDiff = encoderPosition - oldEncPos;
         oldEncPos = encoderPosition;
     }
     return encDiff;
-} 
+}
 // USERINPUT___CLICKENCODER ---------------------------------------------------------------
 
 // USERINPUT___3BUTTONS     ---------------------------------------------------------------
@@ -138,11 +137,11 @@ int16_t UserInput_ClickEncoder::get_encoder_diff()
 
 // Constructor: DigitalButton_SupportsLongPress
 UserInput_3Buttons::DigitalButton_SupportsLongPress::DigitalButton_SupportsLongPress(
-    int8_t pinId, bool active) :
-    DigitalButton{pinId, active}, longPressTime(800), longPressRepeatInterval(400)
-{}
+    int8_t pinId, bool active) : DigitalButton{pinId, active}, longPressTime(800), longPressRepeatInterval(400)
+{
+}
 
-void UserInput_3Buttons::set_input_pins(uint8_t  pinPlayPauseAbort, uint8_t pinPrev, uint8_t pinNext)
+void UserInput_3Buttons::set_input_pins(uint8_t pinPlayPauseAbort, uint8_t pinPrev, uint8_t pinNext)
 {
     // pinPrev, pinePlayPause, pinNext are the pins of the buttons that are connected to the uC.
     this->pinPrev = pinPrev;
@@ -152,18 +151,18 @@ void UserInput_3Buttons::set_input_pins(uint8_t  pinPlayPauseAbort, uint8_t pinP
 
 void UserInput_3Buttons::override_parameters()
 {
-    // longPressTime and longPressRepeatInterval are how long a switch must be pressed to detect a longPress event 
-    // and if longPressed, what the repeat time should be to trigger events.
-    // switchActiveState is the uC input level the switch shall be detected as pressed.
-    // doubleClickTime is the time interval [ms] in which two clicks must be detected to count as doubleclick event.
-    #define ACTIVESTATE false
-    #define DOUBLECLICKTIME 400
-    #define LONGPRESSTIME 800
-    #define LONGPRESSREPEAT 400
+// longPressTime and longPressRepeatInterval are how long a switch must be pressed to detect a longPress event
+// and if longPressed, what the repeat time should be to trigger events.
+// switchActiveState is the uC input level the switch shall be detected as pressed.
+// doubleClickTime is the time interval [ms] in which two clicks must be detected to count as doubleclick event.
+#define ACTIVESTATE false
+#define DOUBLECLICKTIME 400
+#define LONGPRESSTIME 800
+#define LONGPRESSREPEAT 400
     switchActiveState = ACTIVESTATE;
     doubleClickTime = DOUBLECLICKTIME;
     longPressTime = LONGPRESSTIME;
-    longPressRepeatInterval = LONGPRESSREPEAT; 
+    longPressRepeatInterval = LONGPRESSREPEAT;
 }
 
 void UserInput_3Buttons::init()
@@ -173,7 +172,7 @@ void UserInput_3Buttons::init()
         //Error: Need valid arduino input pi ns for encoder pins A, B, and switch!
         return;
     }
-    
+
     // Call constructors of button class
     prevButton = new DigitalButton_SupportsLongPress(pinPrev, switchActiveState);
     plpsButton = new DigitalButton_SupportsLongPress(pinPlayPauseAbort, switchActiveState);
@@ -181,8 +180,8 @@ void UserInput_3Buttons::init()
     //Set defaults
     prevButton->setDoubleClickTime(doubleClickTime);
     plpsButton->setDoubleClickTime(doubleClickTime);
-    nextButton->setDoubleClickTime(doubleClickTime);     
-}   
+    nextButton->setDoubleClickTime(doubleClickTime);
+}
 
 void UserInput_3Buttons::userinput_service_isr()
 {
@@ -197,14 +196,14 @@ UserInput::UserRequest_e UserInput_3Buttons::get_user_request(bool cardDetected)
     {
         return NoAction;
     }
-    
+
     //Get current button's states
     ClickEncoder::Button plpsBtnState = plpsButton->getButton();
     ClickEncoder::Button nextBtnState = nextButton->getButton();
     ClickEncoder::Button prevBtnState = prevButton->getButton();
-    
+
     // --- PlayPauAbort button handler -----------------------------
-    if (plpsBtnState == ClickEncoder::Clicked) 
+    if (plpsBtnState == ClickEncoder::Clicked)
     {
         return PlayPause;
     }
@@ -213,7 +212,7 @@ UserInput::UserRequest_e UserInput_3Buttons::get_user_request(bool cardDetected)
         // Button held
         if (cardDetected)
         {
-            return Abort; 
+            return Abort;
         }
         else
         {
@@ -234,12 +233,12 @@ UserInput::UserRequest_e UserInput_3Buttons::get_user_request(bool cardDetected)
         }
     }
     // --- Next button handler --------------------------------------
-    if ((nextBtnState == ClickEncoder::Clicked) && cardDetected) 
+    if ((nextBtnState == ClickEncoder::Clicked) && cardDetected)
     {
         return NextTrack;
     }
-    
-    if (nextBtnState == ClickEncoder::Held) 
+
+    if (nextBtnState == ClickEncoder::Held)
     {
         nextButton->set_long_press_active(true);
         if (nextButton->handle_repeat_long_pressed())
@@ -256,8 +255,8 @@ UserInput::UserRequest_e UserInput_3Buttons::get_user_request(bool cardDetected)
     {
         return PrevTrack;
     }
-    
-    if (prevBtnState == ClickEncoder::Held) 
+
+    if (prevBtnState == ClickEncoder::Held)
     {
         prevButton->set_long_press_active(true);
         if (prevButton->handle_repeat_long_pressed())
@@ -265,14 +264,13 @@ UserInput::UserRequest_e UserInput_3Buttons::get_user_request(bool cardDetected)
             return IncVolume;
         }
     }
-    else 
+    else
     {
         prevButton->set_long_press_active(false);
-    }    
-       
+    }
+
     return NoAction;
 }
-
 
 void UserInput_3Buttons::DigitalButton_SupportsLongPress::service(void)
 {
@@ -285,8 +283,8 @@ void UserInput_3Buttons::DigitalButton_SupportsLongPress::service(void)
     {
         longPressCount = 0;
     }
-}                                                                
-             
+}
+
 void UserInput_3Buttons::DigitalButton_SupportsLongPress::set_long_press_active(bool longPressActive)
 {
     this->longPressActive = longPressActive;
@@ -308,20 +306,20 @@ bool UserInput_3Buttons::DigitalButton_SupportsLongPress::handle_repeat_long_pre
 
 // USERINPUT___FACTORY      ---------------------------------------------------------------
 
-UserInput* UserInput_Factory::getInstance(UserInputType_e typeKey)
+UserInput *UserInput_Factory::getInstance(UserInputType_e typeKey)
 {
-    UserInput* pObject = NULL; 
-    
-    switch(typeKey)
+    UserInput *pObject = NULL;
+
+    switch (typeKey)
     {
-        case Encoder:
-            pObject = new UserInput_ClickEncoder;
-            break;
-        case ThreeButtons:
-            pObject = new UserInput_3Buttons;
-            break;
-        default:
-            pObject = new UserInput_3Buttons;
+    case Encoder:
+        pObject = new UserInput_ClickEncoder;
+        break;
+    case ThreeButtons:
+        pObject = new UserInput_3Buttons;
+        break;
+    default:
+        pObject = new UserInput_3Buttons;
     }
     return pObject;
 }
