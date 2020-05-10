@@ -19,7 +19,7 @@ class StatusLed
         };
         
         // Constructor
-        StatusLed(uint8_t ledPin, uint16_t flashSlowTime = 500, uint16_t flashQuickTime = 100, bool active = HIGH);
+        StatusLed(uint8_t ledPin, uint16_t flashSlowMillis = 500, uint16_t flashQuickMillis = 100, bool active = HIGH);
         
     public:
         // Methods
@@ -40,8 +40,8 @@ class StatusLed
         bool ledBehaviorSet;
         bool active;
         uint8_t ledPin;
-        uint16_t msCount;
-        uint16_t flashSlowTime; 
-        uint16_t flashQuickTime;         
+        volatile uint16_t msCount;
+        uint16_t flashSlowMillis; 
+        uint16_t flashQuickMillis;         
 };
 #endif // STATUSLED_H

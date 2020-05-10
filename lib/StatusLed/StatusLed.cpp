@@ -2,15 +2,16 @@
 
 // Implementation of class behavior for StatusLed.
               
-StatusLed::StatusLed(uint8_t ledPin, uint16_t flashSlowTime, uint16_t flashQuickTime, bool active)
+StatusLed::StatusLed(uint8_t ledPin, uint16_t flashSlowMillis, uint16_t flashQuickMillis, bool active)
 {
     this->ledPin = ledPin;
-    this->flashSlowTime = flashSlowTime;
-    this->flashQuickTime = flashQuickTime;
+    this->flashSlowMillis = flashSlowMillis;
+    this->flashQuickMillis = flashQuickMillis;
     this->active = active;
     pinMode(ledPin, OUTPUT);
     this->perform = &StatusLed::led_off; //Set default behavior of function pointer: LED off
     this->msCount = 0;
+    digitalWrite(ledPin, !active); //init state is off
 }
 
 void StatusLed::led_service()
@@ -31,10 +32,10 @@ void StatusLed::set_led_behavior(eLedState ledState)
             perform = &StatusLed::led_solid;
             break;
         case flash_slow :
-            perform = &StatusLed::led_flash_quick;
+            perform = &StatusLed::led_flash_slow;
             break;
         case flash_quick :
-            perform = &StatusLed::led_flash_slow;
+            perform = &StatusLed::led_flash_quick;
             break;
         case dim :
             perform = &StatusLed::led_dim;
@@ -56,7 +57,7 @@ void StatusLed::led_solid()
 
 void StatusLed::led_flash_slow()
 {
-    if (msCount >= flashSlowTime)
+    if (msCount >= flashSlowMillis)
     {
         msCount = 0;
         digitalWrite(ledPin, !digitalRead(ledPin));
@@ -65,7 +66,7 @@ void StatusLed::led_flash_slow()
 
 void StatusLed::led_flash_quick()
 {
-    if (msCount >= flashQuickTime)
+    if (msCount >= flashQuickMillis)
     {
         msCount = 0;
         digitalWrite(ledPin, !digitalRead(ledPin));
@@ -74,5 +75,15 @@ void StatusLed::led_flash_quick()
 
 void StatusLed::led_dim()
 {
-    digitalWrite(ledPin, (msCount & 0x08)); // Sets LED to 12.5% brightness @ 125 Hz
+    bool dim = false;
+    if(active)
+    {
+        dim = msCount & 0x08;
+    }
+    else
+    {
+        dim = !(msCount & 0x08);
+    }
+    
+    digitalWrite(ledPin, dim); // Sets LED to 12.5% brightness @ 125 Hz
 }
