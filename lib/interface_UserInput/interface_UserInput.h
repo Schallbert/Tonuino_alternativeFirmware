@@ -28,12 +28,21 @@ public:
         DelCard,
         Help,
         Abort,
+        Error
     };
+
 
 protected:
     //UserInput();
     //~UserInput();
     bool userInputLocked = false;
+
+    enum InterfaceState_e
+    {
+        uninitialized = 0,
+        inputPinsSet = 1,
+        ready = 2
+    };
 
 public:
     // methods
@@ -88,6 +97,7 @@ private:
     uint8_t pinB = 0;
     uint8_t pinSwitch = 0;
     // PARAMETERS AND DEFAULT VALUES
+    InterfaceState_e state = uninitialized;
     bool switchActiveState = false;
     uint16_t doubleClickTime = 400;
     uint8_t encStepsPerNotch = 4;
@@ -161,10 +171,11 @@ private:
     DigitalButton_SupportsLongPress* plpsButton;
     DigitalButton_SupportsLongPress* nextButton;
     // INPUT PINS
-    uint8_t pinPrev;
-    uint8_t pinPlayPauseAbort;
-    uint8_t pinNext;
+    uint8_t pinPrev = 0;
+    uint8_t pinPlayPauseAbort = 0;
+    uint8_t pinNext = 0;
     // PARAMETERS
+    InterfaceState_e state = uninitialized;
     bool switchActiveState;
     uint16_t doubleClickTime;         //mSec
     uint16_t longPressTime;           //mSec

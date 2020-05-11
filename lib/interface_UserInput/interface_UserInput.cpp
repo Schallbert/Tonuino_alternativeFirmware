@@ -11,6 +11,7 @@ void UserInput_ClickEncoder::set_input_pins(uint8_t pinA, uint8_t pinB, uint8_t 
     this->pinA = pinA;
     this->pinB = pinB;
     this->pinSwitch = pinSwitch;
+    state = inputPinsSet;
 }
 
 void UserInput_ClickEncoder::override_parameters()
@@ -29,7 +30,7 @@ void UserInput_ClickEncoder::override_parameters()
 
 void UserInput_ClickEncoder::init()
 {
-    if (!(pinA && pinB && pinSwitch))
+    if (state != inputPinsSet)
     {
         //Error: Need valid arduino input pins for encoder pins A, B, and switch!
         return;
@@ -41,19 +42,28 @@ void UserInput_ClickEncoder::init()
     encoderPosition = 0;
     encoder->setAccelerationEnabled(false);
     encoder->setDoubleClickTime(doubleClickTime);
+    state = ready;
 }
 
 void UserInput_ClickEncoder::userinput_service_isr()
 {
-    encoder->service();
+    if (state == ready)
+    {
+        encoder->service();
+    }
 }
 
 UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request(bool cardDetected)
-{
-    if (UserInput::userInputLocked)
+{  
+    if (state != ready)
+    {
+        return Error;
+    }
+    else if (UserInput::userInputLocked)
     {
         return NoAction;
     }
+    
 
     //Poll for current encoder position and button state
     encoderPosition += encoder->getValue();
@@ -147,10 +157,12 @@ void UserInput_3Buttons::set_input_pins(uint8_t pinPlayPauseAbort, uint8_t pinPr
     this->pinPrev = pinPrev;
     this->pinPlayPauseAbort = pinPlayPauseAbort;
     this->pinNext = pinNext;
+    state = inputPinsSet;
 }
 
 void UserInput_3Buttons::override_parameters()
 {
+    // Must be called before init()!
 // longPressTime and longPressRepeatInterval are how long a switch must be pressed to detect a longPress event
 // and if longPressed, what the repeat time should be to trigger events.
 // switchActiveState is the uC input level the switch shall be detected as pressed.
@@ -167,7 +179,7 @@ void UserInput_3Buttons::override_parameters()
 
 void UserInput_3Buttons::init()
 {
-    if (!(pinPrev && pinNext && pinPlayPauseAbort))
+    if (state != inputPinsSet)
     {
         //Error: Need valid arduino input pi ns for encoder pins A, B, and switch!
         return;
@@ -181,21 +193,30 @@ void UserInput_3Buttons::init()
     prevButton->setDoubleClickTime(doubleClickTime);
     plpsButton->setDoubleClickTime(doubleClickTime);
     nextButton->setDoubleClickTime(doubleClickTime);
+    state = ready;
 }
 
 void UserInput_3Buttons::userinput_service_isr()
 {
-    prevButton->service();
-    plpsButton->service();
-    nextButton->service();
+    if (state == ready)
+    {
+        prevButton->service();
+        plpsButton->service();
+        nextButton->service();
+    }
 }
 
 UserInput::UserRequest_e UserInput_3Buttons::get_user_request(bool cardDetected)
 {
-    if (UserInput::userInputLocked)
+    if (state != ready)
+    {
+        return Error;
+    }
+    else if (UserInput::userInputLocked)
     {
         return NoAction;
     }
+    
 
     //Get current button's states
     ClickEncoder::Button plpsBtnState = plpsButton->getButton();
