@@ -1,4 +1,4 @@
-
+#define UNIT_TEST
 #include <unity.h> //for unittest
 #include "unittest_StatusLed.h"
 #include "unittest_UserInput.h"

@@ -1,6 +1,5 @@
 #ifndef UNIT_TEST
 
-
 // Includes -------------------------
 #include <Arduino.h>
 #include <Defines.h>
@@ -61,7 +60,7 @@ struct adminSettings
 
 //function prototypes -------------------------------
 void writeSettingsToFlash();
-void resetSettings(); 
+void resetSettings();
 void migrateSettings(int oldVersion); //delete
 void loadSettingsFromFlash();
 // UserInput related functions
@@ -205,16 +204,15 @@ void setup()
     mp3.setEq(static_cast<DfMp3_Eq>(mySettings.eq - 1));
 
     // NFC Leser initialisieren
-    SPI.begin();        // Init SPI bus
-    mfrc522.PCD_Init(); // Init MFRC522
+    SPI.begin();                       // Init SPI bus
+    mfrc522.PCD_Init();                // Init MFRC522
     mfrc522.PCD_DumpVersionToSerial(); // Show details of PCD - MFRC522 Card Reader
-    for (byte i = 0; i < 6; i++) //Init with undefined
+    for (byte i = 0; i < 6; i++)       //Init with undefined
     {
         key.keyByte[i] = 0xFF;
     }
 
     //Init Timer1 for Encoder read
-    
 
     //init UserInput
     aUserInput->set_input_pins(PINPLPS, PINPREV, PINNEXT);
@@ -252,8 +250,8 @@ void loop()
             //Deactivate KeepAlive to cut power supply to circuits
             //aKeepAlive.shut_down();
         }
-
-        userAction = aUserInput->get_user_request(mfrc522.PICC_ReadCardSerial()); //ReadCardSerial() only returns true if a known card is present.
+        aUserInput->set_card_detected(mfrc522.PICC_ReadCardSerial());
+        userAction = aUserInput->get_user_request(); //ReadCardSerial() only returns true if a known card is present.
         switch (userAction)
         {
         case UserInput::NoAction:
@@ -280,6 +278,11 @@ void loop()
             mp3.playMp3FolderTrack(MSG_HELP);
             break;
         case UserInput::Abort:
+            break;
+        case UserInput::Error:
+#if DEBUGSERIAL
+            Serial.println(F("Error getting UserInput. Not fully initialized/pins set?"));
+#endif
             break;
         }
 
@@ -529,37 +532,37 @@ uint8_t voiceMenu(int numberOfOptions, int startMessage, int messageOffset,
                 return optionSerial;
         }
 #endif
-
-        userAction = aUserInput->get_user_request(true); //input acts as if a card was present: needed to detect Abort signal
+        aUserInput->set_card_detected(true);
+        userAction = aUserInput->get_user_request(); //input acts as if a card was present: needed to detect Abort signal
         mp3.loop();
 
         switch (userAction)
         {
-            case UserInput::NoAction :
-                break;
-            case UserInput::Abort :
-                mp3.playMp3FolderTrack(MSG_ABORTEED);
-                return defaultValue;
-            case UserInput::PlayPause :
-                if (returnValue != 0) 
-                {
-                    #if DEBUGSERIAL
-                        Serial.print(F("=== "));
-                        Serial.print(returnValue);
-                        Serial.println(F(" ==="));
-                    #endif
-                    return returnValue;
-                }
-                break;
-            case UserInput::NextTrack :
-                returnValue = min(returnValue + 1, numberOfOptions);
-                break;
-            case UserInput::PrevTrack :
-                returnValue = max(returnValue - 1 , 1);
-                break;
-            default:
-                break;
-        } 
+        case UserInput::NoAction:
+            break;
+        case UserInput::Abort:
+            mp3.playMp3FolderTrack(MSG_ABORTEED);
+            return defaultValue;
+        case UserInput::PlayPause:
+            if (returnValue != 0)
+            {
+#if DEBUGSERIAL
+                Serial.print(F("=== "));
+                Serial.print(returnValue);
+                Serial.println(F(" ==="));
+#endif
+                return returnValue;
+            }
+            break;
+        case UserInput::NextTrack:
+            returnValue = min(returnValue + 1, numberOfOptions);
+            break;
+        case UserInput::PrevTrack:
+            returnValue = max(returnValue - 1, 1);
+            break;
+        default:
+            break;
+        }
 
         if (lastReturnValue != returnValue)
         {
@@ -662,7 +665,8 @@ void resetCard()
     while (!mfrc522.PICC_IsNewCardPresent())
     {
         // Wait for new card to be detected, meanwhile allow to abort
-        /*userAction = aUserInput->get_user_request(true);
+        /*aUserInput->set_card_detected(mfrc522.PICC_ReadCardSerial());
+        userAction = aUserInput->get_user_request();
         if (userAction == UserInput::UserRequest::eAbort)
         {
             #if DEBUGSERIAL

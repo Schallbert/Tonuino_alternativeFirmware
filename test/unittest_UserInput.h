@@ -8,8 +8,8 @@ namespace userinput
     void userInput_3Buttons_pinsNotSet(void);
     void userInput_3Buttons_notInitialized(void);
     void userInput_3Buttons_ready(void);
-    void userInput_3Buttons_noAction(void);
-    void userInput_3Buttons_playPause(void);
+    void userInput_3Buttons_getUserRequest(void);
+    void userinput_3Buttons_serviceIsr(void);
 
     void userInput_encoder_pinsNotSet(void);
     void userInput_encoder_notInitialized(void);

@@ -31,11 +31,11 @@ public:
         Error
     };
 
-
 protected:
     //UserInput();
     //~UserInput();
     bool userInputLocked = false;
+    bool cardDetected = false;
 
     enum InterfaceState_e
     {
@@ -46,11 +46,17 @@ protected:
 
 public:
     // methods
-    virtual void set_input_pins(uint8_t, uint8_t, uint8_t) = 0; //Must have same signature as derived methods
-    virtual void override_parameters() = 0; //overrides standard header-defined parameters
-    virtual void init(void) = 0;
-    virtual UserRequest_e get_user_request(bool) = 0;
-    virtual void userinput_service_isr(void) = 0;
+    virtual void set_input_pins(uint8_t, uint8_t, uint8_t) = 0; // Must have same signature as derived methods
+    virtual void init(void) = 0;                                // Initializes userInput object
+    virtual UserRequest_e get_user_request(void) = 0;           // returns user's request to main program
+    virtual void userinput_service_isr(void) = 0;               // recurring task to poll UserInput's connected hardware
+    void set_card_detected(bool cardDetected) {this->cardDetected = cardDetected;} // input: card status from main
+#ifdef UNIT_TEST
+    virtual void set_fake_user_request(UserRequest_e) = 0; // For unit testing: Injects fake requests
+#endif
+
+private:
+    virtual void userinput_refresh(void) = 0; // refreshes button status to UserInput class
 
 }; // UserInput
 
@@ -74,24 +80,24 @@ public:
     UserInput_ClickEncoder();
     ~UserInput_ClickEncoder();
 
+public:
     // pinA, pinB, pinSwitch are the pins of the encoder that are connected to the uC.
     void set_input_pins(uint8_t pinA, uint8_t pinB, uint8_t pinSwitch);
-    // encStepsPerNotch is the resolution of the encoder (datasheet).
-    // switchActiveState is the uC input level the switch shall be detected as pressed.
-    // doubleClickTime is the time interval [ms] in which two clicks must be detected to count as doubleclick event.
-    void override_parameters();
     void init();
     void userinput_service_isr();
-    UserRequest_e get_user_request(bool cardDetected);
+    UserRequest_e get_user_request();
+#ifdef UNIT_TEST
+    void set_fake_user_request(UserRequest_e); // For unit testing: Injects fake requests
+#endif
 
 private:
-    int16_t get_encoder_diff();
+    void userinput_refresh();
 
 private:
     //OBJECTS
-    // have to use pointer as object would have to be initialized 
+    // have to use pointer as object would have to be initialized
     // using its constructor while not all constructor's init variables are defined yet
-    ClickEncoder* encoder; 
+    ClickEncoder *encoder;
     // INPUT PINS
     uint8_t pinA = 0;
     uint8_t pinB = 0;
@@ -103,8 +109,8 @@ private:
     uint8_t encStepsPerNotch = 4;
     // Business logic variables
     volatile int16_t encoderPosition;
-    int16_t encoderDiff;
-    uint8_t buttonState;
+    volatile int16_t encoderDiff;
+    ClickEncoder::Button buttonState;
 
 }; // UserInput_ClickEncoder
 
@@ -124,24 +130,14 @@ class UserInput_3Buttons : public UserInput
     // Name friend classes so constructors can be called
     friend class UserInput_Factory;
 
-public:
-    /*
-            First call set_input_pins to get arduino pins attached to the encoder
-            Second call set_parameters if you want encoder parameters deviatin from standards
-            Then call init to finally instantiate the encoder.
-        */
-    //UserInput_3Buttons();
-    //~UserInput_3Buttons();
-
-    // pinPrev, pinePlayPause, pinNext are the pins of the buttons that are connected to the uC.
-    void set_input_pins(uint8_t pinPlayPauseAbort, uint8_t pinPrev, uint8_t pinNext);
-    void override_parameters();
-    void init();
-    // Service routine to update button status (use 1ms task)
-    void userinput_service_isr(void);
-    UserRequest_e get_user_request(bool cardDetected);
-
 private:
+    struct ButtonStates
+    {
+        ClickEncoder::Button plpsButton = ClickEncoder::Open;
+        ClickEncoder::Button nextButton = ClickEncoder::Open;
+        ClickEncoder::Button prevButton = ClickEncoder::Open;
+    };
+
     class DigitalButton_SupportsLongPress : public DigitalButton
     {
     public:
@@ -154,8 +150,6 @@ private:
         void set_long_press_active(bool longPressActive);
         bool handle_repeat_long_pressed(void);
 
-    private:
-        void increment_ctr_long_pressed(void);
 
     private:
         uint16_t longPressTime;           //mSec
@@ -165,11 +159,31 @@ private:
         ClickEncoder::Button buttonState; //enum to hold buttonState
     };                                    //  DigitalButton_SupportsLongPress
 
+public:
+    /*
+        First call set_input_pins to get arduino pins attached to the encoder
+        Then call init to finally instantiate the encoder.
+    */
+
+    // pinPrev, pinePlayPause, pinNext are the pins of the buttons that are connected to the uC.
+    void set_input_pins(uint8_t pinPlayPauseAbort, uint8_t pinPrev, uint8_t pinNext);
+    void init();
+    // Service routine to update button status (use 1ms task)
+    void userinput_service_isr(void);
+    UserRequest_e get_user_request();
+#ifdef UNIT_TEST
+    void set_fake_user_request(UserRequest_e); // For unit testing: Injects fake requests
+#endif
+
+private:
+    void userinput_refresh();
+
 private:
     //OBJECTS
-    DigitalButton_SupportsLongPress* prevButton;
-    DigitalButton_SupportsLongPress* plpsButton;
-    DigitalButton_SupportsLongPress* nextButton;
+    DigitalButton_SupportsLongPress *prevButton;
+    DigitalButton_SupportsLongPress *plpsButton;
+    DigitalButton_SupportsLongPress *nextButton;
+    ButtonStates buttonStates;
     // INPUT PINS
     uint8_t pinPrev = 0;
     uint8_t pinPlayPauseAbort = 0;
