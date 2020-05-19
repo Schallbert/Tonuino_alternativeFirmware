@@ -133,10 +133,12 @@ void UserInput_ClickEncoder::set_fake_user_request(UserInput::UserRequest_e fake
             break;
         case UserInput::NextTrack:
             set_card_detected(true);
+            buttonState = ClickEncoder::Open;
             encoderDiff = 1; 
             break;
         case UserInput::PrevTrack:
             set_card_detected(true);
+            buttonState = ClickEncoder::Open;
             encoderDiff = -1; 
             break;
         case UserInput::IncVolume:
