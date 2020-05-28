@@ -16,6 +16,8 @@
 #define MSG_SELECTFILE 320
 #define MSG_HELP 330
 
+#define NFCTAG_MEMORY_TO_OCCUPY 16 //bytes
+
 //Pin defines ------------------------
 #define PINANALOG_RNDMGEN A1 //ADC1 24
 // MFRC522
@@ -41,11 +43,19 @@
 #define LED_PIN 13 //for test purposes only, otherwise 16 //PC0 25
 
 //KeepAlive interaction outputs
-#define MAXIDLE 0x400
+#define MAXIDLE 0x400 // TODO: Change to seconds, e.g. 20
 #define FLASHSLOWMS 500
 #define FLASHQUICKMS 200
 
+#define VOLUME_MAX 22
+#define VOLUME_MIN 2
+#define VOLUME_INIT 7
+
 //Timer1 interrupt task
-#define TIMERONE_TASK_INTERVAL_USEC 1000 //1ms
+#define TIMERONE_TASK_INTERVAL_USEC 1000 // 1ms
+#define LULLABYE_TIMER_SECS 20*60 // default is 20 minutes
+
+//MP3 defines
+#define WAIT_DFMINI_READY 1000 // 1 sec
 
 #endif
