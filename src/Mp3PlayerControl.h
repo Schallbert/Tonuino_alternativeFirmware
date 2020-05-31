@@ -86,28 +86,44 @@ public:
     Mp3PlayerControl();
 
 public:
+    // Listen for DFminiMp3 replies, call autoplay routine
     void loop();
+    // Increases volume (<= VOLUME_MAX)
     void volume_up();
+    // Decreases volume (>= VOLUME_MIN)
     void volume_down();
+    // Gets next track from queue and starts playback
     void next_track();
+    // Gets previous track from queue and starts playback
     void prev_track();
+    // If playing, pauses track and vice versa
     void play_pause();
+    // Returns true if DFminiMp3 is currently playing
     bool is_playing();
+    // Starts playback of specified folder (handles queueing and folder specific playmodes)
     void play_folder(Folder* currentFolder);
+    // Plays specific file sd:/advert/####fileId
     void play_specific_file(uint16_t fileId);
-    void set_card_detected(bool cardDetected);
+    // Tells controller to not allow skipping the track that is currently played (e.g. for advertisements)
     void dont_skip_current_track();
+    // Starts inquiry to player to return number of tracks in selected folder.
     uint8_t get_trackCount_of_folder(uint8_t folderId);
+    // Timed routine for lullabye NFC card configuration. To be called in main's 1ms timer interrupt.
+    void lullabye_timeout_tick1ms();
 
 private:
+    // Routine to check playmode and select next track
     void autoplay();
+    // Routine to check if lullabye time has reached to enable KeepAlive to switch system off after timeout.
     bool check_lullabye_timeout();
 
 private:
-    SoftwareSerial dfMiniMp3SoftwareSerial;
-    static DFMiniMp3<SoftwareSerial, Mp3Notify> dfMiniMp3;
-    bool cardDetected;
+    SoftwareSerial dfMiniMp3SoftwareSerial = SoftwareSerial(DFMINI_RX, DFMINI_TX, false);
+    static DFMiniMp3<SoftwareSerial, Mp3Notify> dfMiniMp3 = DFMiniMp3<SoftwareSerial, Mp3Notify>(dfMiniMp3SoftwareSerial);
+    //static SoftwareSerial dfMiniMp3SoftwareSerial;
+    //static DFMiniMp3<SoftwareSerial, Mp3Notify> dfMiniMp3;
     Folder *currentFolder;
+    uint16_t lullabyeTimeActiveSecs;
 };
 
 #endif // MP3PLAYERCONTROL_H

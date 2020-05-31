@@ -10,8 +10,8 @@
 // this object stores nfc tag data
 class NfcTag
 {
-public:
-    NfcTag(){};
+    public:
+    NfcTag();
 
 public:
     bool is_card_present();

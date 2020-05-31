@@ -14,27 +14,15 @@
 #include <NfcTag.h>
 #include <Mp3PlayerControl.h>
 
-// ____ TONUINO LOGIC SPECIFICS_____
-// Play modes
-enum playMode
-{
-    ONELARGETRACK = 1, //So-called Hörspielmodus TODO: RE-RECORD VOICE OUTPUT
-    ALBUM = 2,
-    SAVEPROGRESS = 5, // TODO: RE-RECORD VOICE OUTPUT
-};
-
-// end of UserInput related functions
-void waitForTrackToFinish();
-void playFolder();
+// Function prototypes
 bool setup_folder(Folder &newFolder);
 void reset_card();
 void setup_card();
-uint8_t voiceMenu(int numberOfOptions, int startMessage, int messageOffset,
-                  bool preview = false, int previewFromFolder = 0, int defaultValue = 0, bool exitWithLongPress = false);
+uint8_t voice_menu(uint8_t numberOfOptions, uint16_t startMessage, bool returnValuesOffsetStartMessage,
+                   bool previewSelectedFolder = false, int defaultValue = 0);
 void timer1_task_1ms();
 
 // Global variables & objects -------------------------------
-
 // Init tag reader
 NfcTag nfcTagReader;
 // DFPlayer Mini
@@ -42,7 +30,7 @@ Mp3PlayerControl mp3;
 // Folder for queuing etc.
 Folder currentFolder;
 // keepAlive interface
-KeepAlive aKeepAlive = KeepAlive(KEEPALIVE, false);
+KeepAlive aKeepAlive = KeepAlive(KEEPALIVE, false, MAXIDLE);
 // userInput interface
 UserInput *aUserInput = UserInput_Factory::getInstance(UserInput_Factory::ThreeButtons);
 // led behavior
@@ -50,11 +38,9 @@ StatusLed aLed = StatusLed(LED_PIN, FLASHSLOWMS, FLASHQUICKMS, HIGH);
 
 // SETUP ROUTINE --------------------------------------------------------------
 //-----------------------------------------------------------------------------
-
 void setup()
 {
-    //Activate KeepAlive to maintain power supply to circuits
-    aKeepAlive.keep_alive();
+    aKeepAlive.keep_alive(); //Activate KeepAlive to maintain power supply to circuits
 
 #if DEBUGSERIAL
     Serial.begin(9600); // Some debug output via serial
@@ -62,10 +48,6 @@ void setup()
 #endif
 
     aLed.set_led_behavior(StatusLed::solid);
-    // Busy Pin
-
-    // Init DFplayerMini
-    // TODO: Init DFmini object here
 
     //Init Timer1 for Encoder read
     //init UserInput
@@ -76,32 +58,25 @@ void setup()
     Serial.println(F("Tonuino started."));
 #endif
 }
-
 // LOOP ROUTINE --------------------------------------------------------------
 //----------------------------------------------------------------------------
 void loop()
 {
     UserInput::UserRequest_e userAction = UserInput::NoAction;
-    do
+    while (!nfcTagReader.is_new_card_present())
     {
-        mp3.loop();
-
+        // No new card present. Accept user input.
+        mp3.loop(); // Autoplay and DFmini loop
         //Set LED
         if (mp3.is_playing())
         {
+            aKeepAlive.set_idle_timer(false);
             aLed.set_led_behavior(StatusLed::solid);
         }
         else
         {
-            idleCount++; // TODO: Solve via interrupt
+            aKeepAlive.set_idle_timer(true);
             aLed.set_led_behavior(StatusLed::flash_slow);
-        }
-
-        //Check shutdown timer and shutdown if necessary
-        if (idleCount > MAXIDLE)
-        {
-            //Deactivate KeepAlive to cut power supply to circuits
-            aKeepAlive.shut_down();
         }
         aUserInput->set_card_detected(nfcTagReader.is_card_present());
         userAction = aUserInput->get_user_request(); //ReadCardSerial() only returns true if a known card is present.
@@ -110,19 +85,19 @@ void loop()
         case UserInput::NoAction:
             break;
         case UserInput::PlayPause:
-            play_pause();
+            mp3.play_pause();
             break;
         case UserInput::NextTrack:
-            next_track();
+            mp3.next_track();
             break;
         case UserInput::PrevTrack:
-            prev_track();
+            mp3.prev_track();
             break;
         case UserInput::IncVolume:
-            volume_up();
+            mp3.volume_up();
             break;
         case UserInput::DecVolume:
-            volume_down();
+            mp3.volume_down();
             break;
         case UserInput::DelCard:
             reset_card();
@@ -136,35 +111,44 @@ void loop()
 #if DEBUGSERIAL
             Serial.println(F("Error getting UserInput. Not fully initialized/pins set?"));
 #endif
+            mp3.play_specific_file(MSG_ERROR);
             break;
         }
-
-    } while (!nfcTagReader.is_new_card_present());
-    // new card present
+    }
+    // Do not allow automatic shutdown
+    aKeepAlive.set_idle_timer(false);
+    aLed.set_led_behavior(StatusLed::dim);
+    // new card present, load information from card, create and return folder
     if (nfcTagReader.get_folder(currentFolder))
     {
-        playFolder(); //Folder setup and ready to play
+        mp3.play_folder(&currentFolder); //Folder setup and ready to play
     }
     else
     {
         // unknown card: configure
         mp3.play_specific_file(MSG_UNKNOWNTAG);
-        waitForTrackToFinish();
+        mp3.dont_skip_current_track();
         setup_card();
     }
 }
 // END OF LOOP() ----------------------------------------------------------------------------------
 
-uint8_t voiceMenu(int numberOfOptions, int startMessage, int messageOffset,
-                  bool preview, int previewFromFolder, int defaultValue, bool exitWithLongPress)
+uint8_t voice_menu(uint8_t numberOfOptions, uint16_t startMessage, bool returnValuesOffsetStartMessage,
+                   bool previewSelectedFolder, uint8_t defaultValue)
 {
     uint8_t returnValue = defaultValue;
     uint8_t lastReturnValue = defaultValue;
+    uint16_t messageOffset = (uint8_t)returnValuesOffsetStartMessage * startMessage;
     UserInput::UserRequest_e userAction = UserInput::NoAction;
-    if (startMessage != 0)
+    if (startMessage == 0)
     {
-        mp3.play_specific_file(startMessage);
+        return defaultValue; // invalid function call
     }
+    if (mp3.is_playing())
+    {
+        mp3.play_pause();
+    }
+    mp3.play_specific_file(startMessage);
 #if DEBUGSERIAL
     Serial.print(F("=== voiceMenu() ("));
     Serial.print(numberOfOptions);
@@ -185,7 +169,6 @@ uint8_t voiceMenu(int numberOfOptions, int startMessage, int messageOffset,
         aUserInput->set_card_detected(true);
         userAction = aUserInput->get_user_request(); //input acts as if a card was present: needed to detect Abort signal
         mp3.loop();
-
         switch (userAction)
         {
         case UserInput::NoAction:
@@ -221,17 +204,12 @@ uint8_t voiceMenu(int numberOfOptions, int startMessage, int messageOffset,
 #endif
             // play number of current choice, e.g. "one".
             mp3.play_specific_file(messageOffset + returnValue);
-            if (preview)
+            if (previewSelectedFolder)
             {
-                waitForTrackToFinish();
-                if (!previewFromFolder)
-                {
-                    mp3.playFolderTrack(returnValue, 1);
-                }
-                else
-                {
-                    mp3.playFolderTrack(previewFromFolder, returnValue);
-                }
+                mp3.dont_skip_current_track();
+                // Preview: Play first track from folder to link
+                Folder previewFolder = Folder(returnValue, Folder::ONELARGETRACK, 1);
+                mp3.play_folder(&previewFolder);
             }
         }
     }
@@ -239,6 +217,7 @@ uint8_t voiceMenu(int numberOfOptions, int startMessage, int messageOffset,
 
 void reset_card()
 {
+    aLed.set_led_behavior(StatusLed::flash_quick);
     UserInput::UserRequest_e userAction = UserInput::NoAction;
     mp3.play_specific_file(MSG_DELETETAG);
     while (!nfcTagReader.is_new_card_present())
@@ -248,36 +227,33 @@ void reset_card()
         userAction = aUserInput->get_user_request();
         if (userAction == UserInput::Abort)
         {
-            #if DEBUGSERIAL
-                Serial.print(F("Aborted!"));
-            #endif
+#if DEBUGSERIAL
+            Serial.print(F("Aborted!"));
+#endif
             mp3.play_specific_file(MSG_ABORTEED);
             return;
         }
     }
-
 #if DEBUGSERIAL
-    Serial.print(F("Karte wird neu konfiguriert!"));
+    Serial.print(F("Card to be configured!"));
 #endif
     mp3.play_specific_file(MSG_UNKNOWNTAG);
-    waitForTrackToFinish();
+    mp3.dont_skip_current_track();
     setup_card();
 }
 
 void setup_card()
 {
-    mp3.pause();
 #if DEBUGSERIAL
     Serial.println(F("=== setup_card()"));
 #endif
     if (setup_folder(currentFolder))
     {
-        // Karte ist konfiguriert -> speichern
+        // Configuring card was successful.
         if (mp3.is_playing())
         {
             mp3.play_pause();
         }
-        //waitForTrackToFinish();
         if (nfcTagReader.set_folder(currentFolder))
         {
             mp3.play_specific_file(MSG_TAGCONFSUCCESS); //WRITE_CARD
@@ -287,7 +263,7 @@ void setup_card()
             mp3.play_specific_file(MSG_ERROR); //WRITE_CARD
         }
     }
-    //delay(1000); //TODO: Test whether this delay makes any sense
+    delay(WAIT_DFMINI_READY);
 }
 
 /* 
@@ -302,9 +278,9 @@ bool setup_folder(Folder &newFolder)
     Folder::PlayMode playMode = Folder::UNDEFINED;
     Folder tempFolder;
     // user input: Which folder to link?
-    folderId = voiceMenu(99, 301, 0, true, 0, 0, true); //TODO: Shouldn't this be 300? or 310?
+    folderId = voice_menu(99, MSG_UNKNOWNTAG, false, true, 0); //TODO: Shouldn't this be 300? or 310?
     // user input: Which play mode?
-    playMode = (Folder::PlayMode)voiceMenu(9, MSG_TAGLINKED, MSG_TAGLINKED, false, 0, 0, true); //TODO: Rework voice menu to fit playmodes!
+    playMode = (Folder::PlayMode)voice_menu((int)Folder::PlayMode::ENUM_COUNT, MSG_TAGLINKED, true, false, (int)Folder::PlayMode::ALBUM);
     trackCount = mp3.get_trackCount_of_folder(folderId);
     // Create new folder object and copy to main's folder object
     tempFolder = Folder(folderId, playMode, trackCount); // TODO: Decide on pointer and new or other architecture!
@@ -321,9 +297,9 @@ void timer1_task_1ms()
 {
     aLed.led_service();
     aUserInput->userinput_service_isr();
+    aKeepAlive.idle_timer_tick1ms();
+    mp3.lullabye_timeout_tick1ms();
 }
-
-#endif //UNIT_TEST
 
 //Helper routine to dump a byte array as hex values to Serial.
 #if DEBUGSERIAL
@@ -336,3 +312,4 @@ void dump_byte_array(byte *buffer, byte bufferSize)
     }
 }
 #endif //DEBUGSERIAL
+#endif //UNIT_TEST

@@ -27,6 +27,7 @@ public:
         RANDOM = 3,         // Like ALBUM but with shuffled non-repeating queue. TODO: RECORD VOICE OUTPUT
         SAVEPROGRESS = 5,   // like ALBUM but saves track that is currently active. TODO: RE-RECORD VOICE OUTPUT
         ONELARGETRACK = 1,  // So-called Hörspielmodus. Queue like ALBUM but stops playback after finishing track. TODO: RE-RECORD VOICE OUTPUT.
+        ENUM_COUNT = 5,
     };
 
 public:
@@ -36,7 +37,6 @@ public:
 
 public:
     uint8_t get_next_track();
-    //void get_current_track();
     uint8_t get_prev_track();
     PlayMode get_play_mode();
     uint8_t get_folder_id();

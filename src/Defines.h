@@ -43,7 +43,7 @@
 #define LED_PIN 13 //for test purposes only, otherwise 16 //PC0 25
 
 //KeepAlive interaction outputs
-#define MAXIDLE 0x400 // TODO: Change to seconds, e.g. 20
+#define MAXIDLE 20 //Seconds
 #define FLASHSLOWMS 500
 #define FLASHQUICKMS 200
 

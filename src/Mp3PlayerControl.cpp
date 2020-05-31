@@ -3,8 +3,8 @@
 Mp3PlayerControl::Mp3PlayerControl()
 {
     pinMode(DFMINI_BUSY, INPUT);
-    dfMiniMp3SoftwareSerial = SoftwareSerial(DFMINI_RX, DFMINI_TX);
-    dfMiniMp3 = DFMiniMp3<SoftwareSerial, Mp3Notify>(dfMiniMp3SoftwareSerial);
+    //dfMiniMp3SoftwareSerial = SoftwareSerial(DFMINI_RX, DFMINI_TX, false);
+    //dfMiniMp3 = DFMiniMp3<SoftwareSerial, Mp3Notify>(dfMiniMp3SoftwareSerial);
     dfMiniMp3.begin(); // Init
     delay(WAIT_DFMINI_READY);
     dfMiniMp3.setEq(DfMp3_Eq::DfMp3_Eq_Normal);
@@ -47,9 +47,9 @@ void Mp3PlayerControl::play_pause()
     {
         dfMiniMp3.pause();
     }
-    else if (cardDetected)
+    else if (currentFolder->is_valid())
     {
-        dfMiniMp3.start();
+        dfMiniMp3.start(); //can only restart playback if a valid folder is existing
     }
 }
 void Mp3PlayerControl::dont_skip_current_track()
@@ -68,10 +68,6 @@ void Mp3PlayerControl::dont_skip_current_track()
         dfMiniMp3.loop(); //wait for track to finish
     }
 }
-void Mp3PlayerControl::set_card_detected(bool cardDetected)
-{
-    this->cardDetected = cardDetected;
-}
 void Mp3PlayerControl::autoplay()
 {
     // Autoplay implementation
@@ -83,6 +79,7 @@ void Mp3PlayerControl::autoplay()
 #if DEBUGSERIAL
             Serial.println(F("ONELARGETRACK mode active -> wait for power off"));
 #endif
+            dfMiniMp3.stop();
             return;
         }
         else if (mode == Folder::LULLABYE && check_lullabye_timeout())
@@ -90,6 +87,7 @@ void Mp3PlayerControl::autoplay()
 #if DEBUGSERIAL
             Serial.println(F("LULLABYE timeout expired -> wait for power off"));
 #endif
+            dfMiniMp3.stop();
             return;
         }
         else
@@ -98,16 +96,30 @@ void Mp3PlayerControl::autoplay()
         }
     }
 }
+void Mp3PlayerControl::lullabye_timeout_tick1ms()
+{
+    static uint16_t ticks = 0;
+    ++ticks;
+#define SEC_MSEC 1000
+    if (ticks >= SEC_MSEC)
+    {
+        ticks = 0;
+        ++lullabyeTimeActiveSecs;
+    }
+}
 bool Mp3PlayerControl::check_lullabye_timeout()
 {
-    // TODO: Implement:
-    /* If timer not set, then set timer
-    If timer set, check timer
-    If timer elapsed, return true. Else, return false. */
+    if (lullabyeTimeActiveSecs >= LULLABYE_TIMER_SECS)
+    {
+        // Allow KeepAlive timer to kick in by pausing the track.
+        lullabyeTimeActiveSecs = 0;
+        return true;
+    }
+    return false;
 }
 void Mp3PlayerControl::next_track()
 {
-    if (!cardDetected)
+    if (!currentFolder->is_valid())
     {
 #if DEBUGSERIAL
         Serial.println(F("=== in next_track: Error: No card linked"));
@@ -123,7 +135,7 @@ void Mp3PlayerControl::next_track()
 }
 void Mp3PlayerControl::prev_track()
 {
-    if (!cardDetected)
+    if (!currentFolder->is_valid())
     {
 #if DEBUGSERIAL
         Serial.println(F("=== in prev_track: Error: No card linked"));
@@ -137,47 +149,19 @@ void Mp3PlayerControl::prev_track()
     Serial.print(prevTrack);
 #endif
 }
-void Mp3PlayerControl::play_folder(Folder* currentFolder)
+void Mp3PlayerControl::play_folder(Folder *currentFolder)
 {
 #if DEBUGSERIAL
     Serial.println(F("== play_folder"));
     Serial.print(F(" folderId: "));
     Serial.println(currentFolder->get_folder_id());
 #endif
-    
-    // Hörspielmodus: eine zufällige Datei aus dem Ordner
-    if (myFolder->mode == ONELARGETRACK)
-    {
-        currentTrack = random(1, numTracksInFolder + 1);
-        dfMiniMp3.playFolderTrack(myFolder->folder, currentTrack);
-#if DEBUGSERIAL
-        Serial.println(F("Hörspielmodus -> zufälligen Track wiedergeben"));
-        Serial.println(currentTrack);
-#endif
-    }
-    // Album Modus: kompletten Ordner spielen
-    if (myFolder->mode == ALBUM)
-    {
-#if DEBUGSERIAL
-        Serial.println(F("Album Modus -> kompletten Ordner wiedergeben"));
-#endif
-        currentTrack = 1;
-        dfMiniMp3.playFolderTrack(myFolder->folder, currentTrack);
-    }
-    // Hörbuch Modus: kompletten Ordner spielen und Fortschritt merken
-    if (myFolder->mode == SAVEPROGRESS)
-    {
-#if DEBUGSERIAL
-        Serial.println(F("Hörbuch Modus -> kompletten Ordner spielen und "
-                         "Fortschritt merken"));
-#endif
-        currentTrack = EEPROM.read(myFolder->folder);
-        if (currentTrack == 0 || currentTrack > numTracksInFolder)
-        {
-            currentTrack = 1;
-        }
-        dfMiniMp3.playFolderTrack(myFolder->folder, currentTrack);
-    }
+    // Start playing folder: first track of current folder.
+    dfMiniMp3.playFolderTrack(currentFolder->get_folder_id(), 1);
+}
+void Mp3PlayerControl::play_specific_file(uint16_t fileId)
+{
+    dfMiniMp3.playAdvertisement(fileId);
 }
 uint8_t Mp3PlayerControl::get_trackCount_of_folder(uint8_t folderId)
 {

@@ -41,7 +41,7 @@ bool NfcTag::is_card_present()
 }
 bool NfcTag::is_new_card_present()
 {
-    return mfrc522.PICC_IsNewCardPresent()
+    return mfrc522.PICC_IsNewCardPresent();
 }
 
 bool NfcTag::write_card()
@@ -50,7 +50,7 @@ bool NfcTag::write_card()
     MFRC522::PICC_Type mifareType;
     byte buffer[NFCTAG_MEMORY_TO_OCCUPY] =
         {
-            (byte)cardCookie >> 24,
+            (byte)(cardCookie >> 24),
             (byte)((cardCookie >> 16) & 0xFF),
             (byte)((cardCookie >> 8) & 0xFF),
             (byte)(cardCookie & 0xFF),    // 0x1337b347 magic cookie to identify our nfc tags
@@ -173,7 +173,7 @@ bool NfcTag::read_card()
 #endif
     // END GET DATA FROM CARD    -------------------------------------------------------
     // Transfer buffer from card read to nfcTag's variables
-    uint32_t tempCookie = buffer[0] << 24 | buffer[1] << 16 | buffer[2] << 8 | buffer[3];
+    uint32_t tempCookie = (buffer[0] << 24) | (buffer[1] << 16) | (buffer[2] << 8) | buffer[3];
     cookie = tempCookie;
     uint8_t folderId = (uint8_t)buffer[5];
     Folder::PlayMode playMode = (Folder::PlayMode)buffer[6];
