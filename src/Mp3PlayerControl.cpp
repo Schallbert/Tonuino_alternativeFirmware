@@ -3,8 +3,6 @@
 Mp3PlayerControl::Mp3PlayerControl()
 {
     pinMode(DFMINI_BUSY, INPUT);
-    //dfMiniMp3SoftwareSerial = SoftwareSerial(DFMINI_RX, DFMINI_TX, false);
-    //dfMiniMp3 = DFMiniMp3<SoftwareSerial, Mp3Notify>(dfMiniMp3SoftwareSerial);
     dfMiniMp3.begin(); // Init
     delay(WAIT_DFMINI_READY);
     dfMiniMp3.setEq(DfMp3_Eq::DfMp3_Eq_Normal);
@@ -71,7 +69,7 @@ void Mp3PlayerControl::dont_skip_current_track()
 void Mp3PlayerControl::autoplay()
 {
     // Autoplay implementation
-    if (Mp3Notify::getTrackFinished())
+    if (Mp3Notify::getTrackFinished(false))
     {
         Folder::PlayMode mode = currentFolder->get_play_mode();
         if (mode == Folder::ONELARGETRACK)

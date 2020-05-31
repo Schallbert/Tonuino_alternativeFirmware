@@ -19,7 +19,7 @@ bool setup_folder(Folder &newFolder);
 void reset_card();
 void setup_card();
 uint8_t voice_menu(uint8_t numberOfOptions, uint16_t startMessage, bool returnValuesOffsetStartMessage,
-                   bool previewSelectedFolder = false, int defaultValue = 0);
+                   bool previewSelectedFolder = false, uint8_t defaultValue = 0);
 void timer1_task_1ms();
 
 // Global variables & objects -------------------------------
@@ -280,7 +280,7 @@ bool setup_folder(Folder &newFolder)
     // user input: Which folder to link?
     folderId = voice_menu(99, MSG_UNKNOWNTAG, false, true, 0); //TODO: Shouldn't this be 300? or 310?
     // user input: Which play mode?
-    playMode = (Folder::PlayMode)voice_menu((int)Folder::PlayMode::ENUM_COUNT, MSG_TAGLINKED, true, false, (int)Folder::PlayMode::ALBUM);
+    playMode = (Folder::PlayMode)voice_menu((uint8_t)Folder::PlayMode::ENUM_COUNT, MSG_TAGLINKED, true, false, (uint8_t)Folder::PlayMode::ALBUM);
     trackCount = mp3.get_trackCount_of_folder(folderId);
     // Create new folder object and copy to main's folder object
     tempFolder = Folder(folderId, playMode, trackCount); // TODO: Decide on pointer and new or other architecture!

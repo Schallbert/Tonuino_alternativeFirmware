@@ -3,7 +3,7 @@
 NfcTag::NfcTag()
 {
     // NFC Leser initialisieren
-    mfrc522 = MFRC522(SS_PIN, RST_PIN); // Call constructor
+    //mfrc522 = MFRC522(SS_PIN, RST_PIN); // Call constructor
     SPI.begin();                        // Init SPI bus
     mfrc522.PCD_Init();                 // Init MFRC522
 #if DEBUGSERIAL

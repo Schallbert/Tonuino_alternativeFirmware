@@ -16,6 +16,10 @@
 // its member methods will get called
 class Mp3Notify
 {
+
+    private:
+  // Disallow creating an instance of this object
+  Mp3Notify() {}
 public:
     static void OnError(uint16_t errorCode)
     {
@@ -28,7 +32,7 @@ public:
     }
     static void OnPlayFinished(uint16_t track)
     {
-        trackFinished = true;
+        getTrackFinished(true);
     }
     static void OnCardOnline(uint16_t code)
     {
@@ -66,14 +70,23 @@ public:
         Serial.println(F("USB removed "));
 #endif
     }
-    static bool getTrackFinished()
+    // returns true if track has been set finished
+    // to set state call method setFinished = true
+    // to get state call method setFinished = false
+    static bool getTrackFinished(bool setFinished)
     {
-        if (trackFinished)
+        static bool trackFinished = false;
+        if (setFinished)
+        {
+            trackFinished = true;
+        }
+        else if (trackFinished)
         {
             trackFinished = false;
             return true;
         }
         return false;
+
     }
 
 private:
@@ -118,10 +131,9 @@ private:
     bool check_lullabye_timeout();
 
 private:
-    SoftwareSerial dfMiniMp3SoftwareSerial = SoftwareSerial(DFMINI_RX, DFMINI_TX, false);
-    static DFMiniMp3<SoftwareSerial, Mp3Notify> dfMiniMp3 = DFMiniMp3<SoftwareSerial, Mp3Notify>(dfMiniMp3SoftwareSerial);
-    //static SoftwareSerial dfMiniMp3SoftwareSerial;
-    //static DFMiniMp3<SoftwareSerial, Mp3Notify> dfMiniMp3;
+// Solution for constructor error found here: https://stackoverflow.com/questions/35762196/expected-a-type-specifier-error-when-creating-an-object-of-a-class-inside-anot
+    SoftwareSerial mp3SwSerial{SoftwareSerial(DFMINI_RX, DFMINI_TX)}; // Does not work with mp3SwSerial(DFMINI_RX, DFMINI_TX) because compiler interprets this as a class method call
+    DFMiniMp3<SoftwareSerial, Mp3Notify> dfMiniMp3{DFMiniMp3<SoftwareSerial, Mp3Notify>(mp3SwSerial)};
     Folder *currentFolder;
     uint16_t lullabyeTimeActiveSecs;
 };
