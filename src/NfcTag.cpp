@@ -173,8 +173,7 @@ bool NfcTag::read_card()
 #endif
     // END GET DATA FROM CARD    -------------------------------------------------------
     // Transfer buffer from card read to nfcTag's variables
-    uint32_t tempCookie = ((uint32_t)buffer[0] << 24) | ((uint32_t)buffer[1] << 16) | ((uint32_t)buffer[2] << 8) | (uint32_t)buffer[3];
-    cookie = tempCookie;
+    cookie = ((uint32_t)buffer[0] << 24) | ((uint32_t)buffer[1] << 16) | ((uint32_t)buffer[2] << 8) | (uint32_t)buffer[3];
     uint8_t folderId = (uint8_t)buffer[5];
     Folder::PlayMode playMode = (Folder::PlayMode)buffer[6];
     uint8_t trackCount = (uint8_t)buffer[7];

@@ -50,6 +50,7 @@
 #define VOLUME_MAX 22
 #define VOLUME_MIN 2
 #define VOLUME_INIT 7
+#define DFMINI_EQ_SETTING DfMp3_Eq::DfMp3_Eq_Normal
 
 //Timer1 interrupt task
 #define TIMERONE_TASK_INTERVAL_USEC 1000 // 1ms

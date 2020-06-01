@@ -5,7 +5,7 @@ Mp3PlayerControl::Mp3PlayerControl()
     pinMode(DFMINI_BUSY, INPUT);
     dfMiniMp3.begin(); // Init
     delay(WAIT_DFMINI_READY);
-    dfMiniMp3.setEq(DfMp3_Eq::DfMp3_Eq_Normal);
+    dfMiniMp3.setEq(DFMINI_EQ_SETTING);
     dfMiniMp3.setVolume(VOLUME_INIT);
 }
 void Mp3PlayerControl::loop()

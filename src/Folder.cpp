@@ -28,6 +28,12 @@ Folder::Folder(uint8_t folderId, PlayMode playMode, uint8_t trackCount)
     case PlayMode::SAVEPROGRESS :
     {
         currentQueueEntry = EEPROM.read(folderId);
+        if(currentQueueEntry > trackCount)
+        {
+            // EEPROM has never been written, contains some unknown value
+            currentQueueEntry = 1; // set to first track
+            EEPROM.update(folderId, currentQueueEntry);
+        }
 #if DEBUGSERIAL
         Serial.println(F("SAVEPROGRESS -> sorted queue, save current track"));
 #endif
