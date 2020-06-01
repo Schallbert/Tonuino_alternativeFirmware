@@ -10,14 +10,13 @@
 class Folder
 {
 public:
-    // TODO:
     /*
         Implementation details:
-        LULLABYE: Implement in main's autoplay method
-        ALBUM: Implement in folder's constructor
-        RANDOM: Implement in folder's shuffle method
-        SAVEPROGRESS: Implement in folder's next/prev methods
-        ONELARGETRACK: Implement in main's autoplay method
+        LULLABYE: Mp3PlayerControl's autoplay method
+        ALBUM:  folder's constructor
+        RANDOM: folder's shuffle method
+        SAVEPROGRESS: folder's next/prev methods
+        ONELARGETRACK: Mp3PlayerControl's autoplay method
     */
     enum PlayMode
     {
@@ -27,7 +26,7 @@ public:
         RANDOM = 3,         // Like ALBUM but with shuffled non-repeating queue. TODO: RECORD VOICE OUTPUT
         SAVEPROGRESS = 5,   // like ALBUM but saves track that is currently active. TODO: RE-RECORD VOICE OUTPUT
         ONELARGETRACK = 1,  // So-called Hörspielmodus. Queue like ALBUM but stops playback after finishing track. TODO: RE-RECORD VOICE OUTPUT.
-        ENUM_COUNT = 5,
+        ENUM_COUNT = 5,     // Last entry of enum to allow iteration (no value for content)
     };
 
 public:
@@ -36,6 +35,7 @@ public:
     ~Folder();
 
 public:
+    uint8_t get_current_track();
     uint8_t get_next_track();
     uint8_t get_prev_track();
     PlayMode get_play_mode();
@@ -47,7 +47,6 @@ private:
     void init_random_generator();
     void init_sorted_queue();
     void shuffle_queue();
-    void save_progress();
 
 private:
     uint8_t* trackQueue;

@@ -155,7 +155,7 @@ void Mp3PlayerControl::play_folder(Folder *currentFolder)
     Serial.println(currentFolder->get_folder_id());
 #endif
     // Start playing folder: first track of current folder.
-    dfMiniMp3.playFolderTrack(currentFolder->get_folder_id(), 1);
+    dfMiniMp3.playFolderTrack(currentFolder->get_folder_id(), currentFolder->get_current_track());
 }
 void Mp3PlayerControl::play_specific_file(uint16_t fileId)
 {
