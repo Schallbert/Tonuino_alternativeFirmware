@@ -2,6 +2,7 @@
 #include <unity.h> //for unittest
 #include "unittest_StatusLed.h"
 #include "unittest_UserInput.h"
+#include "unittest_Folder.h"
 
 // void setUp(void) {
 // // set stuff up here
@@ -22,6 +23,7 @@ void loop()
 {
    statusled::unittests();
    userinput::unittests();
+   folder::unittests();
 
     UNITY_END(); // stop unit testing
 }
