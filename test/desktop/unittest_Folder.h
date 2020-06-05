@@ -1,4 +1,4 @@
-#include <Arduino.h>
+#include <ArduinoFake.h>
 #include <unity.h> //for unittest
 #include <Defines.h>
 #include <Folder.h>
