@@ -1,155 +1,189 @@
-#include "unittest_Folder.h"
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
+#include <Folder.h>
+#include "mocks/unittest_Folder_mocks.h"
 
-void folder_invalid(void)
+using ::testing::Return;    
+TEST(folder, folder_invalid)
 {
     Folder testFolder;
-    TEST_ASSERT_EQUAL(false, testFolder.is_valid());
+    ASSERT_EQ(false, testFolder.is_valid());
 }
-void folder_invalid_idIs0(void)
+TEST(folder, folder_invalid_idIs0)
 {
     Folder testFolder;
-    TEST_ASSERT_EQUAL(0, testFolder.get_folder_id());
+    ASSERT_EQ(0, testFolder.get_folder_id());
 }
-void folder_invalid_playModeIsUndefined(void)
+TEST(folder, folder_invalid_playModeIsUndefined)
 {
     Folder testFolder;
-    TEST_ASSERT_EQUAL(Folder::UNDEFINED, testFolder.get_play_mode());
+    ASSERT_EQ(Folder::UNDEFINED, testFolder.get_play_mode());
 }
-void folder_invalid_trackCountIs0(void)
+TEST(folder, folder_invalid_trackCountIs0)
 {
     Folder testFolder;
-    TEST_ASSERT_EQUAL(0, testFolder.get_track_count());
+    ASSERT_EQ(0, testFolder.get_track_count());
 }
-void folder_invalid_currentTrackIs0(void)
+TEST(folder, folder_invalid_currentTrackIs0)
 {
     Folder testFolder;
-    TEST_ASSERT_EQUAL(0, testFolder.get_current_track());
+    ASSERT_EQ(0, testFolder.get_current_track());
 }
-void folder_invalid_nextTrackIs0(void)
+TEST(folder, folder_invalid_nextTrackIs0)
 {
     Folder testFolder;
-    TEST_ASSERT_EQUAL(0, testFolder.get_next_track());
+    ASSERT_EQ(0, testFolder.get_next_track());
 }
-void folder_invalid_prevTrackIs0(void)
+TEST(folder, folder_invalid_prevTrackIs0)
 {
     Folder testFolder;
-    TEST_ASSERT_EQUAL(0, testFolder.get_prev_track());
+    ASSERT_EQ(0, testFolder.get_prev_track());
 }
-void folder_invalid_trackCount0_isValidReturnsFalse(void)
+TEST(folder, folder_invalid_trackCount0_isValidReturnsFalse)
 {
-    Folder testFolder(1, Folder::ALBUM, 0);
-    TEST_ASSERT_EQUAL(false, testFolder.is_valid());
+    Mock_Eeprom eeprom;
+    Folder testFolder(1, Folder::ALBUM, 0, &eeprom, 0);
+    ASSERT_FALSE(testFolder.is_valid());
 }
-void folder_invalid_playModeUndefined_isValidReturnsFalse(void)
+TEST(folder, folder_invalid_playModeUndefined_isValidReturnsFalse)
 {
-    Folder testFolder(1, Folder::UNDEFINED, 24);
-    TEST_ASSERT_EQUAL(false, testFolder.is_valid());
+    Mock_Eeprom eeprom;
+    Folder testFolder(1, Folder::UNDEFINED, 24, &eeprom, 0);
+    ASSERT_FALSE(testFolder.is_valid());
 }
-void folder_invalid_folderIdIs0_isValidReturnsFalse(void)
+TEST(folder, folder_invalid_folderIdIs0_isValidReturnsFalse)
 {
-    Folder testFolder(0, Folder::ALBUM, 24);
-    TEST_ASSERT_EQUAL(false, testFolder.is_valid());
+    Mock_Eeprom eeprom;
+    Folder testFolder(0, Folder::ALBUM, 24, &eeprom, 0);
+    ASSERT_FALSE(testFolder.is_valid());
 }
-void folder_ALBUM_valid(void)
+TEST(folder, folder_ALBUM_valid)
 {
-    Folder testFolder(2, Folder::ALBUM, 10);
-    TEST_ASSERT_EQUAL(true, testFolder.is_valid());
+    Mock_Eeprom eeprom;
+    Folder testFolder(2, Folder::ALBUM, 10, &eeprom, 0);
+    ASSERT_TRUE(testFolder.is_valid());
 }
-void folder_ALBUM_idIs2(void)
+TEST(folder, folder_copyConstructor_workingOK)
 {
-    Folder testFolder(2, Folder::ALBUM, 10);
-    TEST_ASSERT_EQUAL(2, testFolder.get_folder_id());
+    Mock_Eeprom eeprom;
+    Folder testFolder(2, Folder::ALBUM, 10, &eeprom, 0);
+    EXPECT_TRUE(testFolder.is_valid());
+    Folder copyFolder(testFolder);
+    EXPECT_TRUE(copyFolder.is_valid());
 }
-void folder_ALBUM_playModeIsALBUM(void)
+TEST(folder, folder_assignmentOperator_workingOK)
 {
-    Folder testFolder(2, Folder::ALBUM, 10);
-    TEST_ASSERT_EQUAL(Folder::ALBUM, testFolder.get_play_mode());
+    Mock_Eeprom eeprom;
+    Folder testFolder(2, Folder::ALBUM, 10, &eeprom, 0);
+    EXPECT_TRUE(testFolder.is_valid());
+    Folder copyFolder;
+    copyFolder = testFolder;
+    EXPECT_TRUE(copyFolder.is_valid());
 }
-void folder_ALBUM_trackCountIs10(void)
+TEST(folder, folder_ALBUM_idIs2)
 {
-    Folder testFolder(2, Folder::ALBUM, 10);
-    TEST_ASSERT_EQUAL(10, testFolder.get_track_count());
+    Mock_Eeprom eeprom;
+    Folder testFolder(2, Folder::ALBUM, 10, &eeprom, 0);
+    ASSERT_EQ(2, testFolder.get_folder_id());
 }
-void folder_ALBUM_trackCount10_currentTrackIs1(void)
+TEST(folder, folder_ALBUM_playModeIsALBUM)
 {
-    Folder testFolder(2, Folder::ALBUM, 10);
-    TEST_ASSERT_EQUAL(1, testFolder.get_current_track());
+    Mock_Eeprom eeprom;
+    Folder testFolder(2, Folder::ALBUM, 10, &eeprom, 0);
+    ASSERT_EQ(Folder::ALBUM, testFolder.get_play_mode());
 }
-void folder_ALBUM_trackCountIs10_nextTrackIs2(void)
+TEST(folder, folder_ALBUM_trackCountIs10)
 {
-    Folder testFolder(2, Folder::ALBUM, 10);
-    TEST_ASSERT_EQUAL(2, testFolder.get_next_track());
-    TEST_ASSERT_EQUAL(2, testFolder.get_current_track());
+    Mock_Eeprom eeprom;
+    Folder testFolder(2, Folder::ALBUM, 10, &eeprom, 0);
+    ASSERT_EQ(10, testFolder.get_track_count());
 }
-void folder_ALBUM_trackCountIs10_prevTrackIs10(void)
+TEST(folder, folder_ALBUM_trackCount10_currentTrackIs1)
 {
-    Folder testFolder(2, Folder::ALBUM, 10);
-    TEST_ASSERT_EQUAL(10, testFolder.get_prev_track());
-    TEST_ASSERT_EQUAL(10, testFolder.get_current_track());
+    Mock_Eeprom eeprom;
+    Folder testFolder(2, Folder::ALBUM, 10, &eeprom, 0);
+    ASSERT_EQ(1, testFolder.get_current_track());
 }
-void folder_ALBUM_trackCountIs6_AllTracksAreInQueue(void)
+TEST(folder, folder_ALBUM_trackCountIs10_nextTrackIs2)
 {
-    Folder testFolder(1, Folder::ALBUM, 6);
+    Mock_Eeprom eeprom;
+    Folder testFolder(2, Folder::ALBUM, 10, &eeprom, 0);
+    EXPECT_EQ(1, testFolder.get_current_track());
+    EXPECT_EQ(2, testFolder.get_next_track());
+    EXPECT_EQ(2, testFolder.get_current_track());
+}
+TEST(folder, folder_ALBUM_trackCountIs10_prevTrackIs10)
+{
+    Mock_Eeprom eeprom;
+    // Tests rollover track count
+    Folder testFolder(2, Folder::ALBUM, 10, &eeprom, 0);
+    EXPECT_EQ(1, testFolder.get_current_track());
+    EXPECT_EQ(10, testFolder.get_prev_track());
+    EXPECT_EQ(10, testFolder.get_current_track());
+}
+TEST(folder, folder_ALBUM_trackCountIs6_AllTracksAreInQueue)
+{
+    Mock_Eeprom eeprom;
+    Folder testFolder(1, Folder::ALBUM, 6, &eeprom, 0);
     uint8_t trackSum = testFolder.get_current_track();
     for (int i = 2; i <= 6; ++i)
     {
         trackSum += testFolder.get_next_track();
     }
-    TEST_ASSERT_EQUAL(21, trackSum);
+    ASSERT_EQ(21, trackSum);
 }
-void folder_RANDOM_trackCountIs10_NextTracksNotConsecutiveOrNull(void)
+TEST(folder, folder_RANDOM_trackCountIs10_NextTracksNotConsecutiveOrNull)
 {
-    Folder testFolder(1, Folder::RANDOM, 10);
+    Mock_Eeprom eeprom;
+    Folder testFolder(1, Folder::RANDOM, 10, &eeprom, 42);
     uint8_t track1 = testFolder.get_current_track();
     uint8_t track2 = testFolder.get_next_track();
     uint8_t track3 = testFolder.get_next_track();
     uint8_t track4 = testFolder.get_next_track();
-    bool tracksConsecutive = ((track4 - track3) == 1) && ((track3 - track2) == 1) && ((track2 - track1) == 1);
+    bool tracksConsecutive = (bool)(((track4 - track3) == 1) && ((track3 - track2) == 1) && ((track2 - track1) == 1));
     bool tracksNull = (track1 == 0 || track2 == 0 || track3 == 0 || track4 == 0);
-    TEST_ASSERT_EQUAL(false, tracksConsecutive);
-    TEST_ASSERT_EQUAL(false, tracksNull);
+    EXPECT_FALSE(tracksConsecutive);
+    EXPECT_FALSE(tracksNull);
 }
-void folder_RANDOM_trackCountIs6_AllTracksAreInQueue(void)
+TEST(folder, folder_RANDOM_trackCountIs6_AllTracksAreInQueue)
 {
-    Folder testFolder(1, Folder::RANDOM, 6);
+    Mock_Eeprom eeprom;
+    Folder testFolder(1, Folder::RANDOM, 10, &eeprom, 42);
     uint8_t trackSum = testFolder.get_current_track();
-    for (int i = 2; i <= 6; ++i)
+    for (int i = 2; i <= 10; ++i)
     {
         trackSum += testFolder.get_next_track();
     }
-    TEST_ASSERT_EQUAL(21, trackSum);
+    ASSERT_EQ(55, trackSum);
 }
-void folder_SAVEPROGRESS_trackSaveAndLoad_isWorking(void)
+TEST(folder, folder_SAVEPROGRESS_trackLoad_isWorking)
 {
-    Folder testFolder(254, Folder::SAVEPROGRESS, 4);
-    TEST_ASSERT_EQUAL(1, testFolder.get_current_track());
-    testFolder.get_next_track();
-    testFolder = Folder(254, Folder::SAVEPROGRESS, 4);
-    TEST_ASSERT_EQUAL(2, testFolder.get_current_track());
-    testFolder.get_prev_track(); // Revert to 1
+    Mock_Eeprom eeprom;
+    EXPECT_CALL(eeprom, read(254)).WillOnce(Return(13));
+    Folder testFolder(254, Folder::SAVEPROGRESS, 16, &eeprom, 0);
+    EXPECT_EQ(13, testFolder.get_current_track());
 }
-
-void unittests()
+TEST(folder, folder_SAVEPROGRESS_trackSave_isWorking)
 {
-    RUN_TEST(folder_invalid);
-    RUN_TEST(folder_invalid_idIs0);
-    RUN_TEST(folder_invalid_playModeIsUndefined);
-    RUN_TEST(folder_invalid_trackCountIs0);
-    RUN_TEST(folder_invalid_currentTrackIs0);
-    RUN_TEST(folder_invalid_nextTrackIs0);
-    RUN_TEST(folder_invalid_prevTrackIs0);
-    RUN_TEST(folder_invalid_trackCount0_isValidReturnsFalse);
-    RUN_TEST(folder_invalid_playModeUndefined_isValidReturnsFalse);
-    RUN_TEST(folder_invalid_folderIdIs0_isValidReturnsFalse);
-    RUN_TEST(folder_ALBUM_valid);
-    RUN_TEST(folder_ALBUM_idIs2);
-    RUN_TEST(folder_ALBUM_playModeIsALBUM);
-    RUN_TEST(folder_ALBUM_trackCountIs10);
-    RUN_TEST(folder_ALBUM_trackCount10_currentTrackIs1);
-    RUN_TEST(folder_ALBUM_trackCountIs10_nextTrackIs2);
-    RUN_TEST(folder_ALBUM_trackCountIs10_prevTrackIs10);
-    RUN_TEST(folder_ALBUM_trackCountIs6_AllTracksAreInQueue);
-    RUN_TEST(folder_RANDOM_trackCountIs10_NextTracksNotConsecutiveOrNull);
-    RUN_TEST(folder_RANDOM_trackCountIs6_AllTracksAreInQueue);
-    RUN_TEST(folder_SAVEPROGRESS_trackSaveAndLoad_isWorking);
+    Mock_Eeprom eeprom;
+    EXPECT_CALL(eeprom, write(254, 14));
+    EXPECT_CALL(eeprom, read(254)).WillOnce(Return(13));
+    Folder testFolder(254, Folder::SAVEPROGRESS, 16, &eeprom, 0);
+    EXPECT_EQ(14, testFolder.get_next_track());
+}
+TEST(folder, folder_SAVEPROGRESS_Eeprom0_DefaultsTo1)
+{
+    Mock_Eeprom eeprom;
+    EXPECT_CALL(eeprom, write(254,1));
+    EXPECT_CALL(eeprom, read(254)).WillOnce(Return(0));
+    Folder testFolder(254, Folder::SAVEPROGRESS, 16, &eeprom, 0);
+    EXPECT_EQ(1, testFolder.get_current_track());
+}
+TEST(folder, folder_SAVEPROGRESS_EepromLargerThanTrackCount_DefaultsTo1)
+{
+    Mock_Eeprom eeprom;
+    EXPECT_CALL(eeprom, write(14,1));
+    EXPECT_CALL(eeprom, read(14)).WillOnce(Return(17));
+    Folder testFolder(14, Folder::SAVEPROGRESS, 16, &eeprom, 0);
+    EXPECT_EQ(1, testFolder.get_current_track());
 }

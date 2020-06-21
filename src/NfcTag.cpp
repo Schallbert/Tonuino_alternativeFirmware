@@ -20,7 +20,7 @@ bool NfcTag::get_folder(Folder &targetFolder)
     if (read_card())
     {
         // copy folder to target folder (refactor: copy constructor...?)
-        memcpy(&targetFolder, &folder, sizeof(Folder));
+        targetFolder = folder;
         return true;
     }
     return false; //unknown card
@@ -28,7 +28,7 @@ bool NfcTag::get_folder(Folder &targetFolder)
 
 bool NfcTag::set_folder(Folder targetFolder)
 {
-    folder = Folder(targetFolder.get_folder_id(), targetFolder.get_play_mode(), targetFolder.get_track_count());
+    folder = targetFolder;
     if (write_card())
     {
         return true;

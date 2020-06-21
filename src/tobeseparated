@@ -1,0 +1,87 @@
+//admin
+struct adminSettings
+{
+    uint32_t cookie;
+    byte version;
+    uint8_t maxVolume;
+    uint8_t minVolume;
+    uint8_t initVolume;
+    uint8_t eq;
+    bool locked;
+    bool invertVolumeButtons;
+    folderSettings shortCuts[4];
+};
+adminSettings mySettings;
+void writeSettingsToFlash();
+void resetSettings();
+void migrateSettings(int oldVersion);
+void loadSettingsFromFlash();
+// I THINK ALL OF THE ABOVE CAN BE DELETED: IF CONFIGURATIONS ARE JUST GOOD; NOBODY WILL EVER WANt TO CHANGE THEM
+// ELSE; IMPLEMENT IT WELL WITH A FITTING VOICE MENU, GOOD UI AND EXCELLENT TESTTING
+KeepAlive aKeepAlive = KeepAlive(KEEPALIVE, false);
+UserInput *aUserInput = UserInput_Factory::getInstance(UserInput_Factory::ThreeButtons);
+StatusLed aLed = StatusLed(LED_PIN, FLASHSLOWMS, FLASHQUICKMS, HIGH);
+void timer1_task_1ms();
+
+// file management & linking
+enum playMode
+{
+    ONELARGETRACK = 1, //So-called Hörspielmodus TODO: RE-RECORD VOICE OUTPUT
+    ALBUM = 2,
+    SAVEPROGRESS = 5, //TODO: RE-RECORD VOICE OUTPUT
+    // ADD RANDOM?
+};
+struct folderSettings
+{
+    uint8_t folder;
+    uint8_t mode;
+    uint8_t special; // E.g. save progress of track(s) here?
+    uint8_t special2; // DELETE?
+};
+folderSettings *myFolder;
+bool setupFolder(folderSettings *theFolder);
+uint8_t voiceMenu(int numberOfOptions, int startMessage, int messageOffset,
+                  bool preview = false, int previewFromFolder = 0, int defaultValue = 0, bool exitWithLongPress = false);
+void init_random_generator(uint8_t rndmPin);
+
+// player
+SoftwareSerial mySoftwareSerial(DFMINI_RX, DFMINI_TX); // RX, TX
+uint16_t numTracksInFolder;
+uint16_t currentTrack;
+uint8_t volume;
+static DFMiniMp3<SoftwareSerial, Mp3Notify> mp3(mySoftwareSerial);
+    // to
+void play_pause();
+void playFolder();
+static void prev_track();
+static void next_track();
+void volume_up();
+void volume_down();
+void waitForTrackToFinish();
+    // from
+bool isPlaying();
+
+// card
+struct nfcTagObject
+{
+    uint32_t cookie;
+    uint8_t version;
+    folderSettings nfcFolderSettings;
+};
+nfcTagObject myCard;
+MFRC522 mfrc522(SS_PIN, RST_PIN); // Create MFRC522
+MFRC522::MIFARE_Key key;
+bool knownCard = false;
+bool successRead;
+byte sector = 1;
+byte blockAddr = 4;
+byte trailerBlock = 7;
+static const uint32_t cardCookie = 322417479; //TODO: Magic number?
+    // to
+void resetCard();
+void setupCard();
+void writeCard(nfcTagObject nfcTag);
+void dump_byte_array(byte *buffer, byte bufferSize);
+    // from
+bool readCard(nfcTagObject *nfcTag);
+bool authenticate_card(MFRC522::PICC_Type mifareType);

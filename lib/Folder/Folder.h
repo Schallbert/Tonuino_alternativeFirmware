@@ -1,11 +1,9 @@
 #ifndef FOLDER_H
 #define FOLDER_H
-
-#ifndef ARDUINO_H
-#include "Arduino.h"
-#endif
-#include <Defines.h>
-#include <EEPROM.h>
+ 
+// TODO #include "GetAnalogValFromArduino.h"
+#include <EEPROM_interface.h>
+//#include "EEPROM_implementation.h"
 
 class Folder
 {
@@ -30,21 +28,24 @@ public:
     };
 
 public:
-    Folder(uint8_t folderId, PlayMode playMode, uint8_t trackCount);
+    Folder(uint8_t folderId, PlayMode playMode, uint8_t trackCount 
+           , EEPROM_interface* eeprom, uint32_t rndmSeed); // External dependency: EEPROM
     Folder();
+    Folder(const Folder &cpySrcFolder);
+    Folder& operator=(const Folder &cpySrcFolder); // = operator
     ~Folder();
 
 public:
     uint8_t get_current_track();
-    uint8_t get_next_track();
-    uint8_t get_prev_track();
+    uint8_t get_next_track(); // External dependency: EEPROM
+    uint8_t get_prev_track(); // External dependency: EEPROM
     PlayMode get_play_mode();
     uint8_t get_folder_id();
     uint8_t get_track_count();
     bool is_valid();
 
 private:
-    void init_random_generator();
+    void init_playmode_related_settings();
     void init_sorted_queue();
     void shuffle_queue();
 
@@ -54,6 +55,8 @@ private:
     uint8_t currentQueueEntry;
     uint8_t folderId;
     PlayMode playMode;
+    EEPROM_interface* eeprom;
+    uint32_t rndmSeed;
 };
 
 #endif // FOLDER_H

@@ -1,6 +1,7 @@
 #ifdef UNIT_TEST
-#include <unity.h> //for unittest
-#include "unittest_Folder.h"
+#include <gtest/gtest.h> //for unittest
+#include <gmock/gmock.h>
+//#include "unittest_Folder.h"
 
 // void setUp(void) {
 // // set stuff up here
@@ -10,17 +11,9 @@
 // // clean stuff up here
 // }
 
-void setup()
-{
-    delay(2000);
-    UNITY_BEGIN();    // IMPORTANT LINE!
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv); 
+    return RUN_ALL_TESTS();
 }
 
-
-void loop() 
-{
-   folder::unittests();
-
-    UNITY_END(); // stop unit testing
-}
 #endif

@@ -7,14 +7,16 @@
 #include <TimerOne.h>
 
 // LPREUSSE personal includes -------
-#include <StatusLed.h>
+#include <StatusLed/StatusLed.h>
 #include <interface_KeepAlive.h>
 #include <interface_UserInput.h>
 #include <Folder.h>
 #include <NfcTag.h>
 #include <Mp3PlayerControl.h>
+#include <EEPROM_implementation.h>
 
 // Function prototypes
+uint32_t init_random_generator(); // External dependency: Randum Number Generator
 bool setup_folder(Folder &newFolder);
 void reset_card();
 void setup_card();
@@ -35,6 +37,10 @@ KeepAlive aKeepAlive = KeepAlive(KEEPALIVE, false, MAXIDLE);
 UserInput *aUserInput = UserInput_Factory::getInstance(UserInput_Factory::ThreeButtons);
 // led behavior
 StatusLed aLed = StatusLed(LED_PIN, FLASHSLOWMS, FLASHQUICKMS, HIGH);
+// Eeprom init
+Eeprom eeprom;
+// Random Seed generator
+uint32_t rndmSeed = 
 
 // SETUP ROUTINE --------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -208,7 +214,7 @@ uint8_t voice_menu(uint8_t numberOfOptions, uint16_t startMessage, bool returnVa
             {
                 mp3.dont_skip_current_track();
                 // Preview: Play first track from folder to link
-                Folder previewFolder = Folder(returnValue, Folder::ONELARGETRACK, 1);
+                Folder previewFolder = Folder(returnValue, Folder::ONELARGETRACK, 1, &eeprom, 0);
                 mp3.play_folder(&previewFolder);
             }
         }
@@ -283,15 +289,28 @@ bool setup_folder(Folder &newFolder)
     playMode = (Folder::PlayMode)voice_menu((uint8_t)Folder::PlayMode::ENUM_COUNT, MSG_TAGLINKED, true, false, (uint8_t)Folder::PlayMode::ALBUM);
     trackCount = mp3.get_trackCount_of_folder(folderId);
     // Create new folder object and copy to main's folder object
-    tempFolder = Folder(folderId, playMode, trackCount); // TODO: Decide on pointer and new or other architecture!
+    tempFolder = Folder(folderId, playMode, trackCount, &eeprom, init_random_generator()); // TODO: Decide on pointer and new or other architecture!
     if (tempFolder.is_valid())
     {
         // Success! copy temporary folder to new folder.
-        memcpy(&newFolder, &tempFolder, sizeof(Folder));
+        newFolder = tempFolder;
         return true;
     }
     return false;
 }
+
+uint32_t init_random_generator()
+{
+    uint32_t ADC_LSB;
+    uint32_t ADCSeed;
+    for (uint8_t i = 0; i < 128; i++)
+    {
+        ADC_LSB = Arduino::get_analog_value() & 0x1;
+        ADCSeed ^= ADC_LSB << (i % 32);
+    }
+    return ADCSeed; // Init Arduino random generator
+}
+
 
 void timer1_task_1ms()
 {

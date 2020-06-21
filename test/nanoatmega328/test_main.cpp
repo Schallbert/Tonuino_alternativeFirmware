@@ -1,8 +1,8 @@
 #if defined(UNIT_TEST) && defined(ARDUINO_AVR_NANO) // Specific for this board!
 #include <Arduino.h>
 #include <unity.h> //for unittest
-#include "unittest_StatusLed.h"
-#include "unittest_UserInput.h"
+#include "inc/unittest_StatusLed.h"
+#include "inc/unittest_UserInput.h"
 
 // void setUp(void) {
 // // set stuff up here

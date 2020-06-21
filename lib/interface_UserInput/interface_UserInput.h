@@ -210,7 +210,7 @@ public:
         Encoder,
         ThreeButtons
     };
-
+public:
     static UserInput *getInstance(UserInputType_e typeKey);
 
 };     // UserInput_Factory
