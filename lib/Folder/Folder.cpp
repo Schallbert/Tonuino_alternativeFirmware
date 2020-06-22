@@ -1,84 +1,67 @@
 #include "Folder.h"
 
 //Folders
-Folder::Folder()
-{
-    folderId = 0;
-    playMode = Folder::UNDEFINED;
-    trackCount = 0;
-    trackQueue = nullptr;
-    eeprom = nullptr;
-    rndmSeed = 0;
-}
 
-Folder::Folder(uint8_t folderId, PlayMode playMode, uint8_t trackCount
-               , EEPROM_interface* eeprom, uint32_t rndmSeed)
+Folder::Folder(uint8_t ui8FolderId, PlayMode ePlayMode, uint8_t ui8TrackCount
+               , EEPROM_interface* pEeprom, uint32_t ui32RndmSeed)
 {
-    this->folderId = folderId;
-    this->playMode = playMode;
-    this->trackCount = trackCount;
-    this->eeprom = eeprom;
-    this->rndmSeed = rndmSeed;
-    trackQueue = new uint8_t[trackCount + 1](); // () is to init contents with 0, new to allow dynamically sized array
-    currentQueueEntry = 1;
+    m_ui8FolderId = ui8FolderId;
+    m_ePlayMode = ePlayMode;
+    m_ui8TrackCount = ui8TrackCount;
+    m_pEeprom = pEeprom;
+    m_ui32RndmSeed = ui32RndmSeed;
+    m_pTrackQueue = new uint8_t[ui8TrackCount + 1](); // () is to init contents with 0, new to allow dynamically sized array
+    m_ui8CurrentQueueEntry = 1;
     init_playmode_related_settings();
 }
 // Copy Constructor
 Folder::Folder(const Folder& cpySrcFolder) 
 {
-    folderId = 0;
-    playMode = Folder::UNDEFINED;
-    trackCount = 0;
-    trackQueue = nullptr;
-    eeprom = nullptr;
-    rndmSeed = 0;
-    /*
-    folderId = cpySrcFolder.folderId;
-    playMode =cpySrcFolder.playMode;
-    trackCount = cpySrcFolder.trackCount;
-    trackQueue = new uint8_t[cpySrcFolder.trackCount + 1]();
-    eeprom = cpySrcFolder.eeprom;
-    rndmSeed = cpySrcFolder.rndmSeed;
+    m_ui8FolderId = cpySrcFolder.m_ui8FolderId;
+    m_ePlayMode =cpySrcFolder.m_ePlayMode;
+    m_ui8TrackCount = cpySrcFolder.m_ui8TrackCount;
+    m_pTrackQueue = new uint8_t[cpySrcFolder.m_ui8TrackCount + 1]();
+    m_pEeprom = cpySrcFolder.m_pEeprom;
+    m_ui32RndmSeed = cpySrcFolder.m_ui32RndmSeed;
     
-    for(uint8_t i = 0; i <= cpySrcFolder.trackCount; ++i)
+    for(uint8_t i = 1; i <= cpySrcFolder.m_ui8TrackCount; ++i)
     {
-        trackQueue[i] = cpySrcFolder.trackQueue[i];
+        m_pTrackQueue[i] = cpySrcFolder.m_pTrackQueue[i];
     } 
-    */
+
 } 
 Folder& Folder::operator=(const Folder &cpySrcFolder)
 {
-    //folderId = 0;
-    //playMode = Folder::UNDEFINED;
-    //trackCount = 0;
-    //trackQueue = nullptr;
-    //eeprom = nullptr;
+    //m_ui8FolderId = 0;
+    //m_ePlayMode = Folder::UNDEFINED;
+    //m_ui8TrackCount = 0;
+    //m_pTrackQueue = nullptr;
+    //m_pEeprom = nullptr;
     
-    folderId = cpySrcFolder.folderId;
-    playMode =cpySrcFolder.playMode;
-    trackCount = cpySrcFolder.trackCount;
+    m_ui8FolderId = cpySrcFolder.m_ui8FolderId;
+    m_ePlayMode =cpySrcFolder.m_ePlayMode;
+    m_ui8TrackCount = cpySrcFolder.m_ui8TrackCount;
     
-    trackQueue = new uint8_t[cpySrcFolder.trackCount + 1]();
-    //eeprom = cpySrcFolder.eeprom; // SEGMENTATION FAULT
-    rndmSeed = cpySrcFolder.rndmSeed;
+    m_pTrackQueue = new uint8_t[cpySrcFolder.m_ui8TrackCount + 1]();
+    m_pEeprom = cpySrcFolder.m_pEeprom; // SEGMENTATION FAULT
+    m_ui32RndmSeed = cpySrcFolder.m_ui32RndmSeed;
     
-    for(uint8_t i = 0; i <= cpySrcFolder.trackCount; ++i)
+    for(uint8_t i = 0; i <= cpySrcFolder.m_ui8TrackCount; ++i)
     {
-        trackQueue[i] = i;//cpySrcFolder.trackQueue[i];
+        m_pTrackQueue[i] = i;//cpySrcFolder.m_pTrackQueue[i];
     }
-    return *this;
-    
+    return *this; 
 }
 
 Folder::~Folder()
 {
-    delete[] trackQueue;
-    delete eeprom;
+    delete[] m_pTrackQueue;
+    delete m_pEeprom;
 }
 
 bool Folder::is_valid()
 {
-    if (folderId && trackCount && playMode != Folder::UNDEFINED && trackQueue != nullptr && eeprom != nullptr)
+    if (m_ui8FolderId && m_ui8TrackCount && m_ePlayMode != Folder::UNDEFINED && m_pTrackQueue != nullptr && m_pEeprom != nullptr)
     {
         return true;
     }
@@ -87,14 +70,14 @@ bool Folder::is_valid()
 
 uint8_t Folder::get_folder_id()
 {
-    return folderId;
+    return m_ui8FolderId;
 }
 
 uint8_t Folder::get_current_track()
 {
     if (is_valid())
     {
-        return trackQueue[currentQueueEntry];
+        return m_pTrackQueue[m_ui8CurrentQueueEntry];
     }
     else
     {
@@ -111,23 +94,23 @@ uint8_t Folder::get_next_track()
 #endif
         return 0; //Error: folder not initialized
     }
-    if (currentQueueEntry < trackCount)
+    if (m_ui8CurrentQueueEntry < m_ui8TrackCount)
     {
-        ++currentQueueEntry;
+        ++m_ui8CurrentQueueEntry;
     }
     else
     {
-        currentQueueEntry = 1; // Reset queue pointer to first track [1]
+        m_ui8CurrentQueueEntry = 1; // Reset queue pointer to first track [1]
     }
-    if (playMode == PlayMode::SAVEPROGRESS)
+    if (m_ePlayMode == PlayMode::SAVEPROGRESS)
     {
 #if DEBUGSERIAL
         Serial.print(F("SAVEPROGRESS -> saving track"));
         Serial.println(currentTrack);
 #endif
-        eeprom->write(folderId, trackQueue[currentQueueEntry]);
+        m_pEeprom->write(m_ui8FolderId, m_pTrackQueue[m_ui8CurrentQueueEntry]);
     }
-    return trackQueue[currentQueueEntry];
+    return m_pTrackQueue[m_ui8CurrentQueueEntry];
 }
 
 uint8_t Folder::get_prev_track()
@@ -139,38 +122,38 @@ uint8_t Folder::get_prev_track()
 #endif
         return 0; //Error: folder not initialized
     }
-    if (currentQueueEntry > 1)
+    if (m_ui8CurrentQueueEntry > 1)
     {
-        --currentQueueEntry;
+        --m_ui8CurrentQueueEntry;
     }
     else
     {
-        // Reset queue pointer to last track [trackCount]
-        currentQueueEntry = trackCount;
+        // Reset queue pointer to last track [m_ui8TrackCount]
+        m_ui8CurrentQueueEntry = m_ui8TrackCount;
     }
-    if (playMode == PlayMode::SAVEPROGRESS)
+    if (m_ePlayMode == PlayMode::SAVEPROGRESS)
     {
 #if DEBUGSERIAL
         Serial.print(F("SAVEPROGRESS -> saving track"));
         Serial.println(currentTrack);
 #endif
-        eeprom->write(folderId,  trackQueue[currentQueueEntry]);
+        m_pEeprom->write(m_ui8FolderId,  m_pTrackQueue[m_ui8CurrentQueueEntry]);
     }
-    return  trackQueue[currentQueueEntry];
+    return  m_pTrackQueue[m_ui8CurrentQueueEntry];
 }
 
 Folder::PlayMode Folder::get_play_mode()
 {
-    return playMode;
+    return m_ePlayMode;
 }
 uint8_t Folder::get_track_count()
 {
-    return trackCount;
+    return m_ui8TrackCount;
 }
 // PRIVATE METHODS
 void Folder::init_playmode_related_settings()
 {
-        switch (playMode)
+        switch (m_ePlayMode)
     {
     case PlayMode::RANDOM :
     {
@@ -183,12 +166,12 @@ void Folder::init_playmode_related_settings()
     case PlayMode::SAVEPROGRESS :
     {
         init_sorted_queue();
-        currentQueueEntry = eeprom->read(folderId);
-        if(currentQueueEntry > trackCount || currentQueueEntry == 0)
+        m_ui8CurrentQueueEntry = m_pEeprom->read(m_ui8FolderId);
+        if(m_ui8CurrentQueueEntry > m_ui8TrackCount || m_ui8CurrentQueueEntry == 0)
         {
-            // eeprom has never been written, contains some unknown value
-            currentQueueEntry = 1; // set to first track
-            eeprom->write(folderId, currentQueueEntry);
+            // m_pEeprom has never been written, contains some unknown value
+            m_ui8CurrentQueueEntry = 1; // set to first track
+            m_pEeprom->write(m_ui8FolderId, m_ui8CurrentQueueEntry);
         }
 #if DEBUGSERIAL
         Serial.println(F("SAVEPROGRESS -> sorted queue, save current track"));
@@ -239,18 +222,18 @@ void Folder::shuffle_queue()
     uint8_t i = 1; // start at queue[1], queue[0] is always 0!
     uint8_t j = 1;
     uint8_t rnd = 0;
-    uint32_t lfsr = rndmSeed | 0x01; //Avoid seed being 0, in this case generator will lock up
+    uint32_t lfsr = m_ui32RndmSeed | 0x01; //Avoid seed being 0, in this case generator will lock up
     bool alreadyInQueue = false;
     // Fill queue with non-repeating, random contents.
-    while (i <= trackCount)
+    while (i <= m_ui8TrackCount)
     {
         // Calculate pseudo random number based on a XOR'ed shift register
-        // Number between 1 and trackCount is acceptable
+        // Number between 1 and m_ui8TrackCount is acceptable
         while(true)
         {
             lfsr = (lfsr >> 1) ^ ((lfsr & 1)? 0xd0000001u: 0); /* taps 32 31 29 1 */
             rnd = (uint8_t)(lfsr & 0xFF);
-            if((rnd > 0) && (rnd <= trackCount))
+            if((rnd > 0) && (rnd <= m_ui8TrackCount))
             {
                 break;
             }
@@ -259,7 +242,7 @@ void Folder::shuffle_queue()
         alreadyInQueue = false;
         while (j < i)
         {
-            if (trackQueue[j] == rnd)
+            if (m_pTrackQueue[j] == rnd)
             {
                 // Random number already used
                 alreadyInQueue = true;
@@ -269,21 +252,21 @@ void Folder::shuffle_queue()
         }
         if (!alreadyInQueue)
         {
-            trackQueue[i] = rnd;
+            m_pTrackQueue[i] = rnd;
             ++i;
         }
     }
-    currentQueueEntry = 1; //reset trackCounter
+    m_ui8CurrentQueueEntry = 1; //reset m_ui8TrackCounter
 }
 void Folder::init_sorted_queue()
 {
-    currentQueueEntry = 0; // Init: No track played yet.
-    while (currentQueueEntry <= trackCount)
+    m_ui8CurrentQueueEntry = 0; // Init: No track played yet.
+    while (m_ui8CurrentQueueEntry <= m_ui8TrackCount)
     {
-        // go through list and init with standard tracks 1-n; trackQueue[0] = 0, [1] = 1, etc.
+        // go through list and init with standard tracks 1-n; m_pTrackQueue[0] = 0, [1] = 1, etc.
         // 0th track does not exist!
-        ++currentQueueEntry;
-        trackQueue[currentQueueEntry] = currentQueueEntry;
+        ++m_ui8CurrentQueueEntry;
+        m_pTrackQueue[m_ui8CurrentQueueEntry] = m_ui8CurrentQueueEntry;
     }
-    currentQueueEntry = 1; //reset trackCounter
+    m_ui8CurrentQueueEntry = 1; //reset m_ui8TrackCounter
 }

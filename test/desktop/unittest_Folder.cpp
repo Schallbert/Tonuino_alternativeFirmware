@@ -73,12 +73,15 @@ TEST(folder, folder_copyConstructor_workingOK)
 }
 TEST(folder, folder_assignmentOperator_workingOK)
 {
-    Mock_Eeprom eeprom;
-    Folder testFolder(2, Folder::ALBUM, 10, &eeprom, 0);
-    EXPECT_TRUE(testFolder.is_valid());
-    Folder copyFolder;
-    copyFolder = testFolder;
+    Mock_Eeprom m_pEeprom;
+    //Folder testFolder(2, Folder::ALBUM, 10, &m_pEeprom, 0);
+    Folder *pTestFolder = new Folder(2, Folder::ALBUM, 10, &m_pEeprom, 0);
+    EXPECT_TRUE(pTestFolder->is_valid());
+    Folder *pCopyFolder = new Folder();
+    *copyFolder = *testFolder;
     EXPECT_TRUE(copyFolder.is_valid());
+    //delete pTestFolder;
+    //delete pCopyFolder;
 }
 TEST(folder, folder_ALBUM_idIs2)
 {

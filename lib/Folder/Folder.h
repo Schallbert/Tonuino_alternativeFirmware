@@ -28,9 +28,9 @@ public:
     };
 
 public:
-    Folder(uint8_t folderId, PlayMode playMode, uint8_t trackCount 
-           , EEPROM_interface* eeprom, uint32_t rndmSeed); // External dependency: EEPROM
-    Folder();
+    Folder(){};
+    Folder(uint8_t m_ui8FolderId, PlayMode m_ePlayMode, uint8_t m_ui8TrackCount 
+           , EEPROM_interface* m_pEeprom, uint32_t m_ui32RndmSeed); // External dependency: EEPROM
     Folder(const Folder &cpySrcFolder);
     Folder& operator=(const Folder &cpySrcFolder); // = operator
     ~Folder();
@@ -50,13 +50,13 @@ private:
     void shuffle_queue();
 
 private:
-    uint8_t* trackQueue;
-    uint8_t trackCount;
-    uint8_t currentQueueEntry;
-    uint8_t folderId;
-    PlayMode playMode;
-    EEPROM_interface* eeprom;
-    uint32_t rndmSeed;
+    uint8_t* m_pTrackQueue {nullptr};
+    uint8_t m_ui8TrackCount {0};
+    uint8_t m_ui8CurrentQueueEntry {0};
+    uint8_t m_ui8FolderId {0};
+    PlayMode m_ePlayMode {Folder::UNDEFINED};
+    EEPROM_interface* m_pEeprom {nullptr};
+    uint32_t m_ui32RndmSeed {0};
 };
 
 #endif // FOLDER_H
