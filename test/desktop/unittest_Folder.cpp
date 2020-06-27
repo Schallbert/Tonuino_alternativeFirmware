@@ -66,23 +66,31 @@ TEST(folder, folder_ALBUM_valid)
 TEST(folder, folder_copyConstructor_workingOK)
 {
     Mock_Eeprom eeprom;
-    Folder testFolder(2, Folder::ALBUM, 10, &eeprom, 0);
-    EXPECT_TRUE(testFolder.is_valid());
+    EXPECT_CALL(eeprom, read(254)).WillOnce(Return(13));
+    Folder testFolder(254, Folder::SAVEPROGRESS, 16, &eeprom, 0);
     Folder copyFolder(testFolder);
+    // Check if variables are set OK
     EXPECT_TRUE(copyFolder.is_valid());
+    // Validate that contents is copied OK
+    EXPECT_EQ(13, copyFolder.get_current_track());
+    EXPECT_EQ(254, copyFolder.get_folder_id());
+    EXPECT_EQ(Folder::SAVEPROGRESS, copyFolder.get_play_mode());
+    EXPECT_EQ(16, copyFolder.get_track_count());
 }
 TEST(folder, folder_assignmentOperator_workingOK)
 {
-    Mock_Eeprom m_pEeprom;
-    //Folder testFolder(2, Folder::ALBUM, 10, &m_pEeprom, 0);
-    Folder *pTestFolder = new Folder(2, Folder::ALBUM, 10, &m_pEeprom, 0);
-    EXPECT_TRUE(pTestFolder->is_valid());
-    Folder *pCopyFolder = new Folder();
-    *copyFolder = *testFolder;
+    Mock_Eeprom eeprom;
+    Folder testFolder(254, Folder::ALBUM, 10, &eeprom, 0);
+    Folder copyFolder = Folder();
+    copyFolder = testFolder;
+    // Check if variables are set OK
     EXPECT_TRUE(copyFolder.is_valid());
-    //delete pTestFolder;
-    //delete pCopyFolder;
-}
+    // Validate that contents is copied OK
+    EXPECT_EQ(1, copyFolder.get_current_track());
+    EXPECT_EQ(254, copyFolder.get_folder_id());
+    EXPECT_EQ(Folder::ALBUM, copyFolder.get_play_mode());
+    EXPECT_EQ(10, copyFolder.get_track_count());
+} 
 TEST(folder, folder_ALBUM_idIs2)
 {
     Mock_Eeprom eeprom;
