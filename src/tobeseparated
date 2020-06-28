@@ -69,14 +69,14 @@ struct nfcTagObject
     folderSettings nfcFolderSettings;
 };
 nfcTagObject myCard;
-MFRC522 mfrc522(SS_PIN, RST_PIN); // Create MFRC522
-MFRC522::MIFARE_Key key;
+MFRC522 m_mfrc522(SS_PIN, RST_PIN); // Create MFRC522
+MFRC522::MIFARE_Key m_eKey;
 bool knownCard = false;
 bool successRead;
 byte sector = 1;
 byte blockAddr = 4;
 byte trailerBlock = 7;
-static const uint32_t cardCookie = 322417479; //TODO: Magic number?
+static const uint32_t m_cui32CardCookie = 322417479; //TODO: Magic number?
     // to
 void resetCard();
 void setupCard();

@@ -28,14 +28,14 @@ private:
 
 public:
 private:
-    static const uint32_t cardCookie = 0x1337b437; // Magic Id to tag all cards
-    MFRC522 mfrc522{MFRC522(SS_PIN, RST_PIN)};            // Call constructor
-    MFRC522::MIFARE_Key key;
-    byte sector = 1;
-    byte blockAddr = 4;
-    byte trailerBlock = 7;
-    uint32_t cookie;
-    uint8_t version;
+    static const uint32_t m_cui32CardCookie {0x1337b437};        // Magic Id to tag all cards
+    MFRC522 m_mfrc522{MFRC522(SS_PIN, RST_PIN)};            // Call constructor
+    MFRC522::MIFARE_Key m_eKey;
+    byte sector {1};
+    byte blockAddr {4};
+    byte trailerBlock {7};
+    uint32_t cookie {0};
+    uint8_t version {0};
     Folder folder; //Uninitialized!
 };
 

@@ -1,18 +1,23 @@
 #include "Folder.h"
 
 //Folders
-
+Folder::Folder(uint8_t ui8FolderId, PlayMode ePlayMode, uint8_t ui8TrackCount)
+{
+    m_ui8FolderId = ui8FolderId;
+    m_ePlayMode = ePlayMode;
+    m_ui8TrackCount = ui8TrackCount;
+}
+/*
 Folder::Folder(uint8_t ui8FolderId, PlayMode ePlayMode, uint8_t ui8TrackCount, EEPROM_interface *pEeprom, uint32_t ui32RndmSeed)
 {
     m_ui8FolderId = ui8FolderId;
     m_ePlayMode = ePlayMode;
     m_ui8TrackCount = ui8TrackCount;
-    //m_pEeprom = new EEPROM_interface*;
     m_pEeprom = pEeprom;
     m_ui32RndmSeed = ui32RndmSeed;
     m_pTrackQueue = new uint8_t[ui8TrackCount + 1](); // () is to init contents with 0, new to allow dynamically sized array
     init_playmode_related_settings();
-}
+}*/
 // Copy Constructor
 Folder::Folder(const Folder &cpySrcFolder)
 {
@@ -22,13 +27,16 @@ Folder::Folder(const Folder &cpySrcFolder)
     m_pTrackQueue = new uint8_t[cpySrcFolder.m_ui8TrackCount + 1]();
     m_pEeprom = cpySrcFolder.m_pEeprom;
     m_ui32RndmSeed = cpySrcFolder.m_ui32RndmSeed;
-    // Deep copy queue 
-    for (uint8_t i = 1; i <= cpySrcFolder.m_ui8TrackCount; ++i)
+    // Deep copy queue if initialized
+    if (cpySrcFolder.m_pTrackQueue != nullptr)
     {
-        m_pTrackQueue[i] = cpySrcFolder.m_pTrackQueue[i];
-    }
-    // copy current track
-    m_ui8CurrentQueueEntry = cpySrcFolder.m_ui8CurrentQueueEntry;
+        for (uint8_t i = 1; i <= cpySrcFolder.m_ui8TrackCount; ++i)
+        {
+            m_pTrackQueue[i] = cpySrcFolder.m_pTrackQueue[i];
+        }
+        // copy current track
+        m_ui8CurrentQueueEntry = cpySrcFolder.m_ui8CurrentQueueEntry;
+    } 
 }
 Folder &Folder::operator=(const Folder &cpySrcFolder)
 {
@@ -42,28 +50,63 @@ Folder &Folder::operator=(const Folder &cpySrcFolder)
     m_pTrackQueue = new uint8_t[cpySrcFolder.m_ui8TrackCount + 1]();
     m_pEeprom = cpySrcFolder.m_pEeprom;
     m_ui32RndmSeed = cpySrcFolder.m_ui32RndmSeed;
-    // Deep copy queue 
-    for (uint8_t i = 0; i <= cpySrcFolder.m_ui8TrackCount; ++i)
+    // Deep copy queue if initialized
+    if (cpySrcFolder.m_pTrackQueue != nullptr)
     {
-        m_pTrackQueue[i] = cpySrcFolder.m_pTrackQueue[i];
-    }
-    // copy current track
-    m_ui8CurrentQueueEntry = cpySrcFolder.m_ui8CurrentQueueEntry;
+        for (uint8_t i = 1; i <= cpySrcFolder.m_ui8TrackCount; ++i)
+        {
+            m_pTrackQueue[i] = cpySrcFolder.m_pTrackQueue[i];
+        }
+        // copy current track
+        m_ui8CurrentQueueEntry = cpySrcFolder.m_ui8CurrentQueueEntry;
+    } 
     return *this;
 }
 Folder::~Folder()
 {
-    delete[] m_pTrackQueue;
-    m_pEeprom = nullptr; // As this variable is "stack", delete command would call destructor twice --> segfault (6h debugging wasted)
+    if (is_trackQueue_set())
+    {
+        // only delete if it has been set with new!
+        delete[] m_pTrackQueue;
+    }
 }
 
 bool Folder::is_valid()
 {
-    if (m_ui8FolderId && m_ui8TrackCount && m_ePlayMode != Folder::UNDEFINED && m_pTrackQueue != nullptr && m_pEeprom != nullptr)
+    if (is_initiated())
     {
-        return true;
+        if (is_trackQueue_set())
+        {
+#if DEBUGSERIAL
+            Serial.print(F("Folder::is_valid -> All fine!"));
+#endif
+            return true;
+        }
+        else if (is_dependency_set())
+        {
+#if DEBUGSERIAL
+            Serial.print(F("Folder::is_valid -> setting up queue... OK!"));
+#endif
+            setup_track_queue();
+            return true;
+        }
     }
+#if DEBUGSERIAL
+    Serial.print(F("Folder::is_valid -> ERROR: folder dataset incomplete!"));
+#endif
     return false;
+}
+bool Folder::is_initiated()
+{
+    return (m_ui8FolderId && m_ui8TrackCount && m_ePlayMode != Folder::UNDEFINED);
+}
+bool Folder::is_dependency_set()
+{
+    return (m_pEeprom != nullptr);
+}
+bool Folder::is_trackQueue_set()
+{
+    return (m_pTrackQueue != nullptr);
 }
 
 uint8_t Folder::get_folder_id()
@@ -83,13 +126,17 @@ uint8_t Folder::get_current_track()
     }
 }
 
+void Folder::setup_dependencies(EEPROM_interface *pEeprom, uint32_t ui32RndmSeed)
+{
+    m_pEeprom = pEeprom;
+    m_ui32RndmSeed = ui32RndmSeed;
+    is_valid(); // Call to setup play queue in case dependencies are correctly linked
+}
+
 uint8_t Folder::get_next_track()
 {
     if (!is_valid())
     {
-#if DEBUGSERIAL
-        Serial.println(F("get_next_track: Error: folder not initialized"));
-#endif
         return 0; //Error: folder not initialized
     }
     if (m_ui8CurrentQueueEntry < m_ui8TrackCount)
@@ -115,9 +162,6 @@ uint8_t Folder::get_prev_track()
 {
     if (!is_valid())
     {
-#if DEBUGSERIAL
-        Serial.println(F("get_next_track: Error: folder not initialized"));
-#endif
         return 0; //Error: folder not initialized
     }
     if (m_ui8CurrentQueueEntry > 1)
@@ -149,9 +193,10 @@ uint8_t Folder::get_track_count()
     return m_ui8TrackCount;
 }
 // PRIVATE METHODS
-void Folder::init_playmode_related_settings()
+void Folder::setup_track_queue()
 {
     m_ui8CurrentQueueEntry = 1;
+    m_pTrackQueue = new uint8_t[m_ui8TrackCount + 1](); // () is to init contents with 0, new to allow dynamically sized array
     switch (m_ePlayMode)
     {
     case PlayMode::RANDOM:
