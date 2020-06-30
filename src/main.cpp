@@ -4,14 +4,14 @@
 #include <Arduino.h>
 #include <Defines.h>
 #include <avr/sleep.h>
-#include <TimerOne.h>
+#include "TimerOne/src/TimerOne.h"
 
 // LPREUSSE personal includes -------
-#include <StatusLed/StatusLed.h>
-#include <interface_KeepAlive.h>
+#include <StatusLed.h>
+#include "interface_KeepAlive/interface_KeepAlive.h"
 #include <interface_UserInput.h>
 #include <Folder.h>
-#include <NfcTag.h>
+#include <NfcTag/NfcTag.h>
 #include <Mp3PlayerControl.h>
 #include <EEPROM_implementation.h>
 
@@ -39,8 +39,6 @@ UserInput *aUserInput = UserInput_Factory::getInstance(UserInput_Factory::ThreeB
 StatusLed aLed = StatusLed(LED_PIN, FLASHSLOWMS, FLASHQUICKMS, HIGH);
 // Eeprom init
 Eeprom eeprom;
-// Random Seed generator
-uint32_t rndmSeed = 
 
 // SETUP ROUTINE --------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -125,8 +123,9 @@ void loop()
     aKeepAlive.set_idle_timer(false);
     aLed.set_led_behavior(StatusLed::dim);
     // new card present, load information from card, create and return folder
-    if (nfcTagReader.get_folder(currentFolder))
+    if (nfcTagReader.read_folder_from_card(currentFolder))
     {
+        currentFolder.setup_dependencies(&eeprom, init_random_generator());
         mp3.play_folder(&currentFolder); //Folder setup and ready to play
     }
     else
@@ -214,7 +213,8 @@ uint8_t voice_menu(uint8_t numberOfOptions, uint16_t startMessage, bool returnVa
             {
                 mp3.dont_skip_current_track();
                 // Preview: Play first track from folder to link
-                Folder previewFolder = Folder(returnValue, Folder::ONELARGETRACK, 1, &eeprom, 0);
+                Folder previewFolder = Folder(returnValue, Folder::ONELARGETRACK, 1);
+                previewFolder.setup_dependencies(&eeprom, 0);
                 mp3.play_folder(&previewFolder);
             }
         }
@@ -260,7 +260,7 @@ void setup_card()
         {
             mp3.play_pause();
         }
-        if (nfcTagReader.set_folder(currentFolder))
+        if (nfcTagReader.write_folder_to_card(currentFolder))
         {
             mp3.play_specific_file(MSG_TAGCONFSUCCESS); //WRITE_CARD
         }
@@ -289,7 +289,8 @@ bool setup_folder(Folder &newFolder)
     playMode = (Folder::PlayMode)voice_menu((uint8_t)Folder::PlayMode::ENUM_COUNT, MSG_TAGLINKED, true, false, (uint8_t)Folder::PlayMode::ALBUM);
     trackCount = mp3.get_trackCount_of_folder(folderId);
     // Create new folder object and copy to main's folder object
-    tempFolder = Folder(folderId, playMode, trackCount, &eeprom, init_random_generator()); // TODO: Decide on pointer and new or other architecture!
+    tempFolder = Folder(folderId, playMode, trackCount);
+    tempFolder.setup_dependencies(&eeprom, init_random_generator());
     if (tempFolder.is_valid())
     {
         // Success! copy temporary folder to new folder.
@@ -305,10 +306,10 @@ uint32_t init_random_generator()
     uint32_t ADCSeed;
     for (uint8_t i = 0; i < 128; i++)
     {
-        ADC_LSB = Arduino::get_analog_value() & 0x1;
+        ADC_LSB = analogRead(PINANALOG_RNDMGEN) & 0x1;
         ADCSeed ^= ADC_LSB << (i % 32);
     }
-    return ADCSeed; // Init Arduino random generator
+    return ADCSeed; // Init Arduino dependencies generator
 }
 
 
