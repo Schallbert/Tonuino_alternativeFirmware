@@ -14,6 +14,7 @@
 #include <NfcTag/NfcTag.h>
 #include <Mp3PlayerControl.h>
 #include <EEPROM_implementation.h>
+#include <MFC522_implementation.h>
 
 // Function prototypes
 uint32_t init_random_generator(); // External dependency: Randum Number Generator
@@ -26,7 +27,8 @@ void timer1_task_1ms();
 
 // Global variables & objects -------------------------------
 // Init tag reader
-NfcTag nfcTagReader;
+Mfrc522 tagReader;
+NfcTag nfcTagReader = NfcTag(&tagReader); // Constructor injection of concrete reader
 // DFPlayer Mini
 Mp3PlayerControl mp3;
 // Folder for queuing etc.
@@ -39,6 +41,7 @@ UserInput *aUserInput = UserInput_Factory::getInstance(UserInput_Factory::ThreeB
 StatusLed aLed = StatusLed(LED_PIN, FLASHSLOWMS, FLASHQUICKMS, HIGH);
 // Eeprom init
 Eeprom eeprom;
+//
 
 // SETUP ROUTINE --------------------------------------------------------------
 //-----------------------------------------------------------------------------

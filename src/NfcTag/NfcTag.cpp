@@ -3,11 +3,12 @@
 #define MIFARE_UL_PAGE_OFFSET 8
 #define MIFARE_UL_BLOCK_SIZE 4
 
-NfcTag::NfcTag()
+NfcTag::NfcTag(MFRC522_interface* mfrc522)
 {
+    m_mfrc522 = mfrc522; // make internal variable point to external object
     // Init NFC reader
     SPI.begin();          // Init SPI bus
-    m_mfrc522.PCD_Init(); // Init MFRC522
+    m_mfrc522->PCD_Init(); // Init MFRC522
 #if DEBUGSERIAL
     m_mfrc522.PCD_DumpVersionToSerial(); // Show details of PCD - MFRC522 Card Reader
 #endif
@@ -19,11 +20,11 @@ NfcTag::NfcTag()
 
 bool NfcTag::is_card_present()
 {
-    return m_mfrc522.PICC_ReadCardSerial();
+    return m_mfrc522->PICC_ReadCardSerial();
 }
 bool NfcTag::is_new_card_present()
 {
-    return m_mfrc522.PICC_IsNewCardPresent();
+    return m_mfrc522->PICC_IsNewCardPresent();
 }
 
 
@@ -61,7 +62,7 @@ bool NfcTag::write_card()
     {
 #if DEBUGSERIAL
         Serial.print(F("write_card: ERROR: MIFARE_Write() failed: "));
-        Serial.println(m_mfrc522.GetStatusCodeName(status));
+        Serial.println(to_string((uint8_t)(status)));
 #endif
         return false;
     }
@@ -75,7 +76,7 @@ bool NfcTag::write_buffer_to_card(byte *buffer, MFRC522::StatusCode &status, MFR
         (piccType == MFRC522::PICC_TYPE_MIFARE_4K))
     {
         // write 16byte block
-        status = (MFRC522::StatusCode)m_mfrc522.MIFARE_Write(m_cui8BlockAddress, buffer, NFCTAG_MEMORY_TO_OCCUPY);
+        status = (MFRC522::StatusCode)m_mfrc522->MIFARE_Write(m_cui8BlockAddress, buffer, NFCTAG_MEMORY_TO_OCCUPY);
     }
     else if (piccType == MFRC522::PICC_TYPE_MIFARE_UL)
     {
@@ -85,7 +86,7 @@ bool NfcTag::write_buffer_to_card(byte *buffer, MFRC522::StatusCode &status, MFR
         for (uint8_t i = 0; i < (NFCTAG_MEMORY_TO_OCCUPY/MIFARE_UL_BLOCK_SIZE); ++i)
         {
             memcpy(buffer2, buffer + (i * MIFARE_UL_BLOCK_SIZE), MIFARE_UL_BLOCK_SIZE); // copies 4byte block withing buffer to buffer2
-            status = (MFRC522::StatusCode)m_mfrc522.MIFARE_Write(i + MIFARE_UL_PAGE_OFFSET, buffer2, NFCTAG_MEMORY_TO_OCCUPY);
+            status = (MFRC522::StatusCode)m_mfrc522->MIFARE_Write(i + MIFARE_UL_PAGE_OFFSET, buffer2, NFCTAG_MEMORY_TO_OCCUPY);
         }
     }
     set_card_offline();
@@ -140,7 +141,7 @@ bool NfcTag::read_card()
     {
 #if DEBUGSERIAL
         Serial.print(F("read_card: MIFARE_Read() failed: "));
-        Serial.println(m_mfrc522.GetStatusCodeName(status));
+        Serial.println(to_string((uint8_t)(status)));
 #endif
         return false;
     }
@@ -159,7 +160,7 @@ bool NfcTag::read_card_to_buffer(byte* buffer, MFRC522::StatusCode &status, MFRC
         (piccType == MFRC522::PICC_TYPE_MIFARE_1K) ||
         (piccType == MFRC522::PICC_TYPE_MIFARE_4K))
     {
-        status = (MFRC522::StatusCode)m_mfrc522.MIFARE_Read(m_cui8BlockAddress, buffer, NFCTAG_MEMORY_TO_OCCUPY + 2);
+        status = (MFRC522::StatusCode)m_mfrc522->MIFARE_Read(m_cui8BlockAddress, buffer, NFCTAG_MEMORY_TO_OCCUPY + 2);
     }
     else if (piccType == MFRC522::PICC_TYPE_MIFARE_UL)
     {
@@ -167,7 +168,7 @@ bool NfcTag::read_card_to_buffer(byte* buffer, MFRC522::StatusCode &status, MFRC
         byte buffer2[NFCTAG_MEMORY_TO_OCCUPY + 2];
         for (uint8_t i = 0; i < (NFCTAG_MEMORY_TO_OCCUPY/MIFARE_UL_BLOCK_SIZE); ++i)
         {
-            status = (MFRC522::StatusCode)m_mfrc522.MIFARE_Read(i + MIFARE_UL_PAGE_OFFSET, buffer2, NFCTAG_MEMORY_TO_OCCUPY + 2);
+            status = (MFRC522::StatusCode)m_mfrc522->MIFARE_Read(i + MIFARE_UL_PAGE_OFFSET, buffer2, NFCTAG_MEMORY_TO_OCCUPY + 2);
             memcpy(buffer + (i * MIFARE_UL_BLOCK_SIZE), buffer2, MIFARE_UL_BLOCK_SIZE); // copy 4byte block from buffer2 to buffer1
         }
     }
@@ -202,8 +203,8 @@ bool NfcTag::authenticate_card(MFRC522::PICC_Type piccType)
 #if DEBUGSERIAL
         Serial.println(F("authenticate_card: Authenticating using key A..."));
 #endif
-        status = m_mfrc522.PCD_Authenticate(
-            MFRC522::PICC_CMD_MF_AUTH_KEY_A, m_cui8TrailerBlock, &m_eKey, &(m_mfrc522.uid));
+        status = m_mfrc522->PCD_Authenticate(
+            MFRC522::PICC_CMD_MF_AUTH_KEY_A, m_cui8TrailerBlock, &m_eKey, &(m_mfrc522->get_uid()));
     }
     else if (piccType == MFRC522::PICC_TYPE_MIFARE_UL)
     {
@@ -212,14 +213,14 @@ bool NfcTag::authenticate_card(MFRC522::PICC_Type piccType)
 #if DEBUGSERIAL
         Serial.println(F("authenticate_card: Authenticating UL..."));
 #endif
-        status = m_mfrc522.PCD_NTAG216_AUTH(m_eKey.keyByte, pACK);
+        status = m_mfrc522->PCD_NTAG216_AUTH(m_eKey.keyByte, pACK);
     }
 
     if (status != MFRC522::STATUS_OK)
     {
 #if DEBUGSERIAL
         Serial.print(F("authenticate_card: ERROR: PCD_Authenticate() failed: "));
-        Serial.println(m_mfrc522.GetStatusCodeName(status));
+        Serial.println(to_string((uint8_t)(status)));
 #endif
         return false;
     }
@@ -228,7 +229,7 @@ bool NfcTag::authenticate_card(MFRC522::PICC_Type piccType)
 
 bool NfcTag::set_card_online(MFRC522::PICC_Type &piccType)
 {
-    if (m_mfrc522.PICC_ReadCardSerial() != MFRC522::STATUS_OK)
+    if (m_mfrc522->PICC_ReadCardSerial() != MFRC522::STATUS_OK)
     {
 #if DEBUGSERIAL
         Serial.println(F("set_card_online: ERROR: Couldn't detect card."));
@@ -237,7 +238,7 @@ bool NfcTag::set_card_online(MFRC522::PICC_Type &piccType)
         return false;
     }
 
-    piccType = m_mfrc522.PICC_GetType(m_mfrc522.uid.sak);
+    piccType = m_mfrc522->PICC_GetType((m_mfrc522->get_uid()).sak);
     if (!authenticate_card(piccType))
     {
         set_card_offline();
@@ -246,16 +247,15 @@ bool NfcTag::set_card_online(MFRC522::PICC_Type &piccType)
 
 #if DEBUGSERIAL
     Serial.print(F("set_card_online: Card UID:"));
-    dump_byte_array(m_mfrc522.uid.uidByte, m_mfrc522.uid.size);
     Serial.println();
     Serial.print(F("PICC type: "));
-    Serial.println(m_mfrc522.PICC_GetTypeName(piccType));
+    Serial.println(to_string((uint8_t)(piccType)));
 #endif
     return true;
 }
 
 void NfcTag::set_card_offline()
 {
-    m_mfrc522.PICC_HaltA();
-    m_mfrc522.PCD_StopCrypto1();
+    m_mfrc522->PICC_HaltA();
+    m_mfrc522->PCD_StopCrypto1();
 }

@@ -2,8 +2,8 @@
 #define NFCTAG_H
 
 #include <Arduino.h>
-#include <MFRC522.h>
-#include <SPI.h>
+#include "../MFRC522_Interface/MFRC522_interface.h"
+//#include <SPI.h>
 #include <Folder.h>
 #include <Defines.h>
 
@@ -11,7 +11,8 @@
 class NfcTag
 {
 public:
-    NfcTag();
+    // Create NfcTag object with dependency-injected NfcReader object
+    NfcTag(MFRC522_interface* mfrc522);
 
 public:
     // Returns true if a tag is present in the reader's vicinity.
@@ -49,7 +50,7 @@ private:
 public:
 private:
     static const uint32_t m_cui32MagicCookie {0x1337b437};   // Magic Id to tag all cards
-    MFRC522 m_mfrc522{MFRC522(SS_PIN, RST_PIN)};             // Call constructor
+    MFRC522_interface* m_mfrc522 {nullptr}; // NfcReader object to interact with
     MFRC522::MIFARE_Key m_eKey {};
     const byte m_cui8BlockAddress {4};
     const byte m_cui8TrailerBlock {7};
