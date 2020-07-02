@@ -16,8 +16,6 @@
 #define MSG_SELECTFILE 320
 #define MSG_HELP 330
 
-#define NFCTAG_MEMORY_TO_OCCUPY 16 //bytes
-
 //Pin defines ------------------------
 #define PINANALOG_RNDMGEN A1 //ADC1 24
 // MFRC522
