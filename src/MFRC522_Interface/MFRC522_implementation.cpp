@@ -1,21 +1,21 @@
 #include "MFRC522_implementation.h"
 
-void Mfrc522::init()
+void Mfrc522::initReader()
 {
-    m_mfrc522.PCD_Init(); // Init MFRC522
+    m_pMfrc522.PCD_Init(); // Init MFRC522
 #if DEBUGSERIAL
-    m_mfrc522.PCD_DumpVersionToSerial(); // Show details of PCD - MFRC522 Card Reader
+    m_pMfrc522.PCD_DumpVersionToSerial(); // Show details of PCD - MFRC522 Card Reader
 #endif
 }
 
 bool Mfrc522::isCardPresent()
 {
-    return m_mfrc522.PICC_ReadCardSerial();
+    return m_pMfrc522.PICC_ReadCardSerial();
 }
 
 bool Mfrc522::isNewCardPresent()
 {
-    return m_mfrc522.PICC_IsNewCardPresent();
+    return m_pMfrc522.PICC_IsNewCardPresent();
 }
 
 bool Mfrc522::write(byte blockAddr, byte *dataToWrite)
@@ -53,7 +53,7 @@ bool Mfrc522::write(byte blockAddr, byte *dataToWrite)
     {
 #if DEBUGSERIAL
         Serial.print(F("write: ERROR: nfc write failed. "));
-        Serial.println(m_mfrc522.GetStatusCodeName(status));
+        Serial.println(m_pMfrc522.GetStatusCodeName(status));
 #endif
         return false;
     }
@@ -95,7 +95,7 @@ bool Mfrc522::read(byte blockAddr, byte *readResult)
     {
 #if DEBUGSERIAL
         Serial.print(F("read: ERROR: nfc read failed. "));
-        Serial.println(m_mfrc522.GetStatusCodeName(status));
+        Serial.println(m_pMfrc522.GetStatusCodeName(status));
 #endif
         return false;
     }
@@ -104,7 +104,7 @@ bool Mfrc522::read(byte blockAddr, byte *readResult)
 
 MFRC522::StatusCode Mfrc522::writeMini1k4k(byte blockAddr, byte *data)
 {
-    return (MFRC522::StatusCode)m_mfrc522.MIFARE_Write(blockAddr, data, NFCTAG_MEMORY_TO_OCCUPY);
+    return (MFRC522::StatusCode)m_pMfrc522.MIFARE_Write(blockAddr, data, NFCTAG_MEMORY_TO_OCCUPY);
 }
 
 MFRC522::StatusCode Mfrc522::writeUltraLight(byte blockAddr, byte *data)
@@ -118,7 +118,7 @@ MFRC522::StatusCode Mfrc522::writeUltraLight(byte blockAddr, byte *data)
         memset(buffer, 0, NFCTAG_MEMORY_TO_OCCUPY);
         // copy 4byte block from data to buffer
         memcpy(buffer, data + (i * MIFARE_UL_BLOCK_SIZE), MIFARE_UL_BLOCK_SIZE);
-            status = (MFRC522::StatusCode)m_mfrc522.MIFARE_Write(blockAddr + i, buffer, ui8_bufSize);
+            status = (MFRC522::StatusCode)m_pMfrc522.MIFARE_Write(blockAddr + i, buffer, ui8_bufSize);
         if (status != MFRC522::STATUS_OK)
         {
             return status;
@@ -133,7 +133,7 @@ MFRC522::StatusCode Mfrc522::readMini1k4k(byte blockAddr, byte *result)
     byte ui8_bufSize = NFCTAG_MEMORY_TO_OCCUPY + 2; // Account for checksum
     byte buffer[ui8_bufSize];
     // NFC read procedure for certain types of Tag/Cards: Block of 18 bytes incl. checksum
-    status = (MFRC522::StatusCode)m_mfrc522.MIFARE_Read(blockAddr, buffer, &ui8_bufSize);
+    status = (MFRC522::StatusCode)m_pMfrc522.MIFARE_Read(blockAddr, buffer, &ui8_bufSize);
     memcpy(result, buffer, NFCTAG_MEMORY_TO_OCCUPY); // ignores checksum bytes
     return status;
 }
@@ -146,7 +146,7 @@ MFRC522::StatusCode Mfrc522::readUltraLight(byte blockAddr, byte *result)
 
     for (uint8_t i = 0; i < MIFARE_UL_BLOCK_SIZE; ++i)
     {
-        status = (MFRC522::StatusCode)m_mfrc522.MIFARE_Read(blockAddr + 1, buffer, &ui8_bufSize);
+        status = (MFRC522::StatusCode)m_pMfrc522.MIFARE_Read(blockAddr + 1, buffer, &ui8_bufSize);
         if (status != MFRC522::STATUS_OK)
         {
             return status;
@@ -159,8 +159,8 @@ MFRC522::StatusCode Mfrc522::readUltraLight(byte blockAddr, byte *result)
 
 void Mfrc522::setCardOffline()
 {
-    m_mfrc522.PICC_HaltA();
-    m_mfrc522.PCD_StopCrypto1();
+    m_pMfrc522.PICC_HaltA();
+    m_pMfrc522.PCD_StopCrypto1();
 #if DEBUGSERIAL
     Serial.println(F("setCardOffline: Done"));
 #endif
@@ -169,7 +169,7 @@ void Mfrc522::setCardOffline()
 bool Mfrc522::setCardOnline()
 {
     // Try reading card
-    if (m_mfrc522.PICC_ReadCardSerial() != MFRC522::STATUS_OK)
+    if (m_pMfrc522.PICC_ReadCardSerial() != MFRC522::STATUS_OK)
     {
 #if DEBUGSERIAL
         Serial.println(F("setCardOnline: ERROR: Couldn't detect card."));
@@ -181,7 +181,7 @@ bool Mfrc522::setCardOnline()
     Serial.print(F("setCardOnline: Card UID:"));
     Serial.println(); // TODO
     Serial.print(F("PICC type: "));
-    Serial.println(m_mfrc522.PICC_GetTypeName(m_tagType));
+    Serial.println(m_pMfrc522.PICC_GetTypeName(m_tagType));
 #endif
     if (!getTagType())
     {
@@ -196,17 +196,17 @@ bool Mfrc522::setCardOnline()
 bool Mfrc522::authenticateMini1k4k()
 {
     MFRC522::StatusCode status;
-    status = m_mfrc522.PCD_Authenticate(
+    status = m_pMfrc522.PCD_Authenticate(
                                         MFRC522::PICC_CMD_MF_AUTH_KEY_A, 
                                         m_ui8TrailerBlockMini1k4k, 
                                         &m_eKey, 
-                                        &(m_mfrc522.uid)
+                                        &(m_pMfrc522.uid)
                                         );
     if (status != MFRC522::STATUS_OK)
     {
 #if DEBUGSERIAL
         Serial.print(F("authenticateMini1k4k: ERROR: failed:"));
-        Serial.println(m_mfrc522.GetStatusCodeName(status));
+        Serial.println(m_pMfrc522.GetStatusCodeName(status));
 #endif
         return false;
     }
@@ -217,12 +217,12 @@ bool Mfrc522::authenticateUltraLight()
 {
     MFRC522::StatusCode status;
     byte pACK[] = {0, 0}; //16 bit PassWord ACK returned by the NFCtag
-    status = m_mfrc522.PCD_NTAG216_AUTH(m_eKey.keyByte, pACK);
+    status = m_pMfrc522.PCD_NTAG216_AUTH(m_eKey.keyByte, pACK);
     if (status != MFRC522::STATUS_OK)
     {
 #if DEBUGSERIAL
         Serial.print(F("authenticateUltraLight: ERROR: failed:"));
-        Serial.println(m_mfrc522.GetStatusCodeName(status));
+        Serial.println(m_pMfrc522.GetStatusCodeName(status));
 #endif
         return false;
     }
@@ -231,7 +231,7 @@ bool Mfrc522::authenticateUltraLight()
 
 bool Mfrc522::getTagType()
 {
-    m_tagType = m_mfrc522.PICC_GetType(m_mfrc522.uid.sak);
+    m_tagType = m_pMfrc522.PICC_GetType(m_pMfrc522.uid.sak);
     return (m_tagType != MFRC522::PICC_TYPE_UNKNOWN);
 }
 

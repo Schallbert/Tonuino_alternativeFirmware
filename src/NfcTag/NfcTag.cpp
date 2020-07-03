@@ -1,24 +1,24 @@
 #include "NfcTag.h"
 
-NfcTag::NfcTag(MFRC522_interface *mfrc522)
+NfcTag::NfcTag(MFRC522_interface *pMfrc522)
 {
-    m_mfrc522 = mfrc522; // make internal variable point to external object
-    m_mfrc522->init();
+    m_pMfrc522 = pMfrc522; // make internal variable point to external object
+    m_pMfrc522->initReader();
 } 
 
 bool NfcTag::is_card_present()
 {
-    return m_mfrc522->isCardPresent();
+    return m_pMfrc522->isCardPresent();
 }
 bool NfcTag::is_new_card_present()
 {
-    return m_mfrc522->isNewCardPresent();
+    return m_pMfrc522->isNewCardPresent();
 }
 
 bool NfcTag::write_folder_to_card(const Folder &sourceFolder)
 {
     m_oFolder = sourceFolder;                  // Copy source folder to member object
-    byte buffer[MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY] = {}; // TODO HOW TO REFERENCE?
+    byte buffer[MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY] = {};
     if (!m_oFolder.is_valid())
     {
 #if DEBUGSERIAL
@@ -28,14 +28,13 @@ bool NfcTag::write_folder_to_card(const Folder &sourceFolder)
     }
     folder_to_buffer(buffer); // Set buffer according to local folder data
     // Get card online and authenticate
-    return m_mfrc522->write(blockAddressToReadWrite, buffer);
+    return m_pMfrc522->write(blockAddressToReadWrite, buffer);
 }
 
-// READ METHODS ----------------------------------------------
 bool NfcTag::read_folder_from_card(Folder &targetFolder)
 {
     byte buffer[MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY] = {};
-    if (m_mfrc522->read(blockAddressToReadWrite, buffer))
+    if (m_pMfrc522->read(blockAddressToReadWrite, buffer))
     {
         buffer_to_folder(buffer);
         targetFolder = m_oFolder; // Copy member object to target folder

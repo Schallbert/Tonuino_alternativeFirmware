@@ -9,7 +9,7 @@
 class Mfrc522 : public MFRC522_interface
 {
 public:
-    void init();
+    void initReader();
     bool isCardPresent(void);
     bool isNewCardPresent(void);
     bool write(byte blockAddr, byte *dataToWrite);
@@ -36,7 +36,7 @@ private:
     void checkBlockAddressUltraLight(byte &blockAddress);
     
 private:
-    MFRC522 m_mfrc522{MFRC522(SS_PIN, RST_PIN)};
+    MFRC522 m_pMfrc522{MFRC522(SS_PIN, RST_PIN)};
     MFRC522::PICC_Type m_tagType{MFRC522::PICC_TYPE_UNKNOWN};
     MFRC522::MIFARE_Key m_eKey = {{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}}; // 6 byte key, factory default all set.
     static const byte MIFARE_UL_BLOCK_SIZE {4};

@@ -12,7 +12,7 @@ class NfcTag
 {
 public:
     // Create NfcTag object with dependency-injected NfcReader object
-    NfcTag(MFRC522_interface* mfrc522); // TODO: ADD CALLBACK FOR UNKNOWN CARD???
+    NfcTag(MFRC522_interface* pMfrc522); // TODO: ADD CALLBACK FOR UNKNOWN CARD???
 
 public:
     // Returns true if a tag is present in the reader's vicinity.
@@ -38,7 +38,7 @@ private:
     static const uint32_t m_cui32MagicCookie {0x1337b437};   // Magic Id to tag all cards
     uint32_t m_ui32CardCookie {0}; //Cookie read from card to compare against magic ID
     static const byte blockAddressToReadWrite {4}; // sector 1 block 0 for Mini1k4k, page 4-7 for UltraLight
-    MFRC522_interface* m_mfrc522 {nullptr}; // NfcReader object to interact with
+    MFRC522_interface* m_pMfrc522 {nullptr}; // NfcReader object to interact with
     Folder m_oFolder {}; //Uninitialized!
 };
 

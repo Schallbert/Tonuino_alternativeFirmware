@@ -10,9 +10,8 @@ class MFRC522_interface
     virtual ~MFRC522_interface() {};
 
     public:
-
     // Inits communication to card reader
-    virtual void init(void) = 0;
+    virtual void initReader(void) = 0;
     // Returns true if a card can be detected on reader
     virtual bool isCardPresent(void) = 0;
     // Returns true if a card that is not the currently active one
