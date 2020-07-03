@@ -26,31 +26,34 @@ bool Mfrc522::write(byte blockAddr, byte *dataToWrite)
         return false;
     }
 
-    // Try to authenticate card
-    if (!authenticateCard())
-    {
-        setCardOffline();
-        return false;
-    }
-
     if ((m_tagType == MFRC522::PICC_TYPE_MIFARE_MINI) ||
         (m_tagType == MFRC522::PICC_TYPE_MIFARE_1K) ||
         (m_tagType == MFRC522::PICC_TYPE_MIFARE_4K))
     {
+        if (!authenticateMini1k4k())
+        {
+            setCardOffline();
+            return false;
+        }
         status = writeMini1k4k(blockAddr, dataToWrite);
     }
     else if (m_tagType == MFRC522::PICC_TYPE_MIFARE_UL)
     {
-        checkBlockAddressForMifareUltraLight(blockAddr);
+        if (!authenticateUltraLight())
+        {
+            setCardOffline();
+            return false;
+        }
+        checkBlockAddressUltraLight(blockAddr);
         status = writeUltraLight(blockAddr, dataToWrite);
     }
-    set_card_offline();
+    setCardOffline();
 
     if (status != MFRC522::STATUS_OK)
     {
 #if DEBUGSERIAL
         Serial.print(F("write: ERROR: nfc write failed. "));
-        Serial.println(mfrc522.GetStatusCodeName(status));
+        Serial.println(m_mfrc522.GetStatusCodeName(status));
 #endif
         return false;
     }
@@ -71,6 +74,7 @@ bool Mfrc522::read(byte blockAddr, byte *readResult)
     {
         if (!authenticateMini1k4k())
         {
+            setCardOffline();
             return false;
         }
         status = readMini1k4k(blockAddr, readResult);
@@ -79,18 +83,19 @@ bool Mfrc522::read(byte blockAddr, byte *readResult)
     {
         if (!authenticateUltraLight())
         {
+            setCardOffline();
             return false;
         }
-        checkBlockAddressForMifareUltraLight(blockAddr)
-            status = readUltraLight(blockAddr, readResult);
+        checkBlockAddressUltraLight(blockAddr);
+        status = readUltraLight(blockAddr, readResult);
     }
-    set_card_offline();
+    setCardOffline();
 
     if (status != MFRC522::STATUS_OK)
     {
 #if DEBUGSERIAL
         Serial.print(F("read: ERROR: nfc read failed. "));
-        Serial.println(mfrc522.GetStatusCodeName(status));
+        Serial.println(m_mfrc522.GetStatusCodeName(status));
 #endif
         return false;
     }
@@ -99,19 +104,21 @@ bool Mfrc522::read(byte blockAddr, byte *readResult)
 
 MFRC522::StatusCode Mfrc522::writeMini1k4k(byte blockAddr, byte *data)
 {
-    return (MFRC522::StatusCode)mfrc522.MIFARE_Write(blockAddr, data, NFCTAG_MEMORY_TO_OCCUPY);
+    return (MFRC522::StatusCode)m_mfrc522.MIFARE_Write(blockAddr, data, NFCTAG_MEMORY_TO_OCCUPY);
 }
 
 MFRC522::StatusCode Mfrc522::writeUltraLight(byte blockAddr, byte *data)
 {
+    MFRC522::StatusCode status = MFRC522::STATUS_ERROR;
     byte buffer[NFCTAG_MEMORY_TO_OCCUPY] = {};
+    byte ui8_bufSize = NFCTAG_MEMORY_TO_OCCUPY;
 
     for (uint8_t i = 0; i < MIFARE_UL_BLOCK_SIZE; ++i)
     {
         memset(buffer, 0, NFCTAG_MEMORY_TO_OCCUPY);
         // copy 4byte block from data to buffer
-        memcpy(buffer, data + (i * MIFARE_UL_BLOCK_SIZE), MIFARE_UL_BLOCK_SIZE)
-            status = (MFRC522::StatusCode)m_mfrc522.MIFARE_WRITE(blockAddr + i, buffer, &ui8_bufSize);
+        memcpy(buffer, data + (i * MIFARE_UL_BLOCK_SIZE), MIFARE_UL_BLOCK_SIZE);
+            status = (MFRC522::StatusCode)m_mfrc522.MIFARE_Write(blockAddr + i, buffer, ui8_bufSize);
         if (status != MFRC522::STATUS_OK)
         {
             return status;
@@ -127,7 +134,7 @@ MFRC522::StatusCode Mfrc522::readMini1k4k(byte blockAddr, byte *result)
     byte buffer[ui8_bufSize];
     // NFC read procedure for certain types of Tag/Cards: Block of 18 bytes incl. checksum
     status = (MFRC522::StatusCode)m_mfrc522.MIFARE_Read(blockAddr, buffer, &ui8_bufSize);
-    memcpy(result, buffer, ui8_resSize); // ignores checksum bytes
+    memcpy(result, buffer, NFCTAG_MEMORY_TO_OCCUPY); // ignores checksum bytes
     return status;
 }
 
@@ -174,7 +181,7 @@ bool Mfrc522::setCardOnline()
     Serial.print(F("setCardOnline: Card UID:"));
     Serial.println(); // TODO
     Serial.print(F("PICC type: "));
-    Serial.println(mfrc522.PICC_GetTypeName(m_tagType));
+    Serial.println(m_mfrc522.PICC_GetTypeName(m_tagType));
 #endif
     if (!getTagType())
     {
@@ -194,7 +201,7 @@ bool Mfrc522::authenticateMini1k4k()
                                         m_ui8TrailerBlockMini1k4k, 
                                         &m_eKey, 
                                         &(m_mfrc522.uid)
-                                        ;
+                                        );
     if (status != MFRC522::STATUS_OK)
     {
 #if DEBUGSERIAL
@@ -224,29 +231,29 @@ bool Mfrc522::authenticateUltraLight()
 
 bool Mfrc522::getTagType()
 {
-    m_tagType = m_mfrc522.PICC_GetType(mfrc522.uid.sak);
-    return (m_tagType != MFRC522::PICC_TYPE_UNKNOWN)
+    m_tagType = m_mfrc522.PICC_GetType(m_mfrc522.uid.sak);
+    return (m_tagType != MFRC522::PICC_TYPE_UNKNOWN);
 }
 
 void Mfrc522::checkBlockAddressUltraLight(byte &blockAddress)
 {
     // Make sure that blockAddr is within allowed range for MIFARE ultralight
-    if (blockAddress < m_cui8MifareUltralightStartBlockAddress)
+    if (blockAddress < ULTRALIGHTSTARTPAGE)
     {
-        blockAddress = m_cui8MifareUltralightStartBlockAddress;
+        blockAddress = ULTRALIGHTSTARTPAGE;
 #if DEBUGSERIAL
         Serial.print(F("read: WARNING: requested block address protected! Corrected. "));
 #endif
     }
-    else if (blockAddress > m_cuiMifareUltralightStopBlockAddress)
+    else if (blockAddress > ULTRALIGHTSTOPPAGE)
     {
-        blockAddress = m_cuiMifareUltralightStopBlockAddress;
+        blockAddress = ULTRALIGHTSTOPPAGE;
 #if DEBUGSERIAL
         Serial.print(F("read: WARNING: requested block address out of range! Corrected. "));
 #endif
     }
 }
-void Mfrc522::checkBlockAddressMini1k4k(byte &blockAddress)
+void Mfrc522::checkBlockAddressMini1k4k(byte& blockAddress)
 {
     if (blockAddress == 0)
     {
@@ -256,7 +263,7 @@ void Mfrc522::checkBlockAddressMini1k4k(byte &blockAddress)
         Serial.print(F("read: WARNING: requested block address factory occupied! Corrected to 1. "));
 #endif
     }
-    if ((blockAddress % 4) == 3)
+    if ((blockAddress % 4) == SECTORSTRAILERBLOCKMINI1K4K)
     {
         ++blockAddress;
 #if DEBUGSERIAL

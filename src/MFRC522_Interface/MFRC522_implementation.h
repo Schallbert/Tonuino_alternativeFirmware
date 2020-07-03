@@ -2,13 +2,14 @@
 #define MFRC522_IMPLEMENTATION_H
 
 #include <Arduino.h>
+#include <Defines.h>
 #include "MFRC522_interface.h"
-#include "MFRC522.h"
+#include "MFRC522/inc/MFRC522.h"
 
 class Mfrc522 : public MFRC522_interface
 {
 public:
-    void init(uint32_t cardIdentifier);
+    void init();
     bool isCardPresent(void);
     bool isNewCardPresent(void);
     bool write(byte blockAddr, byte *dataToWrite);
@@ -31,17 +32,18 @@ private:
     // Helper function, writes tag type to instance variable
     bool getTagType();
     // Helper function that limites block address to memory range
-    void checkBlockAddressMini1k2k4k(byte &blockAddress);
+    void checkBlockAddressMini1k4k(byte &blockAddress);
     void checkBlockAddressUltraLight(byte &blockAddress);
     
 private:
     MFRC522 m_mfrc522{MFRC522(SS_PIN, RST_PIN)};
     MFRC522::PICC_Type m_tagType{MFRC522::PICC_TYPE_UNKNOWN};
-    MFRC522::MIFARE_Key m_eKey {0xFFFFFFFFFFFF}; // 6 byte key, factory default all set.
+    MFRC522::MIFARE_Key m_eKey = {{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}}; // 6 byte key, factory default all set.
     static const byte MIFARE_UL_BLOCK_SIZE {4};
-    const byte m_cui8UltralightStartPage {4};
-    const byte m_cuiUltralightStopPage {11};
+    const byte ULTRALIGHTSTARTPAGE {4};
+    const byte ULTRALIGHTSTOPPAGE {11};
     byte m_ui8SectorMini1k4k = {0};
-    const byte m_cui8TrailerBlockMini1k4k {3};
+    byte m_ui8TrailerBlockMini1k4k {3};
+    const byte SECTORSTRAILERBLOCKMINI1K4K {3};
 };
 #endif // MFRC522_IMPLEMENTATION_H

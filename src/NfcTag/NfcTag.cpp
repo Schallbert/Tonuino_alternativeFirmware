@@ -3,7 +3,8 @@
 NfcTag::NfcTag(MFRC522_interface *mfrc522)
 {
     m_mfrc522 = mfrc522; // make internal variable point to external object
-}
+    m_mfrc522->init();
+} 
 
 bool NfcTag::is_card_present()
 {
@@ -17,7 +18,7 @@ bool NfcTag::is_new_card_present()
 bool NfcTag::write_folder_to_card(const Folder &sourceFolder)
 {
     m_oFolder = sourceFolder;                  // Copy source folder to member object
-    byte buffer[NFCTAG_MEMORY_TO_OCCUPY] = {}; // TODO HOW TO REFERENCE?
+    byte buffer[MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY] = {}; // TODO HOW TO REFERENCE?
     if (!m_oFolder.is_valid())
     {
 #if DEBUGSERIAL
@@ -33,7 +34,7 @@ bool NfcTag::write_folder_to_card(const Folder &sourceFolder)
 // READ METHODS ----------------------------------------------
 bool NfcTag::read_folder_from_card(Folder &targetFolder)
 {
-    byte buffer[NFCTAG_MEMORY_TO_OCCUPY] = {};
+    byte buffer[MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY] = {};
     if (m_mfrc522->read(blockAddressToReadWrite, buffer))
     {
         buffer_to_folder(buffer);
@@ -46,17 +47,17 @@ bool NfcTag::read_folder_from_card(Folder &targetFolder)
 
 void NfcTag::folder_to_buffer(byte *buffer)
 {
-    byte contentsToCopy[NFCTAG_MEMORY_TO_OCCUPY] =
+    byte contentsToCopy[MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY] =
         {
-            (byte)(m_cui32MagicCookie >> 24),
-            (byte)((m_cui32MagicCookie >> 16) & 0xFF),
-            (byte)((m_cui32MagicCookie >> 8) & 0xFF),
-            (byte)(m_cui32MagicCookie & 0xFF), // magic cookie to identify our nfc tags
-            (byte)m_oFolder.get_folder_id(),   // folder picked by the user
-            (byte)m_oFolder.get_play_mode(),   // playback mode picked by the user
-            (byte)m_oFolder.get_track_count(), // track count of that m_oFolder
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    memcpy(buffer, contentsToCopy, NFCTAG_MEMORY_TO_OCCUPY);
+            (byte)(m_cui32MagicCookie >> 24),           // 0
+            (byte)((m_cui32MagicCookie >> 16) & 0xFF),  // 1
+            (byte)((m_cui32MagicCookie >> 8) & 0xFF),   // 2
+            (byte)(m_cui32MagicCookie & 0xFF),          // 3: magic cookie to identify our nfc tags
+            (byte)m_oFolder.get_folder_id(),            // 4: folder picked by the user
+            (byte)m_oFolder.get_play_mode(),            // 5: playback mode picked by the user
+            (byte)m_oFolder.get_track_count(),          // 6: track count of that m_oFolder
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; // 7-15: Empty
+    memcpy(buffer, contentsToCopy, MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY);
 }
 
 void NfcTag::buffer_to_folder(byte *buffer)
