@@ -3,8 +3,8 @@
 
 #include <Arduino.h>
 #include <Defines.h>
+#include <MFRC522.h>
 #include "MFRC522_interface.h"
-#include "MFRC522/inc/MFRC522.h"
 
 class Mfrc522 : public MFRC522_interface
 {
