@@ -1,15 +1,14 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 //#include <Folder.h>
-//#include "../src/MFRC522_Interface/MFRC522_interface.h"
-#include "../src/NfcTag/NfcTag.h"
+#include <NfcTag.h>
 #include "mocks/unittest_Folder_mocks.h"
 #include "mocks/unittest_NfcTag_mocks.h"
 
 using ::testing::Return; 
 using ::testing::AtLeast;   
 
-TEST(NfcTag, basicTest)
+TEST(NfcTag_init, basicTest)
 {
     EXPECT_EQ(4, 2+2);
 }

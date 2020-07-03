@@ -7,17 +7,6 @@ Folder::Folder(uint8_t ui8FolderId, PlayMode ePlayMode, uint8_t ui8TrackCount)
     m_ePlayMode = ePlayMode;
     m_ui8TrackCount = ui8TrackCount;
 }
-/*
-Folder::Folder(uint8_t ui8FolderId, PlayMode ePlayMode, uint8_t ui8TrackCount, EEPROM_interface *pEeprom, uint32_t ui32RndmSeed)
-{
-    m_ui8FolderId = ui8FolderId;
-    m_ePlayMode = ePlayMode;
-    m_ui8TrackCount = ui8TrackCount;
-    m_pEeprom = pEeprom;
-    m_ui32RndmSeed = ui32RndmSeed;
-    m_pTrackQueue = new uint8_t[ui8TrackCount + 1](); // () is to init contents with 0, new to allow dynamically sized array
-    init_playmode_related_settings();
-}*/
 // Copy Constructor
 Folder::Folder(const Folder &cpySrcFolder)
 {

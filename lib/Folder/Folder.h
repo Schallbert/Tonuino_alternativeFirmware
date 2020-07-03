@@ -1,9 +1,7 @@
 #ifndef FOLDER_H
 #define FOLDER_H
  
-// TODO #include "GetAnalogValFromArduino.h"
 #include <EEPROM_interface.h>
-//#include "EEPROM_implementation.h"
 
 class Folder
 {
@@ -30,8 +28,6 @@ public:
 public:
     Folder(){};
     Folder(uint8_t ui8FolderId, PlayMode ePlayMode, uint8_t ui8TrackCount);
-   //Folder(uint8_t ui8FolderId, PlayMode ePlayMode, uint8_t ui8TrackCount 
-    //       , EEPROM_interface* pEeprom, uint32_t ui32RndmSeed); // External dependency: EEPROM
     Folder(const Folder &cpySrcFolder);
     Folder& operator=(const Folder &cpySrcFolder); // = operator
     ~Folder();

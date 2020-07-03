@@ -11,10 +11,10 @@
 #include "interface_KeepAlive/interface_KeepAlive.h"
 #include <interface_UserInput.h>
 #include <Folder.h>
-#include <NfcTag/NfcTag.h>
+#include <NfcTag.h>
 #include <Mp3PlayerControl.h>
 #include <EEPROM_implementation.h>
-#include "MFRC522_Interface/MFRC522_implementation.h"
+#include <MFRC522_implementation.h>
 
 // Function prototypes
 uint32_t init_random_generator(); // External dependency: Randum Number Generator

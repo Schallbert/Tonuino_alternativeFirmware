@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "../../src/MFRC522_Interface/MFRC522_interface.h"
+#include <MFRC522_interface.h>
 
 class Mock_MFRC522 : public MFRC522_interface
 {
