@@ -38,7 +38,6 @@ bool NfcTag::read_folder_from_card(Folder &targetFolder)
     {
         buffer_to_folder(buffer);
         targetFolder = m_oFolder; // Copy member object to target folder
-
         return true;
     }
     return false; //unknown card
