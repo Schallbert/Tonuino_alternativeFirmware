@@ -12,8 +12,8 @@ public:
     void initReader();
     bool isCardPresent(void);
     bool isNewCardPresent(void);
-    bool write(byte blockAddr, byte *dataToWrite);
-    bool read(byte blockAddr, byte *readResult);
+    bool writeCard(byte blockAddr, byte *dataToWrite);
+    bool readCard(byte blockAddr, byte *readResult);
 
 private:
     // Write data to block for for different NFC types

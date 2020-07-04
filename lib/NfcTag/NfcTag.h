@@ -34,8 +34,9 @@ private:
     //
     bool checkKnownCard();
 
+public:
+    static const uint32_t cui32MagicCookie {0x1337b437};   // Magic Id to tag all cards
 private:
-    static const uint32_t m_cui32MagicCookie {0x1337b437};   // Magic Id to tag all cards
     uint32_t m_ui32CardCookie {0}; //Cookie read from card to compare against magic ID
     static const byte blockAddressToReadWrite {4}; // sector 1 block 0 for Mini1k4k, page 4-7 for UltraLight
     MFRC522_interface* m_pMfrc522 {nullptr}; // NfcReader object to interact with

@@ -28,13 +28,13 @@ bool NfcTag::write_folder_to_card(const Folder &sourceFolder)
     }
     folder_to_buffer(buffer); // Set buffer according to local folder data
     // Get card online and authenticate
-    return m_pMfrc522->write(blockAddressToReadWrite, buffer);
+    return m_pMfrc522->writeCard(blockAddressToReadWrite, buffer);
 }
 
 bool NfcTag::read_folder_from_card(Folder &targetFolder)
 {
     byte buffer[MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY] = {};
-    if (m_pMfrc522->read(blockAddressToReadWrite, buffer))
+    if (m_pMfrc522->readCard(blockAddressToReadWrite, buffer))
     {
         buffer_to_folder(buffer);
         targetFolder = m_oFolder; // Copy member object to target folder
@@ -46,10 +46,10 @@ bool NfcTag::read_folder_from_card(Folder &targetFolder)
 
 void NfcTag::folder_to_buffer(byte *buffer)
 {
-    buffer[0] = (byte)(m_cui32MagicCookie >> 24);          // 0
-    buffer[1] = (byte)((m_cui32MagicCookie >> 16) & 0xFF);  // 1
-    buffer[2] = (byte)((m_cui32MagicCookie >> 8) & 0xFF);   // 2
-    buffer[3] = (byte)(m_cui32MagicCookie & 0xFF);          // 3: magic cookie to identify our nfc tags
+    buffer[0] = (byte)(cui32MagicCookie >> 24);          // 0
+    buffer[1] = (byte)((cui32MagicCookie >> 16) & 0xFF);  // 1
+    buffer[2] = (byte)((cui32MagicCookie >> 8) & 0xFF);   // 2
+    buffer[3] = (byte)(cui32MagicCookie & 0xFF);          // 3: magic cookie to identify our nfc tags
     buffer[4] = (byte)m_oFolder.get_folder_id();            // 4: folder picked by the user
     buffer[5] = (byte)m_oFolder.get_play_mode();            // 5: playback mode picked by the user
     buffer[6] = (byte)m_oFolder.get_track_count();          // 6: track count of that m_oFolder
@@ -75,7 +75,7 @@ void NfcTag::buffer_to_folder(byte *buffer)
 
 bool NfcTag::checkKnownCard()
 {
-    if (m_ui32CardCookie != m_cui32MagicCookie)
+    if (m_ui32CardCookie != cui32MagicCookie)
     {
         // Card has never been written with Magic Cookie:
         // This card can be read but is unknown!

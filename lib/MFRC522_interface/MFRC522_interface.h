@@ -19,10 +19,10 @@ class MFRC522_interface
     virtual bool isNewCardPresent(void) = 0;
     // Returns true on successful write of a 16byte chunk 
     //of data to a sector->block of the card
-    virtual bool write(byte blockAddr, byte *dataToWrite) = 0;
+    virtual bool writeCard(byte blockAddr, byte *dataToWrite) = 0;
     // Returns true on successful read of a 16byte chunk 
     //of data to a sector->block of the card
-	virtual bool read(byte blockAddr, byte *readResult) = 0;
+	virtual bool readCard(byte blockAddr, byte *readResult) = 0;
 
 public:
     static const uint8_t NFCTAG_MEMORY_TO_OCCUPY = 16; //bytes

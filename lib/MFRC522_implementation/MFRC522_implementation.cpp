@@ -18,7 +18,7 @@ bool Mfrc522::isNewCardPresent()
     return m_pMfrc522.PICC_IsNewCardPresent();
 }
 
-bool Mfrc522::write(byte blockAddr, byte *dataToWrite)
+bool Mfrc522::writeCard(byte blockAddr, byte *dataToWrite)
 {
     MFRC522::StatusCode status = MFRC522::STATUS_ERROR;
     if (!setCardOnline())
@@ -60,7 +60,7 @@ bool Mfrc522::write(byte blockAddr, byte *dataToWrite)
     return true;
 }
 
-bool Mfrc522::read(byte blockAddr, byte *readResult)
+bool Mfrc522::readCard(byte blockAddr, byte *readResult)
 {
     MFRC522::StatusCode status = MFRC522::STATUS_ERROR;
     if (!setCardOnline())

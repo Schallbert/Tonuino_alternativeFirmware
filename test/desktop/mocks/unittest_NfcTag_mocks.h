@@ -9,6 +9,6 @@ public:
     MOCK_METHOD(void, initReader, (), (override));
     MOCK_METHOD(bool, isCardPresent, (), (override));
     MOCK_METHOD(bool, isNewCardPresent, (), (override));
-    MOCK_METHOD(bool, write, (byte blockAddr, byte *dataToWrite), (override));
-    MOCK_METHOD(bool, read, (byte blockAddr, byte *readResult), (override));
+    MOCK_METHOD(bool, writeCard, (byte blockAddr, byte *dataToWrite), (override));
+    MOCK_METHOD(bool, readCard, (byte blockAddr, byte *readResult), (override));
 };
