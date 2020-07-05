@@ -13,6 +13,7 @@ class NfcTag
 public:
     // Create NfcTag object with dependency-injected NfcReader object
     NfcTag(MFRC522_interface* pMfrc522); // TODO: ADD CALLBACK FOR UNKNOWN CARD???
+    ~NfcTag();
 
 public:
     // Returns true if a tag is present in the reader's vicinity.
@@ -25,21 +26,25 @@ public:
     // writes an existing source folder's data to card (by reference)
     // writes cookie to card
     bool write_folder_to_card(const Folder &sourceFolder);
+    // Returns true if the current card is known to the system
+    // if it has the "magic cookie" equal to system's
+    bool is_known_card();
 
 private:
     // Handle Read: converts bytestream from NFC tag to folder/ cookie data
-    void buffer_to_folder(byte* buffer);
+    // Converts 16Byte package
+    void buffer_to_folder();
     // Prepare Write: copies folder and cookie information to buffer for card
-    void folder_to_buffer(byte* buffer);
-    //
-    bool checkKnownCard();
+    // Converts 16Byte package
+    void folder_to_buffer();
 
 public:
     static const uint32_t cui32MagicCookie {0x1337b437};   // Magic Id to tag all cards
 private:
     uint32_t m_ui32CardCookie {0}; //Cookie read from card to compare against magic ID
-    static const byte blockAddressToReadWrite {4}; // sector 1 block 0 for Mini1k4k, page 4-7 for UltraLight
+    static const uint8_t blockAddressToReadWrite {4}; // sector 1 block 0 for Mini1k4k, page 4-7 for UltraLight
     MFRC522_interface* m_pMfrc522 {nullptr}; // NfcReader object to interact with
+    uint8_t *m_pBuffer {nullptr}; // Buffer to read/write from/to tag reader
     Folder m_oFolder {}; //Uninitialized!
 };
 

@@ -20,8 +20,8 @@ private:
     MFRC522::StatusCode writeMini1k4k(byte blockAddr, byte* data);
     MFRC522::StatusCode writeUltraLight(byte blockAddr, byte* data);
     // Read data from block for different NFC types
-    MFRC522::StatusCode readMini1k4k(byte blockAddr, byte *result);
-    MFRC522::StatusCode readUltraLight(byte blockAddr, byte *result);
+    MFRC522::StatusCode readMini1k4k(byte blockAddr, byte* result);
+    MFRC522::StatusCode readUltraLight(byte blockAddr, byte* result);
     // Halts communication to card and stops crypto functions
     void setCardOffline();
     // Returns true if communications to a card is successfully established

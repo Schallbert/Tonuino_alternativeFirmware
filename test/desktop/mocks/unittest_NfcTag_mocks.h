@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <MFRC522_interface.h>
+#include <NfcTag.h>
 
 class Mock_MFRC522 : public MFRC522_interface
 {
