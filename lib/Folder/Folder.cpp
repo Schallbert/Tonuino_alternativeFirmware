@@ -1,7 +1,7 @@
 #include "Folder.h"
 
 //Folders
-Folder::Folder(uint8_t ui8FolderId, PlayMode ePlayMode, uint8_t ui8TrackCount)
+Folder::Folder(uint8_t ui8FolderId, ePlayMode ePlayMode, uint8_t ui8TrackCount)
 {
     m_ui8FolderId = ui8FolderId;
     m_ePlayMode = ePlayMode;
@@ -136,7 +136,7 @@ uint8_t Folder::get_next_track()
     {
         m_ui8CurrentQueueEntry = 1; // Reset queue pointer to first track [1]
     }
-    if (m_ePlayMode == PlayMode::SAVEPROGRESS)
+    if (m_ePlayMode == ePlayMode::SAVEPROGRESS)
     {
 #if DEBUGSERIAL
         Serial.print(F("SAVEPROGRESS -> saving track"));
@@ -162,7 +162,7 @@ uint8_t Folder::get_prev_track()
         // Reset queue pointer to last track [m_ui8TrackCount]
         m_ui8CurrentQueueEntry = m_ui8TrackCount;
     }
-    if (m_ePlayMode == PlayMode::SAVEPROGRESS)
+    if (m_ePlayMode == ePlayMode::SAVEPROGRESS)
     {
 #if DEBUGSERIAL
         Serial.print(F("SAVEPROGRESS -> saving track"));
@@ -173,7 +173,7 @@ uint8_t Folder::get_prev_track()
     return m_pTrackQueue[m_ui8CurrentQueueEntry];
 }
 
-Folder::PlayMode Folder::get_play_mode()
+Folder::ePlayMode Folder::get_play_mode()
 {
     return m_ePlayMode;
 }
@@ -188,7 +188,7 @@ void Folder::setup_track_queue()
     m_pTrackQueue = new uint8_t[m_ui8TrackCount + 1](); // () is to init contents with 0, new to allow dynamically sized array
     switch (m_ePlayMode)
     {
-    case PlayMode::RANDOM:
+    case ePlayMode::RANDOM:
     {
         shuffle_queue();
 #if DEBUGSERIAL
@@ -196,7 +196,7 @@ void Folder::setup_track_queue()
 #endif
         break;
     }
-    case PlayMode::SAVEPROGRESS:
+    case ePlayMode::SAVEPROGRESS:
     {
         init_sorted_queue();
         m_ui8CurrentQueueEntry = m_pEeprom->read(m_ui8FolderId);
@@ -211,7 +211,7 @@ void Folder::setup_track_queue()
 #endif
         break;
     }
-    case PlayMode::ALBUM:
+    case ePlayMode::ALBUM:
     {
         init_sorted_queue();
 #if DEBUGSERIAL
@@ -219,7 +219,7 @@ void Folder::setup_track_queue()
 #endif
         break;
     }
-    case PlayMode::LULLABYE:
+    case ePlayMode::LULLABYE:
     {
         init_sorted_queue();
 #if DEBUGSERIAL
@@ -227,7 +227,7 @@ void Folder::setup_track_queue()
 #endif
         break;
     }
-    case PlayMode::ONELARGETRACK:
+    case ePlayMode::ONELARGETRACK:
     {
         init_sorted_queue();
 #if DEBUGSERIAL
@@ -235,7 +235,7 @@ void Folder::setup_track_queue()
 #endif
         break;
     }
-    case PlayMode::UNDEFINED:
+    case ePlayMode::UNDEFINED:
     {
 #if DEBUGSERIAL
         Serial.println(F("UNDEFINED -> playmode not correctly configured"));

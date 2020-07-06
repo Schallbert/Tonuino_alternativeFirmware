@@ -71,7 +71,7 @@ void Mp3PlayerControl::autoplay()
     // Autoplay implementation
     if (Mp3Notify::getTrackFinished(false))
     {
-        Folder::PlayMode mode = currentFolder->get_play_mode();
+        Folder::ePlayMode mode = currentFolder->get_play_mode();
         if (mode == Folder::ONELARGETRACK)
         {
 #if DEBUGSERIAL

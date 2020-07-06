@@ -14,7 +14,7 @@ public:
         SAVEPROGRESS: folder's next/prev methods
         ONELARGETRACK: Mp3PlayerControl's autoplay method
     */
-    enum PlayMode
+    enum ePlayMode
     {
         UNDEFINED = 0,      // Not implemented
         LULLABYE = 4,       // like ALBUM but stops playback after timeout TODO: RECORD VOICE OUTPUT.
@@ -27,7 +27,7 @@ public:
 
 public:
     Folder(){};
-    Folder(uint8_t ui8FolderId, PlayMode ePlayMode, uint8_t ui8TrackCount);
+    Folder(uint8_t ui8FolderId, ePlayMode ePlayMode, uint8_t ui8TrackCount);
     Folder(const Folder &cpySrcFolder);
     Folder& operator=(const Folder &cpySrcFolder); // = operator
     ~Folder();
@@ -40,7 +40,7 @@ public:
     // Decrements queue pointer (rollover) and returns previous track [number]
     uint8_t get_prev_track(); // External dependency: EEPROM
     // Returns folder's play mode [enum]
-    PlayMode get_play_mode();
+    ePlayMode get_play_mode();
     // Returns folder's id [number]
     uint8_t get_folder_id();
     // Returns track count of folder [number], yielded from MP3 player request
@@ -69,7 +69,7 @@ private:
     uint8_t m_ui8TrackCount {0};
     uint8_t m_ui8CurrentQueueEntry {0};
     uint8_t m_ui8FolderId {0};
-    PlayMode m_ePlayMode {Folder::UNDEFINED};
+    ePlayMode m_ePlayMode {Folder::UNDEFINED};
     EEPROM_interface* m_pEeprom {nullptr};
     uint32_t m_ui32RndmSeed {0};
 };

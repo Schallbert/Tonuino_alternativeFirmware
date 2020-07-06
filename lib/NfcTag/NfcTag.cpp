@@ -70,7 +70,7 @@ void NfcTag::buffer_to_folder()
                        ((uint32_t)m_pBuffer[2] << 8) |
                        (uint32_t)m_pBuffer[3];
     uint8_t folderId = (uint8_t)m_pBuffer[4];
-    Folder::PlayMode playMode = (Folder::PlayMode)m_pBuffer[5];
+    Folder::ePlayMode playMode = (Folder::ePlayMode)m_pBuffer[5];
     uint8_t trackCount = (uint8_t)m_pBuffer[6];
     // Set m_oFolder object.
     m_oFolder = Folder(folderId, playMode, trackCount);

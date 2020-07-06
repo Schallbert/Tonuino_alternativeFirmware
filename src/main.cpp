@@ -284,12 +284,12 @@ bool setup_folder(Folder &newFolder)
     // Get folder number on SD card
     uint8_t folderId = 0;
     uint8_t trackCount = 0;
-    Folder::PlayMode playMode = Folder::UNDEFINED;
+    Folder::ePlayMode playMode = Folder::UNDEFINED;
     Folder tempFolder;
     // user input: Which folder to link?
     folderId = voice_menu(99, MSG_UNKNOWNTAG, false, true, 0); //TODO: Shouldn't this be 300? or 310?
     // user input: Which play mode?
-    playMode = (Folder::PlayMode)voice_menu((uint8_t)Folder::PlayMode::ENUM_COUNT, MSG_TAGLINKED, true, false, (uint8_t)Folder::PlayMode::ALBUM);
+    playMode = (Folder::ePlayMode)voice_menu((uint8_t)Folder::ePlayMode::ENUM_COUNT, MSG_TAGLINKED, true, false, (uint8_t)Folder::ePlayMode::ALBUM);
     trackCount = mp3.get_trackCount_of_folder(folderId);
     // Create new folder object and copy to main's folder object
     tempFolder = Folder(folderId, playMode, trackCount);
