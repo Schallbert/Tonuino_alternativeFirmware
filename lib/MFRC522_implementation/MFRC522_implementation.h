@@ -9,11 +9,11 @@
 class Mfrc522 : public MFRC522_interface
 {
 public:
-    void initReader();
-    bool isCardPresent(void);
-    bool isNewCardPresent(void);
-    bool writeCard(byte blockAddr, byte *dataToWrite);
-    bool readCard(byte blockAddr, byte *readResult);
+    void initReader(void) override;
+    bool isCardPresent(void) override;
+    bool isNewCardPresent(void) override;
+    bool writeCard(byte blockAddr, byte *dataToWrite) override;
+    bool readCard(byte blockAddr, byte *readResult) override;
 
 private:
     // Write data to block for for different NFC types

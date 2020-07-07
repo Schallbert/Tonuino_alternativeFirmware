@@ -3,6 +3,8 @@
 #include <NfcTag.h>
 #include "mocks/unittest_Folder_mocks.h"
 #include "mocks/unittest_NfcTag_mocks.h"
+#include "mocks/unittest_NfcTag_fakes.h"
+#include "mocks/unittest_NfcTag_fixture.h"
 
 using ::testing::Return;
 //using ::testing::AtLeast;
@@ -91,12 +93,13 @@ TEST_F(NfcTagReadWrite, Read_IsCalledWithCorrectBlockAddr)
 TEST_F(NfcTagReadWrite, Read_IsCalledWithCorrectPayload)
 {
     Folder resultFolder;
+    m_pMfrc->DelegateToFake(); // Delegates readCard() call to fake object
     EXPECT_CALL(*m_pMfrc, readCard(_, arrayByteCompare(
                                   expectedBufferData,
                                   MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY
                                   ))).WillOnce(Return(true));
     // sets buffer to a certain value
-    m_pNfc->write_folder_to_card(*m_pTestFolder);
+    //m_pNfc->write_folder_to_card(*m_pTestFolder);
     // read with this buffer sets correct argument at readCard
     m_pNfc->read_folder_from_card(resultFolder);
 }
