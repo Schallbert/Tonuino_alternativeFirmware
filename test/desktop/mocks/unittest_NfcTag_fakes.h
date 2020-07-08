@@ -4,7 +4,7 @@
 #include <NfcTag.h>
 
 // Fake buffer data for NFC tag read
-static const byte expectedBufferData[16]{
+static const byte fakeBufferData[16]{
     (byte)(NfcTag::cui32MagicCookie >> 24),          // 0
     (byte)((NfcTag::cui32MagicCookie >> 16) & 0xFF), // 1
     (byte)((NfcTag::cui32MagicCookie >> 8) & 0xFF),  // 2
@@ -19,7 +19,7 @@ static const byte expectedBufferData[16]{
 class Fake_MFRC522 : public MFRC522_interface
 {
 public:
-    virtual ~Fake_MFRC522() {};
+    virtual ~Fake_MFRC522() {}; // MUST BE DEFINED; ELSE VTABLE INCLUDE ERRORS
     void initReader() override;
     bool isCardPresent() override;
     bool isNewCardPresent() override;

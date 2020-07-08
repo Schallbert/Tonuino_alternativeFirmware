@@ -8,6 +8,7 @@
 #include <Folder.h>
 #include <NfcTag.h>
 #include "unittest_NfcTag_fakes.h"
+#include "unittest_Folder_mocks.h"
 
 
 using ::testing::NiceMock;
@@ -22,9 +23,9 @@ protected:
         m_pMfrc = new NiceMock<Mock_MFRC522>;
         m_pEeprom = new Mock_Eeprom;
         m_pNfc = new NfcTag(m_pMfrc);
-        m_pTestFolder = new Folder(expectedBufferData[4],
-                                   (Folder::ePlayMode)expectedBufferData[5],
-                                   expectedBufferData[6]);
+        m_pTestFolder = new Folder(fakeBufferData[4],
+                                   (Folder::ePlayMode)fakeBufferData[5],
+                                   fakeBufferData[6]);
         m_pTestFolder->setup_dependencies(m_pEeprom, 0);
     }
 

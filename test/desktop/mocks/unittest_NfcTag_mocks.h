@@ -28,6 +28,6 @@ public:
     }
 
 private:
-    Fake_MFRC522 m_FakeRead;
+    Fake_MFRC522 m_FakeRead {};
 };
 #endif // UNITTEST_NFCTAG_MOCKS_H
