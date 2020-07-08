@@ -3,21 +3,21 @@
 Mp3PlayerControl::Mp3PlayerControl()
 {
     pinMode(DFMINI_BUSY, INPUT);
-    dfMiniMp3.begin(); // Init
+    m_dfMiniMp3.begin(); // Init
     delay(WAIT_DFMINI_READY);
-    dfMiniMp3.setEq(DFMINI_EQ_SETTING);
-    dfMiniMp3.setVolume(VOLUME_INIT);
+    m_dfMiniMp3.setEq(DFMINI_EQ_SETTING);
+    m_dfMiniMp3.setVolume(VOLUME_INIT);
 }
 void Mp3PlayerControl::loop()
 {
-    dfMiniMp3.loop();
+    m_dfMiniMp3.loop();
     autoplay();
 }
 void Mp3PlayerControl::volume_up()
 {
-    if (dfMiniMp3.getVolume() < VOLUME_MAX)
+    if (m_dfMiniMp3.getVolume() < VOLUME_MAX)
     {
-        dfMiniMp3.increaseVolume();
+        m_dfMiniMp3.increaseVolume();
     }
 #if SERIAL
     Serial.println(F("=== volume_up()"));
@@ -26,9 +26,9 @@ void Mp3PlayerControl::volume_up()
 }
 void Mp3PlayerControl::volume_down()
 {
-    if (dfMiniMp3.getVolume() > VOLUME_MIN)
+    if (m_dfMiniMp3.getVolume() > VOLUME_MIN)
     {
-        dfMiniMp3.decreaseVolume();
+        m_dfMiniMp3.decreaseVolume();
     }
 #if SERIAL
     Serial.println(F("=== volume_down()"));
@@ -43,11 +43,11 @@ void Mp3PlayerControl::play_pause()
 {
     if (is_playing())
     {
-        dfMiniMp3.pause();
+        m_dfMiniMp3.pause();
     }
-    else if (currentFolder->is_valid())
+    else if (m_pCurrentFolder->is_valid())
     {
-        dfMiniMp3.start(); //can only restart playback if a valid folder is existing
+        m_dfMiniMp3.start(); //can only restart playback if a valid folder is existing
     }
 }
 void Mp3PlayerControl::dont_skip_current_track()
@@ -59,11 +59,11 @@ void Mp3PlayerControl::dont_skip_current_track()
 
     while (!is_playing() && millis() < (currentTime + WAIT_DFMINI_READY))
     {
-        dfMiniMp3.loop(); //wait for track to start (until timeout kicks in)
+        m_dfMiniMp3.loop(); //wait for track to start (until timeout kicks in)
     }
     while (is_playing())
     {
-        dfMiniMp3.loop(); //wait for track to finish
+        m_dfMiniMp3.loop(); //wait for track to finish
     }
 }
 void Mp3PlayerControl::autoplay()
@@ -71,13 +71,13 @@ void Mp3PlayerControl::autoplay()
     // Autoplay implementation
     if (Mp3Notify::getTrackFinished(false))
     {
-        Folder::ePlayMode mode = currentFolder->get_play_mode();
+        Folder::ePlayMode mode = m_pCurrentFolder->get_play_mode();
         if (mode == Folder::ONELARGETRACK)
         {
 #if DEBUGSERIAL
             Serial.println(F("ONELARGETRACK mode active -> wait for power off"));
 #endif
-            dfMiniMp3.stop();
+            m_dfMiniMp3.stop();
             return;
         }
         else if (mode == Folder::LULLABYE && check_lullabye_timeout())
@@ -85,7 +85,7 @@ void Mp3PlayerControl::autoplay()
 #if DEBUGSERIAL
             Serial.println(F("LULLABYE timeout expired -> wait for power off"));
 #endif
-            dfMiniMp3.stop();
+            m_dfMiniMp3.stop();
             return;
         }
         else
@@ -102,30 +102,30 @@ void Mp3PlayerControl::lullabye_timeout_tick1ms()
     if (ticks >= SEC_MSEC)
     {
         ticks = 0;
-        ++lullabyeTimeActiveSecs;
+        ++m_ui32LullabyeTimeActiveSecs;
     }
 }
 bool Mp3PlayerControl::check_lullabye_timeout()
 {
-    if (lullabyeTimeActiveSecs >= LULLABYE_TIMER_SECS)
+    if (m_ui32LullabyeTimeActiveSecs >= LULLABYE_TIMER_SECS)
     {
         // Allow KeepAlive timer to kick in by pausing the track.
-        lullabyeTimeActiveSecs = 0;
+        m_ui32LullabyeTimeActiveSecs = 0;
         return true;
     }
     return false;
 }
 void Mp3PlayerControl::next_track()
 {
-    if (!currentFolder->is_valid())
+    if (!m_pCurrentFolder->is_valid())
     {
 #if DEBUGSERIAL
         Serial.println(F("=== in next_track: Error: No card linked"));
 #endif
         return; // Cannot play a track if the card is not linked.
     }
-    uint8_t nextTrack = currentFolder->get_next_track();
-    dfMiniMp3.playFolderTrack(currentFolder->get_folder_id(), nextTrack);
+    uint8_t nextTrack = m_pCurrentFolder->get_next_track();
+    m_dfMiniMp3.playFolderTrack(m_pCurrentFolder->get_folder_id(), nextTrack);
 #if DEBUGSERIAL
     Serial.println(F("=== next_track()"));
     Serial.print(nextTrack);
@@ -133,37 +133,37 @@ void Mp3PlayerControl::next_track()
 }
 void Mp3PlayerControl::prev_track()
 {
-    if (!currentFolder->is_valid())
+    if (!m_pCurrentFolder->is_valid())
     {
 #if DEBUGSERIAL
         Serial.println(F("=== in prev_track: Error: No card linked"));
 #endif
         return; // Cannot play a track if the card is not linked.
     }
-    uint8_t prevTrack = currentFolder->get_prev_track();
-    dfMiniMp3.playFolderTrack(currentFolder->get_folder_id(), prevTrack);
+    uint8_t prevTrack = m_pCurrentFolder->get_prev_track();
+    m_dfMiniMp3.playFolderTrack(m_pCurrentFolder->get_folder_id(), prevTrack);
 #if DEBUGSERIAL
     Serial.println(F("=== prev_track()"));
     Serial.print(prevTrack);
 #endif
 }
-void Mp3PlayerControl::play_folder(Folder *currentFolder)
+void Mp3PlayerControl::play_folder(Folder *m_pCurrentFolder)
 {
 #if DEBUGSERIAL
     Serial.println(F("== play_folder"));
     Serial.print(F(" folderId: "));
-    Serial.println(currentFolder->get_folder_id());
+    Serial.println(m_pCurrentFolder->get_folder_id());
 #endif
     // Start playing folder: first track of current folder.
-    dfMiniMp3.playFolderTrack(currentFolder->get_folder_id(), currentFolder->get_current_track());
+    m_dfMiniMp3.playFolderTrack(m_pCurrentFolder->get_folder_id(), m_pCurrentFolder->get_current_track());
 }
 void Mp3PlayerControl::play_specific_file(uint16_t fileId)
 {
-    dfMiniMp3.playAdvertisement(fileId);
+    m_dfMiniMp3.playAdvertisement(fileId);
 }
 uint8_t Mp3PlayerControl::get_trackCount_of_folder(uint8_t folderId)
 {
-    uint16_t trackCnt = dfMiniMp3.getFolderTrackCount(static_cast<uint16_t>(folderId));
+    uint16_t trackCnt = m_dfMiniMp3.getFolderTrackCount(static_cast<uint16_t>(folderId));
     if (trackCnt > 0xFF)
     {
         return 0; // Error: number of tracks too high

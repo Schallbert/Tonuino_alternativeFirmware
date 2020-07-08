@@ -114,7 +114,7 @@ public:
     // Returns true if DFminiMp3 is currently playing
     bool is_playing();
     // Starts playback of specified folder (handles queueing and folder specific playmodes)
-    void play_folder(Folder* currentFolder);
+    void play_folder(Folder* m_pCurrentFolder);
     // Plays specific file sd:/advert/####fileId
     void play_specific_file(uint16_t fileId);
     // Tells controller to not allow skipping the track that is currently played (e.g. for advertisements)
@@ -132,10 +132,10 @@ private:
 
 private:
 // Solution for constructor error found here: https://stackoverflow.com/questions/35762196/expected-a-type-specifier-error-when-creating-an-object-of-a-class-inside-anot
-    SoftwareSerial mp3SwSerial{SoftwareSerial(DFMINI_RX, DFMINI_TX)}; // Does not work with mp3SwSerial(DFMINI_RX, DFMINI_TX) because compiler interprets this as a class method call
-    DFMiniMp3<SoftwareSerial, Mp3Notify> dfMiniMp3{DFMiniMp3<SoftwareSerial, Mp3Notify>(mp3SwSerial)};
-    Folder *currentFolder;
-    uint16_t lullabyeTimeActiveSecs;
+    SoftwareSerial m_Mp3SwSerial{SoftwareSerial(DFMINI_RX, DFMINI_TX)}; // Does not work with m_Mp3SwSerial(DFMINI_RX, DFMINI_TX) because compiler interprets this as a class method call
+    DFMiniMp3<SoftwareSerial, Mp3Notify> m_dfMiniMp3{DFMiniMp3<SoftwareSerial, Mp3Notify>(m_Mp3SwSerial)};
+    Folder *m_pCurrentFolder;
+    uint16_t m_ui32LullabyeTimeActiveSecs;
 };
 
 #endif // MP3PLAYERCONTROL_H
