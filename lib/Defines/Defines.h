@@ -3,7 +3,7 @@
 
 //#define F_CPU 8000000UL
 
-//DEBUG OUTPUT [just comment out this define to disable all serial outputs]
+//DEBUG OUTPUT [just write "false" to disable debug output on serial]
 #define DEBUGSERIAL false
 
 //mp3 Messages -----------------------
@@ -56,5 +56,6 @@
 
 //MP3 defines
 #define WAIT_DFMINI_READY 1000 // 1 sec
+#define TIMEOUT_PROMPT_PLAYED 10000 // 10 sec
 
 #endif
