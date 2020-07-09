@@ -1,14 +1,15 @@
 #ifndef MP3PLAYERCONTROL_H
 #define MP3PLAYERCONTROL_H
 
-#ifndef ARDUINO_H
-#include "Arduino.h"
-#endif
+#include <Arduino.h>
+
 #include <Folder.h>
 #include <Defines.h>
-#include <DFMiniMp3.h>
-#include <SoftwareSerial.h>
+//#include <DFMiniMp3.h>
+//#include <SoftwareSerial.h>
+#include <DFMiniMp3_interface.h>
 #include <util/delay.h>
+/*
 // TODO: Includes Swserial, dfmini etc
 
 // Classes
@@ -92,11 +93,11 @@ public:
 private:
     static bool trackFinished;
 };
-
+*/
 class Mp3PlayerControl
 {
 public:
-    Mp3PlayerControl();
+    Mp3PlayerControl(DfMiniMp3_interface* player);
 
 public:
     // Listen for DFminiMp3 replies, call autoplay routine
@@ -131,9 +132,10 @@ private:
     bool check_lullabye_timeout();
 
 private:
-// Solution for constructor error found here: https://stackoverflow.com/questions/35762196/expected-a-type-specifier-error-when-creating-an-object-of-a-class-inside-anot
-    SoftwareSerial m_Mp3SwSerial{SoftwareSerial(DFMINI_RX, DFMINI_TX)}; // Does not work with m_Mp3SwSerial(DFMINI_RX, DFMINI_TX) because compiler interprets this as a class method call
-    DFMiniMp3<SoftwareSerial, Mp3Notify> m_dfMiniMp3{DFMiniMp3<SoftwareSerial, Mp3Notify>(m_Mp3SwSerial)};
+    // Solution for constructor error found here: https://stackoverflow.com/questions/35762196/expected-a-type-specifier-error-when-creating-an-object-of-a-class-inside-anot
+    //SoftwareSerial m_Mp3SwSerial{SoftwareSerial(DFMINI_RX, DFMINI_TX)}; // Does not work with m_Mp3SwSerial(DFMINI_RX, DFMINI_TX) because compiler interprets this as a class method call
+    //DFMiniMp3<SoftwareSerial, Mp3Notify> m_dfMiniMp3{DFMiniMp3<SoftwareSerial, Mp3Notify>(m_Mp3SwSerial)};
+    DfMiniMp3_interface* m_pDfMiniMp3 {};
     Folder *m_pCurrentFolder;
     uint16_t m_ui32LullabyeTimeActiveSecs;
 };

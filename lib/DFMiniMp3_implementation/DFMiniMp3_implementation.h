@@ -1,5 +1,7 @@
 #ifndef DFMINIMP3_IMPLEMENTATION_H
 #define DFMINIMP3_IMPLEMENTATION_H
+#include <DFMiniMp3.h>
+#include <SoftwareSerial.h>
 #include <DfMiniMp3_interface.h>
 
 // Classes
@@ -7,9 +9,10 @@
 // its member methods will get called
 class Mp3Notify
 {
-    private:
-  // Disallow creating an instance of this object
-  Mp3Notify() {}
+private:
+    // Disallow creating an instance of this object
+    Mp3Notify() {}
+
 public:
     static void OnError(uint16_t errorCode)
     {
@@ -90,26 +93,38 @@ public:
     ~DfMini(){};
 
 public:
-    void begin() override                   {m_dfMiniMp3.begin()};
-    void setEq(DfMp3_Eq eq) override        {m_dfMiniMp3.setEq(eq)};
-    void setVolume(uint8_t volume) override {m_dfMiniMp3.setVolum(volume)};
-    void loop() override                    {m_dfMiniMp3.loop()};
-    uint8_t getVolume() override            {return m_dfMiniMp3.getVolume()};
-    void increaseVolume() override          {m_dfMiniMp3.increaseVolume()};
-    void decreaseVolume() override          {m_dfMiniMp3.decreaseVolume()};
-    void pause() override                   {m_dfMiniMp3.pause()};
-    void start() override                   {m_dfMiniMp3.start()};
-    void stop() override                    {m_dfMiniMp3.stop()};
-    void playFolderTrack(uint8_t folderId, uint8_t trackId) override 
-                                            {m_dfMiniMp3.playFolderTrack(folderId, trackId)};
-    void playAdvertisement(uint16_t trackId) override 
-                                            {m_dfMiniMp3.playAdvertisement(trackId)};
-    uint8_t getFolderTrackCount(uint8_t folderID) override 
-                {return static_cast<uint8_t>(m_dfMiniMp3.getFolderTrackCount(static_cast<uint16_t>(folderId)))};
+    void begin() override { m_dfMiniMp3.begin(); };
+    void setEq(DfMp3_Eq eq) override { m_dfMiniMp3.setEq(eq); };
+    void setVolume(uint8_t volume) override { m_dfMiniMp3.setVolume(volume); };
+    void loop() override { m_dfMiniMp3.loop(); };
+    uint8_t getVolume() override { return m_dfMiniMp3.getVolume(); };
+    void increaseVolume() override { m_dfMiniMp3.increaseVolume(); };
+    void decreaseVolume() override { m_dfMiniMp3.decreaseVolume(); };
+    void pause() override { m_dfMiniMp3.pause(); };
+    void start() override { m_dfMiniMp3.start(); };
+    void stop() override { m_dfMiniMp3.stop(); };
+    void playFolderTrack(uint8_t folderId, uint8_t trackId) override
+    {
+        m_dfMiniMp3.playFolderTrack(folderId, trackId);
+    };
+    void playAdvertisement(uint16_t trackId) override
+    {
+        m_dfMiniMp3.playAdvertisement(trackId);
+    };
+    uint8_t getFolderTrackCount(uint8_t folderId) override
+    {
+        return static_cast<uint8_t>(m_dfMiniMp3.getFolderTrackCount(static_cast<uint16_t>(folderId)));
+    };
+    bool checkTrackFinished() override { return Mp3Notify::getTrackFinished(false); };
 
-    private:
-    // Solution for constructor error found here: https://stackoverflow.com/questions/35762196/expected-a-type-specifier-error-when-creating-an-object-of-a-class-inside-anot
-    SoftwareSerial m_Mp3SwSerial{SoftwareSerial(DFMINI_RX, DFMINI_TX)}; // Does not work with m_Mp3SwSerial(DFMINI_RX, DFMINI_TX) because compiler interprets this as a class method call
-    DFMiniMp3<SoftwareSerial, Mp3Notify> m_dfMiniMp3{DFMiniMp3<SoftwareSerial, Mp3Notify>(m_Mp3SwSerial)};
+private:
+    // Solution for constructor error found here:
+    //https://stackoverflow.com/questions/35762196/expected-a-type-specifier-error-when-creating-an-object-of-a-class-inside-anot
+    // Does not work with m_Mp3SwSerial(DFMINI_RX, DFMINI_TX)
+    //because compiler interprets this as a class method call
+    SoftwareSerial m_Mp3SwSerial{
+        SoftwareSerial(DFMINI_RX, DFMINI_TX)};
+    DFMiniMp3<SoftwareSerial, Mp3Notify> m_dfMiniMp3{
+        DFMiniMp3<SoftwareSerial, Mp3Notify>(m_Mp3SwSerial)};
 };
 #endif // DFMINIMP3_IMPLEMENTATION_H

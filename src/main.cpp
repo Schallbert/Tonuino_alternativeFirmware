@@ -13,6 +13,7 @@
 #include <Folder.h>
 #include <NfcTag.h>
 #include <Mp3PlayerControl.h>
+#include <DFMiniMp3_implementation.h>
 #include <EEPROM_implementation.h>
 #include <MFRC522_implementation.h>
 
@@ -30,7 +31,8 @@ void timer1_task_1ms();
 Mfrc522 tagReader;
 NfcTag nfcTagReader = NfcTag(&tagReader); // Constructor injection of concrete reader
 // DFPlayer Mini
-Mp3PlayerControl mp3;
+DfMini dfMini;
+Mp3PlayerControl mp3(&dfMini);
 // Folder for queuing etc.
 Folder currentFolder;
 // keepAlive interface
