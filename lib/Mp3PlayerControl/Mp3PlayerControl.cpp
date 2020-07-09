@@ -60,7 +60,7 @@ void Mp3PlayerControl::dont_skip_current_track()
     {
         m_dfMiniMp3.loop(); //wait for track to start (until timeout kicks in)
     }
-    while (is_playing() && millis() < (currentTime + TIMEOUT_PROMPT_PLAYED)
+    while (is_playing() && millis() < (currentTime + TIMEOUT_PROMPT_PLAYED))
     {
         m_dfMiniMp3.loop(); //wait for track to finish
     }
