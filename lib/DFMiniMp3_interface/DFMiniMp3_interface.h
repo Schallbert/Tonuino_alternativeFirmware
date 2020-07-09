@@ -5,10 +5,10 @@
 
 // Wrapper class to separate dependency on dfMini Mp3 player from utilizing classes.
 // Enabler for mocks.
-class DFMINIMP3_interface
+class DfMiniMp3_interface
 {
 public:
-    virtual ~DFMINIMP3_interface(){};
+    virtual ~DfMiniMp3_interface(){};
 
 public:
     virtual void begin() = 0;
