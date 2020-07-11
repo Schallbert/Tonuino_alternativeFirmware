@@ -1,5 +1,6 @@
 #ifndef DEFINES_H
 #define DEFINES_H
+#include <DFMiniMp3_interface.h>
 
 //#define F_CPU 8000000UL
 
@@ -48,7 +49,7 @@
 #define VOLUME_MAX 22
 #define VOLUME_MIN 2
 #define VOLUME_INIT 7
-#define DFMINI_EQ_SETTING DfMp3_Eq::DfMp3_Eq_Normal
+#define DFMINI_EQ_SETTING DfMiniMp3_interface::DfMp3_Eq_Normal // TODO How to solve for enum belonging to foreign file?
 
 //Timer1 interrupt task
 #define TIMERONE_TASK_INTERVAL_USEC 1000 // 1ms

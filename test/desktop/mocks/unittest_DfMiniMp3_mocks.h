@@ -12,7 +12,7 @@ public:
 
 public:
     MOCK_METHOD(void, begin, (), (override));
-    MOCK_METHOD(void, setEq, (extern DfMp3_Eq eq), (override)); // Error here!
+    MOCK_METHOD(void, setEq, (eMp3Eq eq), (override)); // Error here!
     MOCK_METHOD(void, setVolume, (uint8_t volume), (override));
     MOCK_METHOD(void, loop, (), (override)); // DOES LOOP REALLY WORK? WATCH OUT FOR STRANGE ERROR MESSAGES
     MOCK_METHOD(uint8_t, getVolume, (), (override));

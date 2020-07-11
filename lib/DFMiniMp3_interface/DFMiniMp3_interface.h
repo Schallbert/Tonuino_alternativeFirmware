@@ -8,11 +8,22 @@
 class DfMiniMp3_interface
 {
 public:
+    enum eMp3Eq
+    {
+        DfMp3_Eq_Normal,
+        DfMp3_Eq_Pop,
+        DfMp3_Eq_Rock,
+        DfMp3_Eq_Jazz,
+        DfMp3_Eq_Classic,
+        DfMp3_Eq_Bass
+    };
+
+public:
     virtual ~DfMiniMp3_interface(){};
 
 public:
     virtual void begin() = 0;
-    virtual void setEq(extern DfMp3_Eq eq) = 0;
+    virtual void setEq(eMp3Eq eq) = 0;
     virtual void setVolume(uint8_t volume) = 0;
     virtual void loop() = 0;
     virtual uint8_t getVolume() = 0;

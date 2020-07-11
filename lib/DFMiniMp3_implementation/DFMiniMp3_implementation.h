@@ -94,7 +94,7 @@ public:
 
 public:
     void begin() override { m_dfMiniMp3.begin(); };
-    void setEq(DfMp3_Eq eq) override { m_dfMiniMp3.setEq(eq); };
+    void setEq(eMp3Eq eq) override { m_dfMiniMp3.setEq((DfMp3_Eq)eq); };
     void setVolume(uint8_t volume) override { m_dfMiniMp3.setVolume(volume); };
     void loop() override { m_dfMiniMp3.loop(); };
     uint8_t getVolume() override { return m_dfMiniMp3.getVolume(); };
