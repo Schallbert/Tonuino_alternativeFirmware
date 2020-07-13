@@ -1,6 +1,6 @@
 #ifndef EEPROM_INTERFACE_H
 #define EEPROM_INTERFACE_H
-#include <Arduino.h>
+#include <Arduino_types.h>
 
 // Wrapper class to separate dependency EEPROM from utilizing classes.
 // Enabler for mocking EEPROM behavior.

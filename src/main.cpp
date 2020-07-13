@@ -1,7 +1,7 @@
 #ifndef UNIT_TEST
 
 // Includes -------------------------
-#include <Arduino.h>
+#include <Arduino_types.h>
 #include <Defines.h>
 #include <avr/sleep.h>
 #include "TimerOne/src/TimerOne.h"
@@ -12,10 +12,12 @@
 #include <interface_UserInput.h>
 #include <Folder.h>
 #include <NfcTag.h>
+#include <Arduino_implementation.h>
 #include <Mp3PlayerControl.h>
 #include <DFMiniMp3_implementation.h>
 #include <EEPROM_implementation.h>
 #include <MFRC522_implementation.h>
+
 
 // Function prototypes
 uint32_t init_random_generator(); // External dependency: Randum Number Generator
@@ -27,6 +29,9 @@ uint8_t voice_menu(uint8_t numberOfOptions, uint16_t startMessage, bool returnVa
 void timer1_task_1ms();
 
 // Global variables & objects -------------------------------
+Arduino_pins pinControl;
+Arduino_com usbSerial;
+Arduino_delay delayControl;
 // Init tag reader
 Mfrc522 tagReader;
 NfcTag nfcTagReader = NfcTag(&tagReader); // Constructor injection of concrete reader
@@ -52,8 +57,8 @@ void setup()
     aKeepAlive.keep_alive(); //Activate KeepAlive to maintain power supply to circuits
 
 #if DEBUGSERIAL
-    Serial.begin(9600); // Some debug output via serial
-    Serial.println(F("Tonuino starting...."));
+    usbSerial.com_begin(9600); // Some debug output via serial
+    usbSerial.com_println(F("Booting"));
 #endif
 
     aLed.set_led_behavior(StatusLed::solid);
@@ -64,7 +69,7 @@ void setup()
     aUserInput->init();
 
 #if DEBUGSERIAL
-    Serial.println(F("Tonuino started."));
+    usbSerial.com_println(F("Started."));
 #endif
 }
 // LOOP ROUTINE --------------------------------------------------------------
@@ -118,7 +123,7 @@ void loop()
             break;
         case UserInput::Error:
 #if DEBUGSERIAL
-            Serial.println(F("Error getting UserInput. Not fully initialized/pins set?"));
+            usbSerial.com_println(F("Error getting UserInput. Not fully initialized/pins set?"));
 #endif
             mp3.play_specific_file(MSG_ERROR);
             break;
@@ -160,18 +165,18 @@ uint8_t voice_menu(uint8_t numberOfOptions, uint16_t startMessage, bool returnVa
     }
     mp3.play_specific_file(startMessage);
 #if DEBUGSERIAL
-    Serial.print(F("=== voiceMenu() ("));
-    Serial.print(numberOfOptions);
-    Serial.println(F(" Options)"));
+    usbSerial.com_print(F("=== voiceMenu() ("));
+    usbSerial.com_print(numberOfOptions);
+    usbSerial.com_println(F(" Options)"));
 #endif
     while (true)
     {
         lastReturnValue = returnValue;
 #if DEBUGSERIAL
-        //get command from Serial
-        if (Serial.available() > 0)
+        //get command from usbSerial
+        if (usbSerial.available() > 0)
         {
-            int optionSerial = Serial.parseInt();
+            int optionSerial = usbSerial.parseInt();
             if (optionSerial != 0 && optionSerial <= numberOfOptions)
                 return optionSerial;
         }
@@ -190,9 +195,9 @@ uint8_t voice_menu(uint8_t numberOfOptions, uint16_t startMessage, bool returnVa
             if (returnValue != 0)
             {
 #if DEBUGSERIAL
-                Serial.print(F("=== "));
-                Serial.print(returnValue);
-                Serial.println(F(" ==="));
+                usbSerial.com_print(F("=== "));
+                usbSerial.com_print(returnValue);
+                usbSerial.com_println(F(" ==="));
 #endif
                 return returnValue;
             }
@@ -210,7 +215,7 @@ uint8_t voice_menu(uint8_t numberOfOptions, uint16_t startMessage, bool returnVa
         if (lastReturnValue != returnValue)
         {
 #if DEBUGSERIAL
-            Serial.println(returnValue);
+            usbSerial.com_print(returnValue);
 #endif
             // play number of current choice, e.g. "one".
             mp3.play_specific_file(messageOffset + returnValue);
@@ -239,14 +244,14 @@ void reset_card()
         if (userAction == UserInput::Abort)
         {
 #if DEBUGSERIAL
-            Serial.print(F("Aborted!"));
+            usbSerial.com_println(F("Aborted!"));
 #endif
             mp3.play_specific_file(MSG_ABORTEED);
             return;
         }
     }
 #if DEBUGSERIAL
-    Serial.print(F("Card to be configured!"));
+    usbSerial.com_println(F("Card to be configured!"));
 #endif
     mp3.play_specific_file(MSG_UNKNOWNTAG);
     mp3.dont_skip_current_track();
@@ -256,7 +261,7 @@ void reset_card()
 void setup_card()
 {
 #if DEBUGSERIAL
-    Serial.println(F("=== setup_card()"));
+    usbSerial.com_println(F("=== setup_card()"));
 #endif
     if (setup_folder(currentFolder))
     {
@@ -326,14 +331,14 @@ void timer1_task_1ms()
     mp3.lullabye_timeout_tick1ms();
 }
 
-//Helper routine to dump a byte array as hex values to Serial.
+//Helper routine to dump a byte array as hex values to usbSerial.
 #if DEBUGSERIAL
 void dump_byte_array(byte *buffer, byte bufferSize)
 {
     for (byte i = 0; i < bufferSize; i++)
     {
-        Serial.print(buffer[i] < 0x10 ? " 0" : " ");
-        Serial.print(buffer[i], HEX);
+        usbSerial.com_print(buffer[i] < 0x10 ? " 0" : " ");
+        usbSerial.com_print(buffer[i], HEX);
     }
 }
 #endif //DEBUGSERIAL

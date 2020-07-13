@@ -1,11 +1,18 @@
 #include "Mp3PlayerControl.h"
 
-Mp3PlayerControl::Mp3PlayerControl(DfMiniMp3_interface* player)
+Mp3PlayerControl::Mp3PlayerControl(DfMiniMp3_interface* player, 
+                                   Arduino_interface_pins* pinCtrl,
+                                   Arduino_interface_com* usb,
+                                   Arduino_interface_delay* delayCtrl)
 {
     m_pDfMiniMp3 = player;
-    pinMode(DFMINI_BUSY, INPUT);
+    m_pPinCtrl = pinCtrl;
+    m_pUsb = usb;
+    m_pDelayCtrl = delayCtrl;
+    // Init communication with module and setup
+    m_pPinCtrl->pin_mode(DFMINI_BUSY, INPUT);
     m_pDfMiniMp3->begin(); // Init
-    delay(WAIT_DFMINI_READY);
+    m_pDelayCtrl->delay_ms(WAIT_DFMINI_READY);
     m_pDfMiniMp3->setEq(DFMINI_EQ_SETTING);
     m_pDfMiniMp3->setVolume(VOLUME_INIT);
 }
@@ -20,9 +27,9 @@ void Mp3PlayerControl::volume_up()
     {
         m_pDfMiniMp3->increaseVolume();
     }
-#if SERIAL
-    Serial.println(F("=== volume_up()"));
-    Serial.println(currVolume);
+#if DEBUGSERIAL
+    m_pUsb->com_println("volume_up()");
+    m_pUsb->com_println(currVolume);
 #endif
 }
 void Mp3PlayerControl::volume_down()
@@ -31,14 +38,14 @@ void Mp3PlayerControl::volume_down()
     {
         m_pDfMiniMp3->decreaseVolume();
     }
-#if SERIAL
-    Serial.println(F("=== volume_down()"));
-    Serial.println(volume);
+#if DEBUGSERIAL
+    m_pUsb->com_println("volume_down()");
+    m_pUsb->com_println(volume);
 #endif
 }
 bool Mp3PlayerControl::is_playing()
 {
-    return !digitalRead(DFMINI_BUSY);
+    return !(m_pPinCtrl->digital_read(DFMINI_BUSY));
 }
 void Mp3PlayerControl::play_pause()
 {
@@ -55,13 +62,13 @@ void Mp3PlayerControl::dont_skip_current_track()
 {
     //Blocker method to make feature wait until voice prompt has played
     //To ensure following voice prompts do not overwrite current
-    unsigned long currentTime = millis();
+    unsigned long currentTime = m_pDelayCtrl->milli_seconds();
 
-    while (!is_playing() && millis() < (currentTime + WAIT_DFMINI_READY))
+    while (!is_playing() && m_pDelayCtrl->milli_seconds() < (currentTime + WAIT_DFMINI_READY))
     {
         m_pDfMiniMp3->loop(); //wait for track to start (until timeout kicks in)
     }
-    while (is_playing() && millis() < (currentTime + TIMEOUT_PROMPT_PLAYED))
+    while (is_playing() && m_pDelayCtrl->milli_seconds() < (currentTime + TIMEOUT_PROMPT_PLAYED))
     {
         m_pDfMiniMp3->loop(); //wait for track to finish
     }
@@ -75,7 +82,7 @@ void Mp3PlayerControl::autoplay()
         if (mode == Folder::ONELARGETRACK)
         {
 #if DEBUGSERIAL
-            Serial.println(F("autoplay: ONELARGETRACK mode active -> wait for power off"));
+            m_pUsb->com_println("autoplay: ONELARGETRACK active: pause");
 #endif
             m_pDfMiniMp3->stop();
             return;
@@ -83,7 +90,7 @@ void Mp3PlayerControl::autoplay()
         else if (mode == Folder::LULLABYE && check_lullabye_timeout())
         {
 #if DEBUGSERIAL
-            Serial.println(F("autoplay: LULLABYE timeout expired -> wait for power off"));
+            m_pUsb->com_println("autoplay: LULLABYE timeout expired: pause");
 #endif
             m_pDfMiniMp3->stop();
             return;
@@ -91,7 +98,7 @@ void Mp3PlayerControl::autoplay()
         else
         {
 #if DEBUGSERIAL
-            Serial.println(F("autoplay: calling next_track"));
+            m_pUsb->com_println("autoplay: calling next_track");
 #endif
             next_track();
         }
@@ -123,15 +130,15 @@ void Mp3PlayerControl::next_track()
     if (!m_pCurrentFolder->is_valid())
     {
 #if DEBUGSERIAL
-        Serial.println(F("next_track: Error: No card linked"));
+        m_pUsb->com_println("next_track: Error: No card linked");
 #endif
         return; // Cannot play a track if the card is not linked.
     }
     uint8_t nextTrack = m_pCurrentFolder->get_next_track();
     m_pDfMiniMp3->playFolderTrack(m_pCurrentFolder->get_folder_id(), nextTrack);
 #if DEBUGSERIAL
-    Serial.println(F("next_track():"));
-    Serial.print(nextTrack);
+    m_pUsb->com_println("next_track:");
+    m_pUsb->com_println(nextTrack);
 #endif
 }
 void Mp3PlayerControl::prev_track()
@@ -139,23 +146,22 @@ void Mp3PlayerControl::prev_track()
     if (!m_pCurrentFolder->is_valid())
     {
 #if DEBUGSERIAL
-        Serial.println(F("prev_track: Error: No card linked"));
+        m_pUsb->com_println("prev_track: Error: No card linked");
 #endif
         return; // Cannot play a track if the card is not linked.
     }
     uint8_t prevTrack = m_pCurrentFolder->get_prev_track();
     m_pDfMiniMp3->playFolderTrack(m_pCurrentFolder->get_folder_id(), prevTrack);
 #if DEBUGSERIAL
-    Serial.println(F("prev_track():"));
-    Serial.print(prevTrack);
+    m_pUsb->com_println("prev_track():");
+    m_pUsb->com_println(prevTrack);
 #endif
 }
 void Mp3PlayerControl::play_folder(Folder *m_pCurrentFolder)
 {
 #if DEBUGSERIAL
-    Serial.println(F("play_folder"));
-    Serial.print(F("folderId: "));
-    Serial.println(m_pCurrentFolder->get_folder_id());
+    m_pUsb->com_println("play_folder: folderId: ");
+    m_pUsb->com_println(m_pCurrentFolder->get_folder_id());
 #endif
     // Start playing folder: first track of current folder.
     m_pDfMiniMp3->playFolderTrack(m_pCurrentFolder->get_folder_id(), m_pCurrentFolder->get_current_track());
