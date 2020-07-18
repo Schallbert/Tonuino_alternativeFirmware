@@ -1,4 +1,4 @@
-#include "Mp3PlayerControl.h"
+ #include "Mp3PlayerControl.h"
 
 Mp3PlayerControl::Mp3PlayerControl(DfMiniMp3_interface* player, 
                                    Arduino_interface_pins* pinCtrl,
@@ -53,9 +53,9 @@ void Mp3PlayerControl::play_pause()
     {
         m_pDfMiniMp3->pause();
     }
-    else if (m_pCurrentFolder->is_valid())
+    else
     {
-        m_pDfMiniMp3->start(); //can only restart playback if a valid folder is existing
+        m_pDfMiniMp3->start(); // Only successful if a track is entered.
     }
 }
 void Mp3PlayerControl::dont_skip_current_track()
