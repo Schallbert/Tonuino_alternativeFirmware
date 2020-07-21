@@ -47,6 +47,8 @@ private:
     void autoplay();
     // Routine to check if lullabye time has reached to enable KeepAlive to switch system off after timeout.
     bool check_lullabye_timeout();
+    // Checks if the folder we're working with is correctly defined
+    bool check_folder();
 
 private:
     // Solution for constructor error found here: https://stackoverflow.com/questions/35762196/expected-a-type-specifier-error-when-creating-an-object-of-a-class-inside-anot
@@ -56,8 +58,8 @@ private:
     Arduino_interface_pins* m_pPinCtrl {};
     Arduino_interface_com* m_pUsb {};
     Arduino_interface_delay* m_pDelayCtrl {};
-    Folder *m_pCurrentFolder;
-    uint16_t m_ui32LullabyeTimeActiveSecs;
+    Folder *m_pCurrentFolder {};
+    uint16_t m_ui32LullabyeTimeActiveSecs {};
 };
 
 #endif // MP3PLAYERCONTROL_H

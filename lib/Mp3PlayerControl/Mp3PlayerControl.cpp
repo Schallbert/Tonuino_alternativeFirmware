@@ -1,9 +1,9 @@
- #include "Mp3PlayerControl.h"
+#include "Mp3PlayerControl.h"
 
-Mp3PlayerControl::Mp3PlayerControl(DfMiniMp3_interface* player, 
-                                   Arduino_interface_pins* pinCtrl,
-                                   Arduino_interface_com* usb,
-                                   Arduino_interface_delay* delayCtrl)
+Mp3PlayerControl::Mp3PlayerControl(DfMiniMp3_interface *player,
+                                   Arduino_interface_pins *pinCtrl,
+                                   Arduino_interface_com *usb,
+                                   Arduino_interface_delay *delayCtrl)
 {
     m_pDfMiniMp3 = player;
     m_pPinCtrl = pinCtrl;
@@ -104,6 +104,7 @@ void Mp3PlayerControl::autoplay()
         }
     }
 }
+
 void Mp3PlayerControl::lullabye_timeout_tick1ms()
 {
     static uint16_t ticks = 0;
@@ -115,6 +116,7 @@ void Mp3PlayerControl::lullabye_timeout_tick1ms()
         ++m_ui32LullabyeTimeActiveSecs;
     }
 }
+
 bool Mp3PlayerControl::check_lullabye_timeout()
 {
     if (m_ui32LullabyeTimeActiveSecs >= LULLABYE_TIMER_SECS)
@@ -125,51 +127,61 @@ bool Mp3PlayerControl::check_lullabye_timeout()
     }
     return false;
 }
+
 void Mp3PlayerControl::next_track()
 {
-    if (!m_pCurrentFolder->is_valid())
+    if (!check_folder())
     {
 #if DEBUGSERIAL
         m_pUsb->com_println("next_track: Error: No card linked");
 #endif
         return; // Cannot play a track if the card is not linked.
     }
-    uint8_t nextTrack = m_pCurrentFolder->get_next_track();
-    m_pDfMiniMp3->playFolderTrack(m_pCurrentFolder->get_folder_id(), nextTrack);
+    m_pDfMiniMp3->playFolderTrack(m_pCurrentFolder->get_folder_id(),
+                                  m_pCurrentFolder->get_next_track());
 #if DEBUGSERIAL
     m_pUsb->com_println("next_track:");
     m_pUsb->com_println(nextTrack);
 #endif
 }
+
 void Mp3PlayerControl::prev_track()
 {
-    if (!m_pCurrentFolder->is_valid())
+    if (!check_folder())
     {
 #if DEBUGSERIAL
         m_pUsb->com_println("prev_track: Error: No card linked");
 #endif
         return; // Cannot play a track if the card is not linked.
     }
-    uint8_t prevTrack = m_pCurrentFolder->get_prev_track();
-    m_pDfMiniMp3->playFolderTrack(m_pCurrentFolder->get_folder_id(), prevTrack);
+    m_pDfMiniMp3->playFolderTrack(m_pCurrentFolder->get_folder_id(),
+                                  m_pCurrentFolder->get_prev_track());
 #if DEBUGSERIAL
     m_pUsb->com_println("prev_track():");
     m_pUsb->com_println(prevTrack);
 #endif
 }
-void Mp3PlayerControl::play_folder(Folder *m_pCurrentFolder)
+
+void Mp3PlayerControl::play_folder(Folder *currentFolder)
 {
+    m_pCurrentFolder = currentFolder;
 #if DEBUGSERIAL
     m_pUsb->com_println("play_folder: folderId: ");
     m_pUsb->com_println(m_pCurrentFolder->get_folder_id());
 #endif
     // Start playing folder: first track of current folder.
-    m_pDfMiniMp3->playFolderTrack(m_pCurrentFolder->get_folder_id(), m_pCurrentFolder->get_current_track());
+    if (check_folder())
+    {
+        m_pDfMiniMp3->playFolderTrack(m_pCurrentFolder->get_folder_id(), 
+                                      m_pCurrentFolder->get_current_track());
+    }
 }
+
 void Mp3PlayerControl::play_specific_file(uint16_t fileId)
 {
     m_pDfMiniMp3->playAdvertisement(fileId);
 }
+
 uint8_t Mp3PlayerControl::get_trackCount_of_folder(uint8_t folderId)
 {
     uint16_t trackCnt = m_pDfMiniMp3->getFolderTrackCount(static_cast<uint16_t>(folderId));
@@ -181,4 +193,16 @@ uint8_t Mp3PlayerControl::get_trackCount_of_folder(uint8_t folderId)
     {
         return static_cast<uint8_t>(trackCnt);
     }
+}
+
+bool Mp3PlayerControl::check_folder()
+{
+    if  (m_pCurrentFolder != nullptr)
+    {
+        if (m_pCurrentFolder->is_valid())
+        {
+            return true;
+        }
+    }
+    return false;
 }
