@@ -107,7 +107,7 @@ void Mp3PlayerControl::autoplay()
 
 void Mp3PlayerControl::lullabye_timeout_tick1ms()
 {
-    static uint16_t ticks = 0;
+    static volatile uint16_t ticks = 0;
     ++ticks;
 #define SEC_MSEC 1000
     if (ticks >= SEC_MSEC)
@@ -133,7 +133,7 @@ void Mp3PlayerControl::next_track()
     if (!check_folder())
     {
 #if DEBUGSERIAL
-        m_pUsb->com_println("next_track: Error: No card linked");
+        m_pUsb->com_println("next_track: Error: No folder linked");
 #endif
         return; // Cannot play a track if the card is not linked.
     }
@@ -150,7 +150,7 @@ void Mp3PlayerControl::prev_track()
     if (!check_folder())
     {
 #if DEBUGSERIAL
-        m_pUsb->com_println("prev_track: Error: No card linked");
+        m_pUsb->com_println("prev_track: Error: No folder linked");
 #endif
         return; // Cannot play a track if the card is not linked.
     }
@@ -165,16 +165,20 @@ void Mp3PlayerControl::prev_track()
 void Mp3PlayerControl::play_folder(Folder *currentFolder)
 {
     m_pCurrentFolder = currentFolder;
+    if (!check_folder())
+    {
+#if DEBUGSERIAL
+        m_pUsb->com_println("play_folder: Error: No folder linked");
+#endif
+        return; // Cannot play a track if the card is not linked.
+    }
+    // Start playing folder: first track of current folder.
+    m_pDfMiniMp3->playFolderTrack(m_pCurrentFolder->get_folder_id(),
+                                  m_pCurrentFolder->get_current_track());
 #if DEBUGSERIAL
     m_pUsb->com_println("play_folder: folderId: ");
     m_pUsb->com_println(m_pCurrentFolder->get_folder_id());
 #endif
-    // Start playing folder: first track of current folder.
-    if (check_folder())
-    {
-        m_pDfMiniMp3->playFolderTrack(m_pCurrentFolder->get_folder_id(), 
-                                      m_pCurrentFolder->get_current_track());
-    }
 }
 
 void Mp3PlayerControl::play_specific_file(uint16_t fileId)
@@ -197,7 +201,7 @@ uint8_t Mp3PlayerControl::get_trackCount_of_folder(uint8_t folderId)
 
 bool Mp3PlayerControl::check_folder()
 {
-    if  (m_pCurrentFolder != nullptr)
+    if (m_pCurrentFolder != nullptr)
     {
         if (m_pCurrentFolder->is_valid())
         {

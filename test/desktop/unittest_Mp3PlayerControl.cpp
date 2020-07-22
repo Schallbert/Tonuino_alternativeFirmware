@@ -141,6 +141,25 @@ TEST_F(PlayerCtrl, autoplay_LULLABYE_trackFinished_next)
     EXPECT_CALL(*m_pDfMini, checkTrackFinished()).WillOnce(Return(true));
     EXPECT_CALL(*m_pDfMini, playFolderTrack(_, 1)).Times(1); // play_folder calls first track.
     EXPECT_CALL(*m_pDfMini, playFolderTrack(_, 2)).Times(1); // autoplay calls next_track.
+    EXPECT_CALL(*m_pDfMini, stop()).Times(0);
+    m_pMp3PlrCtrl->play_folder(&testFolder);
+    m_pMp3PlrCtrl->loop();
+}
+
+TEST_F(PlayerCtrl, autoplay_LULLABYE_trackFinished_borderline_next)
+{
+    Mock_Eeprom mockEeprom;
+    Folder testFolder(1, Folder::LULLABYE, 8);
+    testFolder.setup_dependencies(&mockEeprom, 0);
+    // make timeout expire
+    for (long i = 0; i<(LULLABYE_TIMER_SECS*1000 - 1); ++i)
+    {
+        m_pMp3PlrCtrl->lullabye_timeout_tick1ms();
+    }
+    EXPECT_CALL(*m_pDfMini, checkTrackFinished()).WillOnce(Return(true));
+    EXPECT_CALL(*m_pDfMini, playFolderTrack(_, 1)).Times(1); // play_folder calls first track.
+    EXPECT_CALL(*m_pDfMini, playFolderTrack(_, 2)).Times(1); // autoplay calls next_track.
+    EXPECT_CALL(*m_pDfMini, stop()).Times(0);
     m_pMp3PlrCtrl->play_folder(&testFolder);
     m_pMp3PlrCtrl->loop();
 }
@@ -234,4 +253,26 @@ TEST_F(PlayerCtrl, prevTrack_FolderOk_playsNext)
     m_pMp3PlrCtrl->prev_track();
 }
 
-// continue writing tests here
+TEST_F(PlayerCtrl, get_trackCount_noFolder_Returns0)
+{
+    EXPECT_CALL(*m_pDfMini, getFolderTrackCount(1)).WillRepeatedly(Return(0));
+    EXPECT_EQ(0, m_pMp3PlrCtrl->get_trackCount_of_folder(1));
+}
+
+TEST_F(PlayerCtrl, get_trackCount_Folder_ReturnsNumber)
+{
+    Mock_Eeprom mockEeprom;
+    Folder testFolder(1, Folder::ALBUM, 8);
+    testFolder.setup_dependencies(&mockEeprom, 0);
+    EXPECT_CALL(*m_pDfMini, getFolderTrackCount(1)).WillRepeatedly(Return(8));
+    EXPECT_EQ(8, m_pMp3PlrCtrl->get_trackCount_of_folder(1));
+}
+
+TEST_F(PlayerCtrl, get_trackCount_TrackNumberTooHigh_Returns0)
+{
+    Mock_Eeprom mockEeprom;
+    Folder testFolder(1, Folder::ALBUM, 8);
+    testFolder.setup_dependencies(&mockEeprom, 0);
+    EXPECT_CALL(*m_pDfMini, getFolderTrackCount(1)).WillRepeatedly(Return(256));
+    EXPECT_EQ(0, m_pMp3PlrCtrl->get_trackCount_of_folder(1));
+}
