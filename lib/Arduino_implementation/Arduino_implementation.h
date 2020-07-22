@@ -13,34 +13,34 @@ public:
     void pin_mode(uint8_t pinId, uint8_t mode) override
     {
         pinMode(pinId, mode);
-    };
+    }
     void digital_write(uint8_t pinId, uint8_t output) override
     {
         digitalWrite(pinId, output);
-    };
+    }
     int digital_read(uint8_t pinId) override
     {
         return digitalRead(pinId);
-    };
+    }
     int analog_read(uint8_t pinId) override
     {
         return analogRead(pinId);
-    };
+    }
     void analog_reference(uint8_t mode) override
     {
         analogReference(mode);
-    };
+    }
     void analog_write(uint8_t pinId, int output) override
     {
         analogWrite(pinId, output);
-    };
+    }
 };
 
 // Class to interface Arduino's delay and elapsed time functions
-class Arduino_delay : Arduino_interface_delay
+class Arduino_delay : public Arduino_interface_delay
 {
 public:
-    ~Arduino_interface_delay(){};
+    ~Arduino_delay(){};
 
 public:
     unsigned long milli_seconds(void) override
@@ -63,10 +63,10 @@ public:
 
 // Class to interface Arduino's com port and print out information
 // All info taken from "USBAPI.h" & "CDC.cpp"
-class Arduino_com : Arduino_interface_com
+class Arduino_com : public Arduino_interface_com
 {
 public:
-    ~Arduino_interface_serial(){};
+    ~Arduino_com(){};
 
 public:
     void com_begin(unsigned long baudrate) override

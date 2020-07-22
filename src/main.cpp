@@ -6,7 +6,7 @@
 #include <avr/sleep.h>
 #include "TimerOne/src/TimerOne.h"
 
-// LPREUSSE personal includes -------
+// project includes -------
 #include <StatusLed.h>
 #include "interface_KeepAlive/interface_KeepAlive.h"
 #include <interface_UserInput.h>
@@ -37,7 +37,7 @@ Mfrc522 tagReader;
 NfcTag nfcTagReader = NfcTag(&tagReader); // Constructor injection of concrete reader
 // DFPlayer Mini
 DfMini dfMini;
-Mp3PlayerControl mp3(&dfMini);
+Mp3PlayerControl mp3(&dfMini, &pinControl, &usbSerial, &delayControl);
 // Folder for queuing etc.
 Folder currentFolder;
 // keepAlive interface
@@ -58,18 +58,17 @@ void setup()
 
 #if DEBUGSERIAL
     usbSerial.com_begin(9600); // Some debug output via serial
-    usbSerial.com_println(F("Booting"));
+    usbSerial.com_println("Booting");
 #endif
 
     aLed.set_led_behavior(StatusLed::solid);
-
     //Init Timer1 for Encoder read
     //init UserInput
     aUserInput->set_input_pins(PINPLPS, PINPREV, PINNEXT);
     aUserInput->init();
 
 #if DEBUGSERIAL
-    usbSerial.com_println(F("Started."));
+    usbSerial.com_println("Started.");
 #endif
 }
 // LOOP ROUTINE --------------------------------------------------------------
@@ -92,8 +91,8 @@ void loop()
             aKeepAlive.set_idle_timer(true);
             aLed.set_led_behavior(StatusLed::flash_slow);
         }
-        aUserInput->set_card_detected(nfcTagReader.is_card_present());
-        userAction = aUserInput->get_user_request(); //ReadCardSerial() only returns true if a known card is present.
+        aUserInput->set_card_detected(nfcTagReader.is_card_present()); // Tell interface if a known card is present.
+        userAction = aUserInput->get_user_request();
         switch (userAction)
         {
         case UserInput::NoAction:
@@ -123,13 +122,13 @@ void loop()
             break;
         case UserInput::Error:
 #if DEBUGSERIAL
-            usbSerial.com_println(F("Error getting UserInput. Not fully initialized/pins set?"));
+            usbSerial.com_println("UserInput: Error.");
 #endif
             mp3.play_specific_file(MSG_ERROR);
             break;
         }
-    }
-    // Do not allow automatic shutdown
+    } // while (!nfcTagReader.is_new_card_present())
+    // New card detected: Do not allow automatic shutdown
     aKeepAlive.set_idle_timer(false);
     aLed.set_led_behavior(StatusLed::dim);
     // new card present, load information from card, create and return folder
@@ -148,6 +147,7 @@ void loop()
 }
 // END OF LOOP() ----------------------------------------------------------------------------------
 
+
 uint8_t voice_menu(uint8_t numberOfOptions, uint16_t startMessage, bool returnValuesOffsetStartMessage,
                    bool previewSelectedFolder, uint8_t defaultValue)
 {
@@ -159,28 +159,21 @@ uint8_t voice_menu(uint8_t numberOfOptions, uint16_t startMessage, bool returnVa
     {
         return defaultValue; // invalid function call
     }
+    // Stop track if playing
     if (mp3.is_playing())
     {
         mp3.play_pause();
     }
     mp3.play_specific_file(startMessage);
+    mp3.dont_skip_current_track();
 #if DEBUGSERIAL
-    usbSerial.com_print(F("=== voiceMenu() ("));
+    usbSerial.com_println("voiceMenu(): "));
     usbSerial.com_print(numberOfOptions);
-    usbSerial.com_println(F(" Options)"));
 #endif
+    // Play prompt and detect user input
     while (true)
     {
         lastReturnValue = returnValue;
-#if DEBUGSERIAL
-        //get command from usbSerial
-        if (usbSerial.available() > 0)
-        {
-            int optionSerial = usbSerial.parseInt();
-            if (optionSerial != 0 && optionSerial <= numberOfOptions)
-                return optionSerial;
-        }
-#endif
         aUserInput->set_card_detected(true);
         userAction = aUserInput->get_user_request(); //input acts as if a card was present: needed to detect Abort signal
         mp3.loop();
@@ -195,9 +188,7 @@ uint8_t voice_menu(uint8_t numberOfOptions, uint16_t startMessage, bool returnVa
             if (returnValue != 0)
             {
 #if DEBUGSERIAL
-                usbSerial.com_print(F("=== "));
                 usbSerial.com_print(returnValue);
-                usbSerial.com_println(F(" ==="));
 #endif
                 return returnValue;
             }
@@ -211,17 +202,13 @@ uint8_t voice_menu(uint8_t numberOfOptions, uint16_t startMessage, bool returnVa
         default:
             break;
         }
-
         if (lastReturnValue != returnValue)
         {
-#if DEBUGSERIAL
-            usbSerial.com_print(returnValue);
-#endif
             // play number of current choice, e.g. "one".
             mp3.play_specific_file(messageOffset + returnValue);
             if (previewSelectedFolder)
             {
-                mp3.dont_skip_current_track();
+                mp3.dont_skip_current_track(); // TODO REALLY? HERE?
                 // Preview: Play first track from folder to link
                 Folder previewFolder = Folder(returnValue, Folder::ONELARGETRACK, 1);
                 previewFolder.setup_dependencies(&eeprom, 0);
@@ -244,14 +231,14 @@ void reset_card()
         if (userAction == UserInput::Abort)
         {
 #if DEBUGSERIAL
-            usbSerial.com_println(F("Aborted!"));
+            usbSerial.com_println("Aborted!");
 #endif
             mp3.play_specific_file(MSG_ABORTEED);
             return;
         }
     }
 #if DEBUGSERIAL
-    usbSerial.com_println(F("Card to be configured!"));
+    usbSerial.com_println("Card to be configured!");
 #endif
     mp3.play_specific_file(MSG_UNKNOWNTAG);
     mp3.dont_skip_current_track();
@@ -261,7 +248,7 @@ void reset_card()
 void setup_card()
 {
 #if DEBUGSERIAL
-    usbSerial.com_println(F("=== setup_card()"));
+    usbSerial.com_println("setup_card()");
 #endif
     if (setup_folder(currentFolder))
     {
@@ -279,7 +266,7 @@ void setup_card()
             mp3.play_specific_file(MSG_ERROR); //WRITE_CARD
         }
     }
-    delay(WAIT_DFMINI_READY);
+    delayControl.delay_ms(WAIT_DFMINI_READY);
 }
 
 /* 
@@ -294,9 +281,13 @@ bool setup_folder(Folder &newFolder)
     Folder::ePlayMode playMode = Folder::UNDEFINED;
     Folder tempFolder;
     // user input: Which folder to link?
-    folderId = voice_menu(99, MSG_UNKNOWNTAG, false, true, 0); //TODO: Shouldn't this be 300? or 310?
+    folderId = voice_menu(99, MSG_UNKNOWNTAG, false, true, 0);
     // user input: Which play mode?
-    playMode = (Folder::ePlayMode)voice_menu((uint8_t)Folder::ePlayMode::ENUM_COUNT, MSG_TAGLINKED, true, false, (uint8_t)Folder::ePlayMode::ALBUM);
+    playMode = (Folder::ePlayMode)voice_menu(static_cast<uint8_t>(Folder::ePlayMode::ENUM_COUNT), 
+                                             MSG_TAGLINKED, 
+                                             true,
+                                             false, 
+                                             static_cast<uint8_t>(Folder::ePlayMode::ALBUM));
     trackCount = mp3.get_trackCount_of_folder(folderId);
     // Create new folder object and copy to main's folder object
     tempFolder = Folder(folderId, playMode, trackCount);
@@ -316,12 +307,11 @@ uint32_t init_random_generator()
     uint32_t ADCSeed;
     for (uint8_t i = 0; i < 128; i++)
     {
-        ADC_LSB = analogRead(PINANALOG_RNDMGEN) & 0x1;
+        ADC_LSB = pinControl.analog_read(PINANALOG_RNDMGEN) & 0x1;
         ADCSeed ^= ADC_LSB << (i % 32);
     }
     return ADCSeed; // Init Arduino dependencies generator
 }
-
 
 void timer1_task_1ms()
 {
@@ -331,15 +321,4 @@ void timer1_task_1ms()
     mp3.lullabye_timeout_tick1ms();
 }
 
-//Helper routine to dump a byte array as hex values to usbSerial.
-#if DEBUGSERIAL
-void dump_byte_array(byte *buffer, byte bufferSize)
-{
-    for (byte i = 0; i < bufferSize; i++)
-    {
-        usbSerial.com_print(buffer[i] < 0x10 ? " 0" : " ");
-        usbSerial.com_print(buffer[i], HEX);
-    }
-}
-#endif //DEBUGSERIAL
 #endif //UNIT_TEST
