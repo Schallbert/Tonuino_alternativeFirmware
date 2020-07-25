@@ -26,9 +26,6 @@ bool NfcTag::write_folder_to_card(const Folder &sourceFolder)
     m_oFolder = sourceFolder;                  // Copy source folder to member object
     if (!m_oFolder.is_valid())
     {
-#if DEBUGSERIAL
-        Serial.print(F("write_card: ERROR: folder object is not correctly initialized"));
-#endif
         return false;
     }
     folder_to_buffer(); // Set buffer according to local folder data

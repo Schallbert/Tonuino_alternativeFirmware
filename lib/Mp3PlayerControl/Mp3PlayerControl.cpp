@@ -29,7 +29,7 @@ void Mp3PlayerControl::volume_up()
     }
 #if DEBUGSERIAL
     m_pUsb->com_println("volume_up()");
-    m_pUsb->com_println(currVolume);
+    m_pUsb->com_print(m_pDfMiniMp3->getVolume());
 #endif
 }
 void Mp3PlayerControl::volume_down()
@@ -40,7 +40,7 @@ void Mp3PlayerControl::volume_down()
     }
 #if DEBUGSERIAL
     m_pUsb->com_println("volume_down()");
-    m_pUsb->com_println(volume);
+    m_pUsb->com_print(m_pDfMiniMp3->getVolume());
 #endif
 }
 bool Mp3PlayerControl::is_playing()
@@ -141,7 +141,7 @@ void Mp3PlayerControl::next_track()
                                   m_pCurrentFolder->get_next_track());
 #if DEBUGSERIAL
     m_pUsb->com_println("next_track:");
-    m_pUsb->com_println(nextTrack);
+    m_pUsb->com_print(m_pCurrentFolder->get_current_track());
 #endif
 }
 
@@ -158,7 +158,7 @@ void Mp3PlayerControl::prev_track()
                                   m_pCurrentFolder->get_prev_track());
 #if DEBUGSERIAL
     m_pUsb->com_println("prev_track():");
-    m_pUsb->com_println(prevTrack);
+    m_pUsb->com_print(m_pCurrentFolder->get_current_track());
 #endif
 }
 
@@ -177,7 +177,7 @@ void Mp3PlayerControl::play_folder(Folder *currentFolder)
                                   m_pCurrentFolder->get_current_track());
 #if DEBUGSERIAL
     m_pUsb->com_println("play_folder: folderId: ");
-    m_pUsb->com_println(m_pCurrentFolder->get_folder_id());
+    m_pUsb->com_print(m_pCurrentFolder->get_folder_id());
 #endif
 }
 

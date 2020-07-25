@@ -18,7 +18,6 @@
 #include <EEPROM_implementation.h>
 #include <MFRC522_implementation.h>
 
-
 // Function prototypes
 uint32_t init_random_generator(); // External dependency: Randum Number Generator
 bool setup_folder(Folder &newFolder);
@@ -75,78 +74,95 @@ void setup()
 //----------------------------------------------------------------------------
 void loop()
 {
-    UserInput::UserRequest_e userAction = UserInput::NoAction;
-    while (!nfcTagReader.is_new_card_present())
+    if (nfcTagReader.is_card_present())
     {
-        // No new card present. Accept user input.
-        mp3.loop(); // Autoplay and DFmini loop
-        //Set LED
-        if (mp3.is_playing())
+        UserInput::UserRequest_e userAction = UserInput::NoAction;
+        while (!nfcTagReader.is_new_card_present())
         {
-            aKeepAlive.set_idle_timer(false);
-            aLed.set_led_behavior(StatusLed::solid);
-        }
-        else
-        {
-            aKeepAlive.set_idle_timer(true);
-            aLed.set_led_behavior(StatusLed::flash_slow);
-        }
-        aUserInput->set_card_detected(nfcTagReader.is_card_present()); // Tell interface if a known card is present.
-        userAction = aUserInput->get_user_request();
-        switch (userAction)
-        {
-        case UserInput::NoAction:
-            break;
-        case UserInput::PlayPause:
-            mp3.play_pause();
-            break;
-        case UserInput::NextTrack:
-            mp3.next_track();
-            break;
-        case UserInput::PrevTrack:
-            mp3.prev_track();
-            break;
-        case UserInput::IncVolume:
-            mp3.volume_up();
-            break;
-        case UserInput::DecVolume:
-            mp3.volume_down();
-            break;
-        case UserInput::DelCard:
-            reset_card();
-            break;
-        case UserInput::Help:
-            mp3.play_specific_file(MSG_HELP);
-            break;
-        case UserInput::Abort:
-            break;
-        case UserInput::Error:
+            // No new card present. Accept user input.
+            mp3.loop(); // Autoplay and DFmini loop
+            //Set LED
+            if (mp3.is_playing())
+            {
+                aKeepAlive.set_idle_timer(false);
+                aLed.set_led_behavior(StatusLed::solid);
+            }
+            else
+            {
+                aKeepAlive.set_idle_timer(true);
+                aLed.set_led_behavior(StatusLed::flash_slow);
+            }
+            // Tell interface if a known card is present.
+            aUserInput->set_card_detected(nfcTagReader.is_card_present());
+            userAction = aUserInput->get_user_request();
+            switch (userAction)
+            {
+            case UserInput::NoAction:
+                break;
+            case UserInput::PlayPause:
+                mp3.play_pause();
+                break;
+            case UserInput::NextTrack:
+                mp3.next_track();
+                break;
+            case UserInput::PrevTrack:
+                mp3.prev_track();
+                break;
+            case UserInput::IncVolume:
+                mp3.volume_up();
+                break;
+            case UserInput::DecVolume:
+                mp3.volume_down();
+                break;
+            case UserInput::DelCard:
+                reset_card();
+                break;
+            case UserInput::Help:
+                mp3.play_specific_file(MSG_HELP);
+                break;
+            case UserInput::Abort:
+                break;
+            case UserInput::Error:
 #if DEBUGSERIAL
-            usbSerial.com_println("UserInput: Error.");
+                usbSerial.com_println("UserInput: Error.");
 #endif
-            mp3.play_specific_file(MSG_ERROR);
-            break;
+                mp3.play_specific_file(MSG_ERROR);
+                mp3.dont_skip_current_track();
+                break;
+            }
+        } // while (!nfcTagReader.is_new_card_present())
+
+        if (nfcTagReader.is_new_card_present())
+        {
+            // New card detected: Do not allow automatic shutdown
+            aKeepAlive.set_idle_timer(false);
+            aLed.set_led_behavior(StatusLed::dim);
+            // new card present, load information from card, create and return folder
+            if (nfcTagReader.read_folder_from_card(currentFolder))
+            {
+                currentFolder.setup_dependencies(&eeprom, init_random_generator());
+                mp3.play_folder(&currentFolder); //Folder setup and ready to play
+            }
+            else
+            {
+                if (!nfcTagReader.is_known_card())
+                {
+                    // unknown card: configure
+                    mp3.play_specific_file(MSG_UNKNOWNTAG);
+                    mp3.dont_skip_current_track();
+                    setup_card();
+                }
+                else
+                {
+                    // card cannot be read: error
+                    mp3.play_specific_file(MSG_ERROR);
+                    mp3.dont_skip_current_track();
+                }
+            }
         }
-    } // while (!nfcTagReader.is_new_card_present())
-    // New card detected: Do not allow automatic shutdown
-    aKeepAlive.set_idle_timer(false);
-    aLed.set_led_behavior(StatusLed::dim);
-    // new card present, load information from card, create and return folder
-    if (nfcTagReader.read_folder_from_card(currentFolder))
-    {
-        currentFolder.setup_dependencies(&eeprom, init_random_generator());
-        mp3.play_folder(&currentFolder); //Folder setup and ready to play
-    }
-    else
-    {
-        // unknown card: configure
-        mp3.play_specific_file(MSG_UNKNOWNTAG);
-        mp3.dont_skip_current_track();
-        setup_card();
     }
 }
 // END OF LOOP() ----------------------------------------------------------------------------------
-
 
 uint8_t voice_menu(uint8_t numberOfOptions, uint16_t startMessage, bool returnValuesOffsetStartMessage,
                    bool previewSelectedFolder, uint8_t defaultValue)
@@ -167,7 +183,7 @@ uint8_t voice_menu(uint8_t numberOfOptions, uint16_t startMessage, bool returnVa
     mp3.play_specific_file(startMessage);
     mp3.dont_skip_current_track();
 #if DEBUGSERIAL
-    usbSerial.com_println("voiceMenu(): "));
+    usbSerial.com_println("voiceMenu() option: ");
     usbSerial.com_print(numberOfOptions);
 #endif
     // Play prompt and detect user input
@@ -283,10 +299,10 @@ bool setup_folder(Folder &newFolder)
     // user input: Which folder to link?
     folderId = voice_menu(99, MSG_UNKNOWNTAG, false, true, 0);
     // user input: Which play mode?
-    playMode = (Folder::ePlayMode)voice_menu(static_cast<uint8_t>(Folder::ePlayMode::ENUM_COUNT), 
-                                             MSG_TAGLINKED, 
+    playMode = (Folder::ePlayMode)voice_menu(static_cast<uint8_t>(Folder::ePlayMode::ENUM_COUNT),
+                                             MSG_TAGLINKED,
                                              true,
-                                             false, 
+                                             false,
                                              static_cast<uint8_t>(Folder::ePlayMode::ALBUM));
     trackCount = mp3.get_trackCount_of_folder(folderId);
     // Create new folder object and copy to main's folder object

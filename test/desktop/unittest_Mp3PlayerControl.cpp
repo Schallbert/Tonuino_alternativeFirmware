@@ -59,28 +59,28 @@ TEST_F(PlayerCtrl, AutoPlayCalledOnLoop)
 
 TEST_F(PlayerCtrl, volumeUp_belowMax_volumeIsIncreased)
 {
-    EXPECT_CALL(*m_pDfMini, getVolume()).WillOnce(Return(VOLUME_MAX - 1));
+    EXPECT_CALL(*m_pDfMini, getVolume()).WillRepeatedly(Return(VOLUME_MAX - 1));
     EXPECT_CALL(*m_pDfMini, increaseVolume()).Times(1);
     m_pMp3PlrCtrl->volume_up();
 }
 
 TEST_F(PlayerCtrl, volumeUp_Max_volumeNotIncreased)
 {
-    EXPECT_CALL(*m_pDfMini, getVolume()).WillOnce(Return(VOLUME_MAX));
+    EXPECT_CALL(*m_pDfMini, getVolume()).WillRepeatedly(Return(VOLUME_MAX));
     EXPECT_CALL(*m_pDfMini, increaseVolume()).Times(0); // not allowed to increase volume here
     m_pMp3PlrCtrl->volume_up();
 }
 
 TEST_F(PlayerCtrl, volumeDown_aboveMin_volumeIsDecreased)
 {
-    EXPECT_CALL(*m_pDfMini, getVolume()).WillOnce(Return(VOLUME_MIN + 1));
+    EXPECT_CALL(*m_pDfMini, getVolume()).WillRepeatedly(Return(VOLUME_MIN + 1));
     EXPECT_CALL(*m_pDfMini, decreaseVolume()).Times(1);
     m_pMp3PlrCtrl->volume_down();
 }
 
 TEST_F(PlayerCtrl, volumeDown_Min_volumeNotDecreased)
 {
-    EXPECT_CALL(*m_pDfMini, getVolume()).WillOnce(Return(VOLUME_MIN));
+    EXPECT_CALL(*m_pDfMini, getVolume()).WillRepeatedly(Return(VOLUME_MIN));
     EXPECT_CALL(*m_pDfMini, decreaseVolume()).Times(0); // not allowed to increase volume here
     m_pMp3PlrCtrl->volume_down();
 }
