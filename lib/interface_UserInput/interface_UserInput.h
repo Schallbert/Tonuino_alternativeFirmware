@@ -17,18 +17,22 @@ class UserInput
         the physical implementation of the user input.
     */
 public:
-    enum UserRequest_e
+    enum UserRequest_e // TODO: Refactor to CAPITAL
     {
-        NoAction,
-        PlayPause,
-        NextTrack,
-        PrevTrack,
-        IncVolume,
-        DecVolume,
-        DelCard,
+        NO_ACTION = 0,
+        PLAY_PAUSE,
+        PP_LONGPRESS, 
+        NEXT_TRACK,
+        PREV_TRACK,
+        INC_VOLUME,
+        DEC_VOLUME,
+        ERROR,
+        DelCard, // TODO: ADJUST AND DELETE
         Help,
         Abort,
-        Error
+        Error,
+        NUMBER_OF_REQUESTS
+
     };
 
 protected:
@@ -63,12 +67,12 @@ private:
 class UserInput_ClickEncoder : public UserInput
 {
     //Interface implementation for clickEncoder
-    //  NoAction = 0,
-    //  PlayPause = Click
-    //  NextTrack = Turn Right with card
-    //  PrevTrack = Turn Left with card
-    //  IncVolume = Pressed/Held Turn Right
-    //  DecVolume = Pressed/Held Turn Left
+    //  NO_ACTION = 0,
+    //  PLAY_PAUSE = Click
+    //  NEXT_TRACK = Turn Right with card
+    //  PREV_TRACK = Turn Left with card
+    //  INC_VOLUME = Pressed/Held Turn Right
+    //  DEC_VOLUME = Pressed/Held Turn Left
     //  DelCard =   Doubleclick without card
     //  ToggleLockInput = Doubleclick with card
     //  Help = Held without card
@@ -117,12 +121,12 @@ private:
 class UserInput_3Buttons : public UserInput
 {
     //Interface implementation for 3 buttons
-    //  NoAction = 0,
-    //  PlayPause = plpsButton Click
-    //  NextTrack = nextButton Click with card
-    //  PrevTrack = prevButton Click with card
-    //  IncVolume = nextButton Held
-    //  DecVolume = prevButton Held
+    //  NO_ACTION = 0,
+    //  PLAY_PAUSE = plpsButton Click
+    //  NEXT_TRACK = nextButton Click with card
+    //  PREV_TRACK = prevButton Click with card
+    //  INC_VOLUME = nextButton Held
+    //  DEC_VOLUME = prevButton Held
     //  DelCard =   plpsButton Doubleclick without card
     //  toggleLockInput = plpsButton Doubleclick with card
     //  Help = plpsButton Held without card

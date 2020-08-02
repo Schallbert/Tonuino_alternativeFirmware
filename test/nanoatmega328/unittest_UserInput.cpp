@@ -24,7 +24,7 @@ namespace userinput
         aUserInput->set_input_pins(1, 2, 3);
         aUserInput->init();
         UserInput::UserRequest_e userAction = aUserInput->get_user_request();
-        TEST_ASSERT_EQUAL(UserInput::UserRequest_e::NoAction, userAction);
+        TEST_ASSERT_EQUAL(UserInput::UserRequest_e::NO_ACTION, userAction);
     }
 
     void userInput_3Buttons_getUserRequest(void)
@@ -37,7 +37,7 @@ namespace userinput
         aUserInput->init();
         // Act
         aUserInput->set_card_detected(true);
-        for (int i = UserInput::UserRequest_e::NoAction; i != UserInput::UserRequest_e::Error; ++i)
+        for (int i = UserInput::UserRequest_e::NO_ACTION; i != UserInput::UserRequest_e::Error; ++i)
         {
             aUserInput->set_fake_user_request(static_cast<UserInput::UserRequest_e>(i));
             // Assert
@@ -55,7 +55,7 @@ namespace userinput
         aUserInput->init();
         aUserInput->set_card_detected(true);
         // Act
-        aUserInput->set_fake_user_request(UserInput::UserRequest_e::IncVolume);
+        aUserInput->set_fake_user_request(UserInput::UserRequest_e::INC_VOLUME);
         aUserInput->get_user_request(); //Throw away first result (as it will be passing anyway)
         aUserInput->userinput_service_isr();
         // test with longPress as a working service will invoke incVolume every LongPressRepeatInterval's cycle
@@ -64,7 +64,7 @@ namespace userinput
             i++;
             aUserInput->userinput_service_isr();
 
-        } while((aUserInput->get_user_request() != UserInput::UserRequest_e::IncVolume) && (i <= longPressRepeatInterval));
+        } while((aUserInput->get_user_request() != UserInput::UserRequest_e::INC_VOLUME) && (i <= longPressRepeatInterval));
         TEST_ASSERT_EQUAL_MESSAGE(longPressRepeatInterval, i, "should be equal to LongPressRepeatInterval (default: 400ms)");
     } 
 
@@ -89,7 +89,7 @@ namespace userinput
         aUserInput->set_input_pins(1, 2, 3);
         aUserInput->init();
         UserInput::UserRequest_e userAction = aUserInput->get_user_request();
-        TEST_ASSERT_EQUAL(UserInput::UserRequest_e::NoAction, userAction);
+        TEST_ASSERT_EQUAL(UserInput::UserRequest_e::NO_ACTION, userAction);
     }
 
    void userInput_encoder_getUserRequest(void)
@@ -99,7 +99,7 @@ namespace userinput
         aUserInput->init();
         // Act
         aUserInput->set_card_detected(true);
-        for (int i = UserInput::UserRequest_e::NoAction; i != UserInput::UserRequest_e::Error; ++i)
+        for (int i = UserInput::UserRequest_e::NO_ACTION; i != UserInput::UserRequest_e::Error; ++i)
         {
             aUserInput->set_fake_user_request(static_cast<UserInput::UserRequest_e>(i));
             // Assert

@@ -33,6 +33,16 @@ bool NfcTag::write_folder_to_card(const Folder &sourceFolder)
     return m_pMfrc522->writeCard(blockAddressToReadWrite, m_pBuffer);
 }
 
+bool NfcTag::erase_card()
+{
+    for (int i = 0; i < MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY; ++i)                             // 7-15: Empty
+    {
+        m_pBuffer[i] = 0x00;
+    }
+    return m_pMfrc522->writeCard(blockAddressToReadWrite, m_pBuffer);
+}
+
+
 bool NfcTag::read_folder_from_card(Folder &targetFolder)
 {
     if (m_pMfrc522->readCard(blockAddressToReadWrite, m_pBuffer))

@@ -58,8 +58,8 @@ private:
     Arduino_interface_pins* m_pPinCtrl {};
     Arduino_interface_com* m_pUsb {};
     Arduino_interface_delay* m_pDelayCtrl {};
-    Folder *m_pCurrentFolder {};
-    uint16_t m_ui32LullabyeTimeActiveSecs {};
+    Folder *m_pCurrentFolder {nullptr};
+    uint16_t m_ui32LullabyeTimeActiveSecs {0};
 };
 
 #endif // MP3PLAYERCONTROL_H

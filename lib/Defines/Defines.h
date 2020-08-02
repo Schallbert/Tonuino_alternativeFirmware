@@ -16,6 +16,7 @@
 #define MSG_TAGLINKED 310
 #define MSG_SELECTFILE 320
 #define MSG_HELP 330
+#define MSG_CONFIRMED 340
 
 //Pin defines ------------------------
 #define PINANALOG_RNDMGEN A1 //ADC1 24

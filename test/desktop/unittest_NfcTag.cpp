@@ -142,3 +142,14 @@ TEST_F(NfcTagReadWrite, Read_Successful_bufferSet_returnsCorrectFolderData)
     EXPECT_EQ(m_pTestFolder->get_play_mode(), resultFolder.get_play_mode());
     EXPECT_EQ(m_pTestFolder->get_track_count(), resultFolder.get_track_count());
 }
+
+TEST_F(NfcTagReadWrite, Erase)
+{
+    // Compare if input of writeCard buffer is really 0
+    emptyBuffer[MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY] = {};
+    EXPECT_CALL(*m_pMfrc, writeCard(_, arrayByteCompare(
+                                  emptyBuffer,
+                                  MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY
+                                  )));
+    m_pNfc->erase_card();
+}
