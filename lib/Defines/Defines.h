@@ -47,6 +47,9 @@
 #define FLASHSLOWMS 500
 #define FLASHQUICKMS 200
 
+//Folder specific data
+#define MAXFOLDERCOUNT 99 // up to 255 supported by player
+
 #define VOLUME_MAX 22
 #define VOLUME_MIN 2
 #define VOLUME_INIT 7

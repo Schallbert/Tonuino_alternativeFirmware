@@ -49,6 +49,8 @@ public:
     void setup_dependencies(EEPROM_interface* pEeprom, uint32_t ui32RndmSeed); // Dependency injection: Random seed & eeprom
     // Returns true if the folder can be fully setup and is ready to be used in other modules
     bool is_valid();
+    // Returns true if folder is setup with relevant data (id, track count, playmode)
+    bool is_initiated();
 
 private:
     // Sets the queue pointer to first track and initializes the queue based on playMode
@@ -57,8 +59,6 @@ private:
     void init_sorted_queue();
     // Creates a Pseudo random queue without repeat
     void shuffle_queue();
-    // Returns true if folder is setup with relevant data (id, track count, playmode)
-    bool is_initiated();
     // Returns true if folder is bound to necessary external dependencies (eeprom, random seed)
     bool is_dependency_set();
     // Returns true if folder's track queue has been initialized

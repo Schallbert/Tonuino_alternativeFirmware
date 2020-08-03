@@ -33,13 +33,11 @@ class InputManager
 public:
     enum eCardState
     {
-        NO_CARD = 0,        // allow certain actions (help, deleteCard etc)
-        ACTIVE_KNOWN_CARD,  // full playback
-        NEW_KNOWN_CARD,     // read card, get folder, full playback
-        UNKNOWN_CARD_MENU,  // play voice menu, link folder to card
-        DELETE_CARD_MENU,   // delete card menu
-        ERROR_CARD_NOREAD,  // cannot read card (link to folder error, reader error etc.)
-        ERROR_CARD_NOWRITE, // cannot write card (card missing, incompatible type, etc.)
+        NO_CARD = 0,       // allow certain actions (help, deleteCard etc)
+        ACTIVE_KNOWN_CARD, // full playback
+        NEW_KNOWN_CARD,    // read card, get folder, full playback
+        UNKNOWN_CARD_MENU, // play voice menu, link folder to card
+        DELETE_CARD_MENU,  // delete card menu
         NUMBER_OF_CARD_STATES
     };
 
@@ -49,9 +47,6 @@ public:
 public:
     eCardState getCardState_fromReader();
     UserInput::UserRequest_e getUserInput();
-    Folder readFolderFromCard();
-    void deleteCard();
-    void writeFolderToCard(Folder target);
 
 private:
     KeepAlive &m_keepAlive;
@@ -59,10 +54,9 @@ private:
     UserInput &m_userInput;
 
     Mp3PlayerControl &mp3;
-    NfcTag &m_nfcTagReader;
-    Folder m_currentFolder{}; // TODO: Should this object really HAVE the folder or only link to one?
+    NfcTag *m_nfcTagReader;
 
-    bool m_bWriteCardError {false};
+    bool m_bWriteCardError{false};
 };
 
 class OutputManager
@@ -91,21 +85,17 @@ private:
     // play help prompt
     void help() { m_mp3->play_specific_file(MSG_HELP); };
     // delete and unlink NFC card
-    void delt();
+    void delt(); // delete menu entry
     void delC(); // confirm deletion
-    void delA(); // abort deletion
     // link NFC card to SD card folder
-    void link() { linkCardToFolder(); };
+    void link(); // link menu entry
     void linC(); // confirm link
-    void linA(); // abort link
-    void linN(); // next command
-    void linP(); // prev command
+    void linN(); // link next command
+    void linP(); // link prev command
     // read and Play card's linked folder
-    void read() { m_mp3->play_folder(m_currentFolder); };
+    void read();
     // play error prompt
     void erro() { m_mp3->play_specific_file(MSG_ERROR); };
-    // play confirm prompt (press play...)
-    void conf(){};
     // aborts current menu or process
     void abrt();
 
@@ -113,19 +103,39 @@ private:
     // TODO: Start timeout for any menu we're going into
     void setInputStates(InputManager::eCardState cardState, UserInput::UserRequest_e userInput);
     void handleErrors();
-    void linkCardToFolder();  
+    void setCurrentFolder(Folder source);
 
 private:
     Mp3PlayerControl *m_mp3{};
     NfcTag *m_nfcTagReader{};
-    Folder *m_currentFolder{};
+    Folder m_currentFolder{};
+    LinkMenu linkMenu{};
 
     // dispatcher is a function pointer, belonging to this class
     typedef void (OutputManager::*dispatcher)();
-    InputManager::eCardState m_eCardState {InputManager::NO_CARD};
-    UserInput::UserRequest_e m_eUserInput {UserInput::NO_ACTION};
+    InputManager::eCardState m_eCardState{InputManager::NO_CARD};
+    UserInput::UserRequest_e m_eUserInput{UserInput::NO_ACTION};
 
-    bool m_bDeleteMenu {false};
-    bool m_bDeleteReady {false};
-    bool m_bLinkMenu  {false};
+    bool m_bDeleteMenu{false};
+    bool m_bDeleteReady{false};
+    bool m_bLinkMenu{false};
+};
+
+class LinkMenu
+{
+
+public:
+// returns true if configuring is complete
+    bool select_confirm();
+    void select_next();
+    void select_prev();
+    Folder get_folder();
+
+private:
+    Folder m_linkedFolder{};
+    // initialized for folderId state
+    bool m_bLinkState {false};
+    uint8_t m_ui8Option{1};
+    uint8_t m_ui8OptionRange{MAXFOLDERCOUNT};
+
 };
