@@ -1,88 +1,170 @@
 #include "System.h"
 
-InputManager::eCardState InputManager::getCardState()
+InputManager::eCardState InputManager::getCardState_fromReader()
 {
-    bool cardPresent = nfcTagReader.is_card_present();
-    userInput.set_card_detected(cardPresent);
-    UserInput::UserRequest_e input = userInput.get_user_request();
+    bool cardPresent = m_nfcTagReader.is_card_present();
+    m_userInput.set_card_detected(cardPresent); // TODO: needed?
+
+    if (m_bWriteCardError)
+    {
+        m_bWriteCardError = false;
+        return ERROR_CARD_NOWRITE;
+    }
+
     if (cardPresent)
     {
-        if (!nfcTagReader.is_new_card_present())
+        if (!m_nfcTagReader.is_new_card_present())
         {
-            handleKeepAliveLed.playback();
             return ACTIVE_KNOWN_CARD;
         }
         else // New card detected: runs once as new card is automatically set to ActiveCard
         {
-            if (nfcTagReader.read_folder_from_card(currentFolder))
+            if (m_nfcTagReader.read_folder_from_card(m_currentFolder))
             {
                 return NEW_KNOWN_CARD;
             }
             else // New card but folder cannot be read
             {
-                if (!nfcTagReader.is_known_card())
+                if (!m_nfcTagReader.is_known_card())
                 {
-                    hanleKeepAliveLed.newCard();
-                    return UNKNOWN_CARD;
+                    return UNKNOWN_CARD_MENU;
                 }
                 else
                 {
-                    return CARD_ERROR;
+                    return ERROR_CARD_NOREAD;
                 }
             }
         }
     }
     else // No card present
     {
-            handleKeepAliveLed.playback();
-            return NO_CARD;
-            
+        return NO_CARD;
     }
+}
+
+Folder InputManager::readFolderFromCard()
+{
+    return m_currentFolder;
+}
+
+void InputManager::writeFolderToCard(Folder target)
+{
+    if (!m_nfcTagReader.write_folder_to_card(target))
+    {
+        m_bWriteCardError = true;
+    }
+    else
+    {
+        m_currentFolder = target;
+    }
+}
+
+void InputManager::deleteCard()
+{
+    m_nfcTagReader.erase_card();
 }
 
 UserInput::UserRequest_e InputManager::getUserInput()
 {
-    return userInput.get_user_request();
+    return m_userInput.get_user_request();
 }
 
-void HandleNoCard::handle_playPause()
+void OutputManager::setInputStates(InputManager::eCardState cardState, UserInput::UserRequest_e userInput)
 {
-    m_mp3->play_specific_file(MSG_HELP);
+    // set to input values, modify if currently in menu
+    m_eCardState = cardState;
+    m_eUserInput = userInput;
+
+    // lock state in menu until complete
+    if (m_bDeleteMenu)
+    {
+        // wait for new card to be detected on reader
+        if(cardState == InputManager::NEW_KNOWN_CARD)
+        {
+            m_bDeleteReady = true;
+        }
+        m_eCardState = InputManager::DELETE_CARD_MENU;
+    }
+
+    if (m_bLinkMenu)
+    {
+        m_eCardState = InputManager::UNKNOWN_CARD_MENU;
+    }
 }
 
-bool OutputManager::runDispatcher(InputManager::eCardState cardState, UserInput::UserRequest_e userInput)
+bool OutputManager::runDispatcher()
 {
     // Check for index out of bounds
-    if ((InputManager::NO_CARD > cardState) ||
-        (cardState >= InputManager::NUMBER_OF_CARD_STATES) ||
-        (UserInput::NO_ACTION > userInput) ||
-        (userInput >= UserInput::NUMBER_OF_REQUESTS))
+    if ((InputManager::NO_CARD > m_eCardState) ||
+        (m_eCardState >= InputManager::NUMBER_OF_CARD_STATES) ||
+        (UserInput::NO_ACTION > m_eUserInput) ||
+        (m_eUserInput >= UserInput::NUMBER_OF_REQUESTS))
     {
         return false;
     }
+    // to not clutter dispatcher
+    handleErrors(); // checks for and handles card/userInput errors
 
     // initialize 2D-array of function pointers to address state-event transitions
     // dispatch table contains function pointers
     // cardStates = LINES, userInput = ROWS
-    static const dispatcher dispatchTable[InputManager::NUMBER_OF_CARD_STATES]
-                                         [UserInput::NUMBER_OF_REQUESTS] =
+
+    static const dispatcher dispatchTable[InputManager::NUMBER_OF_CARD_STATES - 2]
+                                         [UserInput::NUMBER_OF_REQUESTS - 1] =
                                              {
-                                                 //   NOACT, PL_PS, PP_LP, NEXT_, PREV_, INC_V, DEC_V, ERROR
-                                                 {&none, &help, &delt, &none, &none, &none, &none, &erro}, // NO_CARD
-                                                 {&none, &plPs, &delt, &next, &prev, &incV, &decV, &erro}, // ACTIVE_KNOWN_CARD,
-                                                 {&link, &link, &link, &link, &link, &link, &link, &link}, // NEW_KNOWN_CARD,
-                                                 {&none, &conf, &abrt, &next, &prev, &none, &none, &erro}, // UNKNOWN_CARD,
-                                                 {&none, &conf, &abrt, &none, &none, &none, &none, &erro}, // DELETE_CARD,
-                                                 {&erro, &erro, &erro, &erro, &erro, &erro, &erro, &erro}, // CARD_ERROR,
+                                                 //NOACT, PL_PS, PP_LP, NEXT_, PREV_, INC_V, DEC_V, ERROR
+                                                 {&none, &help, &delt, &none, &none, &none, &none}, // NO_CARD
+                                                 {&none, &plPs, &none, &next, &prev, &incV, &decV}, // ACTIVE_KNOWN_CARD,
+                                                 {&link, &link, &link, &link, &link, &link, &link}, // NEW_KNOWN_CARD,
+                                                 {&none, &conf, &abrt, &next, &prev, &none, &none}, // UNKNOWN_CARD_MENU,
+                                                 {&none, &delC, &delA, &none, &none, &none, &none}, // DELETE_CARD_MENU,
                                              };
-    dispatcher dispatchExecutor = dispatchTable[cardState][userInput];
+    dispatcher dispatchExecutor = dispatchTable[m_eCardState][m_eUserInput];
     (this->*dispatchExecutor)();
     // TODO: optimize dispatcher (link, erro!)
+    return true;
 }
 
-void HandleNoCard::userInput_setHandle_ppLongPress()
+// TODO: Add Debug output?
+void OutputManager::handleErrors()
 {
+    if (m_eCardState == InputManager::ERROR_CARD_NOREAD)
+    {
+        m_mp3->play_specific_file(MSG_ERROR_CARDREAD);
+        m_mp3->dont_skip_current_track();
+        m_eCardState = InputManager::NO_CARD;
+    }
+    if (m_eCardState == InputManager::ERROR_CARD_NOWRITE)
+    {
+        m_mp3->play_specific_file(MSG_ERROR_CARDWRITE);
+        m_mp3->dont_skip_current_track();
+        m_eCardState = InputManager::NO_CARD;
+    }
+
+    if (m_eUserInput == UserInput::ERROR)
+    {
+        m_mp3->play_specific_file(MSG_ERROR_USERINPUT);
+        m_mp3->dont_skip_current_track();
+        m_eUserInput = UserInput::NO_ACTION;
+    }
 }
+
+void OutputManager::delt()
+{
+    m_mp3->play_specific_file(MSG_DELETETAG);
+    m_mp3->dont_skip_current_track();
+    m_bDeleteMenu = true; // keep in delete menu
+}
+
+void OutputManager::delC()
+{
+    if(m_bDeleteReady)
+    {
+        
+    }
+}
+
+
 
 void OutputManager::handleInputs(InputManager::eCardState cardState,
                                  UserInput::UserRequest_e userInput)
