@@ -211,6 +211,20 @@ void OutputManager::linP()
     linkMenu.select_prev();
 }
 
+void LinkMenu::init_link()
+{
+    m_ui8Option = 0;
+    m_ui8OptionRange = MAXFOLDERCOUNT;
+    m_bLinkState = false;
+    //mp3.loop();
+    if (mp3.is_playing())
+    {
+        mp3.play_pause();
+    }
+    mp3.play_specific_file(MSG_UNKNOWNTAG);
+}
+
+
 bool LinkMenu::select_confirm()
 {
     static uint8_t folderId = 0;
@@ -218,9 +232,10 @@ bool LinkMenu::select_confirm()
     {
         // Confirms folder selection
         folderId = m_ui8Option;
-        m_ui8Option = 1;
+        m_ui8Option = 0;
         m_ui8OptionRange = static_cast<uint8_t>(Folder::ePlayMode::ENUM_COUNT);
         m_bLinkState = true;
+        mp3.play_specific_file(MSG_TAGLINKED); // Tell user to select playMode
     }
     else
     {
@@ -240,34 +255,60 @@ bool LinkMenu::select_confirm()
 
 void LinkMenu::select_next()
 {
-    // conditionally increment option
+    // conditionally increment option (rollover)
     ++m_ui8Option;
     if (m_ui8Option > m_ui8OptionRange)
     {
         m_ui8Option = 1;
     }
 
-    if (!m_bLinkState)
-    {
-        // prompt to obtain folderId
-
-    }
-    else
-    {
-        // prompt to obtain playMode
-    }
+    play_voice_prompt();
 }
 
 void LinkMenu::select_prev()
 {
-    // decrement option
-    // prompt option
+     // conditionally decrement option (rollover)
+    --m_ui8Option;
+    if (m_ui8Option > m_ui8OptionRange)
+    {
+        m_ui8Option = m_ui8OptionRange;
+    }
+
+    play_voice_prompt();
 }
 
 Folder LinkMenu::get_folder()
 {
-    return m_tempFolder;
+    return m_linkedFolder;
 }
+
+void LinkMenu::play_voice_prompt()
+{
+    //mp3.loop();
+    if (!m_bLinkState)
+    {
+        // prompt to obtain folderId
+        // play number of current choice, e.g. "one".
+        mp3.play_specific_file(static_cast<uint16_t>(m_ui8Option));
+        mp3.dont_skip_current_track();
+
+        // Preview: Play first track from folder to link
+        Folder previewFolder = Folder(m_ui8Option, Folder::ONELARGETRACK, 1);
+        // TODO: SOLVE SOMEWHERE ELSE?!
+        previewFolder.setup_dependencies(&eeprom, 0);
+        mp3.play_folder(&previewFolder);
+    }
+    else
+    {
+        // prompt to obtain playMode
+        // play number of current choice, e.g. "one".
+        mp3.play_specific_file(static_cast<uint16_t>(MSG_TAGLINKED + m_ui8Option));
+        mp3.dont_skip_current_track();
+    }
+}
+
+
+
 
 void OutputManager::handleInputs(InputManager::eCardState cardState,
                                  UserInput::UserRequest_e userInput)
@@ -323,7 +364,6 @@ void OutputManager::handleInputs(InputManager::eCardState cardState,
         break;
     }
 }
-
 
 bool System::delete_link_tagToFolder()
 {
@@ -500,79 +540,6 @@ void System::playback_handle_user_input(UserInput &aUserInput, Mp3PlayerControl 
         mp3.play_specific_file(MSG_ERROR);
         mp3.dont_skip_current_track();
         break;
-    }
-}
-
-uint8_t handle_user_input_folderId(uint8_t numberOfOptions, uint16_t startMessage, bool returnValuesOffsetStartMessage,
-                                   bool previewSelectedFolder, uint8_t defaultValue)
-{
-    uint8_t returnValue = defaultValue;
-    uint8_t lastReturnValue = defaultValue;
-    uint16_t messageOffset = (uint8_t)returnValuesOffsetStartMessage * startMessage;
-    UserInput::UserRequest_e userAction = UserInput::NO_ACTION;
-    if (startMessage == 0)
-    {
-        return defaultValue; // invalid function call
-    }
-    // Stop track if playing
-    if (mp3.is_playing())
-    {
-        mp3.play_pause();
-    }
-    mp3.play_specific_file(startMessage);
-    mp3.dont_skip_current_track();
-#if DEBUGSERIAL
-    usbSerial.com_println("voiceMenu() option: ");
-    usbSerial.com_print(numberOfOptions);
-#endif
-    aUserInput->set_card_detected(true); // needed to detect Abort signal
-    // Play prompt and detect user input
-    while (true)
-    {
-        lastReturnValue = returnValue;
-        userAction = aUserInput->get_user_request();
-        mp3.loop();
-        switch (userAction)
-        {
-        case UserInput::NO_ACTION:
-            break;
-        case UserInput::Abort:
-#if DEBUGSERIAL
-            usbSerial.com_println("Aborted!");
-#endif
-            mp3.play_specific_file(MSG_ABORTEED);
-            return defaultValue;
-        case UserInput::PLAY_PAUSE:
-            if (returnValue != 0)
-            {
-#if DEBUGSERIAL
-                usbSerial.com_print(returnValue);
-#endif
-                return returnValue;
-            }
-            break;
-        case UserInput::NEXT_TRACK:
-            returnValue = min(returnValue + 1, numberOfOptions);
-            break;
-        case UserInput::PREV_TRACK:
-            returnValue = max(returnValue - 1, 1);
-            break;
-        default:
-            break;
-        }
-        if (lastReturnValue != returnValue)
-        {
-            // play number of current choice, e.g. "one".
-            mp3.play_specific_file(messageOffset + returnValue);
-            mp3.dont_skip_current_track();
-            if (previewSelectedFolder)
-            {
-                // Preview: Play first track from folder to link
-                Folder previewFolder = Folder(returnValue, Folder::ONELARGETRACK, 1);
-                previewFolder.setup_dependencies(&eeprom, 0);
-                mp3.play_folder(&previewFolder);
-            }
-        }
     }
 }
 

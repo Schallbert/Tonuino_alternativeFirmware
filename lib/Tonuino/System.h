@@ -103,7 +103,6 @@ private:
     // TODO: Start timeout for any menu we're going into
     void setInputStates(InputManager::eCardState cardState, UserInput::UserRequest_e userInput);
     void handleErrors();
-    void setCurrentFolder(Folder source);
 
 private:
     Mp3PlayerControl *m_mp3{};
@@ -126,16 +125,20 @@ class LinkMenu
 
 public:
 // returns true if configuring is complete
+    void init_link();
     bool select_confirm();
     void select_next();
     void select_prev();
     Folder get_folder();
 
 private:
+    void play_voice_prompt();
+
+private:
     Folder m_linkedFolder{};
     // initialized for folderId state
     bool m_bLinkState {false};
-    uint8_t m_ui8Option{1};
-    uint8_t m_ui8OptionRange{MAXFOLDERCOUNT};
+    uint8_t m_ui8Option{0};
+    uint8_t m_ui8OptionRange{0};
 
 };
