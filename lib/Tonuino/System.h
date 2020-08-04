@@ -108,7 +108,7 @@ private:
     Mp3PlayerControl *m_mp3{};
     NfcTag *m_nfcTagReader{};
     Folder m_currentFolder{};
-    LinkMenu linkMenu{};
+    LinkMenu linkMenu{m_mp3};
 
     // dispatcher is a function pointer, belonging to this class
     typedef void (OutputManager::*dispatcher)();
@@ -120,25 +120,36 @@ private:
     bool m_bLinkMenu{false};
 };
 
+/* 
+Once a new card is detected, It has to be linked to an existing folder on the SD card.
+*/
 class LinkMenu
 {
+public:
+    LinkMenu(Mp3PlayerControl *mp3);
 
 public:
-// returns true if configuring is complete
+    // initializes linking process and plays voice prompt
     void init_link();
+    // returns true if configuring is complete
     bool select_confirm();
+    // selects next menu item, e.g. next folderId
     void select_next();
+    // selects previous menu item, e.g. previous folderId
     void select_prev();
+    // returns a valid folder object when configuring is complete.
     Folder get_folder();
 
 private:
+    // plays the voice prompt selected option, adjusted to current menu state
     void play_voice_prompt();
 
 private:
+    // needed for menu to be able to play voice prompts & previews
+    Mp3PlayerControl *m_mp3{};
     Folder m_linkedFolder{};
-    // initialized for folderId state
-    bool m_bLinkState {false};
+    // initialized for folderId state of linkMenu
+    bool m_bLinkState{false};
     uint8_t m_ui8Option{0};
     uint8_t m_ui8OptionRange{0};
-
 };

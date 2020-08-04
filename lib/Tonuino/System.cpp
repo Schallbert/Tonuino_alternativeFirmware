@@ -157,44 +157,7 @@ void OutputManager::abrt()
     m_mp3->play_specific_file(MSG_ABORTEED);
 }
 
-/* 
-Once a new card is detected, It has to be linked to an existing folder on the SD card.
-establish_link_tagToFolder() asks the user to select a folder on the SD card 
-and to specify a playmode
-*/
-void OutputManager::link()
-{
-    m_bLinkMenu = true;
-    static uint8_t folderId = 0;
-    static uint8_t trackCount = 0;
-    static Folder::ePlayMode playMode = Folder::UNDEFINED;
-    Folder tempFolder;
-    // Get folder number on SD card
-    folderId = voice_menu(
-        99,
-        MSG_UNKNOWNTAG,
-        false,
-        true,
-        0);
-    // user input: Which play mode?
-    playMode = static_cast<Folder::ePlayMode>(voice_menu(
-        static_cast<uint8_t>(Folder::ePlayMode::ENUM_COUNT),
-        MSG_TAGLINKED,
-        true,
-        false,
-        static_cast<uint8_t>(Folder::ePlayMode::ALBUM)));
-    trackCount = mp3.get_trackCount_of_folder(folderId);
-    // Create new folder object and copy to main's folder object
-    tempFolder = Folder(folderId, playMode, trackCount);
-    tempFolder.setup_dependencies(&eeprom, init_random_generator());
-    if (tempFolder.is_valid())
-    {
-        // Success! copy temporary folder to new folder.
-        newFolder = tempFolder;
-        return true;
-    }
-    return false;
-}
+
 
 void OutputManager::linC()
 {
@@ -211,17 +174,22 @@ void OutputManager::linP()
     linkMenu.select_prev();
 }
 
+LinkMenu::LinkMenu(Mp3PlayerControl *mp3)
+{
+    m_mp3 = mp3;
+}
+
 void LinkMenu::init_link()
 {
     m_ui8Option = 0;
     m_ui8OptionRange = MAXFOLDERCOUNT;
     m_bLinkState = false;
     //mp3.loop();
-    if (mp3.is_playing())
+    if (m_mp3->is_playing())
     {
-        mp3.play_pause();
+        m_mp3->play_pause();
     }
-    mp3.play_specific_file(MSG_UNKNOWNTAG);
+    m_mp3->play_specific_file(MSG_UNKNOWNTAG);
 }
 
 
@@ -235,13 +203,13 @@ bool LinkMenu::select_confirm()
         m_ui8Option = 0;
         m_ui8OptionRange = static_cast<uint8_t>(Folder::ePlayMode::ENUM_COUNT);
         m_bLinkState = true;
-        mp3.play_specific_file(MSG_TAGLINKED); // Tell user to select playMode
+        m_mp3->play_specific_file(MSG_TAGLINKED); // Tell user to select playMode
     }
     else
     {
         // Confirms playmode selection.
         Folder::ePlayMode playMode = static_cast<Folder::ePlayMode>(m_ui8Option);
-        uint8_t trackCount = mp3.get_trackCount_of_folder(folderId);
+        uint8_t trackCount = m_mp3->get_trackCount_of_folder(folderId);
         // Create new folder object and copy to main's folder object
         Folder tempFolder = Folder(folderId, playMode, trackCount);
         if (tempFolder.is_initiated())
@@ -284,30 +252,26 @@ Folder LinkMenu::get_folder()
 
 void LinkMenu::play_voice_prompt()
 {
-    //mp3.loop();
+    //mp3.loop(); // TODO: Check if needed
     if (!m_bLinkState)
     {
-        // prompt to obtain folderId
-        // play number of current choice, e.g. "one".
-        mp3.play_specific_file(static_cast<uint16_t>(m_ui8Option));
-        mp3.dont_skip_current_track();
+        // play folderId of current choice, e.g. "one".
+        m_mp3->play_specific_file(static_cast<uint16_t>(m_ui8Option));
+        m_mp3->dont_skip_current_track();
 
-        // Preview: Play first track from folder to link
+        // play preview of selected folder contents
         Folder previewFolder = Folder(m_ui8Option, Folder::ONELARGETRACK, 1);
         // TODO: SOLVE SOMEWHERE ELSE?!
         previewFolder.setup_dependencies(&eeprom, 0);
-        mp3.play_folder(&previewFolder);
+        m_mp3->play_folder(&previewFolder);
     }
     else
     {
-        // prompt to obtain playMode
-        // play number of current choice, e.g. "one".
-        mp3.play_specific_file(static_cast<uint16_t>(MSG_TAGLINKED + m_ui8Option));
-        mp3.dont_skip_current_track();
+        // Prompt selected playMode
+        m_mp3->play_specific_file(static_cast<uint16_t>(MSG_TAGLINKED + m_ui8Option));
+        m_mp3->dont_skip_current_track();
     }
 }
-
-
 
 
 void OutputManager::handleInputs(InputManager::eCardState cardState,
@@ -392,46 +356,6 @@ bool System::delete_link_tagToFolder()
     }
 }
 
-void HandleMp3::activeKnownCardPresent(UserRequest_e userAction)
-{
-    mp3.loop();
-    switch (userAction)
-    {
-    case UserInput::NO_ACTION:
-        break;
-    case UserInput::PLAY_PAUSE:
-        mp3.play_pause();
-        break;
-    case UserInput::NEXT_TRACK:
-        mp3.next_track();
-        break;
-    case UserInput::PREV_TRACK:
-        mp3.prev_track();
-        break;
-    case UserInput::INC_VOLUME:
-        mp3.volume_up();
-        break;
-    case UserInput::DEC_VOLUME:
-        mp3.volume_down();
-        break;
-    case UserInput::DelCard:
-        break;
-    case UserInput::Help:
-        mp3.play_specific_file(MSG_HELP);
-        break;
-    case UserInput::Abort:
-        mp3.play_specific_file(MSG_ABORTEED);
-        break;
-    case UserInput::Error:
-#if DEBUGSERIAL
-        usbSerial.com_println("UserInput: Error.");
-#endif
-        mp3.play_specific_file(MSG_ERROR);
-        mp3.dont_skip_current_track();
-        break;
-    }
-}
-
 void HandleMp3::newKnownCardPresent(Folder &currentFolder)
 {
     mp3.play_folder(currentFolder); //Folder setup and ready to play
@@ -460,11 +384,6 @@ void HandleMp3::DELETE_CARD(UserRequest_e userAction)
     }
 }
 
-void HandleMp3::CARD_ERROR()
-{
-    mp3.play_specific_file(MSG_ERROR);
-    mp3.dont_skip_current_track();
-}
 
 void HandleKeepAliveLed::playback()
 {
@@ -499,49 +418,8 @@ void HandleKeepAliveAndLed::deleteCard()
     aLed.set_led_behavior(StatusLed::flash_quick);
 }
 
-void System::playback_handle_user_input(UserInput &aUserInput, Mp3PlayerControl &mp3, bool cardPresent)
-{
-    // Tell interface if a known card is present.
-    aUserInput->set_card_detected(cardPresent);
-    UserInput::UserRequest_e userAction = aUserInput->get_user_request();
-    switch (userAction)
-    {
-    case UserInput::NO_ACTION:
-        break;
-    case UserInput::PLAY_PAUSE:
-        mp3.play_pause();
-        break;
-    case UserInput::NEXT_TRACK:
-        mp3.next_track();
-        break;
-    case UserInput::PREV_TRACK:
-        mp3.prev_track();
-        break;
-    case UserInput::INC_VOLUME:
-        mp3.volume_up();
-        break;
-    case UserInput::DEC_VOLUME:
-        mp3.volume_down();
-        break;
-    case UserInput::DelCard:
-        mp3.play_specific_file(MSG_DELETETAG); // prompt to have tag placed that shall be deleted.
-        mp3.dont_skip_current_track();
-        deleteCardRequested = true;
-    case UserInput::Help:
-        mp3.play_specific_file(MSG_HELP);
-        break;
-    case UserInput::Abort:
-        mp3.play_specific_file(MSG_ABORTEED);
-        break;
-    case UserInput::Error:
-#if DEBUGSERIAL
-        usbSerial.com_println("UserInput: Error.");
-#endif
-        mp3.play_specific_file(MSG_ERROR);
-        mp3.dont_skip_current_track();
-        break;
-    }
-}
+
+
 
 // dependencies: setup_folder(), mp3 (pausing), nfctagreader (write to card), delay
 void setup_card()
