@@ -11,7 +11,7 @@ InputManager::eCardState InputManager::getCardState_fromReader()
         {
             return ACTIVE_KNOWN_CARD;
         }
-        else // New card detected: runs once as new card is automatically set to ActiveCard
+        else // New card detected: runs once as new card is automatically set_state to ActiveCard
         {
             Folder dummyFolder;
             if (m_nfcTagReader->read_folder_from_card(dummyFolder))
@@ -40,28 +40,34 @@ UserInput::UserRequest_e InputManager::getUserInput()
 
 void OutputManager::setInputStates(InputManager::eCardState cardState, UserInput::UserRequest_e userInput)
 {
-    // set to input values, modify if currently in menu
+    // set_state to input values, modify if currently in menu
     m_eCardState = cardState;
     m_eUserInput = userInput;
 
-    // lock state in menu until complete
-    if (m_bDeleteMenu)
+    m_sysPwr.set_playback(m_mp3->is_playing());
+
+    // lock state in menu, waiting for card placing that shall be deleted
+    if ((m_deleteMenu.get_state(DeleteMenu::DELETE_MENU)) &&
+        (cardState == InputManager::NEW_KNOWN_CARD))
     {
-        if (cardState == InputManager::NEW_KNOWN_CARD) // wait for new card
-        {
-            m_bDeleteReady = true;
-        }
-        m_eCardState = InputManager::DELETE_CARD_MENU;
+        m_deleteMenu.set_state(DeleteMenu::DELETE_READY);
     }
 
-    if (m_bLinkMenu)
+    if (!m_deleteMenu.get_state(DeleteMenu::NO_MENU))
     {
-        m_eCardState = InputManager::UNKNOWN_CARD_MENU; // keeps in link menu
+        m_eCardState = InputManager::DELETE_CARD_MENU; // delete menu entered
+        m_sysPwr.set_delMenu(true);
     }
 
     if (cardState == InputManager::UNKNOWN_CARD_MENU)
     {
-        link(); // runs card link method on UNKNOWN_CARD detected
+        m_linkMenu.set_state(true); // runs card link method on UNKNOWN_CARD detected
+        m_sysPwr.set_delMenu(false);
+    }
+
+    if (m_linkMenu.get_state())
+    {
+        m_eCardState = InputManager::UNKNOWN_CARD_MENU; // keeps in link menu
     }
 }
 
@@ -97,7 +103,6 @@ bool OutputManager::runDispatcher()
     return true;
 }
 
-// TODO: Add Debug output?
 void OutputManager::handleErrors()
 {
     // TODO: refactor?
@@ -129,18 +134,16 @@ void OutputManager::delt()
 {
     m_mp3->play_specific_file(MSG_DELETETAG);
     m_mp3->dont_skip_current_track();
-    m_bDeleteMenu = true; // keep in delete menu
+    m_deleteMenu.set_state(DeleteMenu::DELETE_MENU); // keep in delete menu
 }
 
 void OutputManager::delC()
 {
-    if (m_bDeleteReady)
+    if (m_deleteMenu.get_state(DeleteMenu::DELETE_READY))
     {
         // Do delete the card.
         m_mp3->play_specific_file(MSG_CONFIRMED);
-        // TODO: How to call InputManager's delete method?
-        m_bDeleteReady = false;
-        m_bDeleteMenu = false;
+        m_deleteMenu.set_state(DeleteMenu::NO_MENU);
         m_nfcTagReader->erase_card();
     }
     else
@@ -151,27 +154,41 @@ void OutputManager::delC()
 
 void OutputManager::abrt()
 {
-    m_bDeleteMenu = false;
-    m_bDeleteReady = false;
-    m_bLinkMenu = false;
+    m_deleteMenu.set_state(DeleteMenu::NO_MENU); // reset menu state
+    m_linkMenu.set_state(false);
     m_mp3->play_specific_file(MSG_ABORTEED);
 }
 
-
-
 void OutputManager::linC()
 {
-    linkMenu.select_confirm();
+    if (m_linkMenu.select_confirm())
+    {
+        // link folder information complete! Obtain folder and save to card.
+        m_currentFolder = m_linkMenu.get_folder();
+        m_linkMenu.set_state(false);
+        if (m_nfcTagReader->write_folder_to_card(m_currentFolder))
+        {
+            m_mp3->play_specific_file(MSG_TAGCONFSUCCESS);
+            m_mp3->dont_skip_current_track();
+            read();
+        }
+        else
+        {
+            m_mp3->play_specific_file(MSG_ERROR);
+            m_mp3->dont_skip_current_track();
+            abrt();
+        }
+    }
 }
 
 void OutputManager::linN()
 {
-    linkMenu.select_next();
+    m_linkMenu.select_next();
 }
 
 void OutputManager::linP()
 {
-    linkMenu.select_prev();
+    m_linkMenu.select_prev();
 }
 
 LinkMenu::LinkMenu(Mp3PlayerControl *mp3)
@@ -179,11 +196,28 @@ LinkMenu::LinkMenu(Mp3PlayerControl *mp3)
     m_mp3 = mp3;
 }
 
-void LinkMenu::init_link()
+void LinkMenu::set_state(bool linkMenu)
 {
+    if (linkMenu)
+    {
+        if (!m_bMenuState)
+        {
+            init();
+        }
+    }
+    else
+    {
+        leave();
+    }
+}
+
+void LinkMenu::init()
+{
+    m_bMenuState = true;
+    m_bLinkState = false;
     m_ui8Option = 0;
     m_ui8OptionRange = MAXFOLDERCOUNT;
-    m_bLinkState = false;
+
     //mp3.loop();
     if (m_mp3->is_playing())
     {
@@ -192,6 +226,13 @@ void LinkMenu::init_link()
     m_mp3->play_specific_file(MSG_UNKNOWNTAG);
 }
 
+void LinkMenu::leave()
+{
+    m_bMenuState = false;
+    m_bLinkState = false;
+    m_ui8Option = 0;
+    m_ui8OptionRange = 0;
+}
 
 bool LinkMenu::select_confirm()
 {
@@ -217,6 +258,11 @@ bool LinkMenu::select_confirm()
             m_linkedFolder = tempFolder; // Success! copy temporary folder to new folder.
             return true;
         }
+        else
+        {
+            m_mp3->play_specific_file(MSG_ERROR_FOLDER);
+            m_mp3->dont_skip_current_track();
+        }
     }
     return false;
 }
@@ -235,7 +281,7 @@ void LinkMenu::select_next()
 
 void LinkMenu::select_prev()
 {
-     // conditionally decrement option (rollover)
+    // conditionally decrement option (rollover)
     --m_ui8Option;
     if (m_ui8Option > m_ui8OptionRange)
     {
@@ -243,11 +289,6 @@ void LinkMenu::select_prev()
     }
 
     play_voice_prompt();
-}
-
-Folder LinkMenu::get_folder()
-{
-    return m_linkedFolder;
 }
 
 void LinkMenu::play_voice_prompt()
@@ -273,228 +314,34 @@ void LinkMenu::play_voice_prompt()
     }
 }
 
-
-void OutputManager::handleInputs(InputManager::eCardState cardState,
-                                 UserInput::UserRequest_e userInput)
+Folder LinkMenu::get_folder()
 {
-    switch (cardState)
-    {
-        mp3.loop();
-    case InputManager::NO_CARD:
-        if (!m_deleteCardRequested)
-        {
-            // Set LED&keepAlive playback
-            // Allow certain mp3 commands
-            handle_playPause = &(Mp3PlayerControl::play_pause);
-        }
-        else
-        {
-            // Set LED&keepAlive delete
-            // Allow abort
-            // Start timeout
-        }
-        break;
-    case InputManager::ACTIVE_KNOWN_CARD:
-        // Set LED&keepAlive playback
-        // Allow all mp3 commands
-        break;
-    case InputManager::NEW_KNOWN_CARD:
-        if (!m_deleteCardRequested)
-        {
-            // read card
-            // link folder
-            // play card
-            // allow all mp3 commands
-        }
-        else
-        {
-            // ask for confirmation
-            // allow abort
-            // delete card
-            //deleteCardRequested = false;
-        }
-
-        break;
-    case InputManager::UNKNOWN_CARD:
-        // set LED&keepAlive newCard
-        // play voice menu
-        // link folder to card
-        break;
-
-    default:
-        // play error message
-        // CARD_ERROR
-
-        break;
-    }
+    return m_linkedFolder;
 }
 
-bool System::delete_link_tagToFolder()
+void KeepAlive_StatusLed::set_playback(bool isPlaying)
 {
-    bool newCardPresent = false;
-    handleKeepAliveLed.DELETE_CARD();
-    UserInput::UserRequest_e userAction = UserInput::NO_ACTION;
-    while (!newCardPresent) // TODO: ADD TIMEOUT!
-    {
-        // Wait for new card to be detected, meanwhile allow to abort
-        aUserInput->set_card_detected(newCardPresent);
-        userAction = aUserInput->get_user_request();
-        handleMp3.DELETE_CARD(userAction);
-        if (userAction == UserInput::Abort)
-        {
-            return; // deletion aborted
-        }
-        else if (userAction == UerInput::PLAY_PAUSE)
-        {
-            nfcTagReader.delete_card();
-#if DEBUGSERIAL
-            usbSerial.com_println("Card deleted");
-#endif
-            return;
-        }
-        newCardPresent = nfcTagReader.is_new_card_present();
-    }
-}
-
-void HandleMp3::newKnownCardPresent(Folder &currentFolder)
-{
-    mp3.play_folder(currentFolder); //Folder setup and ready to play
-}
-
-void HandleMp3::newUnknownCardPresent()
-{
-    mp3.play_specific_file(MSG_UNKNOWNTAG);
-    mp3.dont_skip_current_track();
-}
-
-void HandleMp3::DELETE_CARD(UserRequest_e userAction)
-{
-    switch (userAction)
-    {
-    case UserInput::NO_ACTION:
-        break;
-    case UserInput::DelCard:
-        mp3.play_specific_file(MSG_DELETETAG); // prompt to have tag placed that shall be deleted.
-        mp3.dont_skip_current_track();
-        break;
-    case UserINput::PLAY_PAUSE:
-        mp3.play_specific_file(MSG_CONFIRMED); // TODO voice prompt
-        mp3.dont_skip_current_track();
-        break;
-    }
-}
-
-
-void HandleKeepAliveLed::playback()
-{
-    static bool wasPlaying = true; // init true to make check on startup
-    if (wasPlaying == isPlaying)
-    {
-        return; // no status change.
-    }
-
     if (isPlaying)
     {
-        aKeepAlive.set_idle_timer(false);
-        aLed.set_led_behavior(StatusLed::solid);
+        m_keep.set_idle_timer(false); // Playing
+        m_ed.set_led_behavior(StatusLed::solid);
     }
     else
     {
-        aKeepAlive.set_idle_timer(true);
-        aLed.set_led_behavior(StatusLed::flash_slow);
+        m_keep.set_idle_timer(true); // Paused
+        m_led.set_led_behavior(StatusLed::flash_slow);
     }
-    wasPlaying = isPlaying;
 }
 
-void HandleKeepAliveAndLed::newCard()
+void KeepAlive_StatusLed::set_delMenu(bool isDelMenu)
 {
-    aKeepAlive.set_idle_timer(false);
-    aLed.set_led_behavior(StatusLed::dim);
-}
-
-void HandleKeepAliveAndLed::deleteCard()
-{
-    aKeepAlive.set_idle_timer(false);
-    aLed.set_led_behavior(StatusLed::flash_quick);
-}
-
-
-
-
-// dependencies: setup_folder(), mp3 (pausing), nfctagreader (write to card), delay
-void setup_card()
-{
-#if DEBUGSERIAL
-    usbSerial.com_println("setup_card()");
-#endif
-    if (setup_folder(currentFolder))
+    m_keep.set_idle_timer(false);
+    if (isDelMenu)
     {
-        // Configuring card was successful.
-        if (mp3.is_playing())
-        {
-            mp3.play_pause();
-        }
-        if (nfcTagReader.write_folder_to_card(currentFolder))
-        {
-            mp3.play_specific_file(MSG_TAGCONFSUCCESS); //WRITE_CARD
-        }
-        else
-        {
-            mp3.play_specific_file(MSG_ERROR); //WRITE_CARD
-        }
-    }
-    delayControl.delay_ms(WAIT_DFMINI_READY);
-}
-void System::handleCardState()
-{
-    bool cardPresent = nfcTagReader.is_card_present();
-    aUserInput->set_card_detected(cardPresent);
-
-    handleKeepAliveLed.playback() if (cardPresent)
-    {
-        if (!nfcTagReader.is_new_card_present())
-        {
-            return ACTIVE_KNOWN_CARD;
-            if (deletionRequested)
-            {
-                delete_link_tagToFolder(); // card cannot be fully read: clear
-                deletionRequested = false;
-            }
-            else
-            {
-                // Active Card present Accept user input for playback control.
-                handleMp3.activeKnownCardPresent(userAction); // Autoplay and DFmini loop
-            }
-        }
-        else // New card detected: runs once as new card is automatically set to ActiveCard
-        {
-
-            handleKeepAliveLed.newCard();
-            if (nfcTagReader.read_folder_from_card(currentFolder))
-            {
-                return NEW_KNOWN_CARD;
-                currentFolder.setup_dependencies(&eeprom, init_random_generator());
-                handleMp3.newKnownCardPresent(currentFolder);
-            }
-            else
-            {
-                if (!nfcTagReader.is_known_card())
-                {
-                    return UNKNOWN_CARD;
-                    handleMp3.newUnknownCardPresent();
-                    establish_link_tagToFolder(); // unknown card: configure
-                }
-                else
-                {
-                    return CARD_ERROR;
-                    handleMp3.CARD_ERROR();
-                    delete_link_tagToFolder(); // card cannot be fully read: clear
-                }
-            }
-        }
+        m_led.set_led_behavior(StatusLed::flash_quick); // Delete Menu
     }
     else
     {
-        NO_CARD;
+        m_led.set_led_behavior(StatusLed::flash_slow); // Link Menu
     }
 }

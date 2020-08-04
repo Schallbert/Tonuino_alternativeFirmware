@@ -88,7 +88,6 @@ private:
     void delt(); // delete menu entry
     void delC(); // confirm deletion
     // link NFC card to SD card folder
-    void link(); // link menu entry
     void linC(); // confirm link
     void linN(); // link next command
     void linP(); // link prev command
@@ -108,16 +107,33 @@ private:
     Mp3PlayerControl *m_mp3{};
     NfcTag *m_nfcTagReader{};
     Folder m_currentFolder{};
-    LinkMenu linkMenu{m_mp3};
+    LinkMenu m_linkMenu{m_mp3};
+    DeleteMenu m_deleteMenu{};
+    KeepAlive_StatusLed m_sysPwr{};
 
     // dispatcher is a function pointer, belonging to this class
     typedef void (OutputManager::*dispatcher)();
     InputManager::eCardState m_eCardState{InputManager::NO_CARD};
     UserInput::UserRequest_e m_eUserInput{UserInput::NO_ACTION};
+};
 
-    bool m_bDeleteMenu{false};
-    bool m_bDeleteReady{false};
-    bool m_bLinkMenu{false};
+// TODO: ADD MENU TIMEOUT!
+class DeleteMenu
+{
+public:
+    enum eDelMenuState
+    {
+        NO_MENU = 0,
+        DELETE_MENU,
+        DELETE_READY
+    };
+
+public:
+    void set_state(eDelMenuState state);
+    bool get_state(eDelMenuState state) { return (m_eMenuState == state); };
+
+private:
+    eDelMenuState m_eMenuState{NO_MENU};
 };
 
 /* 
@@ -129,8 +145,10 @@ public:
     LinkMenu(Mp3PlayerControl *mp3);
 
 public:
-    // initializes linking process and plays voice prompt
-    void init_link();
+    // initializes linking process and plays voice prompt if TRUE, else reset object.
+    void set_state(bool state);
+    // returns true if link menu has been initialized
+    bool get_state() { return m_bMenuState; };
     // returns true if configuring is complete
     bool select_confirm();
     // selects next menu item, e.g. next folderId
@@ -143,13 +161,33 @@ public:
 private:
     // plays the voice prompt selected option, adjusted to current menu state
     void play_voice_prompt();
+    // Initializes values and prompts for folderId.
+    void init();
+    // resets internal state and values.
+    void leave();
 
 private:
     // needed for menu to be able to play voice prompts & previews
     Mp3PlayerControl *m_mp3{};
     Folder m_linkedFolder{};
     // initialized for folderId state of linkMenu
+    bool m_bMenuState{false};
     bool m_bLinkState{false};
     uint8_t m_ui8Option{0};
     uint8_t m_ui8OptionRange{0};
+};
+
+// controls keepalive relay and status LED output.
+class KeepAlive_StatusLed
+{
+
+public:
+// assumes that mp3 is playing on TRUE
+    void set_playback(bool isPlaying);
+    // assumes delete Menu active on TRUE, link Menu active on FALSE.
+    void set_delMenu(bool isDelMenu);
+
+    private:
+    StatusLed m_led{};
+    KeepAlive m_keep{};
 };
