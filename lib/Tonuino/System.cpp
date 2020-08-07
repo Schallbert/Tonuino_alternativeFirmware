@@ -1,6 +1,41 @@
 #include "System.h"
 
-InputManager::eCardState InputManager::getCardState_fromReader()
+void System::setup()
+{
+    m_KeepAlive.keep_alive(); //Activate KeepAlive to maintain power supply to circuits
+    // Initializes all objects needed
+    
+
+
+#if DEBUGSERIAL
+    usbSerial.com_begin(9600); // Some debug output via serial
+    usbSerial.com_println("Booting");
+#endif
+
+    aLed.set_led_behavior(StatusLed::solid);
+    //Init Timer1 for Encoder read
+    //init UserInput
+    aUserInput->set_input_pins(PINPLPS, PINPREV, PINNEXT);
+    aUserInput->init();
+
+#if DEBUGSERIAL
+    usbSerial.com_println("Started.");
+#endif
+}
+
+uint32_t System::initRandomGenerator()
+{
+    uint32_t ADC_LSB;
+    uint32_t ADCSeed;
+    for (uint8_t i = 0; i < 128; i++)
+    {
+        ADC_LSB = pinControl.analog_read(PINANALOG_RNDMGEN) & 0x1;
+        ADCSeed ^= ADC_LSB << (i % 32);
+    }
+    return ADCSeed; // Init Arduino dependencies generator
+}
+
+InputManager::eCardState InputManager::getCardState()
 {
     bool cardPresent = m_nfcTagReader->is_card_present();
     m_userInput.set_card_detected(cardPresent); // TODO: needed?

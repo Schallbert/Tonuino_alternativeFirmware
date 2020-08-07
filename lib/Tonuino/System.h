@@ -1,34 +1,71 @@
+#ifndef SYSTEM_H
+#define SYSTEM_H
+
+// project includes -------
+#include <StatusLed.h>
+#include "interface_KeepAlive/interface_KeepAlive.h"
 #include <interface_UserInput.h>
 #include <Folder.h>
 #include <NfcTag.h>
+#include <Arduino_implementation.h>
 #include <Mp3PlayerControl.h>
+#include <DFMiniMp3_implementation.h>
+#include <EEPROM_implementation.h>
+#include <MFRC522_implementation.h>
 
+/* This is the "main" class of the project.
+// It contains all the objects and dependencies needed for operation.
+// It also manages timers and asynchronous events.
+// It is not designed to be unit testable,
+// thus it does not contain business logic.
+*/
 class System
 {
 public:
-    void getInputs()
+    void setup();
+    void shutdown();
+    
+    void loop()
     {
-        m_cardState = inputManager.getCardState();
-        m_userEvent = inputManager.getUserInput();
-        if (m_cardState == InputManager::NEW_KNOWN_CARD)
-        {
-            m_folder = inputManager.getCurrentFolder();
-        }
-    }
-    void determineOutputs()
-    {
-        outputManager.runDispatcher(m_cardState, m_userEvent);
-    }
+        m_cardState = m_inputManager.getCardState();
+        m_userEvent = m_inputManager.getUserInput();
+        m_outputManager.setInputStates(m_cardState, m_userEvent);
+        m_outputManager.runDispatcher();
+    };
 
 private:
-    InputManager inputManager{InputManager()};
-    OutputManager outputManager{OutputManager()};
+uint32_t initRandomGenerator();    
+
+private:
+    InputManager m_inputManager{InputManager()};
+    OutputManager m_outputManager{OutputManager()};
     InputManager::eCardState m_cardState{InputManager::NO_CARD};
     UserInput::UserRequest_e m_userEvent{UserInput::NO_ACTION};
-    Folder m_folder{};
+
+    // Dependency objects
+    Arduino_pins m_pinControl;
+    Arduino_com m_usbSerial;
+    Arduino_delay m_delayControl;
+    // Init tag reader
+    Mfrc522 m_reader;
+    NfcTag m_nfcTagReader = NfcTag(&m_reader); // Constructor injection of concrete reader
+    // DFPlayer Mini setup
+    DfMini m_dfMini;
+    Mp3PlayerControl m_mp3(&m_dfMini, &m_pinControl, &m_usbSerial, &m_delayControl);
+    // Folder for queuing etc.
+    Folder m_currentFolder;
+    // keepAlive interface
+    KeepAlive m_KeepAlive = KeepAlive(KEEPALIVE, false, MAXIDLE);
+    // userInput interface
+    UserInput *m_pUserInput = UserInput_Factory::getInstance(UserInput_Factory::ThreeButtons);
+    // led behavior
+    StatusLed m_Led = StatusLed(LED_PIN, FLASHSLOWMS, FLASHQUICKMS, HIGH);
+    // Eeprom init
+    Eeprom m_eeprom;
+    //
 };
 
-class InputManager
+class InputManager()
 {
 public:
     enum eCardState
@@ -45,7 +82,7 @@ public:
     InputManager();
 
 public:
-    eCardState getCardState_fromReader();
+    eCardState getCardState();
     UserInput::UserRequest_e getUserInput();
 
 private:
@@ -65,7 +102,9 @@ public:
     //OutputManager(Mp3PlayerControl *mp3, NfcTag *nfc);
 
 public:
-    void setCurrentFolder(Folder &source);
+    // Sets input states from card and buttons, and determines internal state.
+    void setInputStates(InputManager::eCardState cardState, UserInput::UserRequest_e userInput);
+    // Runs desicion table that calls functions depending on user input
     bool runDispatcher();
 
 private:
@@ -100,7 +139,6 @@ private:
 
     // ----- Wrapper methods to call target object's methods -----
     // TODO: Start timeout for any menu we're going into
-    void setInputStates(InputManager::eCardState cardState, UserInput::UserRequest_e userInput);
     void handleErrors();
 
 private:
@@ -182,12 +220,14 @@ class KeepAlive_StatusLed
 {
 
 public:
-// assumes that mp3 is playing on TRUE
+    // assumes that mp3 is playing on TRUE
     void set_playback(bool isPlaying);
     // assumes delete Menu active on TRUE, link Menu active on FALSE.
     void set_delMenu(bool isDelMenu);
 
-    private:
+private:
     StatusLed m_led{};
     KeepAlive m_keep{};
 };
+
+#endif // SYSTEM_H
