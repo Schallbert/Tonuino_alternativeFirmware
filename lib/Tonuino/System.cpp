@@ -1,61 +1,96 @@
 #include "System.h"
 
-void System::setup()
+System::System()
 {
-    m_KeepAlive.keep_alive(); //Activate KeepAlive to maintain power supply to circuits
     // Initializes all objects needed
-    
-
+    m_pPwrCtrl = new KeepAlive_StatusLed();
+    m_pPwrCtrl->setup();
 
 #if DEBUGSERIAL
-    usbSerial.com_begin(9600); // Some debug output via serial
-    usbSerial.com_println("Booting");
+    m_pUsbSerial->com_begin(9600); // Some debug output via serial
+    m_pUsbSerial->com_println("Booting");
 #endif
 
-    aLed.set_led_behavior(StatusLed::solid);
-    //Init Timer1 for Encoder read
-    //init UserInput
-    aUserInput->set_input_pins(PINPLPS, PINPREV, PINNEXT);
-    aUserInput->init();
+    // Initialize dependency objects
+    m_pPinControl = new Arduino_pins();
+    m_pUsbSerial = new Arduino_com();
+    m_pDelayControl = new Arduino_delay();
+    m_pReader = new Mfrc522();
+    m_pNfcTagReader = new NfcTag(m_pReader); // Constructor injection of concrete reader
+    m_pDfMini = new DfMini();
+    m_pMp3 = new Mp3PlayerControl(m_pDfMini, m_pPinControl, m_pUsbSerial, m_pDelayControl);
+    m_pCurrentFolder = new Folder();
+    m_pEeprom = new Eeprom();
+
+    //Init Timer1 for timer tasks
 
 #if DEBUGSERIAL
-    usbSerial.com_println("Started.");
+    m_pUsbSerial->com_println("Started.");
 #endif
 }
 
-uint32_t System::initRandomGenerator()
+System::~System()
+{
+
+#if DEBUGSERIAL
+    m_pUsbSerial->com_println("Shutdown");
+#endif
+
+    // delete dependency objects
+    delete m_pPinControl;
+    delete m_pUsbSerial;
+    delete m_pDelayControl;
+    delete m_pReader;
+    delete m_pNfcTagReader;
+    delete m_pDfMini;
+    delete m_pMp3;
+    delete m_pCurrentFolder;
+    delete m_pEeprom;
+
+    m_pPwrCtrl->shutdown();
+}
+
+void System::loop()
+{
+    m_cardState = m_inputManager.getCardState();
+    m_userEvent = m_inputManager.getUserInput();
+    m_outputManager.setInputStates(m_cardState, m_userEvent);
+    m_outputManager.runDispatcher();
+}
+
+uint32_t InputManager::initRandomGenerator()
 {
     uint32_t ADC_LSB;
     uint32_t ADCSeed;
     for (uint8_t i = 0; i < 128; i++)
     {
-        ADC_LSB = pinControl.analog_read(PINANALOG_RNDMGEN) & 0x1;
+        ADC_LSB = m_pPinControl->analog_read(PINANALOG_RNDMGEN) & 0x1;
         ADCSeed ^= ADC_LSB << (i % 32);
     }
-    return ADCSeed; // Init Arduino dependencies generator
+    return ADCSeed; // Init Arduino random generator
 }
 
 InputManager::eCardState InputManager::getCardState()
 {
-    bool cardPresent = m_nfcTagReader->is_card_present();
-    m_userInput.set_card_detected(cardPresent); // TODO: needed?
+    bool cardPresent = m_pNfcTagReader->is_card_present();
+    m_pUserInput->set_card_detected(cardPresent); // TODO: needed?
 
     if (cardPresent)
     {
-        if (!m_nfcTagReader->is_new_card_present())
+        if (!m_pNfcTagReader->is_new_card_present())
         {
             return ACTIVE_KNOWN_CARD;
         }
         else // New card detected: runs once as new card is automatically set_state to ActiveCard
         {
             Folder dummyFolder;
-            if (m_nfcTagReader->read_folder_from_card(dummyFolder))
+            if (m_pNfcTagReader->read_folder_from_card(dummyFolder))
             {
                 return NEW_KNOWN_CARD;
             }
             else // New card but folder cannot be read
             {
-                if (!m_nfcTagReader->is_known_card())
+                if (!m_pNfcTagReader->is_known_card())
                 {
                     return UNKNOWN_CARD_MENU;
                 }
@@ -70,16 +105,17 @@ InputManager::eCardState InputManager::getCardState()
 
 UserInput::UserRequest_e InputManager::getUserInput()
 {
-    return m_userInput.get_user_request();
+    return m_pUserInput->get_user_request();
 }
 
+// TODO: Refactor (switch?)
 void OutputManager::setInputStates(InputManager::eCardState cardState, UserInput::UserRequest_e userInput)
 {
     // set_state to input values, modify if currently in menu
     m_eCardState = cardState;
     m_eUserInput = userInput;
 
-    m_sysPwr.set_playback(m_mp3->is_playing());
+    m_pSysPwr->set_playback(m_pMp3->is_playing());
 
     // lock state in menu, waiting for card placing that shall be deleted
     if ((m_deleteMenu.get_state(DeleteMenu::DELETE_MENU)) &&
@@ -91,13 +127,13 @@ void OutputManager::setInputStates(InputManager::eCardState cardState, UserInput
     if (!m_deleteMenu.get_state(DeleteMenu::NO_MENU))
     {
         m_eCardState = InputManager::DELETE_CARD_MENU; // delete menu entered
-        m_sysPwr.set_delMenu(true);
+        m_pSysPwr->set_delMenu();
     }
 
     if (cardState == InputManager::UNKNOWN_CARD_MENU)
     {
         m_linkMenu.set_state(true); // runs card link method on UNKNOWN_CARD detected
-        m_sysPwr.set_delMenu(false);
+        m_pSysPwr->set_linkMenu();
     }
 
     if (m_linkMenu.get_state())
@@ -226,11 +262,6 @@ void OutputManager::linP()
     m_linkMenu.select_prev();
 }
 
-LinkMenu::LinkMenu(Mp3PlayerControl *mp3)
-{
-    m_mp3 = mp3;
-}
-
 void LinkMenu::set_state(bool linkMenu)
 {
     if (linkMenu)
@@ -354,12 +385,26 @@ Folder LinkMenu::get_folder()
     return m_linkedFolder;
 }
 
+void KeepAlive_StatusLed::setup()
+{
+    m_keep.keep_alive(); //Activate KeepAlive to maintain power supply to circuits
+    m_led.set_led_behavior(StatusLed::solid);
+}
+
+void KeepAlive_StatusLed::shutdown()
+{
+    m_led.set_led_behavior(StatusLed::off);
+    m_keep.shut_down();
+}
+
+
+
 void KeepAlive_StatusLed::set_playback(bool isPlaying)
 {
     if (isPlaying)
     {
         m_keep.set_idle_timer(false); // Playing
-        m_ed.set_led_behavior(StatusLed::solid);
+        m_led.set_led_behavior(StatusLed::solid);
     }
     else
     {
@@ -368,15 +413,15 @@ void KeepAlive_StatusLed::set_playback(bool isPlaying)
     }
 }
 
-void KeepAlive_StatusLed::set_delMenu(bool isDelMenu)
+void KeepAlive_StatusLed::set_delMenu()
 {
     m_keep.set_idle_timer(false);
-    if (isDelMenu)
-    {
-        m_led.set_led_behavior(StatusLed::flash_quick); // Delete Menu
-    }
-    else
-    {
-        m_led.set_led_behavior(StatusLed::flash_slow); // Link Menu
-    }
+    m_led.set_led_behavior(StatusLed::flash_quick); // Delete Menu
 }
+
+void KeepAlive_StatusLed::set_linkMenu()
+{
+    m_keep.set_idle_timer(false);
+    m_led.set_led_behavior(StatusLed::flash_slow); // Link Menu
+}
+

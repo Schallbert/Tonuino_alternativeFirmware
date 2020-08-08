@@ -22,51 +22,51 @@
 class System
 {
 public:
-    void setup();
+    System();
+    ~System();
+
+public:
+    void loop();
     void shutdown();
-    
-    void loop()
-    {
-        m_cardState = m_inputManager.getCardState();
-        m_userEvent = m_inputManager.getUserInput();
-        m_outputManager.setInputStates(m_cardState, m_userEvent);
-        m_outputManager.runDispatcher();
-    };
 
 private:
-uint32_t initRandomGenerator();    
-
-private:
-    InputManager m_inputManager{InputManager()};
-    OutputManager m_outputManager{OutputManager()};
+    // Dependency objects -------------------------------------
+    KeepAlive_StatusLed *m_pPwrCtrl{nullptr};
+    // Arduino hardware control
+    Arduino_pins *m_pPinControl{nullptr};
+    Arduino_com *m_pUsbSerial{nullptr};
+    Arduino_delay *m_pDelayControl{nullptr};
+    // Init tag reader
+    Mfrc522 *m_pReader{nullptr};
+    NfcTag *m_pNfcTagReader{nullptr}; // Constructor injection of concrete reader
+    // DFPlayer Mini setup
+    DfMini *m_pDfMini{nullptr};
+    Mp3PlayerControl *m_pMp3{nullptr};
+    // Folder for queuing etc.
+    Folder *m_pCurrentFolder{nullptr};
+    // Eeprom init
+    Eeprom *m_pEeprom{nullptr};
+    // Work member objects -----------------------
+    InputManager m_inputManager{InputManager(m_pPinControl, m_pNfcTagReader)};
+    OutputManager m_outputManager{OutputManager(m_pPwrCtrl, m_pNfcTagReader, m_pMp3)};
+    // POD mambers -------------------
     InputManager::eCardState m_cardState{InputManager::NO_CARD};
     UserInput::UserRequest_e m_userEvent{UserInput::NO_ACTION};
-
-    // Dependency objects
-    Arduino_pins m_pinControl;
-    Arduino_com m_usbSerial;
-    Arduino_delay m_delayControl;
-    // Init tag reader
-    Mfrc522 m_reader;
-    NfcTag m_nfcTagReader = NfcTag(&m_reader); // Constructor injection of concrete reader
-    // DFPlayer Mini setup
-    DfMini m_dfMini;
-    Mp3PlayerControl m_mp3(&m_dfMini, &m_pinControl, &m_usbSerial, &m_delayControl);
-    // Folder for queuing etc.
-    Folder m_currentFolder;
-    // keepAlive interface
-    KeepAlive m_KeepAlive = KeepAlive(KEEPALIVE, false, MAXIDLE);
-    // userInput interface
-    UserInput *m_pUserInput = UserInput_Factory::getInstance(UserInput_Factory::ThreeButtons);
-    // led behavior
-    StatusLed m_Led = StatusLed(LED_PIN, FLASHSLOWMS, FLASHQUICKMS, HIGH);
-    // Eeprom init
-    Eeprom m_eeprom;
-    //
 };
 
-class InputManager()
+class InputManager
 {
+public:
+    InputManager(Arduino_pins *pinCtrl,
+                 NfcTag *nfcReader) : m_pPinControl(pinCtrl),
+                                      m_pNfcTagReader(nfcReader)
+    {
+        //init UserInput
+        m_pUserInput = UserInput_Factory::getInstance(UserInput_Factory::ThreeButtons);
+        m_pUserInput->set_input_pins(PINPLPS, PINPREV, PINNEXT);
+        m_pUserInput->init();
+    }
+
 public:
     enum eCardState
     {
@@ -79,27 +79,24 @@ public:
     };
 
 public:
-    InputManager();
-
-public:
+    uint32_t initRandomGenerator();
     eCardState getCardState();
     UserInput::UserRequest_e getUserInput();
 
 private:
-    KeepAlive &m_keepAlive;
-    StatusLed &m_statusLed;
-    UserInput &m_userInput;
-
-    Mp3PlayerControl &mp3;
-    NfcTag *m_nfcTagReader;
-
-    bool m_bWriteCardError{false};
+    Arduino_pins *m_pPinControl{nullptr};
+    UserInput *m_pUserInput{nullptr};
+    NfcTag *m_pNfcTagReader{nullptr};
 };
 
 class OutputManager
 {
 public:
-    //OutputManager(Mp3PlayerControl *mp3, NfcTag *nfc);
+    OutputManager(KeepAlive_StatusLed *pwrCtrl,
+                  NfcTag *nfcReader,
+                  Mp3PlayerControl *mp3) : m_pSysPwr(pwrCtrl),
+                                           m_pNfcTagReader(nfcReader),
+                                           m_pMp3(mp3){};
 
 public:
     // Sets input states from card and buttons, and determines internal state.
@@ -112,17 +109,17 @@ private:
     // No action performed
     void none(){};
     // Play/pause
-    void plPs() { m_mp3->play_pause(); };
+    void plPs() { m_pMp3->play_pause(); };
     // next track
-    void next() { m_mp3->next_track(); };
+    void next() { m_pMp3->next_track(); };
     // previous track
-    void prev() { m_mp3->prev_track(); };
+    void prev() { m_pMp3->prev_track(); };
     // increase volume
-    void incV() { m_mp3->volume_up(); };
+    void incV() { m_pMp3->volume_up(); };
     // decrease volume
-    void decV() { m_mp3->volume_down(); };
+    void decV() { m_pMp3->volume_down(); };
     // play help prompt
-    void help() { m_mp3->play_specific_file(MSG_HELP); };
+    void help() { m_pMp3->play_specific_file(MSG_HELP); };
     // delete and unlink NFC card
     void delt(); // delete menu entry
     void delC(); // confirm deletion
@@ -133,7 +130,7 @@ private:
     // read and Play card's linked folder
     void read();
     // play error prompt
-    void erro() { m_mp3->play_specific_file(MSG_ERROR); };
+    void erro() { m_pMp3->play_specific_file(MSG_ERROR); };
     // aborts current menu or process
     void abrt();
 
@@ -142,15 +139,15 @@ private:
     void handleErrors();
 
 private:
-    Mp3PlayerControl *m_mp3{};
-    NfcTag *m_nfcTagReader{};
+    typedef void (OutputManager::*dispatcher)(); // table of function pointers
+    // members by dependency injection
+    KeepAlive_StatusLed *m_pSysPwr{nullptr};
+    Mp3PlayerControl *m_pMp3{nullptr};
+    NfcTag *m_pNfcTagReader{nullptr};
+    // Member variables
     Folder m_currentFolder{};
-    LinkMenu m_linkMenu{m_mp3};
+    LinkMenu m_linkMenu{m_pMp3};
     DeleteMenu m_deleteMenu{};
-    KeepAlive_StatusLed m_sysPwr{};
-
-    // dispatcher is a function pointer, belonging to this class
-    typedef void (OutputManager::*dispatcher)();
     InputManager::eCardState m_eCardState{InputManager::NO_CARD};
     UserInput::UserRequest_e m_eUserInput{UserInput::NO_ACTION};
 };
@@ -180,7 +177,7 @@ Once a new card is detected, It has to be linked to an existing folder on the SD
 class LinkMenu
 {
 public:
-    LinkMenu(Mp3PlayerControl *mp3);
+    LinkMenu(Mp3PlayerControl *mp3) : m_pMp3(mp3){};
 
 public:
     // initializes linking process and plays voice prompt if TRUE, else reset object.
@@ -206,7 +203,7 @@ private:
 
 private:
     // needed for menu to be able to play voice prompts & previews
-    Mp3PlayerControl *m_mp3{};
+    Mp3PlayerControl *m_pMp3{nullptr};
     Folder m_linkedFolder{};
     // initialized for folderId state of linkMenu
     bool m_bMenuState{false};
@@ -222,12 +219,18 @@ class KeepAlive_StatusLed
 public:
     // assumes that mp3 is playing on TRUE
     void set_playback(bool isPlaying);
-    // assumes delete Menu active on TRUE, link Menu active on FALSE.
-    void set_delMenu(bool isDelMenu);
+    // sets LED behavior for delete Menu
+    void set_delMenu();
+    // sets LED behavior for link Menu
+    void set_linkMenu();
+    // Keeps system active
+    void setup();
+    // shuts down the system
+    void shutdown();
 
 private:
-    StatusLed m_led{};
-    KeepAlive m_keep{};
+    StatusLed m_led{StatusLed(LED_PIN, FLASHSLOWMS, FLASHQUICKMS, HIGH)};
+    KeepAlive m_keep{KeepAlive(KEEPALIVE, false, MAXIDLE)};
 };
 
 #endif // SYSTEM_H
