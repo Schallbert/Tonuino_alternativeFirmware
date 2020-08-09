@@ -22,18 +22,16 @@ void KeepAlive::request_shutdown()
     m_bShutDownRequested = true;
 }
 
-void KeepAlive::allow_shutdown(bool bAllow)
+bool KeepAlive::get_shutdown_request()
 {
-    if (bAllow)
+    return m_bShutDownRequested;
+}
+
+void KeepAlive::allow_shutdown()
+{
+    if (m_bShutDownRequested)
     {
-        if (m_bShutDownRequested)
-        {
-            digitalWrite(m_ui8PinID, !m_bPinActiveState);
-        }
-    }
-    else
-    {
-        m_bShutDownRequested = false;
+        digitalWrite(m_ui8PinID, !m_bPinActiveState);
     }
 }
 

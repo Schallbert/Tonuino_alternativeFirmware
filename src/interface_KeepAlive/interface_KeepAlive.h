@@ -14,12 +14,14 @@ public:
     //Note: For usage of a bistable relay, active must be inverted!
     KeepAlive(uint8_t pinID, bool pinActiveState, uint16_t seconds);
 
-// Physically keeps system powered (depending on external cirtuitry)
+    // Physically keeps system powered (depending on external cirtuitry)
     void keep_alive();
     // Requests shut down to keep alive system; will be evaluated when "allow" method is called
     void request_shutdown();
+    // returns if shutdown currently requested or not
+    bool get_shutdown_request();
     // Will shut down once bAllow is TRUE and shutdown has been requested
-    void allow_shutdown(bool bAllow);
+    void allow_shutdown();
     // method to be attached to a 1ms interrupt to count system idle time
     void idle_timer_tick1ms();
     // setter method to request the idle timer to (re)start
