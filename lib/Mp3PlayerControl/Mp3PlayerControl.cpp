@@ -105,16 +105,9 @@ void Mp3PlayerControl::autoplay()
     }
 }
 
-void Mp3PlayerControl::lullabye_timeout_tick1ms()
+void Mp3PlayerControl::lullabye_timeout_tick1s()
 {
-    static volatile uint16_t ticks = 0;
-    ++ticks;
-#define SEC_MSEC 1000
-    if (ticks >= SEC_MSEC)
-    {
-        ticks = 0;
         ++m_ui32LullabyeTimeActiveSecs;
-    }
 }
 
 bool Mp3PlayerControl::check_lullabye_timeout()

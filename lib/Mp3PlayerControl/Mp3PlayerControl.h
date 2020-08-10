@@ -40,7 +40,7 @@ public:
     // Starts inquiry to player to return number of tracks in selected folder.
     uint8_t get_trackCount_of_folder(uint8_t folderId);
     // Timed routine for lullabye NFC card configuration. To be called in main's 1ms timer interrupt.
-    void lullabye_timeout_tick1ms();
+    void lullabye_timeout_tick1s();
 
 private:
     // Routine to check playmode and select next track

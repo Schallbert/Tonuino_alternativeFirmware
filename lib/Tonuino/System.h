@@ -2,6 +2,7 @@
 #define SYSTEM_H
 
 // project includes -------
+#include "TimerOne/src/TimerOne.h"
 #include <StatusLed.h>
 #include "interface_KeepAlive/interface_KeepAlive.h"
 #include <interface_UserInput.h>
@@ -26,8 +27,9 @@ public:
     ~System();
 
 public:
-    void loop();
-    void shutdown();
+    bool loop();
+    void timer1_task_1ms();
+    void timer1_task_1s();
 
 private:
     // Dependency objects -------------------------------------
@@ -42,30 +44,29 @@ private:
     // DFPlayer Mini setup
     DfMini *m_pDfMini{nullptr};
     Mp3PlayerControl *m_pMp3{nullptr};
-    // Folder for queuing etc.
-    Folder *m_pCurrentFolder{nullptr};
-    // Eeprom init
-    Eeprom *m_pEeprom{nullptr};
+    // User Input
+    UserInput *m_pUserInput{nullptr};
+    // Menu helper classes
+    MenuTimer *m_pMenuTimer{nullptr};
     // Work member objects -----------------------
-    InputManager m_inputManager{InputManager(m_pPinControl, m_pNfcTagReader)};
-    OutputManager m_outputManager{OutputManager(m_pPwrCtrl, m_pNfcTagReader, m_pMp3)};
-    // POD mambers -------------------
-    InputManager::eCardState m_cardState{InputManager::NO_CARD};
-    UserInput::UserRequest_e m_userEvent{UserInput::NO_ACTION};
+    InputManager m_inputManager{InputManager(m_pPinControl,
+                                             m_pUserInput,
+                                             m_pNfcTagReader)};
+    OutputManager m_outputManager{OutputManager(m_pPwrCtrl,
+                                                m_pNfcTagReader,
+                                                m_pMp3,
+                                                m_pMenuTimer,
+                                                m_inputManager.getRandomSeed())};
 };
 
 class InputManager
 {
 public:
-    InputManager(Arduino_pins *pinCtrl,
-                 NfcTag *nfcReader) : m_pPinControl(pinCtrl),
-                                      m_pNfcTagReader(nfcReader)
-    {
-        //init UserInput
-        m_pUserInput = UserInput_Factory::getInstance(UserInput_Factory::ThreeButtons);
-        m_pUserInput->set_input_pins(PINPLPS, PINPREV, PINNEXT);
-        m_pUserInput->init();
-    }
+    InputManager(Arduino_pins *pPinCtrl,
+                 UserInput *pUserInput,
+                 NfcTag *pNfcReader) : m_pPinControl(pPinCtrl),
+                                       m_pUserInput(pUserInput),
+                                       m_pNfcTagReader(pNfcReader){};
 
 public:
     enum eCardState
@@ -79,7 +80,7 @@ public:
     };
 
 public:
-    uint32_t initRandomGenerator();
+    uint32_t getRandomSeed();
     eCardState getCardState();
     UserInput::UserRequest_e getUserInput();
 
@@ -92,17 +93,22 @@ private:
 class OutputManager
 {
 public:
-    OutputManager(KeepAlive_StatusLed *pwrCtrl,
-                  NfcTag *nfcReader,
-                  Mp3PlayerControl *mp3) : m_pSysPwr(pwrCtrl),
-                                           m_pNfcTagReader(nfcReader),
-                                           m_pMp3(mp3){};
+    OutputManager(KeepAlive_StatusLed *pPwrCtrl,
+                  NfcTag *pNfcReader,
+                  Mp3PlayerControl *pMp3,
+                  MenuTimer *pMenuTimer,
+                  uint32_t ui32Seed) : m_pSysPwr(pPwrCtrl),
+                                       m_pNfcTagReader(pNfcReader),
+                                       m_pMp3(pMp3),
+                                       m_pMenuTimer(pMenuTimer),
+                                       m_ui32RandomSeed(ui32Seed){};
 
 public:
     // Sets input states from card and buttons, and determines internal state.
     void setInputStates(InputManager::eCardState cardState, UserInput::UserRequest_e userInput);
     // Runs desicion table that calls functions depending on user input
     bool runDispatcher();
+    bool getShutdownRequest();
 
 private:
     // ----- Wrapper methods to call target object's methods -----
@@ -144,15 +150,17 @@ private:
     KeepAlive_StatusLed *m_pSysPwr{nullptr};
     Mp3PlayerControl *m_pMp3{nullptr};
     NfcTag *m_pNfcTagReader{nullptr};
-    // Member variables
+    MenuTimer *m_pMenuTimer{nullptr};
+    uint32_t m_ui32RandomSeed{0};
+    // Member objects
+    Eeprom m_eeprom{};
     Folder m_currentFolder{};
-    LinkMenu m_linkMenu{m_pMp3};
+    LinkMenu m_linkMenu{m_pMp3, &m_eeprom};
     DeleteMenu m_deleteMenu{};
     InputManager::eCardState m_eCardState{InputManager::NO_CARD};
     UserInput::UserRequest_e m_eUserInput{UserInput::NO_ACTION};
 };
 
-// TODO: ADD MENU TIMEOUT!
 class DeleteMenu
 {
 public:
@@ -164,6 +172,7 @@ public:
     };
 
 public:
+// initializes and controls delete process and plays voice prompt
     void set_state(eDelMenuState state);
     bool get_state(eDelMenuState state) { return (m_eMenuState == state); };
 
@@ -177,7 +186,7 @@ Once a new card is detected, It has to be linked to an existing folder on the SD
 class LinkMenu
 {
 public:
-    LinkMenu(Mp3PlayerControl *mp3) : m_pMp3(mp3){};
+    LinkMenu(Mp3PlayerControl *pMp3, EEPROM_interface *pEeprom) : m_pMp3(pMp3), m_pEeprom(pEeprom){};
 
 public:
     // initializes linking process and plays voice prompt if TRUE, else reset object.
@@ -203,11 +212,13 @@ private:
 
 private:
     // needed for menu to be able to play voice prompts & previews
+    EEPROM_interface *m_pEeprom{nullptr};
     Mp3PlayerControl *m_pMp3{nullptr};
     Folder m_linkedFolder{};
     // initialized for folderId state of linkMenu
     bool m_bMenuState{false};
     bool m_bLinkState{false};
+    uint8_t m_ui8FolderId{0};
     uint8_t m_ui8Option{0};
     uint8_t m_ui8OptionRange{0};
 };
@@ -226,7 +237,13 @@ public:
     // Keeps system active
     void setup();
     // shuts down the system
-    void shutdown();
+    void request_shutdown();
+    // returns current shutdown status
+    bool get_shutdown_request();
+    // shuts system down if shutdown has been requested and bAllow is TRUE
+    void allow_shutdown();
+    // notifies classes that another timer interval passed
+    void notify_timer_task();
 
 private:
     StatusLed m_led{StatusLed(LED_PIN, FLASHSLOWMS, FLASHQUICKMS, HIGH)};
@@ -234,3 +251,19 @@ private:
 };
 
 #endif // SYSTEM_H
+
+class MenuTimer
+{
+public:
+    // counts menu timer if active
+    void timer_tick1s();
+    // sets whether menuTimeout is currently active or not
+    void set_active(bool bActive);
+    // returns true on timeout
+    bool get_elapsed();
+
+private:
+    uint16_t m_ui16SecCount{0};
+    bool m_bActive{false};
+    bool m_bElapsed{false};
+};

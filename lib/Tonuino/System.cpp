@@ -11,18 +11,21 @@ System::System()
     m_pUsbSerial->com_println("Booting");
 #endif
 
-    // Initialize dependency objects
+    // Set dependency objects ------------------------------
     m_pPinControl = new Arduino_pins();
     m_pUsbSerial = new Arduino_com();
     m_pDelayControl = new Arduino_delay();
     m_pReader = new Mfrc522();
     m_pNfcTagReader = new NfcTag(m_pReader); // Constructor injection of concrete reader
     m_pDfMini = new DfMini();
+    m_pMenuTimer = new MenuTimer();
     m_pMp3 = new Mp3PlayerControl(m_pDfMini, m_pPinControl, m_pUsbSerial, m_pDelayControl);
-    m_pCurrentFolder = new Folder();
-    m_pEeprom = new Eeprom();
+    m_pUserInput = UserInput_Factory::getInstance(UserInput_Factory::ThreeButtons);
 
-    //Init Timer1 for timer tasks
+    // Initialize objects if needed ------------------------
+    //init UserInput
+    m_pUserInput->set_input_pins(PINPLPS, PINPREV, PINNEXT);
+    m_pUserInput->init();
 
 #if DEBUGSERIAL
     m_pUsbSerial->com_println("Started.");
@@ -44,21 +47,50 @@ System::~System()
     delete m_pNfcTagReader;
     delete m_pDfMini;
     delete m_pMp3;
-    delete m_pCurrentFolder;
-    delete m_pEeprom;
+    delete m_pMenuTimer;
+    m_pUserInput = nullptr;
 
-    m_pPwrCtrl->shutdown();
+    // finally shut down system
+    m_pPwrCtrl->request_shutdown();
+    m_pPwrCtrl->allow_shutdown();
+    delete m_pPwrCtrl;
 }
 
-void System::loop()
+bool System::loop()
 {
-    m_cardState = m_inputManager.getCardState();
-    m_userEvent = m_inputManager.getUserInput();
-    m_outputManager.setInputStates(m_cardState, m_userEvent);
+    InputManager::eCardState cardState = m_inputManager.getCardState();
+    UserInput::UserRequest_e userEvent = m_inputManager.getUserInput();
+    m_outputManager.setInputStates(cardState, userEvent);
     m_outputManager.runDispatcher();
+    if (m_pPwrCtrl->get_shutdown_request())
+    {
+        return false;
+    }
+    return true;
 }
 
-uint32_t InputManager::initRandomGenerator()
+void System::timer1_task_1ms()
+{
+    static volatile uint16_t ui16Ticks = 0;
+
+    m_pPwrCtrl->notify_timer_task();       // idle timer
+    m_pUserInput->userinput_service_isr(); // userInput service
+
+    ++ui16Ticks;
+    if (ui16Ticks >= 1000) // 1ms --> 1s
+    {
+        ui16Ticks = 0;
+        timer1_task_1s();
+    }
+}
+
+void System::timer1_task_1s()
+{
+    m_pMp3->lullabye_timeout_tick1s();
+    m_pMenuTimer->timer_tick1s();
+}
+
+uint32_t InputManager::getRandomSeed()
 {
     uint32_t ADC_LSB;
     uint32_t ADCSeed;
@@ -128,11 +160,13 @@ void OutputManager::setInputStates(InputManager::eCardState cardState, UserInput
     {
         m_eCardState = InputManager::DELETE_CARD_MENU; // delete menu entered
         m_pSysPwr->set_delMenu();
-    }
+        m_pMenuTimer->set_active(true);
+    };
 
     if (cardState == InputManager::UNKNOWN_CARD_MENU)
     {
         m_linkMenu.set_state(true); // runs card link method on UNKNOWN_CARD detected
+        m_pMenuTimer->set_active(true);
         m_pSysPwr->set_linkMenu();
     }
 
@@ -179,32 +213,32 @@ void OutputManager::handleErrors()
     // TODO: refactor?
     if (m_eUserInput == UserInput::ERROR)
     {
-        m_mp3->play_specific_file(MSG_ERROR_USERINPUT);
-        m_mp3->dont_skip_current_track();
+        m_pMp3->play_specific_file(MSG_ERROR_USERINPUT);
+        m_pMp3->dont_skip_current_track();
         m_eUserInput = UserInput::NO_ACTION;
     }
 }
 
 void OutputManager::read()
 {
-    if (m_nfcTagReader->read_folder_from_card(m_currentFolder))
+    if (m_pNfcTagReader->read_folder_from_card(m_currentFolder))
     {
-        m_currentFolder.setup_dependencies(&eeprom, init_random_generator()); // TODO: SOLVE maybe on top level?
-        m_mp3->play_folder(&m_currentFolder);
+        m_currentFolder.setup_dependencies(&m_eeprom, m_ui32RandomSeed); // TODO: SOLVE maybe on top level?
+        m_pMp3->play_folder(&m_currentFolder);
     }
     else
     {
         // TODO: Add Debug Output?
-        m_mp3->play_specific_file(MSG_ERROR_CARDREAD);
-        m_mp3->dont_skip_current_track();
+        m_pMp3->play_specific_file(MSG_ERROR_CARDREAD);
+        m_pMp3->dont_skip_current_track();
         m_eCardState = InputManager::NO_CARD;
     }
 }
 
 void OutputManager::delt()
 {
-    m_mp3->play_specific_file(MSG_DELETETAG);
-    m_mp3->dont_skip_current_track();
+    m_pMp3->play_specific_file(MSG_DELETETAG);
+    m_pMp3->dont_skip_current_track();
     m_deleteMenu.set_state(DeleteMenu::DELETE_MENU); // keep in delete menu
 }
 
@@ -212,41 +246,44 @@ void OutputManager::delC()
 {
     if (m_deleteMenu.get_state(DeleteMenu::DELETE_READY))
     {
+        m_pMenuTimer->set_active(false);
         // Do delete the card.
-        m_mp3->play_specific_file(MSG_CONFIRMED);
+        m_pMp3->play_specific_file(MSG_CONFIRMED);
         m_deleteMenu.set_state(DeleteMenu::NO_MENU);
-        m_nfcTagReader->erase_card();
+        m_pNfcTagReader->erase_card();
     }
     else
     {
-        m_mp3->play_specific_file(MSG_DELETETAG);
+        m_pMp3->play_specific_file(MSG_DELETETAG);
     }
 }
 
 void OutputManager::abrt()
 {
+    m_pMenuTimer->set_active(false);
     m_deleteMenu.set_state(DeleteMenu::NO_MENU); // reset menu state
     m_linkMenu.set_state(false);
-    m_mp3->play_specific_file(MSG_ABORTEED);
+    m_pMp3->play_specific_file(MSG_ABORTEED);
 }
 
 void OutputManager::linC()
 {
     if (m_linkMenu.select_confirm())
     {
+        m_pMenuTimer->set_active(false);
         // link folder information complete! Obtain folder and save to card.
         m_currentFolder = m_linkMenu.get_folder();
         m_linkMenu.set_state(false);
-        if (m_nfcTagReader->write_folder_to_card(m_currentFolder))
+        if (m_pNfcTagReader->write_folder_to_card(m_currentFolder))
         {
-            m_mp3->play_specific_file(MSG_TAGCONFSUCCESS);
-            m_mp3->dont_skip_current_track();
+            m_pMp3->play_specific_file(MSG_TAGCONFSUCCESS);
+            m_pMp3->dont_skip_current_track();
             read();
         }
         else
         {
-            m_mp3->play_specific_file(MSG_ERROR);
-            m_mp3->dont_skip_current_track();
+            m_pMp3->play_specific_file(MSG_ERROR);
+            m_pMp3->dont_skip_current_track();
             abrt();
         }
     }
@@ -285,11 +322,11 @@ void LinkMenu::init()
     m_ui8OptionRange = MAXFOLDERCOUNT;
 
     //mp3.loop();
-    if (m_mp3->is_playing())
+    if (m_pMp3->is_playing())
     {
-        m_mp3->play_pause();
+        m_pMp3->play_pause();
     }
-    m_mp3->play_specific_file(MSG_UNKNOWNTAG);
+    m_pMp3->play_specific_file(MSG_UNKNOWNTAG);
 }
 
 void LinkMenu::leave()
@@ -302,23 +339,22 @@ void LinkMenu::leave()
 
 bool LinkMenu::select_confirm()
 {
-    static uint8_t folderId = 0;
     if (!m_bLinkState)
     {
         // Confirms folder selection
-        folderId = m_ui8Option;
+        m_ui8FolderId = m_ui8Option;
         m_ui8Option = 0;
         m_ui8OptionRange = static_cast<uint8_t>(Folder::ePlayMode::ENUM_COUNT);
         m_bLinkState = true;
-        m_mp3->play_specific_file(MSG_TAGLINKED); // Tell user to select playMode
+        m_pMp3->play_specific_file(MSG_TAGLINKED); // Tell user to select playMode
     }
     else
     {
         // Confirms playmode selection.
         Folder::ePlayMode playMode = static_cast<Folder::ePlayMode>(m_ui8Option);
-        uint8_t trackCount = m_mp3->get_trackCount_of_folder(folderId);
+        uint8_t trackCount = m_pMp3->get_trackCount_of_folder(m_ui8FolderId);
         // Create new folder object and copy to main's folder object
-        Folder tempFolder = Folder(folderId, playMode, trackCount);
+        Folder tempFolder = Folder(m_ui8FolderId, playMode, trackCount);
         if (tempFolder.is_initiated())
         {
             m_linkedFolder = tempFolder; // Success! copy temporary folder to new folder.
@@ -326,8 +362,8 @@ bool LinkMenu::select_confirm()
         }
         else
         {
-            m_mp3->play_specific_file(MSG_ERROR_FOLDER);
-            m_mp3->dont_skip_current_track();
+            m_pMp3->play_specific_file(MSG_ERROR_FOLDER);
+            m_pMp3->dont_skip_current_track();
         }
     }
     return false;
@@ -353,7 +389,6 @@ void LinkMenu::select_prev()
     {
         m_ui8Option = m_ui8OptionRange;
     }
-
     play_voice_prompt();
 }
 
@@ -363,20 +398,20 @@ void LinkMenu::play_voice_prompt()
     if (!m_bLinkState)
     {
         // play folderId of current choice, e.g. "one".
-        m_mp3->play_specific_file(static_cast<uint16_t>(m_ui8Option));
-        m_mp3->dont_skip_current_track();
+        m_pMp3->play_specific_file(static_cast<uint16_t>(m_ui8Option));
+        m_pMp3->dont_skip_current_track();
 
         // play preview of selected folder contents
         Folder previewFolder = Folder(m_ui8Option, Folder::ONELARGETRACK, 1);
         // TODO: SOLVE SOMEWHERE ELSE?!
-        previewFolder.setup_dependencies(&eeprom, 0);
-        m_mp3->play_folder(&previewFolder);
+        previewFolder.setup_dependencies(m_pEeprom, 0);
+        m_pMp3->play_folder(&previewFolder);
     }
     else
     {
         // Prompt selected playMode
-        m_mp3->play_specific_file(static_cast<uint16_t>(MSG_TAGLINKED + m_ui8Option));
-        m_mp3->dont_skip_current_track();
+        m_pMp3->play_specific_file(static_cast<uint16_t>(MSG_TAGLINKED + m_ui8Option));
+        m_pMp3->dont_skip_current_track();
     }
 }
 
@@ -385,19 +420,56 @@ Folder LinkMenu::get_folder()
     return m_linkedFolder;
 }
 
+// counts menu timer if active
+void MenuTimer::timer_tick1s()
+{
+    if (m_bActive)
+    {
+        ++m_ui16SecCount;
+    }
+
+    if (m_ui16SecCount >= MENU_TIMEOUT_SECS)
+    {
+        m_bElapsed = true;
+    }
+}
+
+void MenuTimer::set_active(bool bActive)
+{
+    m_bActive = bActive;
+}
+
+bool MenuTimer::get_elapsed()
+{
+    if (m_bElapsed)
+    {
+        m_bElapsed = false;
+        return true;
+    }
+    return false;
+}
+
 void KeepAlive_StatusLed::setup()
 {
     m_keep.keep_alive(); //Activate KeepAlive to maintain power supply to circuits
     m_led.set_led_behavior(StatusLed::solid);
 }
 
-void KeepAlive_StatusLed::shutdown()
+void KeepAlive_StatusLed::request_shutdown()
 {
     m_led.set_led_behavior(StatusLed::off);
-    m_keep.shut_down();
+    m_keep.request_shutdown();
 }
 
+bool KeepAlive_StatusLed::get_shutdown_request()
+{
+    return m_keep.get_shutdown_request();
+}
 
+void KeepAlive_StatusLed::allow_shutdown()
+{
+    m_keep.allow_shutdown();
+}
 
 void KeepAlive_StatusLed::set_playback(bool isPlaying)
 {
@@ -425,3 +497,8 @@ void KeepAlive_StatusLed::set_linkMenu()
     m_led.set_led_behavior(StatusLed::flash_slow); // Link Menu
 }
 
+void KeepAlive_StatusLed::notify_timer_task()
+{
+    m_keep.idle_timer_tick1ms();
+    m_led.led_service();
+}

@@ -58,6 +58,7 @@
 //Timer1 interrupt task
 #define TIMERONE_TASK_INTERVAL_USEC 1000 // 1ms
 #define LULLABYE_TIMER_SECS 20*60 // default is 20 minutes
+#define MENU_TIMEOUT_SECS 20 // menu will be automatically aborted if no input within this time
 
 //MP3 defines
 #define WAIT_DFMINI_READY 1000 // 1 sec
