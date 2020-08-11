@@ -120,32 +120,3 @@ Folder LinkMenu::get_folder()
 {
     return m_linkedFolder;
 }
-
-// counts menu timer if active
-void MenuTimer::timer_tick()
-{
-    if (m_bActive)
-    {
-        ++m_ui16SecCount;
-    }
-
-    if (m_ui16SecCount >= MENU_TIMEOUT_SECS)
-    {
-        m_bElapsed = true;
-    }
-}
-
-void MenuTimer::set_active(bool bActive)
-{
-    m_bActive = bActive;
-}
-
-bool MenuTimer::get_elapsed()
-{
-    if (m_bElapsed)
-    {
-        m_bElapsed = false;
-        return true;
-    }
-    return false;
-}

@@ -3,7 +3,6 @@
 
 #include "interface_KeepAlive/interface_KeepAlive.h"
 #include "InputManager.h"
-#include <EEPROM.h>
 #include <StatusLed.h>
 #include <NfcTag.h>
 #include <Mp3PlayerControl.h>
@@ -15,11 +14,13 @@ public:
     OutputManager(KeepAlive_StatusLed *pPwrCtrl,
                   NfcTag *pNfcReader,
                   Mp3PlayerControl *pMp3,
-                  MenuTimer *pMenuTimer,
+                  Timer *pMenuTimer,
+                  EEPROM_interface *pEeprom,
                   uint32_t ui32Seed) : m_pSysPwr(pPwrCtrl),
                                        m_pNfcTagReader(pNfcReader),
                                        m_pMp3(pMp3),
                                        m_pMenuTimer(pMenuTimer),
+                                       m_pEeprom(pEeprom),
                                        m_ui32RandomSeed(ui32Seed){};
 
 public:
@@ -69,22 +70,22 @@ private:
     KeepAlive_StatusLed *m_pSysPwr{nullptr};
     Mp3PlayerControl *m_pMp3{nullptr};
     NfcTag *m_pNfcTagReader{nullptr};
-    MenuTimer *m_pMenuTimer{nullptr};
+    Timer *m_pMenuTimer{nullptr};
     uint32_t m_ui32RandomSeed{0};
+    EEPROM_interface *m_pEeprom{nullptr};
     // Member objects
-    Eeprom m_eeprom{};
     Folder m_currentFolder{};
-    LinkMenu m_linkMenu{m_pMp3, &m_eeprom};
+    LinkMenu m_linkMenu{m_pMp3, m_pEeprom};
     DeleteMenu m_deleteMenu{};
     InputManager::eCardState m_eCardState{InputManager::NO_CARD};
     UserInput::UserRequest_e m_eUserInput{UserInput::NO_ACTION};
 };
 
-
-
 // controls keepalive relay and status LED output.
 class KeepAlive_StatusLed
 {
+public:
+    KeepAlive_StatusLed(Timer *pIdleTimer) : m_pIdleTimer(pIdleTimer){};
 
 public:
     // assumes that mp3 is playing on TRUE
@@ -102,11 +103,14 @@ public:
     // shuts system down if shutdown has been requested and bAllow is TRUE
     void allow_shutdown();
     // notifies classes that another timer interval passed
-    void notify_timer_task();
+    void notify_timer_tick();
 
 private:
+    // Dependency object
+    Timer *m_pIdleTimer{nullptr};
+    // Member objects
     StatusLed m_led{StatusLed(LED_PIN, FLASHSLOWMS, FLASHQUICKMS, HIGH)};
-    KeepAlive m_keep{KeepAlive(KEEPALIVE, false, MAXIDLE)};
+    KeepAlive m_keep{KeepAlive(KEEPALIVE, false)};
 };
 
 #endif // OUTPUTMANAGER_H

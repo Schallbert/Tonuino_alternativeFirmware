@@ -4,10 +4,11 @@
 void OutputManager::setInputStates(InputManager::eCardState cardState, UserInput::UserRequest_e userInput)
 {
     // set_state to input values, modify if currently in menu
+    bool isPlaying = m_pMp3->is_playing();
     m_eCardState = cardState;
     m_eUserInput = userInput;
 
-    m_pSysPwr->set_playback(m_pMp3->is_playing());
+    m_pSysPwr->set_playback(isPlaying);
 
     // lock state in menu, waiting for card placing that shall be deleted
     if ((m_deleteMenu.get_state(DeleteMenu::DELETE_MENU)) &&
@@ -20,13 +21,13 @@ void OutputManager::setInputStates(InputManager::eCardState cardState, UserInput
     {
         m_eCardState = InputManager::DELETE_CARD_MENU; // delete menu entered
         m_pSysPwr->set_delMenu();
-        m_pMenuTimer->set_active(true);
+        m_pMenuTimer->start(MENU_TIMEOUT_SECS);
     };
 
     if (cardState == InputManager::UNKNOWN_CARD_MENU)
     {
         m_linkMenu.set_state(true); // runs card link method on UNKNOWN_CARD detected
-        m_pMenuTimer->set_active(true);
+        m_pMenuTimer->start(MENU_TIMEOUT_SECS);
         m_pSysPwr->set_linkMenu();
     }
 
@@ -83,7 +84,7 @@ void OutputManager::read()
 {
     if (m_pNfcTagReader->read_folder_from_card(m_currentFolder))
     {
-        m_currentFolder.setup_dependencies(&m_eeprom, m_ui32RandomSeed); // TODO: SOLVE maybe on top level?
+        m_currentFolder.setup_dependencies(m_pEeprom, m_ui32RandomSeed); // TODO: SOLVE maybe on top level?
         m_pMp3->play_folder(&m_currentFolder);
     }
     else
@@ -106,7 +107,7 @@ void OutputManager::delC()
 {
     if (m_deleteMenu.get_state(DeleteMenu::DELETE_READY))
     {
-        m_pMenuTimer->set_active(false);
+        m_pMenuTimer->stop();
         // Do delete the card.
         m_pMp3->play_specific_file(MSG_CONFIRMED);
         m_deleteMenu.set_state(DeleteMenu::NO_MENU);
@@ -120,7 +121,7 @@ void OutputManager::delC()
 
 void OutputManager::abrt()
 {
-    m_pMenuTimer->set_active(false);
+    m_pMenuTimer->stop();
     m_deleteMenu.set_state(DeleteMenu::NO_MENU); // reset menu state
     m_linkMenu.set_state(false);
     m_pMp3->play_specific_file(MSG_ABORTEED);
@@ -130,7 +131,7 @@ void OutputManager::linC()
 {
     if (m_linkMenu.select_confirm())
     {
-        m_pMenuTimer->set_active(false);
+        m_pMenuTimer->stop();
         // link folder information complete! Obtain folder and save to card.
         m_currentFolder = m_linkMenu.get_folder();
         m_linkMenu.set_state(false);
@@ -159,8 +160,6 @@ void OutputManager::linP()
     m_linkMenu.select_prev();
 }
 
-
-
 void KeepAlive_StatusLed::setup()
 {
     m_keep.keep_alive(); //Activate KeepAlive to maintain power supply to circuits
@@ -187,30 +186,36 @@ void KeepAlive_StatusLed::set_playback(bool isPlaying)
 {
     if (isPlaying)
     {
-        m_keep.set_idle_timer(false); // Playing
         m_led.set_led_behavior(StatusLed::solid);
+        m_pIdleTimer->stop();
     }
     else
     {
-        m_keep.set_idle_timer(true); // Paused
+
+        m_pIdleTimer->start(IDLE_TIMEOUT_SECS);
         m_led.set_led_behavior(StatusLed::flash_slow);
     }
 }
 
 void KeepAlive_StatusLed::set_delMenu()
 {
-    m_keep.set_idle_timer(false);
+    m_pIdleTimer->stop();
     m_led.set_led_behavior(StatusLed::flash_quick); // Delete Menu
 }
 
 void KeepAlive_StatusLed::set_linkMenu()
 {
-    m_keep.set_idle_timer(false);
+    m_pIdleTimer->stop();
     m_led.set_led_behavior(StatusLed::flash_slow); // Link Menu
 }
 
-void KeepAlive_StatusLed::notify_timer_task()
+void KeepAlive_StatusLed::notify_timer_tick()
 {
-    m_keep.idle_timer_tick1ms();
+    m_pIdleTimer->timer_tick();
+    if (m_pIdleTimer->is_elapsed())
+    {
+        m_pIdleTimer->stop();
+        request_shutdown();
+    }
     m_led.led_service();
 }

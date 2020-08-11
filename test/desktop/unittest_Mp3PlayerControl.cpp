@@ -152,7 +152,7 @@ TEST_F(PlayerCtrl, autoplay_LULLABYE_trackFinished_borderline_next)
     Folder testFolder(1, Folder::LULLABYE, 8);
     testFolder.setup_dependencies(&mockEeprom, 0);
     // make timeout expire
-    for (long i = 0; i<(LULLABYE_TIMER_SECS*1000 - 1); ++i)
+    for (long i = 0; i<(LULLABYE_TIMEOUT_SECS*1000 - 1); ++i)
     {
         m_pMp3PlrCtrl->lullabye_timeout_tick1ms();
     }
@@ -170,7 +170,7 @@ TEST_F(PlayerCtrl, autoplay_LULLABYE_trackFinished_timeout_stop)
     Folder testFolder(1, Folder::ONELARGETRACK, 8);
     testFolder.setup_dependencies(&mockEeprom, 0);
     // make timeout expire
-    for (int i = 0; i<(LULLABYE_TIMER_SECS*1000); ++i)
+    for (int i = 0; i<(LULLABYE_TIMEOUT_SECS*1000); ++i)
     {
         m_pMp3PlrCtrl->lullabye_timeout_tick1ms();
     }

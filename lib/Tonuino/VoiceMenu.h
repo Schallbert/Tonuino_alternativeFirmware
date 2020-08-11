@@ -69,22 +69,4 @@ private:
     uint8_t m_ui8OptionRange{0};
 };
 
-/* Menu timer class that, if active, counts up to a menu timeout.
-If interrogated, will reveal if elapsed or not */
-class MenuTimer
-{
-public:
-    // counts menu timer if active
-    void timer_tick();
-    // sets whether menuTimeout is currently active or not
-    void set_active(bool bActive);
-    // returns true on timeout
-    bool get_elapsed();
-
-private:
-    uint16_t m_ui16SecCount{0};
-    bool m_bActive{false};
-    bool m_bElapsed{false};
-};
-
 #endif // VOICEMENU_H

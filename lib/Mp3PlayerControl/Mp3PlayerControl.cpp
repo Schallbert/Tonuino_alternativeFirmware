@@ -1,14 +1,13 @@
 #include "Mp3PlayerControl.h"
 
-Mp3PlayerControl::Mp3PlayerControl(DfMiniMp3_interface *player,
-                                   Arduino_interface_pins *pinCtrl,
-                                   Arduino_interface_com *usb,
-                                   Arduino_interface_delay *delayCtrl)
+Mp3PlayerControl::Mp3PlayerControl(DfMiniMp3_interface *pPlayer,
+                                   Arduino_interface_pins *pPinCtrl,
+                                   Arduino_interface_com *pUsb,
+                                   Arduino_interface_delay *pDelayCtrl,
+                                   Timer *pIdleTimer,
+                                   Timer *pLullabyeTimer)
 {
-    m_pDfMiniMp3 = player;
-    m_pPinCtrl = pinCtrl;
-    m_pUsb = usb;
-    m_pDelayCtrl = delayCtrl;
+
     // Init communication with module and setup
     m_pPinCtrl->pin_mode(DFMINI_BUSY, INPUT);
     m_pDfMiniMp3->begin(); // Init
@@ -51,10 +50,13 @@ void Mp3PlayerControl::play_pause()
 {
     if (is_playing())
     {
+        m_pIdleTimer->start(IDLE_TIMEOUT_SECS);
         m_pDfMiniMp3->pause();
     }
     else
     {
+        m_pIdleTimer->stop();
+        m_pLullabyeTimer->start(LULLABYE_TIMEOUT_SECS); // start shutdown timer
         m_pDfMiniMp3->start(); // Only successful if a track is entered.
     }
 }
@@ -87,7 +89,7 @@ void Mp3PlayerControl::autoplay()
             m_pDfMiniMp3->stop();
             return;
         }
-        else if (mode == Folder::LULLABYE && check_lullabye_timeout())
+        else if (mode == Folder::LULLABYE && m_pLullabyeTimer->is_elapsed())
         {
 #if DEBUGSERIAL
             m_pUsb->com_println("autoplay: LULLABYE timeout expired: pause");
@@ -98,27 +100,11 @@ void Mp3PlayerControl::autoplay()
         else
         {
 #if DEBUGSERIAL
-            m_pUsb->com_println("autoplay: calling next_track");
+            m_pUsb->com_println("autoplay: next_track");
 #endif
             next_track();
         }
     }
-}
-
-void Mp3PlayerControl::lullabye_timeout_tick1s()
-{
-        ++m_ui32LullabyeTimeActiveSecs;
-}
-
-bool Mp3PlayerControl::check_lullabye_timeout()
-{
-    if (m_ui32LullabyeTimeActiveSecs >= LULLABYE_TIMER_SECS)
-    {
-        // Allow KeepAlive timer to kick in by pausing the track.
-        m_ui32LullabyeTimeActiveSecs = 0;
-        return true;
-    }
-    return false;
 }
 
 void Mp3PlayerControl::next_track()
@@ -126,7 +112,7 @@ void Mp3PlayerControl::next_track()
     if (!check_folder())
     {
 #if DEBUGSERIAL
-        m_pUsb->com_println("next_track: Error: No folder linked");
+        m_pUsb->com_println("next_track: No folder linked");
 #endif
         return; // Cannot play a track if the card is not linked.
     }
@@ -143,7 +129,7 @@ void Mp3PlayerControl::prev_track()
     if (!check_folder())
     {
 #if DEBUGSERIAL
-        m_pUsb->com_println("prev_track: Error: No folder linked");
+        m_pUsb->com_println("prev_track: No folder linked");
 #endif
         return; // Cannot play a track if the card is not linked.
     }
@@ -161,7 +147,7 @@ void Mp3PlayerControl::play_folder(Folder *currentFolder)
     if (!check_folder())
     {
 #if DEBUGSERIAL
-        m_pUsb->com_println("play_folder: Error: No folder linked");
+        m_pUsb->com_println("play_folder: No folder linked");
 #endif
         return; // Cannot play a track if the card is not linked.
     }

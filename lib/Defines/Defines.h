@@ -42,22 +42,22 @@
 //Feedback LED
 #define LED_PIN 13 //for test purposes only, otherwise 16 //PC0 25
 
-//KeepAlive interaction outputs
-#define MAXIDLE 20 //Seconds
+//StatusLEDs interaction outputs
 #define FLASHSLOWMS 500
 #define FLASHQUICKMS 200
 
 //Folder specific data
 #define MAXFOLDERCOUNT 99 // up to 255 supported by player
 
-#define VOLUME_MAX 22
-#define VOLUME_MIN 2
-#define VOLUME_INIT 7
+#define VOLUME_MAX 22 // Absolute max: 30
+#define VOLUME_MIN 2 // Absolute min: 0
+#define VOLUME_INIT 7 // Start volume. Anything between 0 and 30.
 #define DFMINI_EQ_SETTING DfMiniMp3_interface::DfMp3_Eq_Normal // TODO How to solve for enum belonging to foreign file?
 
 //Timer1 interrupt task
 #define TIMERONE_TASK_INTERVAL_USEC 1000 // 1ms
-#define LULLABYE_TIMER_SECS 20*60 // default is 20 minutes
+#define IDLE_TIMEOUT_SECS 60 // System will automatically switch off when paused
+#define LULLABYE_TIMEOUT_SECS 20*60 // default is 20 minutes (effective when track finished)
 #define MENU_TIMEOUT_SECS 20 // menu will be automatically aborted if no input within this time
 
 //MP3 defines

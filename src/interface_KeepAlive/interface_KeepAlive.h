@@ -2,6 +2,7 @@
 #define KEEPALIVE_H
 
 #include <Arduino.h>
+#include <System.h>
 
 class KeepAlive
 {
@@ -9,10 +10,16 @@ class KeepAlive
         until requested to shut down by the main program,
         e.g. after a timeout. As a KeepAlive function electronically
         can be designed in many sensible ways (TTL, Relay, Hi/Lo-Active etc.).
+        Should be used like this:
+        one button is electrically connected to the keepAlive circuitry,
+        and paralelly - if wished - to an input of the microcontroller.
+        When pressed, it will physically switch the system on.
+        Upon system setup, keep_alive() is automatically called in the 
+        class constructor. 
     */
 public:
     //Note: For usage of a bistable relay, active must be inverted!
-    KeepAlive(uint8_t pinID, bool pinActiveState, uint16_t seconds);
+    KeepAlive(uint8_t ui8PinID, bool bActiveState);
 
     // Physically keeps system powered (depending on external cirtuitry)
     void keep_alive();
@@ -20,19 +27,13 @@ public:
     void request_shutdown();
     // returns if shutdown currently requested or not
     bool get_shutdown_request();
-    // Will shut down once bAllow is TRUE and shutdown has been requested
+    // Will actually shut down once shutdown has been requested
     void allow_shutdown();
-    // method to be attached to a 1ms interrupt to count system idle time
-    void idle_timer_tick1ms();
-    // setter method to request the idle timer to (re)start
-    void set_idle_timer(bool bIdleTimerActive);
 
 private:
     uint8_t m_ui8PinID;
-    bool m_bShutDownRequested{false};
     bool m_bPinActiveState{true};
-    bool m_bIdleTimerActive{false};
-    uint16_t m_ui16Seconds{0};
-    volatile uint32_t m_ui32Tick1ms{0};
+
+    bool m_bShutDownRequested{false};
 };
 #endif //KEEPALIVE_H
