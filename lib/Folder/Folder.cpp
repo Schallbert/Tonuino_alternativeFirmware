@@ -1,12 +1,11 @@
 #include "Folder.h"
 
 //Folders
-Folder::Folder(uint8_t ui8FolderId, ePlayMode ePlayMode, uint8_t ui8TrackCount)
-{
-    m_ui8FolderId = ui8FolderId;
-    m_ePlayMode = ePlayMode;
-    m_ui8TrackCount = ui8TrackCount;
-}
+Folder::Folder(uint8_t ui8FolderId,
+               ePlayMode ePlayMode,
+               uint8_t ui8TrackCount) : m_ui8FolderId(ui8FolderId),
+                                        m_ePlayMode(ePlayMode),
+                                        m_ui8TrackCount(ui8TrackCount) {}
 // Copy Constructor
 Folder::Folder(const Folder &cpySrcFolder)
 {
@@ -25,8 +24,9 @@ Folder::Folder(const Folder &cpySrcFolder)
         }
         // copy current track
         m_ui8CurrentQueueEntry = cpySrcFolder.m_ui8CurrentQueueEntry;
-    } 
+    }
 }
+// overload assignment operator
 Folder &Folder::operator=(const Folder &cpySrcFolder)
 {
     if (this == &cpySrcFolder)
@@ -48,9 +48,10 @@ Folder &Folder::operator=(const Folder &cpySrcFolder)
         }
         // copy current track
         m_ui8CurrentQueueEntry = cpySrcFolder.m_ui8CurrentQueueEntry;
-    } 
+    }
     return *this;
 }
+// Destructor
 Folder::~Folder()
 {
     if (is_trackQueue_set())
@@ -66,23 +67,14 @@ bool Folder::is_valid()
     {
         if (is_trackQueue_set())
         {
-#if DEBUGSERIAL
-            Serial.print(F("Folder::is_valid -> All fine!"));
-#endif
             return true;
         }
         else if (is_dependency_set())
         {
-#if DEBUGSERIAL
-            Serial.print(F("Folder::is_valid -> setting up queue... OK!"));
-#endif
             setup_track_queue();
             return true;
         }
     }
-#if DEBUGSERIAL
-    Serial.print(F("Folder::is_valid -> ERROR: folder dataset incomplete!"));
-#endif
     return false;
 }
 bool Folder::is_initiated()
@@ -138,10 +130,6 @@ uint8_t Folder::get_next_track()
     }
     if (m_ePlayMode == ePlayMode::SAVEPROGRESS)
     {
-#if DEBUGSERIAL
-        Serial.print(F("SAVEPROGRESS -> saving track"));
-        Serial.println(currentTrack);
-#endif
         m_pEeprom->write(m_ui8FolderId, m_pTrackQueue[m_ui8CurrentQueueEntry]);
     }
     return m_pTrackQueue[m_ui8CurrentQueueEntry];
@@ -164,10 +152,6 @@ uint8_t Folder::get_prev_track()
     }
     if (m_ePlayMode == ePlayMode::SAVEPROGRESS)
     {
-#if DEBUGSERIAL
-        Serial.print(F("SAVEPROGRESS -> saving track"));
-        Serial.println(currentTrack);
-#endif
         m_pEeprom->write(m_ui8FolderId, m_pTrackQueue[m_ui8CurrentQueueEntry]);
     }
     return m_pTrackQueue[m_ui8CurrentQueueEntry];
@@ -197,7 +181,6 @@ void Folder::setup_track_queue()
         break;
     }
     case ePlayMode::SAVEPROGRESS:
-    {
         init_sorted_queue();
         m_ui8CurrentQueueEntry = m_pEeprom->read(m_ui8FolderId);
         if (m_ui8CurrentQueueEntry > m_ui8TrackCount || m_ui8CurrentQueueEntry == 0)
@@ -206,42 +189,22 @@ void Folder::setup_track_queue()
             m_ui8CurrentQueueEntry = 1; // set to first track
             m_pEeprom->write(m_ui8FolderId, m_ui8CurrentQueueEntry);
         }
-#if DEBUGSERIAL
-        Serial.println(F("SAVEPROGRESS -> sorted queue, save current track"));
-#endif
         break;
-    }
+
     case ePlayMode::ALBUM:
-    {
         init_sorted_queue();
-#if DEBUGSERIAL
-        Serial.println(F("ALBUM -> sorted queue, endless, rollover"));
-#endif
         break;
-    }
+
     case ePlayMode::LULLABYE:
-    {
         init_sorted_queue();
-#if DEBUGSERIAL
-        Serial.println(F("LULLABYE -> stop playback after lullabye timeout"));
-#endif
         break;
-    }
+
     case ePlayMode::ONELARGETRACK:
-    {
         init_sorted_queue();
-#if DEBUGSERIAL
-        Serial.println(F("ONELARGETRACK -> sorted queue, stop playback after each track"));
-#endif
         break;
-    }
+
     case ePlayMode::UNDEFINED:
-    {
-#if DEBUGSERIAL
-        Serial.println(F("UNDEFINED -> playmode not correctly configured"));
-#endif
         break;
-    }
     }
 }
 void Folder::shuffle_queue()
