@@ -62,7 +62,8 @@ bool LinkMenu::select_confirm()
             return true;
         }
         else
-        {
+        { 
+            // Could not initiate folder. Corrupt input data.
             m_pMp3->play_specific_file(MSG_ERROR_FOLDER);
             m_pMp3->dont_skip_current_track();
         }

@@ -16,13 +16,7 @@ public:
                      Arduino_interface_pins *pPinCtrl,
                      Arduino_interface_com *pUsb,
                      Arduino_interface_delay *pDelayCtrl,
-                     Timer *pLullabyeTimer,
-                     Timer *pIdleTimer) : m_pDfMiniMp3(pPlayer),
-                                              m_pPinCtrl(pPinCtrl),
-                                              m_pUsb(pUsb),
-                                              m_pDelayCtrl(pDelayCtrl),
-                                              m_pLullabyeTimer(pLullabyeTimer),
-                                              m_pIdleTimer(pIdleTimer);
+                     Timer *pLullabyeTimer);
 
 public:
     // Listen for DFminiMp3 replies, call autoplay routine
@@ -65,7 +59,6 @@ private:
     Arduino_interface_com *m_pUsb{nullptr};
     Arduino_interface_delay *m_pDelayCtrl{nullptr};
     Timer *m_pLullabyeTimer{nullptr};
-    Timer *m_pIdleTimer{nullptr};
     Folder *m_pCurrentFolder{nullptr};
 };
 

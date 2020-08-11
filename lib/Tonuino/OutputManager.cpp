@@ -37,18 +37,10 @@ void OutputManager::setInputStates(InputManager::eCardState cardState, UserInput
     }
 }
 
-bool OutputManager::runDispatcher()
+void OutputManager::runDispatcher()
 {
-    // Check for index out of bounds
-    if ((InputManager::NO_CARD > m_eCardState) ||
-        (m_eCardState >= InputManager::NUMBER_OF_CARD_STATES) ||
-        (UserInput::NO_ACTION > m_eUserInput) ||
-        (m_eUserInput >= UserInput::NUMBER_OF_REQUESTS))
-    {
-        return false;
-    }
     // to not clutter dispatcher
-    handleErrors(); // TODO: refactor?
+    handleInputErrors();
 
     // initialize 2D-array of function pointers to address state-event transitions
     // dispatch table contains function pointers
@@ -65,18 +57,42 @@ bool OutputManager::runDispatcher()
                                              };
     dispatcher dispatchExecutor = dispatchTable[m_eCardState][m_eUserInput];
     (this->*dispatchExecutor)();
-    // TODO: optimize dispatcher (link, erro!)
-    return true;
 }
 
-void OutputManager::handleErrors()
+void OutputManager::handleInputErrors()
 {
-    // TODO: refactor?
-    if (m_eUserInput == UserInput::ERROR)
+    bool bError = false;
+    // Check for index out of bounds
+    if ((InputManager::NO_CARD > m_eCardState) ||
+        (m_eCardState >= InputManager::NUMBER_OF_CARD_STATES))
     {
-        m_pMp3->play_specific_file(MSG_ERROR_USERINPUT);
+        bError = true;
+#ifdef DEBUGSERIAL
+        m_pUsb->com_println("runDispatcher(): cardState out of range!");
+#endif
+    }
+    else if ((UserInput::NO_ACTION > m_eUserInput) ||
+             (m_eUserInput >= UserInput::NUMBER_OF_REQUESTS))
+    {
+        bError = true;
+#ifdef DEBUGSERIAL
+        m_pUsb->com_println("runDispatcher(): userInput out of range!");
+#endif
+    }
+    else if (m_eUserInput == UserInput::ERROR)
+    {
+        bError = true;
+#ifdef DEBUGSERIAL
+        m_pUsb->com_println("runDispatcher(): userInput internal error!");
+#endif
+    }
+
+    if (bError)
+    {
+        m_pMp3->play_specific_file(MSG_ERROR);
         m_pMp3->dont_skip_current_track();
         m_eUserInput = UserInput::NO_ACTION;
+        m_eCardState = InputManager::NO_CARD;
     }
 }
 
@@ -160,7 +176,7 @@ void OutputManager::linP()
     m_linkMenu.select_prev();
 }
 
-void KeepAlive_StatusLed::setup()
+KeepAlive_StatusLed::KeepAlive_StatusLed(Timer *pIdleTimer) : m_pIdleTimer(pIdleTimer)
 {
     m_keep.keep_alive(); //Activate KeepAlive to maintain power supply to circuits
     m_led.set_led_behavior(StatusLed::solid);

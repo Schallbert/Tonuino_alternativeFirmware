@@ -11,12 +11,14 @@
 class OutputManager
 {
 public:
-    OutputManager(KeepAlive_StatusLed *pPwrCtrl,
+    OutputManager(Arduino_interface_com *pUsb,
+                  KeepAlive_StatusLed *pPwrCtrl,
                   NfcTag *pNfcReader,
                   Mp3PlayerControl *pMp3,
                   Timer *pMenuTimer,
                   EEPROM_interface *pEeprom,
-                  uint32_t ui32Seed) : m_pSysPwr(pPwrCtrl),
+                  uint32_t ui32Seed) : m_pUsb(pUsb),
+                                       m_pSysPwr(pPwrCtrl),
                                        m_pNfcTagReader(pNfcReader),
                                        m_pMp3(pMp3),
                                        m_pMenuTimer(pMenuTimer),
@@ -27,7 +29,7 @@ public:
     // Sets input states from card and buttons, and determines internal state.
     void setInputStates(InputManager::eCardState cardState, UserInput::UserRequest_e userInput);
     // Runs desicion table that calls functions depending on user input
-    bool runDispatcher();
+    void runDispatcher();
     bool getShutdownRequest();
 
 private:
@@ -61,12 +63,12 @@ private:
     void abrt();
 
     // ----- Wrapper methods to call target object's methods -----
-    // TODO: Start timeout for any menu we're going into
-    void handleErrors();
+    void handleInputErrors();
 
 private:
     typedef void (OutputManager::*dispatcher)(); // table of function pointers
     // members by dependency injection
+    Arduino_interface_com *m_pUsb{nullptr};
     KeepAlive_StatusLed *m_pSysPwr{nullptr};
     Mp3PlayerControl *m_pMp3{nullptr};
     NfcTag *m_pNfcTagReader{nullptr};
@@ -85,7 +87,7 @@ private:
 class KeepAlive_StatusLed
 {
 public:
-    KeepAlive_StatusLed(Timer *pIdleTimer) : m_pIdleTimer(pIdleTimer){};
+    KeepAlive_StatusLed(Timer *pIdleTimer);
 
 public:
     // assumes that mp3 is playing on TRUE
@@ -94,8 +96,6 @@ public:
     void set_delMenu();
     // sets LED behavior for link Menu
     void set_linkMenu();
-    // Keeps system active
-    void setup();
     // shuts down the system
     void request_shutdown();
     // returns current shutdown status
@@ -109,8 +109,8 @@ private:
     // Dependency object
     Timer *m_pIdleTimer{nullptr};
     // Member objects
-    StatusLed m_led{StatusLed(LED_PIN, FLASHSLOWMS, FLASHQUICKMS, HIGH)};
-    KeepAlive m_keep{KeepAlive(KEEPALIVE, false)};
+    StatusLed m_led{StatusLed(LED_PIN, FLASHSLOWMS, FLASHQUICKMS, LED_ACTIVE_STATE)};
+    KeepAlive m_keep{KeepAlive(KEEPALIVE_PIN, KEEPALIVE_ACTIVE_STATE)};
 };
 
 #endif // OUTPUTMANAGER_H

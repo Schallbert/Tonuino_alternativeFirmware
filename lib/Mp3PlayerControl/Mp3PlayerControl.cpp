@@ -4,8 +4,11 @@ Mp3PlayerControl::Mp3PlayerControl(DfMiniMp3_interface *pPlayer,
                                    Arduino_interface_pins *pPinCtrl,
                                    Arduino_interface_com *pUsb,
                                    Arduino_interface_delay *pDelayCtrl,
-                                   Timer *pIdleTimer,
-                                   Timer *pLullabyeTimer)
+                                   Timer *pLullabyeTimer) : m_pDfMiniMp3(pPlayer),
+                                                        m_pPinCtrl(pPinCtrl),
+                                                        m_pUsb(pUsb),
+                                                        m_pDelayCtrl(pDelayCtrl),
+                                                        m_pLullabyeTimer(pLullabyeTimer)
 {
 
     // Init communication with module and setup
@@ -50,14 +53,12 @@ void Mp3PlayerControl::play_pause()
 {
     if (is_playing())
     {
-        m_pIdleTimer->start(IDLE_TIMEOUT_SECS);
         m_pDfMiniMp3->pause();
     }
     else
     {
-        m_pIdleTimer->stop();
         m_pLullabyeTimer->start(LULLABYE_TIMEOUT_SECS); // start shutdown timer
-        m_pDfMiniMp3->start(); // Only successful if a track is entered.
+        m_pDfMiniMp3->start();                          // Only successful if a track is entered.
     }
 }
 void Mp3PlayerControl::dont_skip_current_track()

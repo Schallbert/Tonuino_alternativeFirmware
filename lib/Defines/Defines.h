@@ -11,6 +11,8 @@
 #define MSG_DELETETAG 800
 #define MSG_ABORTEED 802
 #define MSG_ERROR 401
+#define MSG_ERROR_CARDREAD 402
+#define MSG_ERROR_FOLDER 403
 #define MSG_TAGCONFSUCCESS 400
 #define MSG_UNKNOWNTAG 300 // TODO: rename o "select folderId?"
 #define MSG_TAGLINKED 310 // TODO: Rename to "select playMode"
@@ -38,9 +40,11 @@
 #define PINPREV 17 // PC4 26
 #define PINNEXT 19 // PC6 28
 //KeepAlive
-#define KEEPALIVE A0 //PB6 9
+#define KEEPALIVE_PIN A0 //PB6 9
+#define KEEPALIVE_ACTIVE_STATE LOW
 //Feedback LED
 #define LED_PIN 13 //for test purposes only, otherwise 16 //PC0 25
+#define LED_ACTIVE_STATE HIGH
 
 //StatusLEDs interaction outputs
 #define FLASHSLOWMS 500

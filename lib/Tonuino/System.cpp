@@ -5,7 +5,6 @@ System::System()
     // Initializes all objects needed
     m_pIdleTimer = new Timer();
     m_pPwrCtrl = new KeepAlive_StatusLed(m_pIdleTimer);
-    m_pPwrCtrl->setup();
 
 #if DEBUGSERIAL
     m_pUsbSerial->com_begin(9600); // Some debug output via serial
@@ -21,7 +20,7 @@ System::System()
     m_pDfMini = new DfMini();
     m_pMenuTimer = new Timer();
     m_pLullabyeTimer = new Timer();
-    m_pMp3 = new Mp3PlayerControl(m_pDfMini, m_pPinControl, m_pUsbSerial, m_pDelayControl, m_pLullabyeTimer, m_pIdleTimer);
+    m_pMp3 = new Mp3PlayerControl(m_pDfMini, m_pPinControl, m_pUsbSerial, m_pDelayControl, m_pLullabyeTimer);
     m_pUserInput = UserInput_Factory::getInstance(UserInput_Factory::ThreeButtons);
 
     // Initialize objects if needed ------------------------
@@ -51,6 +50,7 @@ System::~System()
     delete m_pMp3;
     delete m_pMenuTimer;
     delete m_pLullabyeTimer;
+    delete m_pIdleTimer;
     m_pUserInput = nullptr;
 
     // finally shut down system
