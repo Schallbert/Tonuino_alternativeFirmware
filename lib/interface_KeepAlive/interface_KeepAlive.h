@@ -2,7 +2,6 @@
 #define KEEPALIVE_H
 
 #include <Arduino.h>
-#include <System.h>
 
 class KeepAlive
 {

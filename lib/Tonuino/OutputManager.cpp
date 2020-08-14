@@ -45,16 +45,17 @@ void OutputManager::runDispatcher()
     // initialize 2D-array of function pointers to address state-event transitions
     // dispatch table contains function pointers
     // cardStates = ROWS, userInput = COLUMNS
+    typedef OutputManager OM;
     static const dispatcher dispatchTable[InputManager::NUMBER_OF_CARD_STATES]
                                          [UserInput::NUMBER_OF_REQUESTS - 1] =
-                                             {
-                                                 //NOAC, PL_PS, PP_LP, NEXT_, PREV_, INC_V, DEC_V, ERROR
-                                                 {&none, &plPs, &help, &next, &prev, &incV, &decV}, // NO_CARD
-                                                 {&none, &plPs, &delt, &next, &prev, &incV, &decV}, // ACTIVE_KNOWN_CARD,
-                                                 {&none, &plPs, &none, &next, &prev, &incV, &decV}, // NEW_KNOWN_CARD,
-                                                 {&none, &linC, &abrt, &linN, &linP, &none, &none}, // UNKNOWN_CARD_MENU,
-                                                 {&none, &delC, &abrt, &none, &none, &none, &none}, // DELETE_CARD_MENU,
-                                             };
+        {
+            //NOAC,     PL_PS,     PP_LP,     NEXT_,     PREV_,     INC_V,     DEC_V, 
+            {&OM::none, &OM::plPs, &OM::help, &OM::next, &OM::prev, &OM::incV, &OM::decV}, // NO_CARD
+            {&OM::none, &OM::plPs, &OM::delt, &OM::next, &OM::prev, &OM::incV, &OM::decV}, // ACTIVE_KNOWN_CARD,
+            {&OM::none, &OM::plPs, &OM::none, &OM::next, &OM::prev, &OM::incV, &OM::decV}, // NEW_KNOWN_CARD,
+            {&OM::none, &OM::linC, &OM::abrt, &OM::linN, &OM::linP, &OM::none, &OM::none}, // UNKNOWN_CARD_MENU,
+            {&OM::none, &OM::delC, &OM::abrt, &OM::none, &OM::none, &OM::none, &OM::none}, // DELETE_CARD_MENU,
+        };
     dispatcher dispatchExecutor = dispatchTable[m_eCardState][m_eUserInput];
     (this->*dispatchExecutor)();
 }
@@ -174,64 +175,4 @@ void OutputManager::linN()
 void OutputManager::linP()
 {
     m_linkMenu.select_prev();
-}
-
-KeepAlive_StatusLed::KeepAlive_StatusLed(Timer *pIdleTimer) : m_pIdleTimer(pIdleTimer)
-{
-    m_keep.keep_alive(); //Activate KeepAlive to maintain power supply to circuits
-    m_led.set_led_behavior(StatusLed::solid);
-}
-
-void KeepAlive_StatusLed::request_shutdown()
-{
-    m_led.set_led_behavior(StatusLed::off);
-    m_keep.request_shutdown();
-}
-
-bool KeepAlive_StatusLed::get_shutdown_request()
-{
-    return m_keep.get_shutdown_request();
-}
-
-void KeepAlive_StatusLed::allow_shutdown()
-{
-    m_keep.allow_shutdown();
-}
-
-void KeepAlive_StatusLed::set_playback(bool isPlaying)
-{
-    if (isPlaying)
-    {
-        m_led.set_led_behavior(StatusLed::solid);
-        m_pIdleTimer->stop();
-    }
-    else
-    {
-
-        m_pIdleTimer->start(IDLE_TIMEOUT_SECS);
-        m_led.set_led_behavior(StatusLed::flash_slow);
-    }
-}
-
-void KeepAlive_StatusLed::set_delMenu()
-{
-    m_pIdleTimer->stop();
-    m_led.set_led_behavior(StatusLed::flash_quick); // Delete Menu
-}
-
-void KeepAlive_StatusLed::set_linkMenu()
-{
-    m_pIdleTimer->stop();
-    m_led.set_led_behavior(StatusLed::flash_slow); // Link Menu
-}
-
-void KeepAlive_StatusLed::notify_timer_tick()
-{
-    m_pIdleTimer->timer_tick();
-    if (m_pIdleTimer->is_elapsed())
-    {
-        m_pIdleTimer->stop();
-        request_shutdown();
-    }
-    m_led.led_service();
 }

@@ -5,9 +5,9 @@
 
 #include <Folder.h>
 #include <Defines.h>
-#include <System.h>
 #include <Arduino_interface.h>
 #include <DFMiniMp3_interface.h>
+#include <SimpleTimer.h>
 
 class Mp3PlayerControl
 {
@@ -16,7 +16,7 @@ public:
                      Arduino_interface_pins *pPinCtrl,
                      Arduino_interface_com *pUsb,
                      Arduino_interface_delay *pDelayCtrl,
-                     Timer *pLullabyeTimer);
+                     SimpleTimer *pLullabyeTimer);
 
 public:
     // Listen for DFminiMp3 replies, call autoplay routine
@@ -58,7 +58,7 @@ private:
     Arduino_interface_pins *m_pPinCtrl{nullptr};
     Arduino_interface_com *m_pUsb{nullptr};
     Arduino_interface_delay *m_pDelayCtrl{nullptr};
-    Timer *m_pLullabyeTimer{nullptr};
+    SimpleTimer *m_pLullabyeTimer{nullptr};
     Folder *m_pCurrentFolder{nullptr};
 };
 

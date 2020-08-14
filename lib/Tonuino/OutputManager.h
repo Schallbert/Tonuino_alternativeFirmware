@@ -1,21 +1,25 @@
 #ifndef OUTPUTMANAGER_H
 #define OUTPUTMANAGER_H
 
-#include "interface_KeepAlive/interface_KeepAlive.h"
-#include "InputManager.h"
-#include <StatusLed.h>
+#include <Arduino_interface.h>
 #include <NfcTag.h>
 #include <Mp3PlayerControl.h>
-#include <VoiceMenu.h>
+
+#include "LinkMenu.h"
+#include "DeleteMenu.h"
+#include "SimpleTimer.h"
+#include "InputManager.h" // Use Enums
+#include "PowerManager.h"
+
 
 class OutputManager
 {
 public:
     OutputManager(Arduino_interface_com *pUsb,
-                  KeepAlive_StatusLed *pPwrCtrl,
+                  PowerManager *pPwrCtrl,
                   NfcTag *pNfcReader,
                   Mp3PlayerControl *pMp3,
-                  Timer *pMenuTimer,
+                  SimpleTimer *pMenuTimer,
                   EEPROM_interface *pEeprom,
                   uint32_t ui32Seed) : m_pUsb(pUsb),
                                        m_pSysPwr(pPwrCtrl),
@@ -69,48 +73,19 @@ private:
     typedef void (OutputManager::*dispatcher)(); // table of function pointers
     // members by dependency injection
     Arduino_interface_com *m_pUsb{nullptr};
-    KeepAlive_StatusLed *m_pSysPwr{nullptr};
-    Mp3PlayerControl *m_pMp3{nullptr};
+    PowerManager *m_pSysPwr{nullptr};
     NfcTag *m_pNfcTagReader{nullptr};
-    Timer *m_pMenuTimer{nullptr};
-    uint32_t m_ui32RandomSeed{0};
+    Mp3PlayerControl *m_pMp3{nullptr};
+    SimpleTimer *m_pMenuTimer{nullptr};
     EEPROM_interface *m_pEeprom{nullptr};
+    uint32_t m_ui32RandomSeed{0};
+
     // Member objects
     Folder m_currentFolder{};
     LinkMenu m_linkMenu{m_pMp3, m_pEeprom};
     DeleteMenu m_deleteMenu{};
     InputManager::eCardState m_eCardState{InputManager::NO_CARD};
     UserInput::UserRequest_e m_eUserInput{UserInput::NO_ACTION};
-};
-
-// controls keepalive relay and status LED output.
-class KeepAlive_StatusLed
-{
-public:
-    KeepAlive_StatusLed(Timer *pIdleTimer);
-
-public:
-    // assumes that mp3 is playing on TRUE
-    void set_playback(bool isPlaying);
-    // sets LED behavior for delete Menu
-    void set_delMenu();
-    // sets LED behavior for link Menu
-    void set_linkMenu();
-    // shuts down the system
-    void request_shutdown();
-    // returns current shutdown status
-    bool get_shutdown_request();
-    // shuts system down if shutdown has been requested and bAllow is TRUE
-    void allow_shutdown();
-    // notifies classes that another timer interval passed
-    void notify_timer_tick();
-
-private:
-    // Dependency object
-    Timer *m_pIdleTimer{nullptr};
-    // Member objects
-    StatusLed m_led{StatusLed(LED_PIN, FLASHSLOWMS, FLASHQUICKMS, LED_ACTIVE_STATE)};
-    KeepAlive m_keep{KeepAlive(KEEPALIVE_PIN, KEEPALIVE_ACTIVE_STATE)};
 };
 
 #endif // OUTPUTMANAGER_H

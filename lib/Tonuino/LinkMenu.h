@@ -3,28 +3,8 @@
 
 #include <Defines.h>
 #include <Folder.h>
+#include <EEPROM_interface.h>
 #include <Mp3PlayerControl.h>
-
-/* POD container for delete menu status. */
-class DeleteMenu
-{
-public:
-    enum eDelMenuState
-    {
-        NO_MENU = 0,
-        DELETE_MENU,
-        DELETE_READY
-    };
-
-public:
-// initializes and controls delete process and plays voice prompt
-    void set_state(eDelMenuState state);
-    bool get_state(eDelMenuState state) { return (m_eMenuState == state); };
-
-private:
-    eDelMenuState m_eMenuState{NO_MENU};
-};
-
 
 /* 
 Once a new card is detected, It has to be linked to an existing folder on the SD card.
@@ -58,8 +38,8 @@ private:
 
 private:
     // needed for menu to be able to play voice prompts & previews
-    EEPROM_interface *m_pEeprom{nullptr};
     Mp3PlayerControl *m_pMp3{nullptr};
+    EEPROM_interface *m_pEeprom{nullptr};
     Folder m_linkedFolder{};
     // initialized for folderId state of linkMenu
     bool m_bMenuState{false};

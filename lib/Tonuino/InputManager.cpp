@@ -1,6 +1,5 @@
 #include "InputManager.h"
 
-
 uint32_t InputManager::getRandomSeed()
 {
     uint32_t ADC_LSB;
@@ -24,7 +23,7 @@ InputManager::eCardState InputManager::getCardState()
         {
             return ACTIVE_KNOWN_CARD;
         }
-        else // New card detected: runs once as new card is automatically set_state to ActiveCard
+        else // New card detected: runs once as new card is automatically set to ActiveCard
         {
             Folder dummyFolder;
             if (m_pNfcTagReader->read_folder_from_card(dummyFolder))
@@ -40,10 +39,8 @@ InputManager::eCardState InputManager::getCardState()
             }
         }
     }
-    else // No card present
-    {
-        return NO_CARD;
-    }
+
+    return NO_CARD;
 }
 
 UserInput::UserRequest_e InputManager::getUserInput()

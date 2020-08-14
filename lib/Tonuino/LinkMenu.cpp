@@ -1,4 +1,4 @@
-#include <VoiceMenu.h>
+#include <LinkMenu.h>
 
 void LinkMenu::set_state(bool linkMenu)
 {
