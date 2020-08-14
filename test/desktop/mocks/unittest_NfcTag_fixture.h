@@ -38,9 +38,9 @@ protected:
     }
 
 protected:
-    NiceMock<Mock_MFRC522>* m_pMfrc;
-    NfcTag* m_pNfc;
-    Mock_Eeprom* m_pEeprom;
-    Folder* m_pTestFolder;
+    NiceMock<Mock_MFRC522>* m_pMfrc{nullptr};
+    NfcTag* m_pNfc{nullptr};
+    Mock_Eeprom* m_pEeprom{nullptr};
+    Folder* m_pTestFolder{nullptr};
 };
 #endif // UNITTEST_NFCTAG_FIXTURE_H

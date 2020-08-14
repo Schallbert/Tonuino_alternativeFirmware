@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <Mp3PlayerControl.h>
+#include <SimpleTimer.h>
 #include "mocks/unittest_Folder_mocks.h"
 #include "mocks/unittest_DfMiniMp3_mocks.h"
 #include "mocks/unittest_ArduinoIf_mocks.h"
@@ -20,7 +21,8 @@ protected:
         m_pPinCtrl = new NiceMock<Mock_pinCtrl>;
         m_pUsb = new NiceMock<Mock_com>;
         m_pDelayCtrl = new NiceMock<Mock_delay>;
-        m_pMp3PlrCtrl = new Mp3PlayerControl(m_pDfMini, m_pPinCtrl, m_pUsb, m_pDelayCtrl);
+        m_pMp3PlrCtrl = new Mp3PlayerControl(m_pDfMini, m_pPinCtrl, m_pUsb, m_pDelayCtrl, m_pLullabyeTimer);
+        m_pLullabyeTimer = new SimpleTimer{};
     }
 
     virtual void TearDown()
@@ -30,6 +32,7 @@ protected:
         delete m_pPinCtrl;
         delete m_pUsb;
         delete m_pMp3PlrCtrl;
+        delete m_pLullabyeTimer;
     }
 
 protected:
@@ -38,6 +41,7 @@ protected:
     NiceMock<Mock_com> *m_pUsb;
     NiceMock<Mock_delay> *m_pDelayCtrl;
     Mp3PlayerControl *m_pMp3PlrCtrl;
+    SimpleTimer *m_pLullabyeTimer{nullptr};
 };
 
 using ::testing::Return;
@@ -47,7 +51,7 @@ TEST_F(PlayerCtrl, ClassConstructorMethodsCalled)
     EXPECT_CALL(*m_pDfMini, begin());
     EXPECT_CALL(*m_pDfMini, setEq(DFMINI_EQ_SETTING));
     EXPECT_CALL(*m_pDfMini, setVolume(VOLUME_INIT));
-    Mp3PlayerControl myMp3(m_pDfMini, m_pPinCtrl, m_pUsb, m_pDelayCtrl);
+    Mp3PlayerControl myMp3(m_pDfMini, m_pPinCtrl, m_pUsb, m_pDelayCtrl, m_pLullabyeTimer);
 }
 
 TEST_F(PlayerCtrl, AutoPlayCalledOnLoop)
@@ -128,7 +132,7 @@ TEST_F(PlayerCtrl, autoplay_ONELARGETRACK_trackFinished_stop)
     testFolder.setup_dependencies(&mockEeprom, 0);
     EXPECT_CALL(*m_pDfMini, checkTrackFinished()).WillOnce(Return(true));
     EXPECT_CALL(*m_pDfMini, playFolderTrack(_, 1)).Times(1); // play_folder calls first track.
-    EXPECT_CALL(*m_pDfMini, stop()).Times(1); // autoplay calls stop
+    EXPECT_CALL(*m_pDfMini, stop()).Times(1);                // autoplay calls stop
     m_pMp3PlrCtrl->play_folder(&testFolder);
     m_pMp3PlrCtrl->loop();
 }
@@ -151,10 +155,11 @@ TEST_F(PlayerCtrl, autoplay_LULLABYE_trackFinished_borderline_next)
     Mock_Eeprom mockEeprom;
     Folder testFolder(1, Folder::LULLABYE, 8);
     testFolder.setup_dependencies(&mockEeprom, 0);
+    m_pLullabyeTimer->start(LULLABYE_TIMEOUT_SECS);
     // make timeout expire
-    for (long i = 0; i<(LULLABYE_TIMEOUT_SECS*1000 - 1); ++i)
+    for (long i = 0; i < (LULLABYE_TIMEOUT_SECS - 1); ++i)
     {
-        m_pMp3PlrCtrl->lullabye_timeout_tick1ms();
+        m_pLullabyeTimer->timer_tick();
     }
     EXPECT_CALL(*m_pDfMini, checkTrackFinished()).WillOnce(Return(true));
     EXPECT_CALL(*m_pDfMini, playFolderTrack(_, 1)).Times(1); // play_folder calls first track.
@@ -170,13 +175,14 @@ TEST_F(PlayerCtrl, autoplay_LULLABYE_trackFinished_timeout_stop)
     Folder testFolder(1, Folder::ONELARGETRACK, 8);
     testFolder.setup_dependencies(&mockEeprom, 0);
     // make timeout expire
-    for (int i = 0; i<(LULLABYE_TIMEOUT_SECS*1000); ++i)
+    m_pLullabyeTimer->start(LULLABYE_TIMEOUT_SECS);
+    for (int i = 0; i < (LULLABYE_TIMEOUT_SECS); ++i)
     {
-        m_pMp3PlrCtrl->lullabye_timeout_tick1ms();
+         m_pLullabyeTimer->timer_tick();
     }
     EXPECT_CALL(*m_pDfMini, checkTrackFinished()).WillOnce(Return(true));
     EXPECT_CALL(*m_pDfMini, playFolderTrack(_, 1)).Times(1); // play_folder calls first track.
-    EXPECT_CALL(*m_pDfMini, stop()).Times(1); // autoplay calls stop
+    EXPECT_CALL(*m_pDfMini, stop()).Times(1);                // autoplay calls stop
     m_pMp3PlrCtrl->play_folder(&testFolder);
     m_pMp3PlrCtrl->loop();
 }

@@ -146,7 +146,7 @@ TEST_F(NfcTagReadWrite, Read_Successful_bufferSet_returnsCorrectFolderData)
 TEST_F(NfcTagReadWrite, Erase)
 {
     // Compare if input of writeCard buffer is really 0
-    emptyBuffer[MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY] = {};
+    byte emptyBuffer[MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY] = {};
     EXPECT_CALL(*m_pMfrc, writeCard(_, arrayByteCompare(
                                   emptyBuffer,
                                   MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY

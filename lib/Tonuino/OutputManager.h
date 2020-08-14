@@ -11,6 +11,8 @@
 #include "InputManager.h" // Use Enums
 #include "PowerManager.h"
 
+// TODO: for testability: Setup inferface clases for PowerManager
+// and UserInterface (enums)
 
 class OutputManager
 {
