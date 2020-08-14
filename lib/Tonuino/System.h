@@ -11,8 +11,8 @@
 #include <DFMiniMp3_implementation.h>
 #include <EEPROM_implementation.h>
 #include <MFRC522_implementation.h>
+#include <PowerManager.h>
 
-#include "PowerManager.h"
 #include "InputManager.h"
 #include "SimpleTimer.h"
 #include "OutputManager.h"

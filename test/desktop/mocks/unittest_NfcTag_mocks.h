@@ -3,7 +3,7 @@
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <Arduino.h>
+#include <Arduino_types.h>
 #include <MFRC522_interface.h>
 #include "unittest_NfcTag_fakes.h"
 

@@ -1,7 +1,7 @@
 #ifndef NFCTAG_H
 #define NFCTAG_H
 
-#include <Arduino.h>
+#include <Arduino_types.h>
 #include <MFRC522_interface.h>
 //#include <SPI.h>
 #include <Folder.h>

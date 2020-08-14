@@ -2,23 +2,24 @@
 #define OUTPUTMANAGER_H
 
 #include <Arduino_interface.h>
+#include <PowerManager_interface.h>
 #include <NfcTag.h>
 #include <Mp3PlayerControl.h>
+
 
 #include "LinkMenu.h"
 #include "DeleteMenu.h"
 #include "SimpleTimer.h"
 #include "InputManager.h" // Use Enums
-#include "PowerManager.h"
 
-// TODO: for testability: Setup inferface clases for PowerManager
+// TODO: for testability: Setup interface classes for PowerManager
 // and UserInterface (enums)
 
 class OutputManager
 {
 public:
     OutputManager(Arduino_interface_com *pUsb,
-                  PowerManager *pPwrCtrl,
+                  PowerManager_interface *pPwrCtrl,
                   NfcTag *pNfcReader,
                   Mp3PlayerControl *pMp3,
                   SimpleTimer *pMenuTimer,
@@ -75,7 +76,7 @@ private:
     typedef void (OutputManager::*dispatcher)(); // table of function pointers
     // members by dependency injection
     Arduino_interface_com *m_pUsb{nullptr};
-    PowerManager *m_pSysPwr{nullptr};
+    PowerManager_interface *m_pSysPwr{nullptr};
     NfcTag *m_pNfcTagReader{nullptr};
     Mp3PlayerControl *m_pMp3{nullptr};
     SimpleTimer *m_pMenuTimer{nullptr};

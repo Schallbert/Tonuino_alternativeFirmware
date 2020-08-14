@@ -1,14 +1,15 @@
 #ifndef POWERMANAGER_H
 #define POWERMANAGER_H
 
+#include "PowerManager_interface.h"
+
 #include <Defines.h>
 #include <StatusLed.h>
 #include <interface_KeepAlive.h>
 #include <SimpleTimer.h>
 
-
 // controls keepalive relay and status LED output.
-class PowerManager
+class PowerManager : public PowerManager_interface
 {
 public:
     PowerManager(SimpleTimer *pIdleTimer);
