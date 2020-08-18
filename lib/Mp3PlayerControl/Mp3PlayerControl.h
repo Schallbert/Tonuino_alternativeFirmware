@@ -4,7 +4,8 @@
 #include <Arduino_types.h>
 
 #include <Folder.h>
-#include <Defines.h>
+#include <Tonuino_config.h>
+#include <Arduino_config.h>
 #include <Arduino_interface.h>
 #include <DFMiniMp3_interface.h>
 #include <SimpleTimer.h>

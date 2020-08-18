@@ -2,8 +2,8 @@
 #define POWERMANAGER_H
 
 #include "PowerManager_interface.h"
-
-#include <Defines.h>
+#include "../Config/Arduino_config.h"
+#include "../Config/Tonuino_config.h"
 #include <StatusLed.h>
 #include <interface_KeepAlive.h>
 #include <SimpleTimer.h>

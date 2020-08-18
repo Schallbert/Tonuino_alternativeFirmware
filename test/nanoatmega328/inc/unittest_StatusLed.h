@@ -1,7 +1,7 @@
 
 #include <Arduino.h>
 #include <unity.h> //for unittest
-#include <Defines.h>
+#include <Tonuino_config.h>
 #include <StatusLed.h>
 
 namespace statusled

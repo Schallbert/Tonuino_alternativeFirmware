@@ -10,7 +10,7 @@
 #include "LinkMenu.h"
 #include "DeleteMenu.h"
 #include "SimpleTimer.h"
-#include "InputManager.h" // Use Enums
+#include "InputManager/InputManager.h" // Use Enums
 
 // TODO: for testability: Setup interface classes for PowerManager
 // and UserInterface (enums)
@@ -18,6 +18,8 @@
 class OutputManager
 {
 public:
+
+
     OutputManager(Arduino_interface_com *pUsb,
                   PowerManager_interface *pPwrCtrl,
                   NfcTag *pNfcReader,

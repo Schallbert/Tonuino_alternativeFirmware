@@ -1,7 +1,7 @@
 #ifndef INPUTMANAGER_H
 #define INPUTMANAGER_H
 
-#include <Defines.h>
+#include "../Config/Arduino_config.h"
 #include <Arduino_implementation.h>
 #include <interface_UserInput.h>
 #include <NfcTag.h>
