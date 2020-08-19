@@ -14,10 +14,7 @@ uint32_t InputManager::getRandomSeed()
 
 InputManager::eCardState InputManager::getCardState()
 {
-    bool cardPresent = m_pNfcTagReader->is_card_present();
-    m_pUserInput->set_card_detected(cardPresent); // TODO: needed?
-
-    if (cardPresent)
+    if (m_pNfcTagReader->is_card_present())
     {
         if (!m_pNfcTagReader->is_new_card_present())
         {

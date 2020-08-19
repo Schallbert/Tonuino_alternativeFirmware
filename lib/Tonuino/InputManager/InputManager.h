@@ -3,7 +3,7 @@
 
 #include "../Config/Arduino_config.h"
 #include <Arduino_implementation.h>
-#include <interface_UserInput.h>
+#include <UserInput_interface.h>
 #include <NfcTag.h>
 
 class InputManager

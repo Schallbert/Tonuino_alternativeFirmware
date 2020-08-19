@@ -3,7 +3,6 @@
 
 // project includes -------
 
-#include <interface_UserInput.h>
 #include <Folder.h>
 #include <NfcTag.h>
 #include <Arduino_implementation.h>
@@ -13,7 +12,8 @@
 #include <MFRC522_implementation.h>
 #include <PowerManager.h>
 
-#include "InputManager.h"
+#include  "../UserInput/UserInput_implementation.h" //interface_UserInput.h>
+#include "InputManager/InputManager.h"
 #include "SimpleTimer.h"
 #include "OutputManager.h"
 
