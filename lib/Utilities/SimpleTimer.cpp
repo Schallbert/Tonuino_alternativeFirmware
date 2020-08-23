@@ -36,6 +36,7 @@ void SimpleTimer::timer_tick()
 {
     if (m_ui16Timeout == 0)
     {
+        m_bElapsed = false;
         return; // timer stopped
     }
 

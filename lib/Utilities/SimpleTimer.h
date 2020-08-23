@@ -11,8 +11,16 @@ public:
 TimerManager(uint8_t ui8MaxTimersToKeep);
 
 public:
-void register_timer(SimpleTimer* pTimer);
-void timer_tick();
+// Registers a timer and reaturns its ID to calling entity.
+uint8_t timer_register();
+// ticks all (running) timers
+void timers_tick();
+// starts timer by ID
+void timer_start(uint8_t timerId);
+// stops timer by ID
+void timer_stop(uint8_t timerId);
+// returns timer's elapsed state
+bool timer_isElapsed();
 
 private:
     SimpleTimer **m_pArrayOfTimers{nullptr};
@@ -33,7 +41,8 @@ public:
 public:
     // counts timer if started
     void timer_tick();
-    // sets timeout and activates timer
+    // (re)sets timeout
+    // (timer runs automatically when timeout not reached)
     void start(uint16_t ui16Timeout);
     // stops the timer and resets values
     void stop();
