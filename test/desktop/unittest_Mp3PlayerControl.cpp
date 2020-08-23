@@ -21,8 +21,8 @@ protected:
         m_pPinCtrl = new NiceMock<Mock_pinCtrl>;
         m_pUsb = new NiceMock<Mock_com>;
         m_pDelayCtrl = new NiceMock<Mock_delay>;
-        m_pMp3PlrCtrl = new Mp3PlayerControl(m_pDfMini, m_pPinCtrl, m_pUsb, m_pDelayCtrl, m_pLullabyeTimer);
         m_pLullabyeTimer = new SimpleTimer{};
+        m_pMp3PlrCtrl = new Mp3PlayerControl(m_pDfMini, m_pPinCtrl, m_pUsb, m_pDelayCtrl, m_pLullabyeTimer);
     }
 
     virtual void TearDown()

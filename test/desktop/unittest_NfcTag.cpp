@@ -76,11 +76,11 @@ TEST_F(NfcTagReadWrite, Read_NotSuccessful_returnsFalse)
     EXPECT_FALSE(m_pNfc->read_folder_from_card(resultFolder));
 }
 
-TEST_F(NfcTagReadWrite, Read_Successful_returnsTrue)
+TEST_F(NfcTagReadWrite, Read_Successful_ReadFolderNotInitialized_returnsFalse)
 {
     Folder resultFolder;
     EXPECT_CALL(*m_pMfrc, readCard(_, _)).WillOnce(Return(true));
-    EXPECT_TRUE(m_pNfc->read_folder_from_card(resultFolder));
+    EXPECT_FALSE(m_pNfc->read_folder_from_card(resultFolder));
 }
 
 TEST_F(NfcTagReadWrite, Read_IsCalledWithCorrectBlockAddr)
@@ -103,22 +103,14 @@ TEST_F(NfcTagReadWrite, Read_IsCalledWithCorrectPayload)
     m_pNfc->read_folder_from_card(resultFolder);
 }
 
-TEST_F(NfcTagReadWrite, Read_Successful_bufferEmpty_overridesSourceFolder)
+TEST_F(NfcTagReadWrite, Read_Successful_bufferEmpty_NoOverwriteOfSourceFolder)
 {
     Folder resultFolder(27, Folder::LULLABYE, 5);
     EXPECT_CALL(*m_pMfrc, readCard(_, _)).WillOnce(Return(true));
-    EXPECT_TRUE(m_pNfc->read_folder_from_card(resultFolder));
-    EXPECT_EQ(0, resultFolder.get_folder_id());
-    EXPECT_EQ(Folder::UNDEFINED, resultFolder.get_play_mode());
-    EXPECT_EQ(0, resultFolder.get_track_count());
-}
-
-TEST_F(NfcTagReadWrite, Read_Successful_bufferEmpty_returnsUnknownCard)
-{
-    Folder resultFolder;
-    EXPECT_CALL(*m_pMfrc, readCard(_, _)).WillOnce(Return(true));
-    EXPECT_TRUE(m_pNfc->read_folder_from_card(resultFolder));
-    EXPECT_FALSE(m_pNfc->is_known_card());
+    EXPECT_FALSE(m_pNfc->read_folder_from_card(resultFolder));
+    EXPECT_EQ(27, resultFolder.get_folder_id());
+    EXPECT_EQ(Folder::LULLABYE, resultFolder.get_play_mode());
+    EXPECT_EQ(5, resultFolder.get_track_count());
 }
 
 TEST_F(NfcTagReadWrite, Read_Successful_bufferSet_returnsKnownCard)
