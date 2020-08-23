@@ -1,6 +1,8 @@
 #ifndef USERINPUT_INTERFACE_H
 #define USERINPUT_INTERFACE_H
 
+#include <Arduino_types.h>
+
 class UserInput
 {
     //Interface class of UserInput implementation
@@ -11,7 +13,7 @@ class UserInput
         the physical implementation of the user input.
     */
 public:
-    enum UserRequest_e // TODO: Refactor to CAPITAL
+    enum UserRequest_e
     {
         NO_ACTION = 0,
         PLAY_PAUSE,
@@ -25,8 +27,6 @@ public:
     };
 
 protected:
-    //UserInput();
-    //~UserInput();
     bool userInputLocked = false;
     bool cardDetected = false;
 

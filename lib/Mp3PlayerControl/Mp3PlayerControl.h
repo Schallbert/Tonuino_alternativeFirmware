@@ -3,12 +3,13 @@
 
 #include <Arduino_types.h>
 
-#include <Folder.h>
-#include <Tonuino_config.h>
-#include <Arduino_config.h>
+#include <Folder.h> 
 #include <Arduino_interface.h>
 #include <DFMiniMp3_interface.h>
-#include <SimpleTimer.h>
+
+#include "../Config/Tonuino_config.h"
+#include "../Config/Arduino_config.h"
+#include "../Utilities/SimpleTimer.h"
 
 class Mp3PlayerControl
 {

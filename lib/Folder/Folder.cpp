@@ -7,22 +7,15 @@ Folder::Folder(uint8_t ui8FolderId,
                                         m_ePlayMode(ePlayMode),
                                         m_ui8TrackCount(ui8TrackCount) {}
 // Copy Constructor
-Folder::Folder(const Folder &cpySrcFolder)
+Folder::Folder(const Folder &cpySrcFolder) : m_ui8FolderId(cpySrcFolder.m_ui8FolderId),
+                                             m_ePlayMode(cpySrcFolder.m_ePlayMode),
+                                             m_ui8TrackCount(cpySrcFolder.m_ui8TrackCount),
+                                             m_pTrackQueue(new uint8_t[cpySrcFolder.m_ui8TrackCount + 1]()),
+                                             m_pEeprom(cpySrcFolder.m_pEeprom),
+                                             m_ui32RndmSeed(cpySrcFolder.m_ui32RndmSeed)
 {
-    m_ui8FolderId = cpySrcFolder.m_ui8FolderId;
-    m_ePlayMode = cpySrcFolder.m_ePlayMode;
-    m_ui8TrackCount = cpySrcFolder.m_ui8TrackCount;
-    m_pTrackQueue = new uint8_t[cpySrcFolder.m_ui8TrackCount + 1]();
-    m_pEeprom = cpySrcFolder.m_pEeprom;
-    m_ui32RndmSeed = cpySrcFolder.m_ui32RndmSeed;
-    // Deep copy queue if initialized
-    if (cpySrcFolder.m_pTrackQueue != nullptr)
+    if (deep_copy_queue(cpySrcFolder.m_pTrackQueue))
     {
-        for (uint8_t i = 1; i <= cpySrcFolder.m_ui8TrackCount; ++i)
-        {
-            m_pTrackQueue[i] = cpySrcFolder.m_pTrackQueue[i];
-        }
-        // copy current track
         m_ui8CurrentQueueEntry = cpySrcFolder.m_ui8CurrentQueueEntry;
     }
 }
@@ -39,14 +32,8 @@ Folder &Folder::operator=(const Folder &cpySrcFolder)
     m_pTrackQueue = new uint8_t[cpySrcFolder.m_ui8TrackCount + 1]();
     m_pEeprom = cpySrcFolder.m_pEeprom;
     m_ui32RndmSeed = cpySrcFolder.m_ui32RndmSeed;
-    // Deep copy queue if initialized
-    if (cpySrcFolder.m_pTrackQueue != nullptr)
+    if (deep_copy_queue(cpySrcFolder.m_pTrackQueue))
     {
-        for (uint8_t i = 1; i <= cpySrcFolder.m_ui8TrackCount; ++i)
-        {
-            m_pTrackQueue[i] = cpySrcFolder.m_pTrackQueue[i];
-        }
-        // copy current track
         m_ui8CurrentQueueEntry = cpySrcFolder.m_ui8CurrentQueueEntry;
     }
     return *this;
@@ -58,6 +45,23 @@ Folder::~Folder()
     {
         // only delete if it has been set with new!
         delete[] m_pTrackQueue;
+    }
+}
+
+bool Folder::deep_copy_queue(uint8_t *pTrackQueue)
+{
+    // Deep copy queue if initialized
+    if (pTrackQueue != nullptr)
+    {
+        for (uint8_t i = 1; i <= m_ui8TrackCount; ++i)
+        {
+            m_pTrackQueue[i] = pTrackQueue[i];
+        }
+        return true;
+    }
+    else
+    {
+        return false;
     }
 }
 
@@ -83,7 +87,17 @@ bool Folder::is_initiated()
 }
 bool Folder::is_dependency_set()
 {
-    return (m_pEeprom != nullptr);
+    // Dependencies only strictly necessary for certain playmodes
+    if (m_ePlayMode == Folder::SAVEPROGRESS)
+    {
+        return (m_pEeprom != nullptr);
+    }
+    else if (m_ePlayMode == Folder::RANDOM)
+    {
+        return (m_ui32RndmSeed > 0);
+    }
+    else
+        return true; // no dependencies needed
 }
 bool Folder::is_trackQueue_set()
 {

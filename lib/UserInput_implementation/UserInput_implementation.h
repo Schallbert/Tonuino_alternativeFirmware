@@ -1,8 +1,9 @@
 #ifndef USERINPUT_IMPLEMENTATION_H
 #define USERINPUT_IMPLEMENTATION_H
 
+#include <UserInput_interface.h>
 #include "../ClickEncoder/ClickEncoder.h"
-#include "UserInput_interface.h"
+
 
 class UserInput_ClickEncoder : public UserInput
 {
@@ -92,7 +93,6 @@ private:
         void set_long_press_active(bool longPressActive);
         bool handle_repeat_long_pressed(void);
 
-
     private:
         uint16_t longPressTime;           //mSec
         uint16_t longPressRepeatInterval; //mSec
@@ -152,9 +152,10 @@ public:
         Encoder,
         ThreeButtons
     };
+
 public:
     static UserInput *getInstance(UserInputType_e typeKey);
 
-};     // UserInput_Factory
+}; // UserInput_Factory
 
 #endif // USERINPUT_IMPLEMENTATION_H

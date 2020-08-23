@@ -5,7 +5,7 @@
 //#define F_CPU 8000000UL
 
 //Pin defines ------------------------
-#define PINANALOG_RNDMGEN A1 //ADC1 24
+#define PINANALOG_RNDMGEN 17 //ADC1 24 A1
 // MFRC522
 #define RST_PIN 9 // PB1 15
 #define SS_PIN 10 // PB2 16

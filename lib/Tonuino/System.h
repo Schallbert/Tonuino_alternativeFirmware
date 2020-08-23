@@ -10,12 +10,13 @@
 #include <DFMiniMp3_implementation.h>
 #include <EEPROM_implementation.h>
 #include <MFRC522_implementation.h>
+#include  <UserInput_implementation.h>
 #include <PowerManager.h>
+#include <InputManager.h>
+#include <OutputManager.h>
 
-#include  "../UserInput/UserInput_implementation.h" //interface_UserInput.h>
-#include "InputManager/InputManager.h"
-#include "SimpleTimer.h"
-#include "OutputManager.h"
+#include "../Utilities/SimpleTimer.h"
+
 
 /* This is the "main" class of the project.
 // It contains all the objects and dependencies needed for operation.
