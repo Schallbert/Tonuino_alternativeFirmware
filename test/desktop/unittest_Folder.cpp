@@ -170,7 +170,7 @@ TEST(folder, folder_RANDOM_trackCountIs10_NextTracksNotConsecutiveOrNull)
     EXPECT_FALSE(tracksConsecutive);
     EXPECT_FALSE(tracksNull);
 }
-TEST(folder, folder_RANDOM_invalidSeed_NextTracksNotConsecutiveOrNull)
+TEST(folder, folder_RANDOM_invalidSeed_NextTracksNull)
 {
     Mock_Eeprom eeprom;
     Folder testFolder(1, Folder::RANDOM, 10);
@@ -182,7 +182,7 @@ TEST(folder, folder_RANDOM_invalidSeed_NextTracksNotConsecutiveOrNull)
     bool tracksConsecutive = (bool)(((track4 - track3) == 1) && ((track3 - track2) == 1) && ((track2 - track1) == 1));
     bool tracksNull = (track1 == 0 || track2 == 0 || track3 == 0 || track4 == 0);
     EXPECT_FALSE(tracksConsecutive);
-    EXPECT_FALSE(tracksNull);
+    EXPECT_TRUE(tracksNull); // Without a random seed, TrackQueue will not be setup. isValid = FALSE.
 }
 TEST(folder, folder_RANDOM_trackCountIs6_AllTracksAreInQueue)
 {

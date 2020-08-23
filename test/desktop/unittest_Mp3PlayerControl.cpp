@@ -212,22 +212,53 @@ TEST_F(PlayerCtrl, nextTrack_noFolder_noop)
     m_pMp3PlrCtrl->next_track();
 }
 
-TEST_F(PlayerCtrl, nextTrack_FolderNok_noop)
+TEST_F(PlayerCtrl, nextTrack_FolderSAVEPROGRESS_dependencyNotSet_noop)
 {
     Mock_Eeprom mockEeprom;
-    Folder testFolder(1, Folder::ALBUM, 8);
-    // dependencies not set!
+    Folder testFolder(1, Folder::SAVEPROGRESS, 8);
+    // dependencies not set 
     EXPECT_CALL(*m_pDfMini, playFolderTrack(_, _)).Times(0);
     m_pMp3PlrCtrl->play_folder(&testFolder);
     m_pMp3PlrCtrl->next_track();
 }
 
-TEST_F(PlayerCtrl, nextTrack_FolderOk_playsNext)
+TEST_F(PlayerCtrl, nextTrack_FolderRANDOM_dependencyNotSet_noop)
+{
+    Mock_Eeprom mockEeprom;
+    Folder testFolder(1, Folder::RANDOM, 8);
+    // dependencies not set 
+    EXPECT_CALL(*m_pDfMini, playFolderTrack(_, _)).Times(0);
+    m_pMp3PlrCtrl->play_folder(&testFolder);
+    m_pMp3PlrCtrl->next_track();
+}
+
+TEST_F(PlayerCtrl, nextTrack_FolderALBUM_dependencyNotSet_playsNext)
+{
+    Mock_Eeprom mockEeprom;
+    Folder testFolder(1, Folder::SAVEPROGRESS, 8);
+    // dependencies not set 
+    EXPECT_CALL(*m_pDfMini, playFolderTrack(_, _)).Times(0);
+    m_pMp3PlrCtrl->play_folder(&testFolder);
+    m_pMp3PlrCtrl->next_track();
+}
+
+TEST_F(PlayerCtrl, nextTrack_FolderALBUM_dependencySet_playsNext)
 {
     Mock_Eeprom mockEeprom;
     Folder testFolder(1, Folder::ALBUM, 8);
     testFolder.setup_dependencies(&mockEeprom, 0);
     EXPECT_CALL(*m_pDfMini, playFolderTrack(_, _)).Times(2);
+    m_pMp3PlrCtrl->play_folder(&testFolder);
+    m_pMp3PlrCtrl->next_track();
+}
+
+TEST_F(PlayerCtrl, nextTrack_FolderSAVEPROGRESS_dependencySet_playsNext)
+{
+    NiceMock<Mock_Eeprom> mockEeprom; // we don't test EEPROM here
+    Folder testFolder(1, Folder::SAVEPROGRESS, 8);
+    testFolder.setup_dependencies(&mockEeprom, 0);
+    EXPECT_CALL(*m_pDfMini, playFolderTrack(_, _)).Times(2);
+    
     m_pMp3PlrCtrl->play_folder(&testFolder);
     m_pMp3PlrCtrl->next_track();
 }
@@ -239,17 +270,17 @@ TEST_F(PlayerCtrl, prevTrack_noFolder_noop)
     m_pMp3PlrCtrl->prev_track();
 }
 
-TEST_F(PlayerCtrl, prevTrack_FolderNok_noop)
+TEST_F(PlayerCtrl, prevTrack_FolderALBUM_dependenciesNotSet_playsPrev)
 {
     Mock_Eeprom mockEeprom;
     Folder testFolder(1, Folder::ALBUM, 8);
     // dependencies not set!
-    EXPECT_CALL(*m_pDfMini, playFolderTrack(_, _)).Times(0);
+    EXPECT_CALL(*m_pDfMini, playFolderTrack(_, _)).Times(2);
     m_pMp3PlrCtrl->play_folder(&testFolder);
     m_pMp3PlrCtrl->prev_track();
 }
 
-TEST_F(PlayerCtrl, prevTrack_FolderOk_playsNext)
+TEST_F(PlayerCtrl, prevTrack_FolderOk_playsPrev)
 {
     Mock_Eeprom mockEeprom;
     Folder testFolder(1, Folder::ALBUM, 8);
