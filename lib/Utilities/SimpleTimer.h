@@ -1,7 +1,6 @@
 #ifndef SIMPLETIMER_H
 #define SIMPLETIMER_H
 
-
 #include <Arduino_types.h>
 
 /*

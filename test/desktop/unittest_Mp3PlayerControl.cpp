@@ -27,11 +27,12 @@ protected:
 
     virtual void TearDown()
     {
+        delete m_pMp3PlrCtrl;
+
         delete m_pDfMini;
         delete m_pDelayCtrl;
         delete m_pPinCtrl;
         delete m_pUsb;
-        delete m_pMp3PlrCtrl;
         delete m_pLullabyeTimer;
     }
 
@@ -40,11 +41,11 @@ protected:
     NiceMock<Mock_pinCtrl> *m_pPinCtrl;
     NiceMock<Mock_com> *m_pUsb;
     NiceMock<Mock_delay> *m_pDelayCtrl;
-    Mp3PlayerControl *m_pMp3PlrCtrl;
     SimpleTimer *m_pLullabyeTimer{nullptr};
+    
+    Mp3PlayerControl *m_pMp3PlrCtrl;
 };
 
-using ::testing::Return;
 
 TEST_F(PlayerCtrl, ClassConstructorMethodsCalled)
 {

@@ -4,10 +4,10 @@
 void OutputManager::setInputStates(InputManager::eCardState cardState, UserInput::UserRequest_e userInput)
 {
     // set_state to input values, modify if currently in menu
-    bool isPlaying = m_pMp3->is_playing();
     m_eCardState = cardState;
     m_eUserInput = userInput;
 
+    bool isPlaying = m_pMp3->is_playing();
     m_pSysPwr->set_playback(isPlaying);
 
     handleDeleteMenu();
@@ -88,7 +88,7 @@ void OutputManager::handleDeleteMenu()
         m_eCardState = InputManager::DELETE_CARD_MENU; // delete menu entered
         m_pSysPwr->set_delMenu();
         m_pMenuTimer->start(MENU_TIMEOUT_SECS);
-    };
+    }
 }
 
 void OutputManager::handleLinkMenu()
@@ -145,6 +145,7 @@ void OutputManager::delC()
         m_pMenuTimer->stop();
         // Do delete the card.
         m_pMp3->play_specific_file(MSG_CONFIRMED);
+        m_pMp3->dont_skip_current_track();
         m_deleteMenu.set_state(DeleteMenu::NO_MENU);
         m_pNfcTagReader->erase_card();
     }
