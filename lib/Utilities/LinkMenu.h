@@ -37,6 +37,10 @@ public:
     // selects previous menu item, e.g. previous folderId and returns new selection
     uint16_t select_prev();
 
+    private: 
+    // resets menu state if menu has not been correctly setup so that the optionRange field is filled
+    bool check_initialized();
+
 private:
     // constants for definition of offset
     // for playing prompts based on selected options
