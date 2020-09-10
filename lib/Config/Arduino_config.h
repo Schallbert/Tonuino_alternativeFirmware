@@ -10,7 +10,7 @@
 #define RST_PIN 9 // PB1 15
 #define SS_PIN 10 // PB2 16
 //MP3
-#define DFMINI_BUSY 4 // PD4 6
+#define DFMINI_STATUS_ISIDLE 4 // PD4 6
 #define DFMINI_RX 2   // PD2 4
 #define DFMINI_TX 3   // PD3 5
 //Serial

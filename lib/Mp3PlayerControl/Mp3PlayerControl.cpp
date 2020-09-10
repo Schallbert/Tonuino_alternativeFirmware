@@ -12,7 +12,7 @@ Mp3PlayerControl::Mp3PlayerControl(DfMiniMp3_interface *pPlayer,
 {
 
     // Init communication with module and setup
-    m_pPinCtrl->pin_mode(DFMINI_BUSY, INPUT);
+    m_pPinCtrl->pin_mode(DFMINI_STATUS_ISIDLE, INPUT);
     m_pDfMiniMp3->begin(); // Init
     m_pDelayCtrl->delay_ms(WAIT_DFMINI_READY);
     m_pDfMiniMp3->setEq(DFMINI_EQ_SETTING);
@@ -47,7 +47,7 @@ void Mp3PlayerControl::volume_down()
 }
 bool Mp3PlayerControl::is_playing()
 {
-    return !(m_pPinCtrl->digital_read(DFMINI_BUSY));
+    return !(m_pPinCtrl->digital_read(DFMINI_STATUS_ISIDLE));
 }
 void Mp3PlayerControl::play_pause()
 {
@@ -76,6 +76,7 @@ void Mp3PlayerControl::dont_skip_current_track()
         m_pDfMiniMp3->loop(); //wait for track to finish
     }
 }
+
 void Mp3PlayerControl::autoplay()
 {
     // Autoplay implementation

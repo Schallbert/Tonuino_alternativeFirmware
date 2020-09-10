@@ -36,7 +36,6 @@ public:
     void setInputStates(InputManager::eCardState cardState, UserInput::UserRequest_e userInput);
     // Runs desicion table that calls functions depending on user input
     void runDispatcher();
-    bool getShutdownRequest();
 
 private:
     // handles errors from cardReader or UserInput interfaces

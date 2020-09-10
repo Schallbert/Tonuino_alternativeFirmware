@@ -1,14 +1,12 @@
 #include "OutputManager.h"
 
-// TODO: Refactor (switch?)
 void OutputManager::setInputStates(InputManager::eCardState cardState, UserInput::UserRequest_e userInput)
 {
     // set_state to input values, modify if currently in menu
     m_eCardState = cardState;
     m_eUserInput = userInput;
 
-    bool isPlaying = m_pMp3->is_playing();
-    m_pSysPwr->set_playback(isPlaying);
+    m_pSysPwr->set_playback(m_pMp3->is_playing());
 
     handleDeleteMenu();
     handleLinkMenu();
@@ -80,7 +78,7 @@ void OutputManager::handleDeleteMenu()
     if ((m_deleteMenu.is_state(DeleteMenu::DELETE_MENU)) &&
         (m_eCardState == InputManager::NEW_KNOWN_CARD))
     {
-        m_deleteMenu.set_state(DeleteMenu::DELETE_READY);
+        m_deleteMenu.set_ready();
     }
 
     if (!m_deleteMenu.is_state(DeleteMenu::NO_MENU))
@@ -101,17 +99,17 @@ void OutputManager::handleLinkMenu()
             m_pMenuTimer->start(MENU_TIMEOUT_SECS);
             m_pSysPwr->set_linkMenu();
 
-            //mp3.loop();
+            //TODO: NECESSARY? mp3.loop();
             if (m_pMp3->is_playing())
             {
                 m_pMp3->play_pause();
             }
             m_pMp3->play_specific_file(MSG_UNKNOWNTAG); // prompts user to select folder ID
         }
-        else
-        {
-            m_eCardState = InputManager::UNKNOWN_CARD_MENU; // keeps in link menu
-        }
+    }
+    else if (!m_linkMenu.is_state(LinkMenu::NO_MENU))
+    {
+        m_eCardState = InputManager::UNKNOWN_CARD_MENU; // keeps in link menu
     }
 }
 
@@ -146,8 +144,8 @@ void OutputManager::delC()
         // Do delete the card.
         m_pMp3->play_specific_file(MSG_CONFIRMED);
         m_pMp3->dont_skip_current_track();
-        m_deleteMenu.set_state(DeleteMenu::NO_MENU);
         m_pNfcTagReader->erase_card();
+        m_deleteMenu.leave();
     }
     else
     {
@@ -158,7 +156,7 @@ void OutputManager::delC()
 void OutputManager::abrt()
 {
     m_pMenuTimer->stop();
-    m_deleteMenu.set_state(DeleteMenu::NO_MENU); // reset menu state
+    m_deleteMenu.leave();
     m_linkMenu.select_abort();
     m_pMp3->play_specific_file(MSG_ABORTEED);
 }
