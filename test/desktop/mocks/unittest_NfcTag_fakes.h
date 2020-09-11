@@ -1,5 +1,6 @@
 #ifndef UNITTEST_NFCTAG_FAKES_H
 #define UNITTEST_NFCTAG_FAKES_H
+
 #include <MFRC522_interface.h>
 #include <NfcTag.h>
 

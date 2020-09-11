@@ -1,7 +1,6 @@
 #ifndef UNITTEST_NFCTAG_MOCKS_H
 #define UNITTEST_NFCTAG_MOCKS_H
 
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <Arduino_types.h>
 #include <MFRC522_interface.h>

@@ -1,9 +1,8 @@
 #ifndef MP3PLAYERCONTROL_H
 #define MP3PLAYERCONTROL_H
 
-#include <Arduino_types.h>
+#include "../Mp3PlayerControl_interface/Mp3PlayerControl_interface.h"
 
-#include <Folder.h> 
 #include <Arduino_interface.h>
 #include <DFMiniMp3_interface.h>
 
@@ -11,7 +10,7 @@
 #include "../Config/Arduino_config.h"
 #include "../Utilities/SimpleTimer.h"
 
-class Mp3PlayerControl
+class Mp3PlayerControl : public Mp3PlayerControl_interface
 {
 public:
     Mp3PlayerControl(DfMiniMp3_interface *pPlayer,
