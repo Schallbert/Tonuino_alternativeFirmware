@@ -4,7 +4,7 @@
 #include <Arduino_interface.h>
 #include <PowerManager_interface.h>
 #include <NfcTag.h>
-#include <Mp3PlayerControl.h>
+#include <Mp3PlayerControl_interface.h>
 #include <InputManager.h> // Use Enums
 
 #include "../Utilities/LinkMenu.h"
@@ -20,7 +20,7 @@ public:
     OutputManager(Arduino_interface_com *pUsb,
                   PowerManager_interface *pPwrCtrl,
                   NfcTag *pNfcReader,
-                  Mp3PlayerControl *pMp3,
+                  Mp3PlayerControl_interface *pMp3,
                   SimpleTimer *pMenuTimer,
                   EEPROM_interface *pEeprom,
                   uint32_t ui32Seed) : m_pUsb(pUsb),
@@ -81,7 +81,7 @@ private:
     Arduino_interface_com *m_pUsb{nullptr};
     PowerManager_interface *m_pSysPwr{nullptr};
     NfcTag *m_pNfcTagReader{nullptr};
-    Mp3PlayerControl *m_pMp3{nullptr};
+    Mp3PlayerControl_interface *m_pMp3{nullptr};
     SimpleTimer *m_pMenuTimer{nullptr};
     EEPROM_interface *m_pEeprom{nullptr};
     uint32_t m_ui32RandomSeed{0};
