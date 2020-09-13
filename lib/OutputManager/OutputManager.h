@@ -74,6 +74,8 @@ private:
     void erro() { m_pMp3->play_specific_file(MSG_ERROR); };
     // aborts current menu or process
     void abrt();
+    // plays folder error message and aborts menu
+    void folder_invalid();
 
 private:
     typedef void (OutputManager::*dispatcher)(); // table of function pointers

@@ -8,7 +8,7 @@
 TEST(linkMenu, noInit_StateIsNO_MENU)
 {
     LinkMenu menu;
-    ASSERT_TRUE(menu.is_state(LinkMenu::NO_MENU));
+    ASSERT_TRUE(menu.get_state() == LinkMenu::NO_MENU);
 }
 
 TEST(linkMenu, noInit_FolderIdIs0)
@@ -27,7 +27,7 @@ TEST(linkMenu, init_StateTransitionsToFOLDER_SELECT)
 {
     LinkMenu menu;
     menu.init();
-    ASSERT_TRUE(menu.is_state(LinkMenu::FOLDER_SELECT));
+    ASSERT_TRUE(menu.get_state() == LinkMenu::FOLDER_SELECT);
 }
 
 TEST(linkMenu, init_FolderIdIs0)
@@ -48,7 +48,7 @@ TEST(linkMenu, noInit_selectConfirm_StateIsNOMENU)
 {
     LinkMenu menu;
     menu.select_confirm();
-    ASSERT_TRUE(menu.is_state(LinkMenu::NO_MENU));
+    ASSERT_TRUE(menu.get_state() == LinkMenu::NO_MENU);
 }
 
 TEST(linkMenu, noInit_selectNext_FolderIdStays0)
@@ -71,7 +71,7 @@ TEST(linkMenu, selectConfirm_StateTransitionsToPLAYMODE_SELECT)
     LinkMenu menu;
     menu.init();
     menu.select_confirm();
-    ASSERT_TRUE(menu.is_state(LinkMenu::PLAYMODE_SELECT));
+    ASSERT_TRUE(menu.get_state() == LinkMenu::PLAYMODE_SELECT);
 }
 
 TEST(linkMenu, selectConfirm_folderIdIs0)
@@ -95,7 +95,7 @@ TEST(linkMenu, confirm2_MenuIsCOMPLETE)
     menu.init();
     menu.select_confirm();
     menu.select_confirm();
-    ASSERT_TRUE(menu.is_state(LinkMenu::COMPLETE));
+    ASSERT_TRUE(menu.get_state() == LinkMenu::COMPLETE);
 }
 
 TEST(linkMenu, confirm2_PlayModeIsUNDEFINED)
@@ -304,7 +304,7 @@ TEST(linkMenu, selectAbort_menuStateIsReset)
     menu.init();
     menu.select_confirm();
     menu.select_abort();
-    ASSERT_TRUE(menu.is_state(LinkMenu::NO_MENU));
+    ASSERT_TRUE(menu.get_state() == LinkMenu::NO_MENU);
 }
 
 TEST(linkMenu, selectAbort_folderIdIsReset)

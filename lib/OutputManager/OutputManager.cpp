@@ -10,6 +10,11 @@ void OutputManager::setInputStates(InputManager::eCardState cardState, UserInput
 
     handleDeleteMenu();
     handleLinkMenu();
+
+    if (m_pMenuTimer->is_elapsed())
+    {
+        abrt(); // Timer elapsed, reset menu state.
+    }
 }
 
 void OutputManager::runDispatcher()
@@ -74,18 +79,18 @@ void OutputManager::handleInputErrors()
 
 void OutputManager::handleDeleteMenu()
 {
-    // lock state in menu, waiting for card to be placed that shall be deleted
+    // order of these two condition statements is CRITICAL!
     if ((m_deleteMenu.is_state(DeleteMenu::DELETE_MENU)) &&
         (m_eCardState == InputManager::NEW_KNOWN_CARD))
     {
         m_deleteMenu.set_ready();
     }
 
+    // lock state in menu, waiting for card to be placed that shall be deleted
     if (!m_deleteMenu.is_state(DeleteMenu::NO_MENU))
     {
         m_eCardState = InputManager::DELETE_CARD_MENU; // delete menu entered
         m_pSysPwr->set_delMenu();
-        m_pMenuTimer->start(MENU_TIMEOUT_SECS);
     }
 }
 
@@ -93,21 +98,12 @@ void OutputManager::handleLinkMenu()
 {
     if (m_eCardState == InputManager::UNKNOWN_CARD_MENU)
     {
-        if (m_linkMenu.is_state(LinkMenu::NO_MENU))
+        if (m_linkMenu.get_state() == LinkMenu::NO_MENU)
         {
-            m_linkMenu.init(); // runs card link method on UNKNOWN_CARD detected
-            m_pMenuTimer->start(MENU_TIMEOUT_SECS);
-            m_pSysPwr->set_linkMenu();
-
-            //TODO: NECESSARY? mp3.loop();
-            if (m_pMp3->is_playing())
-            {
-                m_pMp3->play_pause();
-            }
-            m_pMp3->play_specific_file(MSG_UNKNOWNTAG); // prompts user to select folder ID
+            linC();
         }
     }
-    else if (!m_linkMenu.is_state(LinkMenu::NO_MENU))
+    else if (!m_linkMenu.get_state() == LinkMenu::NO_MENU)
     {
         m_eCardState = InputManager::UNKNOWN_CARD_MENU; // keeps in link menu
     }
@@ -133,6 +129,7 @@ void OutputManager::delt()
 {
     m_pMp3->play_specific_file(MSG_DELETETAG);
     m_pMp3->dont_skip_current_track();
+    m_pMenuTimer->start(MENU_TIMEOUT_SECS);
     m_deleteMenu.init(); // keep in delete menu
 }
 
@@ -166,30 +163,54 @@ void OutputManager::linC()
     // Restart timeout
     m_pMenuTimer->stop();
     m_pMenuTimer->start(MENU_TIMEOUT_SECS);
-    m_linkMenu.select_confirm();
-    if (m_linkMenu.is_state(LinkMenu::COMPLETE))
+
+    switch (m_linkMenu.get_state())
     {
-        m_pMenuTimer->stop(); // cancel timeout
+    case LinkMenu::NO_MENU:
+        m_linkMenu.init(); // runs card link method on UNKNOWN_CARD detected
+        m_pSysPwr->set_linkMenu();
+        m_pMp3->play_specific_file(MSG_SELECT_FOLDERID); // prompts user to select folder ID
+        m_pMp3->dont_skip_current_track();
+        break;
+    case LinkMenu::FOLDER_SELECT:
+        m_linkMenu.select_confirm();
+        m_pMp3->play_specific_file(MSG_SELECT_PLAYMODE);
+        m_pMp3->dont_skip_current_track();
+        break;
+    case LinkMenu::PLAYMODE_SELECT:
+        m_linkMenu.select_confirm(); // done!
+        m_pMenuTimer->stop();
+        m_pSysPwr->set_playback(false); // indicate link menu is complete
         // link folder information complete! Obtain folder and save to card.
         uint8_t folderId = m_linkMenu.get_folderId();
         Folder::ePlayMode playMode = m_linkMenu.get_playMode();
         uint8_t trackCount = m_pMp3->get_trackCount_of_folder(folderId);
         // Create new folder object and copy to main's folder object
         m_currentFolder = Folder(folderId, playMode, trackCount);
-
-        if (m_pNfcTagReader->write_folder_to_card(m_currentFolder))
+        if (!m_currentFolder.is_initiated())
         {
-            m_pMp3->play_specific_file(MSG_TAGCONFSUCCESS);
+            m_pMp3->play_specific_file(MSG_ERROR_FOLDER);
             m_pMp3->dont_skip_current_track();
-            read();
+            m_pMenuTimer->stop(); // cancel timeout
+            abrt();
         }
         else
         {
-            // Couldn't write to card due to folder setup error.
-            m_pMp3->play_specific_file(MSG_ERROR);
+            m_pMp3->play_specific_file(MSG_TAGCONFSUCCESS);
             m_pMp3->dont_skip_current_track();
-            abrt();
+            if (m_pNfcTagReader->write_folder_to_card(m_currentFolder))
+            {
+                read();
+            }
+            else // Couldn't write to card due to folder setup error.
+            {
+
+                m_pMp3->play_specific_file(MSG_ERROR_CARDREAD);
+                m_pMp3->dont_skip_current_track();
+                abrt();
+            }
         }
+        m_linkMenu.select_abort(); // reset menu state
     }
 }
 
@@ -208,7 +229,7 @@ void OutputManager::changeOption(uint16_t option)
     // play folderId of current choice, e.g. "one".
     m_pMp3->play_specific_file(option);
     m_pMp3->dont_skip_current_track();
-    if (m_linkMenu.is_state(LinkMenu::FOLDER_SELECT))
+    if (m_linkMenu.get_state() == LinkMenu::FOLDER_SELECT)
     {
         // play preview of selected folder's contents
         Folder previewFolder = Folder(static_cast<uint8_t>(option), Folder::ONELARGETRACK, 1);

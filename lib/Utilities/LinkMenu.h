@@ -25,7 +25,7 @@ public:
     // Initializes menu and sets according variables
     void init();
     // getters for member variables
-    bool is_state(eLinkMenuState state) { return (m_eMenuState == state); };
+    eLinkMenuState get_state() { return m_eMenuState; };
     uint8_t get_folderId() { return m_ui16FolderId; };
     Folder::ePlayMode get_playMode() { return m_ePlayMode; }
     // returns true if configuring is complete
