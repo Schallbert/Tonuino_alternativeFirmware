@@ -83,7 +83,7 @@ bool Folder::is_valid()
 }
 bool Folder::is_initiated()
 {
-    return (m_ui8FolderId && m_ui8TrackCount && m_ePlayMode != Folder::UNDEFINED);
+    return (m_ui8FolderId && m_ui8TrackCount && m_ePlayMode != Folder::UNDEFINED && m_ePlayMode != Folder::ENUM_COUNT);
 }
 bool Folder::is_dependency_set()
 {

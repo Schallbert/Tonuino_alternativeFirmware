@@ -45,7 +45,7 @@ private:
     // constants for definition of offset
     // for playing prompts based on selected options
     const uint16_t START_OPTION_FOLDERID = 0;
-    const uint16_t START_OPTION_PLAYMODE = MSG_TAGLINKED;
+    const uint16_t START_OPTION_PLAYMODE = MSG_SELECT_PLAYMODE;
     // initialized for folderId state of linkMenu   
     eLinkMenuState m_eMenuState{NO_MENU};
     uint16_t m_ui16FolderId{START_OPTION_FOLDERID};

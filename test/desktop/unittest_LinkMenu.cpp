@@ -163,7 +163,7 @@ TEST(linkMenu, playModeSelect_selectNext_returnValueIsOFFSETplus1)
     LinkMenu menu;
     menu.init();
     menu.select_confirm();
-    ASSERT_EQ(menu.select_next(), MSG_TAGLINKED+1);
+    ASSERT_EQ(menu.select_next(), MSG_SELECT_PLAYMODE+1);
 }
 
 TEST(linkMenu, playModeSelect_selectNext_confirm_getPlaymodeReturnsALBUM)

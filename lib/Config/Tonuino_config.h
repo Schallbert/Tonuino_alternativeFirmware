@@ -13,8 +13,8 @@
 #define MSG_ERROR_CARDREAD 402
 #define MSG_ERROR_FOLDER 403
 #define MSG_TAGCONFSUCCESS 400
-#define MSG_UNKNOWNTAG 300 // TODO: rename o "select folderId?"
-#define MSG_TAGLINKED 310 // TODO: Rename to "select playMode"
+#define MSG_SELECT_FOLDERID 300 // TODO: rename o "select folderId?"
+#define MSG_SELECT_PLAYMODE 310 // TODO: Rename to "select playMode"
 #define MSG_SELECTFILE 320
 #define MSG_HELP 330
 #define MSG_CONFIRMED 340

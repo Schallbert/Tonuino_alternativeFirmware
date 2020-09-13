@@ -40,7 +40,7 @@ public:
 public:
     // counts timer if started
     void timer_tick();
-    // (re)sets timeout
+    // sets timeout, count IS NOT RESET!
     // (timer runs automatically when timeout not reached)
     void start(uint16_t ui16Timeout);
     // stops the timer and resets values
