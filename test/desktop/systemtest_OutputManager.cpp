@@ -18,6 +18,8 @@ using ::testing::_;
 using ::testing::Assign;
 using ::testing::NiceMock;
 using ::testing::Return;
+using ::testing::Field;
+
 
 // Fixture
 class OutputManagerTest : public ::testing::Test
@@ -99,20 +101,6 @@ TEST_F(OutputManagerTest, setInputStates_noCardNoAction_linkMenuSetNotCalled)
     EXPECT_CALL(*m_pSysPwr, set_linkMenu()).Times(0);
 }
 
-TEST_F(OutputManagerTest, setInpuStates_linkCardMenu_linkMenuEntered)
-{
-    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_UNKNOWNTAG));
-    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NO_ACTION);
-}
-
-TEST_F(OutputManagerTest, setInputStates_linkCardMenu_lockInLinkMenu)
-{
-    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NO_ACTION);
-    EXPECT_CALL(*m_pMp3, play_specific_file(1)); // Check if we are successfully locked in unknown card menu
-    m_pOutputManager->setInputStates(InputManager::ACTIVE_KNOWN_CARD, UserInput::NEXT_TRACK); // although card state changes
-    m_pOutputManager->runDispatcher();
-}
-
 TEST_F(OutputManagerTest, dispatcher_noCardNoAction_errorHandler_noError)
 {
     m_pOutputManager->setInputStates(InputManager::NO_CARD, UserInput::NO_ACTION);
@@ -165,15 +153,104 @@ TEST_F(OutputManagerTest, dispatcher_newKnownCard_playCalled)
     m_pOutputManager->runDispatcher();
 }
 
-MATCHER(validFolder, "") { return ((arg.folderId == 1) &&
-                                   (arg.playMode == Folder::ALBUM) &&
-                                   (arg.trackCount == 8)); }
+// LINK MENU SPECIFIC TESTS ---------------------------------------
+
+TEST_F(OutputManagerTest, setInputStates_linkCardMenu_linkMenuEnterNotRepeated)
+{
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NO_ACTION);
+    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_SELECT_FOLDERID)).Times(0); // linkMenu init not called multiple times
+    m_pOutputManager->setInputStates(InputManager::ACTIVE_KNOWN_CARD, UserInput::NEXT_TRACK);
+}
+
+TEST_F(OutputManagerTest, setInpuStates_linkCardMenu_linkMenuEntered)
+{
+    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_SELECT_FOLDERID));
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NO_ACTION);
+}
+
+TEST_F(OutputManagerTest, setInputStates_linkCardMenu_lockInLinkMenu)
+{
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NO_ACTION);
+    EXPECT_CALL(*m_pMp3, play_specific_file(1)); // Check if we are successfully locked in unknown card menu
+    m_pOutputManager->setInputStates(InputManager::ACTIVE_KNOWN_CARD, UserInput::NEXT_TRACK); // although card state changes
+    m_pOutputManager->runDispatcher();
+}
+
+TEST_F(OutputManagerTest, setInputStates_linkCardMenu_folderSelectionWorking)
+{
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NO_ACTION);
+    EXPECT_CALL(*m_pMp3, play_specific_file(MAXFOLDERCOUNT)); 
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::PREV_TRACK);
+    m_pOutputManager->runDispatcher();
+}
+
+TEST_F(OutputManagerTest, dispatcher_unknownCard_linkMenuFolderSelect_folderInvalidSelection0)
+{
+    EXPECT_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillOnce(Return(0));
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NO_ACTION);
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::PLAY_PAUSE);
+    m_pOutputManager->runDispatcher();
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NEXT_TRACK);
+    m_pOutputManager->runDispatcher();
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::PLAY_PAUSE);
+    EXPECT_CALL(*m_pMp3, play_specific_file(_));
+    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_ERROR_FOLDER));
+    m_pOutputManager->runDispatcher();
+    
+}
+
+MATCHER_P(folderIdIs, value, "") { return (arg->get_folder_id() == value); }
+
+TEST_F(OutputManagerTest, dispatcher_unknownCard_linkMenuFolderSelect_folderPreviewPlayed)
+{
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NEXT_TRACK);
+    EXPECT_CALL(*m_pMp3, play_folder(folderIdIs(1)));
+    m_pOutputManager->runDispatcher();
+}
+
+TEST_F(OutputManagerTest, dispatcher_unknownCard_linkMenuPlayModeSelect_playModeSelectionWorking)
+{
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NEXT_TRACK);
+    m_pOutputManager->runDispatcher();
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::PLAY_PAUSE);
+    m_pOutputManager->runDispatcher();
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::PREV_TRACK);
+    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_SELECT_PLAYMODE+static_cast<uint8_t>(Folder::ONELARGETRACK)));
+    m_pOutputManager->runDispatcher();
+}
+
+TEST_F(OutputManagerTest, dispatcher_unknownCard_linkMenuPlayModeSelect_playModeInvalidSelection0)
+{
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NEXT_TRACK);
+    m_pOutputManager->runDispatcher();
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::PLAY_PAUSE);
+    m_pOutputManager->runDispatcher();
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::PLAY_PAUSE);
+    EXPECT_CALL(*m_pMp3, play_specific_file(_));
+    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_ERROR_FOLDER));
+    m_pOutputManager->runDispatcher();
+}
+
+TEST_F(OutputManagerTest, dispatcher_unknownCard_linkMenuComplete_configureSuccessful)
+{
+    ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(8));
+    ON_CALL(*m_pMfrc, writeCard(_, _)).WillByDefault(Return(true));
+    ON_CALL(*m_pMfrc, readCard(_, _)).WillByDefault(Return(true));
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NEXT_TRACK);
+    m_pOutputManager->runDispatcher();
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::PLAY_PAUSE);
+    m_pOutputManager->runDispatcher();
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NEXT_TRACK);
+    m_pOutputManager->runDispatcher();
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::PLAY_PAUSE);
+    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_TAGCONFSUCCESS)); 
+    m_pOutputManager->runDispatcher();
+}
 
 TEST_F(OutputManagerTest, dispatcher_unknownCard_linkMenuComplete_writesInfoToCard)
 {
     ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(8));
-    ON_CALL(*m_pMfrc, readCard(_, _)).WillByDefault(Return(true)); // Card Read method tested separately.
-    EXPECT_CALL(*m_pMfrc, writeCard(_, _));                        // Make sure card info is written
+    ON_CALL(*m_pMfrc, readCard(_, _)).WillByDefault(Return(true));
 
     // Simulate navigation through linkMenu with folder1, playMode Album, 8 tracks
     m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NEXT_TRACK);
@@ -183,8 +260,60 @@ TEST_F(OutputManagerTest, dispatcher_unknownCard_linkMenuComplete_writesInfoToCa
     m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NEXT_TRACK);
     m_pOutputManager->runDispatcher(); // should set link menu to playmode ALBUM
     m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::PLAY_PAUSE);
+    EXPECT_CALL(*m_pMfrc, writeCard(_, _));                        // Make sure card info is written
     m_pOutputManager->runDispatcher(); // should log playmode and complete linkMenu
 }
+
+MATCHER_P3(folderOk, expFolderId, expPlayMode, expTrackCnt, ""){
+    return ((arg->get_folder_id() == expFolderId) &&
+    (arg->get_play_mode() == expPlayMode) &&
+    (arg->get_track_count() == expTrackCnt));
+}
+
+TEST_F(OutputManagerTest, dispatcher_unknownCard_linkMenuComplete_startsPlaybackWithCorrectSettings)
+{
+    ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(8));
+    ON_CALL(*m_pMfrc, writeCard(_, _)).WillByDefault(Return(true)); 
+    ON_CALL(*m_pMfrc, readCard(_, _)).WillByDefault(Return(true));
+
+    // Simulate navigation through linkMenu with folder1, playMode Album, 8 tracks
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NEXT_TRACK);
+    m_pOutputManager->runDispatcher(); // should set link menu to folder 1
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::PLAY_PAUSE);
+    m_pOutputManager->runDispatcher(); // should log folder 1
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NEXT_TRACK);
+    m_pOutputManager->runDispatcher(); // should set link menu to playmode ALBUM
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::PLAY_PAUSE);
+    EXPECT_CALL(*m_pMp3, play_folder(folderOk(1, Folder::LULLABYE, 8)));
+    m_pOutputManager->runDispatcher(); // should log playmode and complete linkMenu
+}
+// END OF LINK MENU SPECIFIC TESTS ---------------------------------------
+
+// DELETE MENU SPECIFIC TESTS
+TEST_F(OutputManagerTest, dispatcher_deleteCardMenu_entry_playsPrompt)
+{
+    m_pOutputManager->setInputStates(InputManager::ACTIVE_KNOWN_CARD, UserInput::PP_LONGPRESS); 
+    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_DELETETAG));
+    m_pOutputManager->runDispatcher(); // enter delete menu
+}
+
+TEST_F(OutputManagerTest, dispatcher_deleteCardMenu_confirmDeletion_playsPrompt)
+{
+    m_pOutputManager->setInputStates(InputManager::ACTIVE_KNOWN_CARD, UserInput::PP_LONGPRESS); 
+    m_pOutputManager->runDispatcher(); // enter delete menu
+    m_pOutputManager->setInputStates(InputManager::NEW_KNOWN_CARD, UserInput::NO_ACTION); // get delete menu ready
+    m_pOutputManager->setInputStates(InputManager::DELETE_CARD_MENU, UserInput::PLAY_PAUSE); // confirm deletion
+    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_CONFIRMED));
+    m_pOutputManager->runDispatcher(); // complete delete menu
+}
+
+TEST_F(OutputManagerTest, dispatcher_noCardPPlongPress_help_playsPrompt)
+{
+    m_pOutputManager->setInputStates(InputManager::NO_CARD, UserInput::PP_LONGPRESS); 
+    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_HELP));
+    m_pOutputManager->runDispatcher();
+}
+
 
 // EXPECT_CALL(*m_pDfMini, playFolderTrack(1, 1); // Make sure card read is performed.
 
