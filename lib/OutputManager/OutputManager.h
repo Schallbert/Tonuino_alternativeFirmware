@@ -66,8 +66,8 @@ private:
     void delC(); // confirm deletion
     // link NFC card to SD card folder
     void linC(); // confirm link
-    void linN(); // link next command
-    void linP(); // link prev command
+    void linN() { changeOption(m_linkMenu.select_next()); }; // link next command
+    void linP() { changeOption(m_linkMenu.select_prev()); }; // link prev command
     // read and Play card's linked folder
     void read();
     // play error prompt

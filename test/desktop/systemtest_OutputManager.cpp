@@ -89,13 +89,13 @@ TEST_F(OutputManagerTest, setInputStates_dependenciesCalled)
     m_pOutputManager->setInputStates(InputManager::NO_CARD, UserInput::NO_ACTION);
 }
 
-TEST_F(OutputManagerTest, setInputStates_noCardNoAction_delMenuSetNotCalled)
+TEST_F(OutputManagerTest, setInputStates_noCardNoAction_deleteMenuNotCalled)
 {
     m_pOutputManager->setInputStates(InputManager::NO_CARD, UserInput::NO_ACTION);
     EXPECT_CALL(*m_pSysPwr, set_delMenu()).Times(0);
 }
 
-TEST_F(OutputManagerTest, setInputStates_noCardNoAction_linkMenuSetNotCalled)
+TEST_F(OutputManagerTest, setInputStates_noCardNoAction_linkMenuNotCalled)
 {
     m_pOutputManager->setInputStates(InputManager::NO_CARD, UserInput::NO_ACTION);
     EXPECT_CALL(*m_pSysPwr, set_linkMenu()).Times(0);
@@ -155,20 +155,20 @@ TEST_F(OutputManagerTest, dispatcher_newKnownCard_playCalled)
 
 // LINK MENU SPECIFIC TESTS ---------------------------------------
 
-TEST_F(OutputManagerTest, setInputStates_linkCardMenu_linkMenuEnterNotRepeated)
+TEST_F(OutputManagerTest, linkMenu_linkMenuEnterNotRepeated)
 {
     m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NO_ACTION);
     EXPECT_CALL(*m_pMp3, play_specific_file(MSG_SELECT_FOLDERID)).Times(0); // linkMenu init not called multiple times
     m_pOutputManager->setInputStates(InputManager::ACTIVE_KNOWN_CARD, UserInput::NEXT_TRACK);
 }
 
-TEST_F(OutputManagerTest, setInpuStates_linkCardMenu_linkMenuEntered)
+TEST_F(OutputManagerTest, linkMenu_entry)
 {
     EXPECT_CALL(*m_pMp3, play_specific_file(MSG_SELECT_FOLDERID));
     m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NO_ACTION);
 }
 
-TEST_F(OutputManagerTest, setInputStates_linkCardMenu_lockInLinkMenu)
+TEST_F(OutputManagerTest, linkMenu_lockInLinkMenu)
 {
     m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NO_ACTION);
     EXPECT_CALL(*m_pMp3, play_specific_file(1)); // Check if we are successfully locked in unknown card menu
@@ -176,7 +176,15 @@ TEST_F(OutputManagerTest, setInputStates_linkCardMenu_lockInLinkMenu)
     m_pOutputManager->runDispatcher();
 }
 
-TEST_F(OutputManagerTest, setInputStates_linkCardMenu_folderSelectionWorking)
+TEST_F(OutputManagerTest, linkMenu_nextSelected_nextOptionSelected)
+{
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NO_ACTION);
+    EXPECT_CALL(*m_pMp3, play_specific_file(1)).Times(1);
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NEXT_TRACK);
+    m_pOutputManager->runDispatcher();
+}
+
+TEST_F(OutputManagerTest, linkMenu_folderSelectionWorking)
 {
     m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NO_ACTION);
     EXPECT_CALL(*m_pMp3, play_specific_file(MAXFOLDERCOUNT)); 
@@ -184,7 +192,7 @@ TEST_F(OutputManagerTest, setInputStates_linkCardMenu_folderSelectionWorking)
     m_pOutputManager->runDispatcher();
 }
 
-TEST_F(OutputManagerTest, dispatcher_unknownCard_linkMenuFolderSelect_folderInvalidSelection0)
+TEST_F(OutputManagerTest, linkMenu_linkMenuFolderSelect_folderInvalidSelection0)
 {
     EXPECT_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillOnce(Return(0));
     m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NO_ACTION);
@@ -201,14 +209,14 @@ TEST_F(OutputManagerTest, dispatcher_unknownCard_linkMenuFolderSelect_folderInva
 
 MATCHER_P(folderIdIs, value, "") { return (arg->get_folder_id() == value); }
 
-TEST_F(OutputManagerTest, dispatcher_unknownCard_linkMenuFolderSelect_folderPreviewPlayed)
+TEST_F(OutputManagerTest, linkMenu_linkMenuFolderSelect_folderPreviewPlayed)
 {
     m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NEXT_TRACK);
     EXPECT_CALL(*m_pMp3, play_folder(folderIdIs(1)));
     m_pOutputManager->runDispatcher();
 }
 
-TEST_F(OutputManagerTest, dispatcher_unknownCard_linkMenuPlayModeSelect_playModeSelectionWorking)
+TEST_F(OutputManagerTest, linkMenu_linkMenuPlayModeSelect_playModeSelectionWorking)
 {
     m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NEXT_TRACK);
     m_pOutputManager->runDispatcher();
@@ -219,7 +227,7 @@ TEST_F(OutputManagerTest, dispatcher_unknownCard_linkMenuPlayModeSelect_playMode
     m_pOutputManager->runDispatcher();
 }
 
-TEST_F(OutputManagerTest, dispatcher_unknownCard_linkMenuPlayModeSelect_playModeInvalidSelection0)
+TEST_F(OutputManagerTest, linkMenu_linkMenuPlayModeSelect_playModeInvalidSelection0)
 {
     m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NEXT_TRACK);
     m_pOutputManager->runDispatcher();
@@ -231,7 +239,7 @@ TEST_F(OutputManagerTest, dispatcher_unknownCard_linkMenuPlayModeSelect_playMode
     m_pOutputManager->runDispatcher();
 }
 
-TEST_F(OutputManagerTest, dispatcher_unknownCard_linkMenuComplete_configureSuccessful)
+TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_configureSuccessful)
 {
     ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(8));
     ON_CALL(*m_pMfrc, writeCard(_, _)).WillByDefault(Return(true));
@@ -247,7 +255,7 @@ TEST_F(OutputManagerTest, dispatcher_unknownCard_linkMenuComplete_configureSucce
     m_pOutputManager->runDispatcher();
 }
 
-TEST_F(OutputManagerTest, dispatcher_unknownCard_linkMenuComplete_writesInfoToCard)
+TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_writesInfoToCard)
 {
     ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(8));
     ON_CALL(*m_pMfrc, readCard(_, _)).WillByDefault(Return(true));
@@ -270,7 +278,7 @@ MATCHER_P3(folderOk, expFolderId, expPlayMode, expTrackCnt, ""){
     (arg->get_track_count() == expTrackCnt));
 }
 
-TEST_F(OutputManagerTest, dispatcher_unknownCard_linkMenuComplete_startsPlaybackWithCorrectSettings)
+TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_startsPlaybackWithCorrectSettings)
 {
     ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(8));
     ON_CALL(*m_pMfrc, writeCard(_, _)).WillByDefault(Return(true)); 
@@ -282,23 +290,53 @@ TEST_F(OutputManagerTest, dispatcher_unknownCard_linkMenuComplete_startsPlayback
     m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::PLAY_PAUSE);
     m_pOutputManager->runDispatcher(); // should log folder 1
     m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NEXT_TRACK);
-    m_pOutputManager->runDispatcher(); // should set link menu to playmode ALBUM
+    m_pOutputManager->runDispatcher(); // should set link menu to playmode LULLABYE
     m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::PLAY_PAUSE);
     EXPECT_CALL(*m_pMp3, play_folder(folderOk(1, Folder::LULLABYE, 8)));
     m_pOutputManager->runDispatcher(); // should log playmode and complete linkMenu
 }
+
+TEST_F(OutputManagerTest, linkMenu_menuTimeout_resetsMenu)
+{
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NO_ACTION); // enter linkMenu
+    for (uint16_t i = 0; i <= MENU_TIMEOUT_SECS; ++i)
+    {
+        m_pMenuTimer->timer_tick(); // make menuTimer elapse
+    }
+    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_ABORTED));
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NO_ACTION); // enter linkMenu
+}
+
+TEST_F(OutputManagerTest, linkMenu_userAbort_resetsMenu)
+{
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NO_ACTION); // enter linkMenu
+    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_ABORTED));
+    m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::PP_LONGPRESS); // abort linkMenu
+    m_pOutputManager->runDispatcher();
+}
+
 // END OF LINK MENU SPECIFIC TESTS ---------------------------------------
 
-// DELETE MENU SPECIFIC TESTS
-TEST_F(OutputManagerTest, dispatcher_deleteCardMenu_entry_playsPrompt)
+// DELETE MENU SPECIFIC TESTS --------------------------------------------
+TEST_F(OutputManagerTest, deleteCardMenu_entry_playsDeletePrompt)
 {
     m_pOutputManager->setInputStates(InputManager::ACTIVE_KNOWN_CARD, UserInput::PP_LONGPRESS); 
     EXPECT_CALL(*m_pMp3, play_specific_file(MSG_DELETETAG));
     m_pOutputManager->runDispatcher(); // enter delete menu
 }
 
-TEST_F(OutputManagerTest, dispatcher_deleteCardMenu_confirmDeletion_playsPrompt)
+TEST_F(OutputManagerTest, deleteCardMenu_deleteNotReady_confirmDeletion_replaysDeletePrompt)
 {
+    m_pOutputManager->setInputStates(InputManager::ACTIVE_KNOWN_CARD, UserInput::PP_LONGPRESS); 
+    m_pOutputManager->runDispatcher(); // enter delete menu
+    m_pOutputManager->setInputStates(InputManager::ACTIVE_KNOWN_CARD, UserInput::PLAY_PAUSE);
+    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_DELETETAG));
+    m_pOutputManager->runDispatcher(); // delete menu cannot complete but stays active
+}
+
+TEST_F(OutputManagerTest, deleteCardMenu_deletionReady_confirmDeletion_playsDeleteConfirmPrompt)
+{
+    ON_CALL(*m_pMfrc, writeCard(_, _)).WillByDefault(Return(true));
     m_pOutputManager->setInputStates(InputManager::ACTIVE_KNOWN_CARD, UserInput::PP_LONGPRESS); 
     m_pOutputManager->runDispatcher(); // enter delete menu
     m_pOutputManager->setInputStates(InputManager::NEW_KNOWN_CARD, UserInput::NO_ACTION); // get delete menu ready
@@ -307,6 +345,29 @@ TEST_F(OutputManagerTest, dispatcher_deleteCardMenu_confirmDeletion_playsPrompt)
     m_pOutputManager->runDispatcher(); // complete delete menu
 }
 
+TEST_F(OutputManagerTest, deleteCardMenu_menuTimeout_resetsMenu)
+{
+    m_pOutputManager->setInputStates(InputManager::ACTIVE_KNOWN_CARD, UserInput::PP_LONGPRESS); 
+    m_pOutputManager->runDispatcher(); // enter delete menu
+    for (uint16_t i = 0; i <= MENU_TIMEOUT_SECS; ++i)
+    {
+        m_pMenuTimer->timer_tick(); // make menuTimer elapse
+    }
+    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_ABORTED));
+    m_pOutputManager->setInputStates(InputManager::ACTIVE_KNOWN_CARD, UserInput::NO_ACTION);
+}
+
+TEST_F(OutputManagerTest, deleteMenu_userAbort_resetsMenu)
+{
+    m_pOutputManager->setInputStates(InputManager::ACTIVE_KNOWN_CARD, UserInput::PP_LONGPRESS);
+    m_pOutputManager->runDispatcher();
+    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_ABORTED));
+    m_pOutputManager->setInputStates(InputManager::ACTIVE_KNOWN_CARD, UserInput::PP_LONGPRESS);
+    m_pOutputManager->runDispatcher();
+}
+
+// END OF DELETE MENU SPECIFIC TESTS --------------------------------------------
+
 TEST_F(OutputManagerTest, dispatcher_noCardPPlongPress_help_playsPrompt)
 {
     m_pOutputManager->setInputStates(InputManager::NO_CARD, UserInput::PP_LONGPRESS); 
@@ -314,6 +375,23 @@ TEST_F(OutputManagerTest, dispatcher_noCardPPlongPress_help_playsPrompt)
     m_pOutputManager->runDispatcher();
 }
 
+TEST_F(OutputManagerTest, dispatcher_noCardNext_playsNextTrack)
+{
+    m_pOutputManager->setInputStates(InputManager::NO_CARD, UserInput::NEXT_TRACK); 
+    EXPECT_CALL(*m_pMp3, next_track());
+    m_pOutputManager->runDispatcher();
+}
 
-// EXPECT_CALL(*m_pDfMini, playFolderTrack(1, 1); // Make sure card read is performed.
+TEST_F(OutputManagerTest, dispatcher_activeKnownCardNext_playsNextTrack)
+{
+    m_pOutputManager->setInputStates(InputManager::ACTIVE_KNOWN_CARD, UserInput::NEXT_TRACK); 
+    EXPECT_CALL(*m_pMp3, next_track());
+    m_pOutputManager->runDispatcher();
+}
 
+TEST_F(OutputManagerTest, dispatcher_newKnownCardNext_playsNextTrack)
+{
+    m_pOutputManager->setInputStates(InputManager::NEW_KNOWN_CARD, UserInput::NEXT_TRACK); 
+    EXPECT_CALL(*m_pMp3, next_track());
+    m_pOutputManager->runDispatcher();
+}

@@ -106,6 +106,7 @@ void OutputManager::handleLinkMenu()
     else if (!m_linkMenu.get_state() == LinkMenu::NO_MENU)
     {
         m_eCardState = InputManager::UNKNOWN_CARD_MENU; // keeps in link menu
+        m_pSysPwr->set_linkMenu();
     }
 }
 
@@ -136,17 +137,23 @@ void OutputManager::delt()
 void OutputManager::delC()
 {
     if (m_deleteMenu.is_state(DeleteMenu::DELETE_READY))
-    {
+    {   // Do delete the card.
         m_pMenuTimer->stop();
-        // Do delete the card.
         m_pMp3->play_specific_file(MSG_CONFIRMED);
         m_pMp3->dont_skip_current_track();
-        m_pNfcTagReader->erase_card();
+        if (!m_pNfcTagReader->erase_card())
+        {
+            m_pMp3->play_specific_file(MSG_ERROR_CARDREAD);
+            m_pMp3->dont_skip_current_track();
+        }
         m_deleteMenu.leave();
+        m_pSysPwr->set_playback(false);
     }
     else
     {
         m_pMp3->play_specific_file(MSG_DELETETAG);
+        m_pMenuTimer->stop(); // restart menu timer
+        m_pMenuTimer->start(MENU_TIMEOUT_SECS);
     }
 }
 
@@ -155,15 +162,11 @@ void OutputManager::abrt()
     m_pMenuTimer->stop();
     m_deleteMenu.leave();
     m_linkMenu.select_abort();
-    m_pMp3->play_specific_file(MSG_ABORTEED);
+    m_pMp3->play_specific_file(MSG_ABORTED);
 }
 
 void OutputManager::linC()
 {
-    // Restart timeout
-    m_pMenuTimer->stop();
-    m_pMenuTimer->start(MENU_TIMEOUT_SECS);
-
     switch (m_linkMenu.get_state())
     {
     case LinkMenu::NO_MENU:
@@ -191,7 +194,6 @@ void OutputManager::linC()
         {
             m_pMp3->play_specific_file(MSG_ERROR_FOLDER);
             m_pMp3->dont_skip_current_track();
-            m_pMenuTimer->stop(); // cancel timeout
             abrt();
         }
         else
@@ -211,17 +213,12 @@ void OutputManager::linC()
             }
         }
         m_linkMenu.select_abort(); // reset menu state
+        return; // do not restart menu timer
     }
-}
 
-void OutputManager::linN()
-{
-    changeOption(m_linkMenu.select_next());
-}
-
-void OutputManager::linP()
-{
-    changeOption(m_linkMenu.select_prev());
+    // Restart timeout
+    m_pMenuTimer->stop();
+    m_pMenuTimer->start(MENU_TIMEOUT_SECS);
 }
 
 void OutputManager::changeOption(uint16_t option)
