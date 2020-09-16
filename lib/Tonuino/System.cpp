@@ -20,11 +20,12 @@ System::System()
      // Timers
     m_pMenuTimer = new SimpleTimer();
     m_pLullabyeTimer = new SimpleTimer();
+    m_pDfMiniMsgTimeout = new SimpleTimer();
     // Periphery
     m_pReader = new Mfrc522();
     m_pNfcTagReader = new NfcTag(m_pReader); // Constructor injection of concrete reader
     m_pDfMini = new DfMini();
-    m_pMp3 = new Mp3PlayerControl(m_pDfMini, m_pPinControl, m_pUsbSerial, m_pDelayControl, m_pLullabyeTimer);
+    m_pMp3 = new Mp3PlayerControl(m_pDfMini, m_pPinControl, m_pUsbSerial, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
     m_pUserInput = UserInput_Factory::getInstance(UserInput_Factory::ThreeButtons);
 
     // Initialize objects if needed ------------------------
@@ -56,6 +57,7 @@ System::~System()
     delete m_pMenuTimer;
     delete m_pLullabyeTimer;
     delete m_pIdleTimer;
+    delete m_pDfMiniMsgTimeout;
     m_pUserInput = nullptr;
 
     // finally shut down system
@@ -93,4 +95,5 @@ void System::timer1_task_1s()
     m_pPwrCtrl->notify_timer_tick(); // idle timer and LED behavior
     m_pLullabyeTimer->timer_tick();
     m_pMenuTimer->timer_tick();
+    m_pDfMiniMsgTimeout->timer_tick();
 }

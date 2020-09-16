@@ -7,6 +7,7 @@
 #include "mocks/unittest_ArduinoIf_mocks.h"
 
 using ::testing::_;
+using ::testing::InvokeWithoutArgs;
 using ::testing::NiceMock;
 using ::testing::Return;
 
@@ -20,9 +21,9 @@ protected:
         m_pDfMini = new NiceMock<Mock_DfMiniMp3>;
         m_pPinCtrl = new NiceMock<Mock_pinCtrl>;
         m_pUsb = new NiceMock<Mock_com>;
-        m_pDelayCtrl = new NiceMock<Mock_delay>;
         m_pLullabyeTimer = new SimpleTimer{};
-        m_pMp3PlrCtrl = new Mp3PlayerControl(m_pDfMini, m_pPinCtrl, m_pUsb, m_pDelayCtrl, m_pLullabyeTimer);
+        m_pDfMiniMsgTimeout = new SimpleTimer{};
+        m_pMp3PlrCtrl = new Mp3PlayerControl(m_pDfMini, m_pPinCtrl, m_pUsb, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
     }
 
     virtual void TearDown()
@@ -30,18 +31,18 @@ protected:
         delete m_pMp3PlrCtrl;
 
         delete m_pDfMini;
-        delete m_pDelayCtrl;
         delete m_pPinCtrl;
         delete m_pUsb;
         delete m_pLullabyeTimer;
+        delete m_pDfMiniMsgTimeout;
     }
 
 protected:
     NiceMock<Mock_DfMiniMp3> *m_pDfMini;
     NiceMock<Mock_pinCtrl> *m_pPinCtrl;
     NiceMock<Mock_com> *m_pUsb;
-    NiceMock<Mock_delay> *m_pDelayCtrl;
     SimpleTimer *m_pLullabyeTimer{nullptr};
+    SimpleTimer *m_pDfMiniMsgTimeout{nullptr};
     
     Mp3PlayerControl *m_pMp3PlrCtrl;
 };
@@ -52,7 +53,7 @@ TEST_F(PlayerCtrl, ClassConstructorMethodsCalled)
     EXPECT_CALL(*m_pDfMini, begin());
     EXPECT_CALL(*m_pDfMini, setEq(DFMINI_EQ_SETTING));
     EXPECT_CALL(*m_pDfMini, setVolume(VOLUME_INIT));
-    Mp3PlayerControl myMp3(m_pDfMini, m_pPinCtrl, m_pUsb, m_pDelayCtrl, m_pLullabyeTimer);
+    Mp3PlayerControl myMp3(m_pDfMini, m_pPinCtrl, m_pUsb, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
 }
 
 TEST_F(PlayerCtrl, AutoPlayCalledOnLoop)
@@ -191,16 +192,22 @@ TEST_F(PlayerCtrl, autoplay_LULLABYE_trackFinished_timeout_stop)
 TEST_F(PlayerCtrl, dontSkip_notPlaying_Timeout)
 {
     ON_CALL(*m_pPinCtrl, digital_read(_)).WillByDefault(Return(true));       // not playing
-    EXPECT_CALL(*m_pDelayCtrl, milli_seconds()).Times(3).WillOnce(Return(0)) // Timer init
-        .WillOnce(Return(WAIT_DFMINI_READY - 1))                             // loop 1
-        .WillRepeatedly(Return(WAIT_DFMINI_READY));                          // loop 2
-    EXPECT_CALL(*m_pDfMini, loop()).Times(1);                                //called twice before timeout
+    EXPECT_CALL(*m_pDfMini, loop()).Times(WAIT_DFMINI_READY)
+                                   .WillOnce(InvokeWithoutArgs(m_pDfMiniMsgTimeout, &SimpleTimer::timer_tick));                                //called twice before timeout
+    m_pMp3PlrCtrl->dont_skip_current_track();
+}
+
+TEST_F(PlayerCtrl, dontSkip_notFinishing_Timeout)
+{
+    ON_CALL(*m_pPinCtrl, digital_read(_)).WillByDefault(Return(false));       // not playing
+    EXPECT_CALL(*m_pDfMini, loop()).Times(TIMEOUT_PROMPT_PLAYED)
+                                   .WillRepeatedly(InvokeWithoutArgs(m_pDfMiniMsgTimeout, &SimpleTimer::timer_tick));                                //called twice before timeout
     m_pMp3PlrCtrl->dont_skip_current_track();
 }
 
 TEST_F(PlayerCtrl, dontSkip_playing_noTimeout)
-{
-    ON_CALL(*m_pDelayCtrl, milli_seconds()).WillByDefault(Return(0));                                                                // no time elapsing
+{                                                               
+    // timeout not elapsing
     EXPECT_CALL(*m_pPinCtrl, digital_read(_)).Times(3).WillOnce(Return(false)).WillOnce(Return(false)).WillRepeatedly(Return(true)); // not playing
     EXPECT_CALL(*m_pDfMini, loop()).Times(1);                                                                                        //called once before isplaying returns true
     m_pMp3PlrCtrl->dont_skip_current_track();

@@ -119,7 +119,6 @@ void OutputManager::read()
     }
     else
     {
-        // TODO: Add Debug Output?
         m_pMp3->play_specific_file(MSG_ERROR_CARDREAD);
         m_pMp3->dont_skip_current_track();
         m_eCardState = InputManager::NO_CARD;

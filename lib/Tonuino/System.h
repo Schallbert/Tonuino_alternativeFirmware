@@ -50,6 +50,7 @@ private:
     SimpleTimer *m_pMenuTimer{nullptr};
     SimpleTimer *m_pLullabyeTimer{nullptr};
     SimpleTimer *m_pIdleTimer{nullptr};
+    SimpleTimer *m_pDfMiniMsgTimeout{nullptr};
     // Periphery
     // Init tag reader
     Mfrc522 *m_pReader{nullptr};
