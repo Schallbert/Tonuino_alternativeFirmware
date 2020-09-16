@@ -40,11 +40,12 @@ void SimpleTimer::timer_tick()
         return; // timer stopped
     }
 
-    if (m_ui16Count < m_ui16Timeout)
+    if(!m_bElapsed)
     {
-        ++m_ui16Count; // timer running
+        ++m_ui16Count;
     }
-    else
+
+    if (m_ui16Count >= m_ui16Timeout)
     {
         m_bElapsed = true; // timer elapsed
     }
