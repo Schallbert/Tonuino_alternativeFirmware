@@ -22,11 +22,16 @@ void setup()
     pTimer1->start();
 }
 
+// TODO:::::::
+// - Refactor pseudo timer in Mp3PlayerControl
+// - Rethink folder creation (trackCount renewal)
+// . Option: Card stays on system or can be removed?
+
 void loop()
 {
     //LowPower.sleep(100);
     // SLEEP for 100ms to reduce power consumption?
-    if (!pSys->loop())
+    if (!pSys->loop()) // shutdown requested
     {
         pTimer1->detachInterrupt();
         delete pTimer1;
@@ -35,7 +40,6 @@ void loop()
     }
 }
 
-// TODO: MENU TIMEOUT!
 void timer1_task_1ms()
 {
     pSys->timer1_task_1ms();

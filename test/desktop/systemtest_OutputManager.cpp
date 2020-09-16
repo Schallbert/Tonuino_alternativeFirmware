@@ -395,3 +395,66 @@ TEST_F(OutputManagerTest, dispatcher_newKnownCardNext_playsNextTrack)
     EXPECT_CALL(*m_pMp3, next_track());
     m_pOutputManager->runDispatcher();
 }
+
+TEST_F(OutputManagerTest, dispatcher_noCardPrev_playsPrevTrack)
+{
+    m_pOutputManager->setInputStates(InputManager::NO_CARD, UserInput::PREV_TRACK); 
+    EXPECT_CALL(*m_pMp3, prev_track());
+    m_pOutputManager->runDispatcher();
+}
+
+TEST_F(OutputManagerTest, dispatcher_activeKnownCardPrev_playsPrevTrack)
+{
+    m_pOutputManager->setInputStates(InputManager::ACTIVE_KNOWN_CARD, UserInput::PREV_TRACK); 
+    EXPECT_CALL(*m_pMp3, prev_track());
+    m_pOutputManager->runDispatcher();
+}
+
+TEST_F(OutputManagerTest, dispatcher_newKnownCardPrev_playsPrevTrack)
+{
+    m_pOutputManager->setInputStates(InputManager::NEW_KNOWN_CARD, UserInput::PREV_TRACK); 
+    EXPECT_CALL(*m_pMp3, prev_track());
+    m_pOutputManager->runDispatcher();
+}
+
+TEST_F(OutputManagerTest, dispatcher_noCardIncVol_increasesVolume)
+{
+    m_pOutputManager->setInputStates(InputManager::NO_CARD, UserInput::INC_VOLUME); 
+    EXPECT_CALL(*m_pMp3, volume_up());
+    m_pOutputManager->runDispatcher();
+}
+
+TEST_F(OutputManagerTest, dispatcher_activeKnownCardIncVol_increasesVolume)
+{
+    m_pOutputManager->setInputStates(InputManager::ACTIVE_KNOWN_CARD, UserInput::INC_VOLUME); 
+    EXPECT_CALL(*m_pMp3, volume_up());
+    m_pOutputManager->runDispatcher();
+}
+
+TEST_F(OutputManagerTest, dispatcher_newKnownCardIncVol_increasesVolume)
+{
+    m_pOutputManager->setInputStates(InputManager::NEW_KNOWN_CARD, UserInput::INC_VOLUME); 
+    EXPECT_CALL(*m_pMp3, volume_up());
+    m_pOutputManager->runDispatcher();
+}
+
+TEST_F(OutputManagerTest, dispatcher_noCardDecVol_decreasesVolume)
+{
+    m_pOutputManager->setInputStates(InputManager::NO_CARD, UserInput::DEC_VOLUME); 
+    EXPECT_CALL(*m_pMp3, volume_down());
+    m_pOutputManager->runDispatcher();
+}
+
+TEST_F(OutputManagerTest, dispatcher_activeKnownCardVol_decreasesVolume)
+{
+    m_pOutputManager->setInputStates(InputManager::ACTIVE_KNOWN_CARD, UserInput::DEC_VOLUME); 
+    EXPECT_CALL(*m_pMp3, volume_down());
+    m_pOutputManager->runDispatcher();
+}
+
+TEST_F(OutputManagerTest, dispatcher_newKnownCardVol_decreasesVolume)
+{
+    m_pOutputManager->setInputStates(InputManager::NEW_KNOWN_CARD, UserInput::DEC_VOLUME); 
+    EXPECT_CALL(*m_pMp3, volume_down());
+    m_pOutputManager->runDispatcher();
+}

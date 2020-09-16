@@ -11,9 +11,6 @@
 #include "../Utilities/DeleteMenu.h"
 #include "../Utilities/SimpleTimer.h"
 
-// TODO: for testability: Setup interface classes for PowerManager
-// and UserInterface (enums)
-
 class OutputManager
 {
 public:
@@ -70,12 +67,8 @@ private:
     void linP() { changeOption(m_linkMenu.select_prev()); }; // link prev command
     // read and Play card's linked folder
     void read();
-    // play error prompt
-    void erro() { m_pMp3->play_specific_file(MSG_ERROR); };
     // aborts current menu or process
     void abrt();
-    // plays folder error message and aborts menu
-    void folder_invalid();
 
 private:
     typedef void (OutputManager::*dispatcher)(); // table of function pointers
