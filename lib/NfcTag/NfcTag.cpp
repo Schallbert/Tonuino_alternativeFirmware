@@ -47,7 +47,7 @@ bool NfcTag::read_folder_from_card(Folder &targetFolder)
     if (m_pMfrc522->readCard(blockAddressToReadWrite, m_pBuffer))
     {
         buffer_to_folder();
-        if (m_oFolder.is_valid())
+        if (m_oFolder.is_initiated())
         {
             targetFolder = m_oFolder; // Copy member object to target folder
             return true;

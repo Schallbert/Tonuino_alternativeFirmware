@@ -12,7 +12,7 @@ class NfcTag
 {
 public:
     // Create NfcTag object with dependency-injected NfcReader object
-    NfcTag(MFRC522_interface *pMfrc522); // TODO: ADD CALLBACK FOR UNKNOWN CARD???
+    NfcTag(MFRC522_interface *pMfrc522);
     ~NfcTag();
 
 public:

@@ -1,29 +1,40 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <NfcTag.h>
 #include "mocks/unittest_Folder_mocks.h"
 #include "mocks/unittest_NfcTag_mocks.h"
-#include "mocks/unittest_NfcTag_fakes.h"
-#include "mocks/unittest_NfcTag_fixture.h"
 
-using ::testing::Return;
-//using ::testing::AtLeast;
+class NfcTag;
+
 using ::testing::_;
-using ::testing::ElementsAre;
+using ::testing::NiceMock;
+using ::testing::Return;
 
-// MATCHERS
-MATCHER_P2(arrayByteCompare, bytes, size, "Compares array bites and throws errors for each byte that does not match.")
+// TEST FIXTURE
+class NfcTagReadWrite : public ::testing::Test
 {
-    for (int i = 0; i < size; ++i)
+protected:
+    // Arrange
+    virtual void SetUp()
     {
-        if (arg[i] != bytes[i])
-        {
-            EXPECT_EQ("", "Error: " + std::to_string(i) + ". element not matching:");
-            EXPECT_EQ(arg[i], bytes[i]);
-        }
+        m_pMfrc = new NiceMock<Mock_MFRC522>;
+        m_pNfc = new NfcTag(m_pMfrc);
+        m_pTestFolder = new Folder(fakeBufferData[4],
+                                   (Folder::ePlayMode)fakeBufferData[5],
+                                   fakeBufferData[6]);
     }
-    return true;
-}
+
+    virtual void TearDown()
+    {
+        delete m_pMfrc;
+        delete m_pNfc;
+        delete m_pTestFolder;
+    }
+
+protected:
+    NiceMock<Mock_MFRC522>* m_pMfrc{nullptr};
+    NfcTag* m_pNfc{nullptr};
+    Folder* m_pTestFolder{nullptr};
+};
 
 // TESTS
 TEST_F(NfcTagReadWrite, IsCalledOnConstruction)

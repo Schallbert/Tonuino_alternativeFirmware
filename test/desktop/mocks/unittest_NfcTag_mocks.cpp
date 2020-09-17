@@ -1,4 +1,4 @@
-#include "unittest_NfcTag_fakes.h"
+#include "unittest_NfcTag_mocks.h"
 
 void Fake_MFRC522::initReader() {return;}
 bool Fake_MFRC522::isCardPresent() {return true;}
