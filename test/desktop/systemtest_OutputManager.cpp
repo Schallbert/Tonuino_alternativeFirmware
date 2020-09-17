@@ -15,11 +15,8 @@
 #include <OutputManager.h>
 
 using ::testing::_;
-using ::testing::Assign;
 using ::testing::NiceMock;
 using ::testing::Return;
-using ::testing::Field;
-
 
 // Fixture
 class OutputManagerTest : public ::testing::Test
@@ -80,7 +77,7 @@ protected:
     OutputManager *m_pOutputManager{nullptr};
 };
 
-using ::testing::Return;
+// TESTS
 
 TEST_F(OutputManagerTest, setInputStates_dependenciesCalled)
 {
@@ -146,10 +143,10 @@ TEST_F(OutputManagerTest, dispatcher_activeKnownCardPlayPause_playCalled)
     m_pOutputManager->runDispatcher();
 }
 
-TEST_F(OutputManagerTest, dispatcher_newKnownCard_playCalled)
+TEST_F(OutputManagerTest, dispatcher_newKnownCard_readCalled)
 {
     m_pOutputManager->setInputStates(InputManager::NEW_KNOWN_CARD, UserInput::PLAY_PAUSE);
-    EXPECT_CALL(*m_pMp3, play_pause());
+    EXPECT_CALL(*m_pMfrc, readCard(_, _));
     m_pOutputManager->runDispatcher();
 }
 
@@ -389,10 +386,10 @@ TEST_F(OutputManagerTest, dispatcher_activeKnownCardNext_playsNextTrack)
     m_pOutputManager->runDispatcher();
 }
 
-TEST_F(OutputManagerTest, dispatcher_newKnownCardNext_playsNextTrack)
+TEST_F(OutputManagerTest, dispatcher_newKnownCardNext_readCalled)
 {
     m_pOutputManager->setInputStates(InputManager::NEW_KNOWN_CARD, UserInput::NEXT_TRACK); 
-    EXPECT_CALL(*m_pMp3, next_track());
+    EXPECT_CALL(*m_pMfrc, readCard(_, _));
     m_pOutputManager->runDispatcher();
 }
 
@@ -410,10 +407,10 @@ TEST_F(OutputManagerTest, dispatcher_activeKnownCardPrev_playsPrevTrack)
     m_pOutputManager->runDispatcher();
 }
 
-TEST_F(OutputManagerTest, dispatcher_newKnownCardPrev_playsPrevTrack)
+TEST_F(OutputManagerTest, dispatcher_newKnownCardPrev_readCalled)
 {
     m_pOutputManager->setInputStates(InputManager::NEW_KNOWN_CARD, UserInput::PREV_TRACK); 
-    EXPECT_CALL(*m_pMp3, prev_track());
+    EXPECT_CALL(*m_pMfrc, readCard(_, _));
     m_pOutputManager->runDispatcher();
 }
 
@@ -431,10 +428,10 @@ TEST_F(OutputManagerTest, dispatcher_activeKnownCardIncVol_increasesVolume)
     m_pOutputManager->runDispatcher();
 }
 
-TEST_F(OutputManagerTest, dispatcher_newKnownCardIncVol_increasesVolume)
+TEST_F(OutputManagerTest, dispatcher_newKnownCardIncVol_readCalled)
 {
     m_pOutputManager->setInputStates(InputManager::NEW_KNOWN_CARD, UserInput::INC_VOLUME); 
-    EXPECT_CALL(*m_pMp3, volume_up());
+    EXPECT_CALL(*m_pMfrc, readCard(_, _));
     m_pOutputManager->runDispatcher();
 }
 
@@ -452,10 +449,10 @@ TEST_F(OutputManagerTest, dispatcher_activeKnownCardVol_decreasesVolume)
     m_pOutputManager->runDispatcher();
 }
 
-TEST_F(OutputManagerTest, dispatcher_newKnownCardVol_decreasesVolume)
+TEST_F(OutputManagerTest, dispatcher_newKnownCardVol_readCalled)
 {
     m_pOutputManager->setInputStates(InputManager::NEW_KNOWN_CARD, UserInput::DEC_VOLUME); 
-    EXPECT_CALL(*m_pMp3, volume_down());
+    EXPECT_CALL(*m_pMfrc, readCard(_, _));
     m_pOutputManager->runDispatcher();
 }
 
@@ -476,6 +473,7 @@ TEST_F(OutputManagerTest, dispatcher_read_noUpdateOfFolderInfoNecessary_cardNotU
 
     m_pOutputManager->setInputStates(InputManager::NEW_KNOWN_CARD, UserInput::NO_ACTION); 
     EXPECT_CALL(*m_pMfrc, writeCard(_, _)).Times(0); // no need to update card
+    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_ERROR_CARDREAD)).Times(0);
     m_pOutputManager->runDispatcher(); 
 }
 

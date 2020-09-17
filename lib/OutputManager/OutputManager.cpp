@@ -32,7 +32,7 @@ void OutputManager::runDispatcher()
                                                  //NOAC,     PL_PS,     PP_LP,     NEXT_,     PREV_,     INC_V,     DEC_V,
                                                  {&OM::none, &OM::plPs, &OM::help, &OM::next, &OM::prev, &OM::incV, &OM::decV}, // NO_CARD
                                                  {&OM::none, &OM::plPs, &OM::delt, &OM::next, &OM::prev, &OM::incV, &OM::decV}, // ACTIVE_KNOWN_CARD,
-                                                 {&OM::read, &OM::plPs, &OM::none, &OM::next, &OM::prev, &OM::incV, &OM::decV}, // NEW_KNOWN_CARD,
+                                                 {&OM::read, &OM::read, &OM::read, &OM::read, &OM::read, &OM::read, &OM::read}, // NEW_KNOWN_CARD,
                                                  {&OM::none, &OM::linC, &OM::abrt, &OM::linN, &OM::linP, &OM::none, &OM::none}, // UNKNOWN_CARD_MENU,
                                                  {&OM::none, &OM::delC, &OM::abrt, &OM::none, &OM::none, &OM::none, &OM::none}, // DELETE_CARD_MENU,
                                              };

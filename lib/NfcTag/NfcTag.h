@@ -3,9 +3,8 @@
 
 #include <Arduino_types.h>
 #include <MFRC522_interface.h>
-//#include <SPI.h>
 #include <Folder.h>
-//#include <Defines.h>
+
 
 // this object stores nfc tag data
 class NfcTag
