@@ -29,7 +29,7 @@ void setup()
 // - Option: Card stays on system or can be removed while playing? Config?
 // - Integration testing on device
 // - Lib cleanup in solution (lib manager)
-// - Solve build warnings
+// - Solve build warnings DONE
 
 void loop()
 {

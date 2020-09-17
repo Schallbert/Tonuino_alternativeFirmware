@@ -36,7 +36,6 @@ void LinkMenu::select_confirm()
     case PLAYMODE_SELECT:
         // Confirms playmode selection.
         m_ePlayMode = static_cast<Folder::ePlayMode>(m_ui16Option - START_OPTION_PLAYMODE);
-        m_eMenuState = COMPLETE;
         break;
     default:
         // should not be used

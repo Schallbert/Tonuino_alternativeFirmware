@@ -1,6 +1,7 @@
 
 #include <Arduino.h>
 #include <unity.h> //for unittest
+#include <Arduino_config.h>
 #include <Tonuino_config.h>
 #include <StatusLed.h>
 

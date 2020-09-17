@@ -4,6 +4,8 @@
 #include "../Config/Tonuino_config.h"
 #include <Folder.h>
 
+class Folder;
+
 /* 
 Once a new card is detected, It has to be linked to an existing folder on the SD card.
 */
@@ -14,8 +16,7 @@ public:
     {
         NO_MENU = 0,
         FOLDER_SELECT,
-        PLAYMODE_SELECT,
-        COMPLETE
+        PLAYMODE_SELECT
     };
 
 public:
