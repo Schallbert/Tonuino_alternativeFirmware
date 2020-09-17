@@ -16,7 +16,7 @@ public:
     */
     enum ePlayMode
     {
-        UNDEFINED = 0, // Not implemented
+        UNDEFINED = 0,     // Not implemented
         LULLABYE = 1,      // like ALBUM but stops playback after timeout TODO: RECORD VOICE OUTPUT.
         ALBUM = 2,         // Play tracks in order on SD card (1,2,3...), endless, rollover.
         RANDOM = 3,        // Like ALBUM but with shuffled non-repeating queue. TODO: RECORD VOICE OUTPUT

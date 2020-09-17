@@ -64,7 +64,7 @@ void Mp3PlayerControl::play_pause()
     {
         m_pLullabyeTimer->start(LULLABYE_TIMEOUT_SECS); // start shutdown timer
         wait_player_ready();
-        m_pDfMiniMp3->start();                          // Only successful if a track is entered.
+        m_pDfMiniMp3->start(); // Only successful if a track is entered.
     }
 }
 void Mp3PlayerControl::dont_skip_current_track()
@@ -126,6 +126,8 @@ void Mp3PlayerControl::next_track()
 #if DEBUGSERIAL
         m_pUsb->com_println("next_track: No folder linked");
 #endif
+        wait_player_ready();
+        m_pDfMiniMp3->playAdvertisement(MSG_ERROR_FOLDER);
         return; // Cannot play a track if the card is not linked.
     }
     wait_player_ready();
@@ -144,6 +146,8 @@ void Mp3PlayerControl::prev_track()
 #if DEBUGSERIAL
         m_pUsb->com_println("prev_track: No folder linked");
 #endif
+        wait_player_ready();
+        m_pDfMiniMp3->playAdvertisement(MSG_ERROR_FOLDER);
         return; // Cannot play a track if the card is not linked.
     }
     wait_player_ready();
@@ -160,6 +164,8 @@ void Mp3PlayerControl::play_folder(Folder *currentFolder)
     m_pCurrentFolder = currentFolder;
     if (!check_folder())
     {
+        wait_player_ready();
+        m_pDfMiniMp3->playAdvertisement(MSG_ERROR_FOLDER);
 #if DEBUGSERIAL
         m_pUsb->com_println("play_folder: No folder linked");
 #endif
@@ -179,7 +185,6 @@ void Mp3PlayerControl::play_specific_file(uint16_t fileId)
 {
     wait_player_ready();
     m_pDfMiniMp3->playAdvertisement(fileId);
-    
 }
 
 uint8_t Mp3PlayerControl::get_trackCount_of_folder(uint8_t folderId)
@@ -210,7 +215,7 @@ bool Mp3PlayerControl::check_folder()
 
 void Mp3PlayerControl::wait_player_ready()
 {
-    // command will wait for complete serial 
+    // command will wait for complete serial
     // communication message to be received from Player
     // assuming that the player is ready to process new input
     m_pDfMiniMp3->loop();
