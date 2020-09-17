@@ -41,8 +41,10 @@ private:
     void handleLinkMenu();
     // Checks delete menu state and plays according voice prompts
     void handleDeleteMenu();
-    // 
+    // Prompts the new option chosen in Link Menu
     void changeOption(uint16_t option);
+    // Updates folder information on NFC card if necessary based on MP3 player read
+    void updateFolderInformation();
     // ----- Wrapper methods to call target object's methods -----
     // No action performed
     void none(){};

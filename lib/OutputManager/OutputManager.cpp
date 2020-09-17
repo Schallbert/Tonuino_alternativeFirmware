@@ -32,7 +32,7 @@ void OutputManager::runDispatcher()
                                                  //NOAC,     PL_PS,     PP_LP,     NEXT_,     PREV_,     INC_V,     DEC_V,
                                                  {&OM::none, &OM::plPs, &OM::help, &OM::next, &OM::prev, &OM::incV, &OM::decV}, // NO_CARD
                                                  {&OM::none, &OM::plPs, &OM::delt, &OM::next, &OM::prev, &OM::incV, &OM::decV}, // ACTIVE_KNOWN_CARD,
-                                                 {&OM::none, &OM::plPs, &OM::none, &OM::next, &OM::prev, &OM::incV, &OM::decV}, // NEW_KNOWN_CARD,
+                                                 {&OM::read, &OM::plPs, &OM::none, &OM::next, &OM::prev, &OM::incV, &OM::decV}, // NEW_KNOWN_CARD,
                                                  {&OM::none, &OM::linC, &OM::abrt, &OM::linN, &OM::linP, &OM::none, &OM::none}, // UNKNOWN_CARD_MENU,
                                                  {&OM::none, &OM::delC, &OM::abrt, &OM::none, &OM::none, &OM::none, &OM::none}, // DELETE_CARD_MENU,
                                              };
@@ -114,7 +114,9 @@ void OutputManager::read()
 {
     if (m_pNfcTagReader->read_folder_from_card(m_currentFolder))
     {
+        updateFolderInformation();
         m_currentFolder.setup_dependencies(m_pEeprom, m_ui32RandomSeed); // TODO: SOLVE maybe on top level?
+
         m_pMp3->play_folder(&m_currentFolder);
     }
     else
@@ -136,7 +138,7 @@ void OutputManager::delt()
 void OutputManager::delC()
 {
     if (m_deleteMenu.is_state(DeleteMenu::DELETE_READY))
-    {   // Do delete the card.
+    { // Do delete the card.
         m_pMenuTimer->stop();
         m_pMp3->play_specific_file(MSG_CONFIRMED);
         m_pMp3->dont_skip_current_track();
@@ -212,7 +214,7 @@ void OutputManager::linC()
             }
         }
         m_linkMenu.select_abort(); // reset menu state
-        return; // do not restart menu timer
+        return;                    // do not restart menu timer
     }
 
     // Restart timeout
@@ -230,5 +232,24 @@ void OutputManager::changeOption(uint16_t option)
         // play preview of selected folder's contents
         Folder previewFolder = Folder(static_cast<uint8_t>(option), Folder::ONELARGETRACK, 1);
         m_pMp3->play_folder(&previewFolder);
+    }
+}
+
+void OutputManager::updateFolderInformation()
+{
+    // update trackCount (might change when folders on SD card are modified content-wise)
+    uint8_t ui8SavedTrackCnt = m_currentFolder.get_track_count();
+    uint8_t ui8RealTrackCnt = m_pMp3->get_trackCount_of_folder(m_currentFolder.get_folder_id());
+    if (ui8RealTrackCnt == 0)
+    {
+        m_pMp3->play_specific_file(MSG_ERROR_FOLDER); // folder without tracks on SD card. Error.
+        return;
+    }
+    if (ui8SavedTrackCnt != ui8RealTrackCnt)
+    {
+        m_currentFolder = Folder(m_currentFolder.get_folder_id(),
+                                 m_currentFolder.get_play_mode(),
+                                 ui8RealTrackCnt);
+        m_pNfcTagReader->write_folder_to_card(m_currentFolder); // update folder information on card
     }
 }

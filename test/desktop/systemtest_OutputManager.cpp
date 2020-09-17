@@ -458,3 +458,49 @@ TEST_F(OutputManagerTest, dispatcher_newKnownCardVol_decreasesVolume)
     EXPECT_CALL(*m_pMp3, volume_down());
     m_pOutputManager->runDispatcher();
 }
+
+TEST_F(OutputManagerTest, dispatcher_readSuccesful_noErrorGenerated)
+{
+    m_pMfrc->DelegateToFake(); // Delegates readCard() call to fake object
+    ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(fakeBufferData[6]));
+
+    m_pOutputManager->setInputStates(InputManager::NEW_KNOWN_CARD, UserInput::NO_ACTION); 
+    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_ERROR_CARDREAD)).Times(0);
+    m_pOutputManager->runDispatcher(); 
+}
+
+TEST_F(OutputManagerTest, dispatcher_read_noUpdateOfFolderInfoNecessary_cardNotUpdated)
+{
+    m_pMfrc->DelegateToFake(); // Delegates readCard() call to fake object
+    ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(fakeBufferData[6]));
+
+    m_pOutputManager->setInputStates(InputManager::NEW_KNOWN_CARD, UserInput::NO_ACTION); 
+    EXPECT_CALL(*m_pMfrc, writeCard(_, _)).Times(0); // no need to update card
+    m_pOutputManager->runDispatcher(); 
+}
+
+TEST_F(OutputManagerTest, dispatcher_read_updateOfFolderInfoNecessary_cardUpdated)
+{
+    byte updatedExpectedBuffer[16] = {};
+    memcpy(updatedExpectedBuffer, fakeBufferData, sizeof(byte) * 16);
+    updatedExpectedBuffer[6] = 9;
+    m_pMfrc->DelegateToFake(); // Delegates readCard() call to fake object
+    ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(9));
+
+    m_pOutputManager->setInputStates(InputManager::NEW_KNOWN_CARD, UserInput::NO_ACTION); 
+    EXPECT_CALL(*m_pMfrc, writeCard(_, arrayByteCompare(
+                                updatedExpectedBuffer,
+                                MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY
+                                ))).Times(1);
+    m_pOutputManager->runDispatcher(); 
+}
+
+TEST_F(OutputManagerTest, dispatcher_read_folderDeletedOnCard_playsErrorPrompt)
+{
+    m_pMfrc->DelegateToFake(); // Delegates readCard() call to fake object
+    ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(0));
+
+    m_pOutputManager->setInputStates(InputManager::NEW_KNOWN_CARD, UserInput::NO_ACTION); 
+    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_ERROR_FOLDER));
+    m_pOutputManager->runDispatcher(); 
+}

@@ -23,9 +23,13 @@ void setup()
 }
 
 // TODO:::::::
-// - Refactor pseudo timer in Mp3PlayerControl
-// - Rethink folder creation (trackCount renewal)
-// . Option: Card stays on system or can be removed?
+// - Refactor pseudo timer in Mp3PlayerControl DONE
+// - Rethink folder creation (trackCount renewal) DONE
+// - Use class forward declaration for quicker compiles
+// - Option: Card stays on system or can be removed while playing? Config?
+// - Integration testing on device
+// - Lib cleanup in solution (lib manager)
+// - Solve build warnings
 
 void loop()
 {
