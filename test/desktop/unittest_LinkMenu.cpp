@@ -89,13 +89,13 @@ TEST(linkMenu, selectNext1_returnValueIs1)
     ASSERT_EQ(menu.select_next(), 1);
 }
 
-TEST(linkMenu, confirm2_MenuIsCOMPLETE)
+TEST(linkMenu, confirm2_MenuComplete_StatusStaysAtPLAYMODE_SELECT)
 {
     LinkMenu menu;
     menu.init();
     menu.select_confirm();
     menu.select_confirm();
-    ASSERT_TRUE(menu.get_state() == LinkMenu::COMPLETE);
+    ASSERT_TRUE(menu.get_state() == LinkMenu::PLAYMODE_SELECT);
 }
 
 TEST(linkMenu, confirm2_PlayModeIsUNDEFINED)
