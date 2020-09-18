@@ -14,8 +14,10 @@ public:
 
 public:
 // initializes and controls delete process and plays voice prompt
-    void set_state(eDelMenuState state) { m_eMenuState = state; }
-    bool get_state(eDelMenuState state) { return (m_eMenuState == state); };
+    void init() { m_eMenuState = DELETE_MENU; }
+    void set_ready() { m_eMenuState = DELETE_READY; }
+    void leave() {m_eMenuState = NO_MENU; }
+    bool is_state(eDelMenuState state) { return (m_eMenuState == state); };
 
 private:
     eDelMenuState m_eMenuState{NO_MENU};

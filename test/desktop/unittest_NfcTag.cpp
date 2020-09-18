@@ -1,29 +1,39 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <NfcTag.h>
-#include "mocks/unittest_Folder_mocks.h"
 #include "mocks/unittest_NfcTag_mocks.h"
-#include "mocks/unittest_NfcTag_fakes.h"
-#include "mocks/unittest_NfcTag_fixture.h"
 
-using ::testing::Return;
-//using ::testing::AtLeast;
+class NfcTag;
+
 using ::testing::_;
-using ::testing::ElementsAre;
+using ::testing::NiceMock;
+using ::testing::Return;
 
-// MATCHERS
-MATCHER_P2(arrayByteCompare, bytes, size, "Compares array bites and throws errors for each byte that does not match.")
+// TEST FIXTURE
+class NfcTagReadWrite : public ::testing::Test
 {
-    for (int i = 0; i < size; ++i)
+protected:
+    // Arrange
+    virtual void SetUp()
     {
-        if (arg[i] != bytes[i])
-        {
-            EXPECT_EQ("", "Error: " + std::to_string(i) + ". element not matching:");
-            EXPECT_EQ(arg[i], bytes[i]);
-        }
+        m_pMfrc = new NiceMock<Mock_MFRC522>;
+        m_pNfc = new NfcTag(m_pMfrc);
+        m_pTestFolder = new Folder(fakeBufferData[4],
+                                   (Folder::ePlayMode)fakeBufferData[5],
+                                   fakeBufferData[6]);
     }
-    return true;
-}
+
+    virtual void TearDown()
+    {
+        delete m_pMfrc;
+        delete m_pNfc;
+        delete m_pTestFolder;
+    }
+
+protected:
+    NiceMock<Mock_MFRC522>* m_pMfrc{nullptr};
+    NfcTag* m_pNfc{nullptr};
+    Folder* m_pTestFolder{nullptr};
+};
 
 // TESTS
 TEST_F(NfcTagReadWrite, IsCalledOnConstruction)
@@ -76,11 +86,11 @@ TEST_F(NfcTagReadWrite, Read_NotSuccessful_returnsFalse)
     EXPECT_FALSE(m_pNfc->read_folder_from_card(resultFolder));
 }
 
-TEST_F(NfcTagReadWrite, Read_Successful_returnsTrue)
+TEST_F(NfcTagReadWrite, Read_Successful_ReadFolderNotInitialized_returnsFalse)
 {
     Folder resultFolder;
     EXPECT_CALL(*m_pMfrc, readCard(_, _)).WillOnce(Return(true));
-    EXPECT_TRUE(m_pNfc->read_folder_from_card(resultFolder));
+    EXPECT_FALSE(m_pNfc->read_folder_from_card(resultFolder));
 }
 
 TEST_F(NfcTagReadWrite, Read_IsCalledWithCorrectBlockAddr)
@@ -103,22 +113,14 @@ TEST_F(NfcTagReadWrite, Read_IsCalledWithCorrectPayload)
     m_pNfc->read_folder_from_card(resultFolder);
 }
 
-TEST_F(NfcTagReadWrite, Read_Successful_bufferEmpty_overridesSourceFolder)
+TEST_F(NfcTagReadWrite, Read_Successful_bufferEmpty_NoOverwriteOfSourceFolder)
 {
     Folder resultFolder(27, Folder::LULLABYE, 5);
     EXPECT_CALL(*m_pMfrc, readCard(_, _)).WillOnce(Return(true));
-    EXPECT_TRUE(m_pNfc->read_folder_from_card(resultFolder));
-    EXPECT_EQ(0, resultFolder.get_folder_id());
-    EXPECT_EQ(Folder::UNDEFINED, resultFolder.get_play_mode());
-    EXPECT_EQ(0, resultFolder.get_track_count());
-}
-
-TEST_F(NfcTagReadWrite, Read_Successful_bufferEmpty_returnsUnknownCard)
-{
-    Folder resultFolder;
-    EXPECT_CALL(*m_pMfrc, readCard(_, _)).WillOnce(Return(true));
-    EXPECT_TRUE(m_pNfc->read_folder_from_card(resultFolder));
-    EXPECT_FALSE(m_pNfc->is_known_card());
+    EXPECT_FALSE(m_pNfc->read_folder_from_card(resultFolder));
+    EXPECT_EQ(27, resultFolder.get_folder_id());
+    EXPECT_EQ(Folder::LULLABYE, resultFolder.get_play_mode());
+    EXPECT_EQ(5, resultFolder.get_track_count());
 }
 
 TEST_F(NfcTagReadWrite, Read_Successful_bufferSet_returnsKnownCard)
@@ -146,7 +148,7 @@ TEST_F(NfcTagReadWrite, Read_Successful_bufferSet_returnsCorrectFolderData)
 TEST_F(NfcTagReadWrite, Erase)
 {
     // Compare if input of writeCard buffer is really 0
-    emptyBuffer[MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY] = {};
+    byte emptyBuffer[MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY] = {};
     EXPECT_CALL(*m_pMfrc, writeCard(_, arrayByteCompare(
                                   emptyBuffer,
                                   MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY

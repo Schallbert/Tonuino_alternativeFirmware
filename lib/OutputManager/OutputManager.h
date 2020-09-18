@@ -2,23 +2,23 @@
 #define OUTPUTMANAGER_H
 
 #include <Arduino_interface.h>
-#include <NfcTag.h>
-#include <Mp3PlayerControl.h>
+#include <PowerManager_interface.h>
+#include <Mp3PlayerControl_interface.h>
+#include <InputManager.h> // Use Enums
 
-#include "LinkMenu.h"
-#include "DeleteMenu.h"
-#include "SimpleTimer.h"
-#include "InputManager.h" // Use Enums
-#include "PowerManager.h"
+#include "../Utilities/LinkMenu.h"
+#include "../Utilities/DeleteMenu.h"
+#include "../Utilities/SimpleTimer.h"
 
+class NfcTag;
 
 class OutputManager
 {
 public:
     OutputManager(Arduino_interface_com *pUsb,
-                  PowerManager *pPwrCtrl,
+                  PowerManager_interface *pPwrCtrl,
                   NfcTag *pNfcReader,
-                  Mp3PlayerControl *pMp3,
+                  Mp3PlayerControl_interface *pMp3,
                   SimpleTimer *pMenuTimer,
                   EEPROM_interface *pEeprom,
                   uint32_t ui32Seed) : m_pUsb(pUsb),
@@ -34,9 +34,18 @@ public:
     void setInputStates(InputManager::eCardState cardState, UserInput::UserRequest_e userInput);
     // Runs desicion table that calls functions depending on user input
     void runDispatcher();
-    bool getShutdownRequest();
 
 private:
+    // handles errors from cardReader or UserInput interfaces
+    void handleInputErrors();
+    // Checks link menu state and plays according voice prompts
+    void handleLinkMenu();
+    // Checks delete menu state and plays according voice prompts
+    void handleDeleteMenu();
+    // Prompts the new option chosen in Link Menu
+    void changeOption(uint16_t option);
+    // Updates folder information on NFC card if necessary based on MP3 player read
+    void updateFolderInformation();
     // ----- Wrapper methods to call target object's methods -----
     // No action performed
     void none(){};
@@ -57,32 +66,27 @@ private:
     void delC(); // confirm deletion
     // link NFC card to SD card folder
     void linC(); // confirm link
-    void linN(); // link next command
-    void linP(); // link prev command
+    void linN() { changeOption(m_linkMenu.select_next()); }; // link next command
+    void linP() { changeOption(m_linkMenu.select_prev()); }; // link prev command
     // read and Play card's linked folder
     void read();
-    // play error prompt
-    void erro() { m_pMp3->play_specific_file(MSG_ERROR); };
     // aborts current menu or process
     void abrt();
-
-    // ----- Wrapper methods to call target object's methods -----
-    void handleInputErrors();
 
 private:
     typedef void (OutputManager::*dispatcher)(); // table of function pointers
     // members by dependency injection
     Arduino_interface_com *m_pUsb{nullptr};
-    PowerManager *m_pSysPwr{nullptr};
+    PowerManager_interface *m_pSysPwr{nullptr};
     NfcTag *m_pNfcTagReader{nullptr};
-    Mp3PlayerControl *m_pMp3{nullptr};
+    Mp3PlayerControl_interface *m_pMp3{nullptr};
     SimpleTimer *m_pMenuTimer{nullptr};
     EEPROM_interface *m_pEeprom{nullptr};
     uint32_t m_ui32RandomSeed{0};
 
     // Member objects
     Folder m_currentFolder{};
-    LinkMenu m_linkMenu{m_pMp3, m_pEeprom};
+    LinkMenu m_linkMenu{};
     DeleteMenu m_deleteMenu{};
     InputManager::eCardState m_eCardState{InputManager::NO_CARD};
     UserInput::UserRequest_e m_eUserInput{UserInput::NO_ACTION};

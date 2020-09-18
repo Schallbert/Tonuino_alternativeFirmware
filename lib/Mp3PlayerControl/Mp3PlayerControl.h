@@ -1,22 +1,23 @@
 #ifndef MP3PLAYERCONTROL_H
 #define MP3PLAYERCONTROL_H
 
-#include <Arduino_types.h>
+#include "../Mp3PlayerControl_interface/Mp3PlayerControl_interface.h"
 
-#include <Folder.h>
-#include <Defines.h>
 #include <Arduino_interface.h>
 #include <DFMiniMp3_interface.h>
-#include <SimpleTimer.h>
 
-class Mp3PlayerControl
+#include "../Config/Tonuino_config.h"
+#include "../Config/Arduino_config.h"
+#include "../Utilities/SimpleTimer.h"
+
+class Mp3PlayerControl : public Mp3PlayerControl_interface
 {
 public:
     Mp3PlayerControl(DfMiniMp3_interface *pPlayer,
                      Arduino_interface_pins *pPinCtrl,
                      Arduino_interface_com *pUsb,
-                     Arduino_interface_delay *pDelayCtrl,
-                     SimpleTimer *pLullabyeTimer);
+                     SimpleTimer *pLullabyeTimer, 
+                     SimpleTimer *pDfMiniMsgTimeout);
 
 public:
     // Listen for DFminiMp3 replies, call autoplay routine
@@ -43,6 +44,8 @@ public:
     uint8_t get_trackCount_of_folder(uint8_t folderId);
 
 private:
+    // Waits for DfMiniMp3 player's serial connection to be ready for new commands
+    void wait_player_ready();
     // Routine to check playmode and select next track
     void autoplay();
     // Routine to check if lullabye time has reached to enable KeepAlive to switch system off after timeout.
@@ -57,8 +60,8 @@ private:
     DfMiniMp3_interface *m_pDfMiniMp3{nullptr};
     Arduino_interface_pins *m_pPinCtrl{nullptr};
     Arduino_interface_com *m_pUsb{nullptr};
-    Arduino_interface_delay *m_pDelayCtrl{nullptr};
     SimpleTimer *m_pLullabyeTimer{nullptr};
+    SimpleTimer *m_pDfMiniMsgTimeout{nullptr};
     Folder *m_pCurrentFolder{nullptr};
 };
 

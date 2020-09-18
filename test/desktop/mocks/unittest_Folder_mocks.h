@@ -1,6 +1,7 @@
 #ifndef UNITTEST_FOLDER_MOCKS_H
 #define UNITTEST_FOLDER_MOCKS_H
 
+#include <gmock/gmock.h>
 #include <Arduino.h>
 #include <EEPROM_interface.h>
 

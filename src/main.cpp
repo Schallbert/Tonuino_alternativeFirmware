@@ -22,11 +22,20 @@ void setup()
     pTimer1->start();
 }
 
+// TODO:::::::
+// - Refactor pseudo timer in Mp3PlayerControl DONE
+// - Rethink folder creation (trackCount renewal) DONE
+// - Use class forward declaration for quicker compiles
+// - Option: Card stays on system or can be removed while playing? Config?
+// - Integration testing on device
+// - Lib cleanup in solution (lib manager)
+// - Solve build warnings DONE
+
 void loop()
 {
     //LowPower.sleep(100);
     // SLEEP for 100ms to reduce power consumption?
-    if (!pSys->loop())
+    if (!pSys->loop()) // shutdown requested
     {
         pTimer1->detachInterrupt();
         delete pTimer1;
@@ -35,7 +44,6 @@ void loop()
     }
 }
 
-// TODO: MENU TIMEOUT!
 void timer1_task_1ms()
 {
     pSys->timer1_task_1ms();

@@ -1,5 +1,4 @@
-#include "interface_UserInput.h"
-#include "ClickEncoder.h"
+#include <UserInput_implementation.h>
 
 // USERINPUT___CLICKENCODER ---------------------------------------------------------------
 UserInput_ClickEncoder::UserInput_ClickEncoder() {} // : public UserInput(){}
@@ -43,17 +42,17 @@ UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request()
 {
     if (state != ready)
     {
-        return Error;
+        return ERROR;
     }
     else if (UserInput::userInputLocked)
     {
         return NO_ACTION;
     }
 
-    //Poll for current encoder position and button state
-    #ifndef UNIT_TEST
+//Poll for current encoder position and button state
+#ifndef UNIT_TEST
     userinput_refresh();
-    #endif
+#endif
 
     if (buttonState == ClickEncoder::Clicked)
     {
@@ -67,8 +66,7 @@ UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request()
         {
             return INC_VOLUME; //while button was pressed/held: volume up
         }
-
-        if (cardDetected)
+        else
         {
             return NEXT_TRACK; //no button press: next track
         }
@@ -81,8 +79,7 @@ UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request()
         {
             return DEC_VOLUME; //while button was pressed/held: volume up
         }
-
-        if (cardDetected)
+        else
         {
             return PREV_TRACK; //no button press: next track
         }
@@ -91,26 +88,12 @@ UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request()
     if (buttonState == ClickEncoder::Held)
     {
         // Button held but not turned
-        if (cardDetected)
-        {
-            return Abort;
-        }
-        else
-        {
-            return Help;
-        }
+        return PP_LONGPRESS;
     }
 
     if (buttonState == ClickEncoder::DoubleClicked)
     {
-        if (cardDetected)
-        {
-            UserInput::userInputLocked = !UserInput::userInputLocked; // Doubleclick and card present: lock buttons
-        }
-        else
-        {
-            return DelCard; // Doubleclick without card: delete card
-        }
+        UserInput::userInputLocked = !UserInput::userInputLocked; // Doubleclick: lock buttons
     }
 
     return NO_ACTION;
@@ -120,56 +103,35 @@ UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request()
 void UserInput_ClickEncoder::set_fake_user_request(UserInput::UserRequest_e fakeAction) // For unit testing: Injects fake requests
 {
     switch (fakeAction)
-        {
-        case UserInput::NO_ACTION:
-            buttonState = ClickEncoder::Open;
-            encoderDiff = 0;
-            set_card_detected(true);
-            break;
-        case UserInput::PLAY_PAUSE:
-            set_card_detected(true);
-            buttonState = ClickEncoder::Clicked;
-            encoderDiff = 0;
-            break;
-        case UserInput::NEXT_TRACK:
-            set_card_detected(true);
-            buttonState = ClickEncoder::Open;
-            encoderDiff = 1; 
-            break;
-        case UserInput::PREV_TRACK:
-            set_card_detected(true);
-            buttonState = ClickEncoder::Open;
-            encoderDiff = -1; 
-            break;
-        case UserInput::INC_VOLUME:
-            set_card_detected(true);
-            buttonState = ClickEncoder::Held;
-            encoderDiff = 1; 
-            break;
-        case UserInput::DEC_VOLUME:
-            set_card_detected(true);
-            buttonState = ClickEncoder::Held;
-            encoderDiff = -1; 
-            break;
-        case UserInput::DelCard:
-            set_card_detected(false);
-            encoderDiff = 0;
-            buttonState = ClickEncoder::DoubleClicked;
-            break;
-        case UserInput::Help:
-            set_card_detected(false);
-            encoderDiff = 0;
-            buttonState = ClickEncoder::Held;
-            break;
-        case UserInput::Abort:
-            set_card_detected(true);
-            encoderDiff = 0;
-            buttonState = ClickEncoder::Held;
-            break;
-        case UserInput::Error:
-            state = inputPinsSet; //not ready anymore
-            break;
-        }
+    {
+    case UserInput::NO_ACTION:
+        buttonState = ClickEncoder::Open;
+        encoderDiff = 0;
+        break;
+    case UserInput::PLAY_PAUSE:
+        buttonState = ClickEncoder::Clicked;
+        encoderDiff = 0;
+        break;
+    case UserInput::NEXT_TRACK:
+        buttonState = ClickEncoder::Open;
+        encoderDiff = 1;
+        break;
+    case UserInput::PREV_TRACK:
+        buttonState = ClickEncoder::Open;
+        encoderDiff = -1;
+        break;
+    case UserInput::INC_VOLUME:
+        buttonState = ClickEncoder::Held;
+        encoderDiff = 1;
+        break;
+    case UserInput::DEC_VOLUME:
+        buttonState = ClickEncoder::Held;
+        encoderDiff = -1;
+        break;
+    case UserInput::ERROR:
+        state = inputPinsSet; //not ready anymore
+        break;
+    }
 }
 #endif
 
@@ -245,17 +207,17 @@ UserInput::UserRequest_e UserInput_3Buttons::get_user_request()
 {
     if (state != ready)
     {
-        return Error;
+        return ERROR;
     }
     else if (UserInput::userInputLocked)
     {
         return NO_ACTION;
     }
 
-    //Get current button's states
-    #ifndef UNIT_TEST
+//Get current button's states
+#ifndef UNIT_TEST
     userinput_refresh();
-    #endif
+#endif
 
     // --- PlayPauAbort button handler -----------------------------
     if (buttonStates.plpsButton == ClickEncoder::Clicked)
@@ -265,35 +227,19 @@ UserInput::UserRequest_e UserInput_3Buttons::get_user_request()
     else if (buttonStates.plpsButton == ClickEncoder::Held)
     {
         // Button held
-        if (cardDetected)
-        {
-            return Abort;
-        }
-        else
-        {
-            return Help;
-        }
+        return PP_LONGPRESS;
     }
     else if (buttonStates.plpsButton == ClickEncoder::DoubleClicked)
     {
-        if (cardDetected)
-        {
-            // Doubleclick and card present: lock buttons
-            UserInput::userInputLocked = !UserInput::userInputLocked;
-        }
-        else
-        {
-            // Doubleclick without card: delete card
-            return DelCard;
-        }
+        UserInput::userInputLocked = !UserInput::userInputLocked;
     }
     // --- Next button handler --------------------------------------
-    if ((buttonStates.nextButton == ClickEncoder::Clicked) && cardDetected)
+    if (buttonStates.nextButton == ClickEncoder::Clicked)
     {
         return NEXT_TRACK;
     }
 
-    if (buttonStates.nextButton == ClickEncoder::Held && cardDetected)
+    if (buttonStates.nextButton == ClickEncoder::Held)
     {
         nextButton->set_long_press_active(true);
         if (nextButton->handle_repeat_long_pressed())
@@ -306,12 +252,12 @@ UserInput::UserRequest_e UserInput_3Buttons::get_user_request()
         nextButton->set_long_press_active(false);
     }
     // --- Previous button handler ----------------------------------
-    if ((buttonStates.prevButton == ClickEncoder::Clicked) && cardDetected)
+    if (buttonStates.prevButton == ClickEncoder::Clicked)
     {
         return PREV_TRACK;
     }
 
-    if (buttonStates.prevButton == ClickEncoder::Held && cardDetected)
+    if (buttonStates.prevButton == ClickEncoder::Held)
     {
         prevButton->set_long_press_active(true);
         if (prevButton->handle_repeat_long_pressed())
@@ -331,65 +277,41 @@ UserInput::UserRequest_e UserInput_3Buttons::get_user_request()
 void UserInput_3Buttons::set_fake_user_request(UserInput::UserRequest_e fakeAction) // For unit testing: Injects fake requests
 {
     switch (fakeAction)
-        {
-        case UserInput::NO_ACTION:
-            set_card_detected(true);
-            buttonStates.plpsButton = ClickEncoder::Open;
-            buttonStates.nextButton = ClickEncoder::Open;
-            buttonStates.prevButton = ClickEncoder::Open;
-            break;
-        case UserInput::PLAY_PAUSE:
-            set_card_detected(true);
-            buttonStates.plpsButton = ClickEncoder::Clicked;
-            buttonStates.nextButton = ClickEncoder::Open;
-            buttonStates.prevButton = ClickEncoder::Open;
-            break;
-        case UserInput::NEXT_TRACK:
-            set_card_detected(true);
-            buttonStates.plpsButton = ClickEncoder::Open;
-            buttonStates.nextButton = ClickEncoder::Clicked;
-            buttonStates.prevButton = ClickEncoder::Open;
-            break;
-        case UserInput::PREV_TRACK:
-            set_card_detected(true);
-            buttonStates.plpsButton = ClickEncoder::Open;
-            buttonStates.nextButton = ClickEncoder::Open;
-            buttonStates.prevButton = ClickEncoder::Clicked;
-            break;
-        case UserInput::INC_VOLUME:
-            set_card_detected(true);
-            buttonStates.plpsButton = ClickEncoder::Open;
-            buttonStates.nextButton = ClickEncoder::Held;
-            buttonStates.prevButton = ClickEncoder::Open;
-            break;
-        case UserInput::DEC_VOLUME:
-            set_card_detected(true);
-            buttonStates.plpsButton = ClickEncoder::Open;
-            buttonStates.nextButton = ClickEncoder::Open;
-            buttonStates.prevButton = ClickEncoder::Held;
-            break;
-        case UserInput::DelCard:
-            set_card_detected(false);
-            buttonStates.plpsButton = ClickEncoder::DoubleClicked;
-            buttonStates.nextButton = ClickEncoder::Open;
-            buttonStates.prevButton = ClickEncoder::Open;
-            break;
-        case UserInput::Help:
-            set_card_detected(false);
-            buttonStates.plpsButton = ClickEncoder::Held;
-            buttonStates.nextButton = ClickEncoder::Open;
-            buttonStates.prevButton = ClickEncoder::Open;
-            break;
-        case UserInput::Abort:
-            set_card_detected(true);
-            buttonStates.plpsButton = ClickEncoder::Held;
-            buttonStates.nextButton = ClickEncoder::Open;
-            buttonStates.prevButton = ClickEncoder::Open;
-            break;
-        case UserInput::Error:
-            state = inputPinsSet; //not ready anymore
-            break;
-        }
+    {
+    case UserInput::NO_ACTION:
+        buttonStates.plpsButton = ClickEncoder::Open;
+        buttonStates.nextButton = ClickEncoder::Open;
+        buttonStates.prevButton = ClickEncoder::Open;
+        break;
+    case UserInput::PLAY_PAUSE:
+        buttonStates.plpsButton = ClickEncoder::Clicked;
+        buttonStates.nextButton = ClickEncoder::Open;
+        buttonStates.prevButton = ClickEncoder::Open;
+        break;
+    case UserInput::NEXT_TRACK:
+        buttonStates.plpsButton = ClickEncoder::Open;
+        buttonStates.nextButton = ClickEncoder::Clicked;
+        buttonStates.prevButton = ClickEncoder::Open;
+        break;
+    case UserInput::PREV_TRACK:
+        buttonStates.plpsButton = ClickEncoder::Open;
+        buttonStates.nextButton = ClickEncoder::Open;
+        buttonStates.prevButton = ClickEncoder::Clicked;
+        break;
+    case UserInput::INC_VOLUME:
+        buttonStates.plpsButton = ClickEncoder::Open;
+        buttonStates.nextButton = ClickEncoder::Held;
+        buttonStates.prevButton = ClickEncoder::Open;
+        break;
+    case UserInput::DEC_VOLUME:
+        buttonStates.plpsButton = ClickEncoder::Open;
+        buttonStates.nextButton = ClickEncoder::Open;
+        buttonStates.prevButton = ClickEncoder::Held;
+        break;
+    case UserInput::ERROR:
+        state = inputPinsSet; //not ready anymore
+        break;
+    }
 }
 #endif
 
@@ -421,7 +343,7 @@ void UserInput_3Buttons::DigitalButton_SupportsLongPress::set_long_press_active(
 bool UserInput_3Buttons::DigitalButton_SupportsLongPress::handle_repeat_long_pressed()
 {
     bool result = false;
-    if(longPressCount >= longPressRepeatInterval)
+    if (longPressCount >= longPressRepeatInterval)
     {
         longPressCount = 0;
     }

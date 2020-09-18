@@ -17,11 +17,11 @@ public:
     enum ePlayMode
     {
         UNDEFINED = 0,     // Not implemented
-        LULLABYE = 4,      // like ALBUM but stops playback after timeout TODO: RECORD VOICE OUTPUT.
+        LULLABYE = 1,      // like ALBUM but stops playback after timeout TODO: RECORD VOICE OUTPUT.
         ALBUM = 2,         // Play tracks in order on SD card (1,2,3...), endless, rollover.
         RANDOM = 3,        // Like ALBUM but with shuffled non-repeating queue. TODO: RECORD VOICE OUTPUT
-        SAVEPROGRESS = 5,  // like ALBUM but saves track that is currently active. TODO: RE-RECORD VOICE OUTPUT
-        ONELARGETRACK = 1, // So-called Hörspielmodus. Queue like ALBUM but stops playback after finishing track. TODO: RE-RECORD VOICE OUTPUT.
+        SAVEPROGRESS = 4,  // like ALBUM but saves track that is currently active. TODO: RE-RECORD VOICE OUTPUT
+        ONELARGETRACK = 5, // So-called Hörspielmodus. Queue like ALBUM but stops playback after finishing track. TODO: RE-RECORD VOICE OUTPUT.
         ENUM_COUNT = 5,    // Last entry of enum to allow iteration (no value for content)
     };
 
@@ -57,6 +57,8 @@ private:
     void setup_track_queue();
     // Creates a sorted play queue (1= first track, 2= second track etc.)
     void init_sorted_queue();
+    // Creates a 1:1 copy of the input track queue and saves in member variable
+    bool deep_copy_queue(uint8_t *pTrackQueue);
     // Creates a Pseudo random queue, each track only once in queue
     void shuffle_queue();
     // Returns true if folder is bound to necessary external dependencies (eeprom, random seed)
@@ -65,13 +67,13 @@ private:
     bool is_trackQueue_set();
 
 private:
-    uint8_t *m_pTrackQueue{nullptr};
-    uint8_t m_ui8TrackCount{0};
-    uint8_t m_ui8CurrentQueueEntry{0};
     uint8_t m_ui8FolderId{0};
     ePlayMode m_ePlayMode{Folder::UNDEFINED};
+    uint8_t m_ui8TrackCount{0};
+    uint8_t *m_pTrackQueue{nullptr};
     EEPROM_interface *m_pEeprom{nullptr}; // external dependency
     uint32_t m_ui32RndmSeed{0};
+    uint8_t m_ui8CurrentQueueEntry{0};
 };
 
 #endif // FOLDER_H

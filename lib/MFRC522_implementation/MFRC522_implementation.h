@@ -2,7 +2,7 @@
 #define MFRC522_IMPLEMENTATION_H
 
 #include <Arduino.h>
-#include <Defines.h>
+#include <Arduino_config.h>
 #include <MFRC522.h>
 #include "MFRC522_interface.h"
 

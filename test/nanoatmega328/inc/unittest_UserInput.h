@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <unity.h>
-#include <Defines.h>
+#include <Arduino_config.h>
 #include <interface_UserInput.h>
 
 namespace userinput

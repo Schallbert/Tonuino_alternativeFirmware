@@ -3,7 +3,6 @@
 
 // project includes -------
 
-#include <interface_UserInput.h>
 #include <Folder.h>
 #include <NfcTag.h>
 #include <Arduino_implementation.h>
@@ -11,11 +10,13 @@
 #include <DFMiniMp3_implementation.h>
 #include <EEPROM_implementation.h>
 #include <MFRC522_implementation.h>
+#include  <UserInput_implementation.h>
+#include <PowerManager.h>
+#include <InputManager.h>
+#include <OutputManager.h>
 
-#include "PowerManager.h"
-#include "InputManager.h"
-#include "SimpleTimer.h"
-#include "OutputManager.h"
+#include "../Utilities/SimpleTimer.h"
+
 
 /* This is the "main" class of the project.
 // It contains all the objects and dependencies needed for operation.
@@ -49,6 +50,7 @@ private:
     SimpleTimer *m_pMenuTimer{nullptr};
     SimpleTimer *m_pLullabyeTimer{nullptr};
     SimpleTimer *m_pIdleTimer{nullptr};
+    SimpleTimer *m_pDfMiniMsgTimeout{nullptr};
     // Periphery
     // Init tag reader
     Mfrc522 *m_pReader{nullptr};

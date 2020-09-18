@@ -1,18 +1,17 @@
 #ifndef NFCTAG_H
 #define NFCTAG_H
 
-#include <Arduino.h>
+#include <Arduino_types.h>
 #include <MFRC522_interface.h>
-//#include <SPI.h>
 #include <Folder.h>
-#include <Defines.h>
+
 
 // this object stores nfc tag data
 class NfcTag
 {
 public:
     // Create NfcTag object with dependency-injected NfcReader object
-    NfcTag(MFRC522_interface *pMfrc522); // TODO: ADD CALLBACK FOR UNKNOWN CARD???
+    NfcTag(MFRC522_interface *pMfrc522);
     ~NfcTag();
 
 public:

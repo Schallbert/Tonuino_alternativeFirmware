@@ -1,81 +1,21 @@
-#ifndef USERINPUT_H
-#define USERINPUT_H
+#ifndef USERINPUT_IMPLEMENTATION_H
+#define USERINPUT_IMPLEMENTATION_H
 
-#ifndef ARDUINO_H
-#include "Arduino.h"
-#endif
+#include <UserInput_interface.h>
+#include "../ClickEncoder/ClickEncoder.h"
 
-#include "ClickEncoder.h"
-
-class UserInput
-{
-    //Interface class of UserInput implementation
-    /*  UserInput gets the user's requests for device control,
-        be it via buttons or a click encoder, and relays the requests
-        to the main program.
-        This interface is set up to make the main program independent of
-        the physical implementation of the user input.
-    */
-public:
-    enum UserRequest_e // TODO: Refactor to CAPITAL
-    {
-        NO_ACTION = 0,
-        PLAY_PAUSE,
-        PP_LONGPRESS, 
-        NEXT_TRACK,
-        PREV_TRACK,
-        INC_VOLUME,
-        DEC_VOLUME,
-        ERROR,
-        DelCard, // TODO: ADJUST AND DELETE
-        Help,
-        Abort,
-        Error,
-        NUMBER_OF_REQUESTS
-
-    };
-
-protected:
-    //UserInput();
-    //~UserInput();
-    bool userInputLocked = false;
-    bool cardDetected = false;
-
-    enum InterfaceState_e
-    {
-        uninitialized = 0,
-        inputPinsSet = 1,
-        ready = 2
-    };
-
-public:
-    // methods
-    virtual void set_input_pins(uint8_t, uint8_t, uint8_t) = 0; // Must have same signature as derived methods
-    virtual void init(void) = 0;                                // Initializes userInput object
-    virtual UserRequest_e get_user_request(void) = 0;           // returns user's request to main program
-    virtual void userinput_service_isr(void) = 0;               // recurring task to poll UserInput's connected hardware
-    void set_card_detected(bool cardDetected) {this->cardDetected = cardDetected;} // input: card status from main
-#ifdef UNIT_TEST
-    virtual void set_fake_user_request(UserRequest_e) = 0; // For unit testing: Injects fake requests
-#endif
-
-private:
-    virtual void userinput_refresh(void) = 0; // refreshes button status to UserInput class
-
-}; // UserInput
 
 class UserInput_ClickEncoder : public UserInput
 {
     //Interface implementation for clickEncoder
     //  NO_ACTION = 0,
     //  PLAY_PAUSE = Click
-    //  NEXT_TRACK = Turn Right with card
-    //  PREV_TRACK = Turn Left with card
+    //  NEXT_TRACK = Turn Right
+    //  PREV_TRACK = Turn Left
     //  INC_VOLUME = Pressed/Held Turn Right
     //  DEC_VOLUME = Pressed/Held Turn Left
-    //  DelCard =   Doubleclick without card
-    //  ToggleLockInput = Doubleclick with card
-    //  Help = Held without card
+    //  ToggleLockInput = Doubleclick
+    //  ERROR
 
     // Name friend classes so constructors can be called
     friend class UserInput_Factory;
@@ -123,13 +63,12 @@ class UserInput_3Buttons : public UserInput
     //Interface implementation for 3 buttons
     //  NO_ACTION = 0,
     //  PLAY_PAUSE = plpsButton Click
-    //  NEXT_TRACK = nextButton Click with card
-    //  PREV_TRACK = prevButton Click with card
+    //  NEXT_TRACK = nextButton Click
+    //  PREV_TRACK = prevButton Click
     //  INC_VOLUME = nextButton Held
     //  DEC_VOLUME = prevButton Held
-    //  DelCard =   plpsButton Doubleclick without card
-    //  toggleLockInput = plpsButton Doubleclick with card
-    //  Help = plpsButton Held without card
+    //  ToggleLockInput = plpsButton Doubleclick
+    //  ERROR
 
     // Name friend classes so constructors can be called
     friend class UserInput_Factory;
@@ -153,7 +92,6 @@ private:
         void service(void);
         void set_long_press_active(bool longPressActive);
         bool handle_repeat_long_pressed(void);
-
 
     private:
         uint16_t longPressTime;           //mSec
@@ -214,8 +152,10 @@ public:
         Encoder,
         ThreeButtons
     };
+
 public:
     static UserInput *getInstance(UserInputType_e typeKey);
 
-};     // UserInput_Factory
-#endif // USERINPUT_H
+}; // UserInput_Factory
+
+#endif // USERINPUT_IMPLEMENTATION_H

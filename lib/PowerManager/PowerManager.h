@@ -1,14 +1,16 @@
 #ifndef POWERMANAGER_H
 #define POWERMANAGER_H
 
-#include <Defines.h>
 #include <StatusLed.h>
 #include <interface_KeepAlive.h>
-#include <SimpleTimer.h>
 
+#include "PowerManager_interface.h"
+#include "../Config/Arduino_config.h"
+#include "../Config/Tonuino_config.h"
+#include "../Utilities/SimpleTimer.h"
 
 // controls keepalive relay and status LED output.
-class PowerManager
+class PowerManager : public PowerManager_interface
 {
 public:
     PowerManager(SimpleTimer *pIdleTimer);

@@ -178,8 +178,6 @@ bool Mfrc522::setCardOnline()
         return false;
     }
 #if DEBUGSERIAL
-    Serial.print(F("setCardOnline: Card UID:"));
-    Serial.println(); // TODO
     Serial.print(F("PICC type: "));
     Serial.println(m_pMfrc522.PICC_GetTypeName(m_tagType));
 #endif
