@@ -1,9 +1,8 @@
 #ifndef EEPROMIMPLEMENTATION_H
 #define EEPROMIMPLEMENTATION_H
 
-#include <Arduino.h>
-#include <EEPROM.h>
-#include <EEPROM_interface.h>
+#include "EEPROM.h"
+#include "EEPROM_interface.h"
 
 // Implementation of interface.
 class Eeprom : public EEPROM_interface

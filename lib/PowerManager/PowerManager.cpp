@@ -1,6 +1,5 @@
 #include "PowerManager.h"
 
-
 PowerManager::PowerManager(SimpleTimer *pIdleTimer) : m_pIdleTimer(pIdleTimer)
 {
     m_keep.keep_alive(); //Activate KeepAlive to maintain power supply to circuits

@@ -1,6 +1,6 @@
 #ifndef MFRC522_INTERFACE_H
 #define MFRC522_INTERFACE_H
-#include <Arduino.h>
+#include "Arduino_types.h"
 
 // Wrapper class to separate dependency MFRC522 card reader from utilizing classes.
 // Enabler for mocking MFRC522 behavior.

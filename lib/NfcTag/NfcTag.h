@@ -1,9 +1,8 @@
 #ifndef NFCTAG_H
 #define NFCTAG_H
 
-#include <Arduino_types.h>
-#include <MFRC522_interface.h>
-#include <Folder.h>
+#include "MFRC522_interface.h"
+#include "Folder.h"
 
 
 // this object stores nfc tag data

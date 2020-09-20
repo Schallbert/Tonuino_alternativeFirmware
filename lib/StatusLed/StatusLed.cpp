@@ -1,7 +1,5 @@
 #include "StatusLed.h"
-
-// Implementation of class behavior for StatusLed.
-              
+      
 StatusLed::StatusLed(uint8_t ledPin, uint16_t flashSlowMillis, uint16_t flashQuickMillis, bool active)
 {
     this->ledPin = ledPin;

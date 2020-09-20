@@ -1,36 +1,5 @@
 #include "SimpleTimer.h"
 
-
-/*
-TimerManager::TimerManager(uint8_t ui8MaxTimersToKeep)
-{
-    // Initialize array of timers to register
-    // pointer to an array of pointers. Crazy.
-    m_pArrayOfTimers = new SimpleTimer *[ui8MaxTimersToKeep] {};
-}
-
-TimerManager::~TimerManager()
-{
-    delete m_pArrayOfTimers;
-}
-
-void TimerManager::register_timer(SimpleTimer *pTimer)
-{
-    m_pArrayOfTimers[m_ui8NumOfElements] = pTimer;
-    ++m_ui8NumOfElements;
-}
-
-void TimerManager::timer_tick()
-{
-    // execute timer_tick for all registered timers
-    for (uint8_t i = 0; i < m_ui8NumOfElements; ++i)
-    {
-        m_pArrayOfTimers[i]->timer_tick();
-    }
-}
-*/
-
-
 // counts menu timer if active
 void SimpleTimer::timer_tick()
 {

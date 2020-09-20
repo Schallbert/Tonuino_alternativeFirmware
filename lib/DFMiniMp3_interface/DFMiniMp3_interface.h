@@ -2,7 +2,6 @@
 #define DFMINIMP3_INTERFACE_H
 
 #include <Arduino_types.h>
-//#include <std::string>
 
 // Wrapper class to separate dependency on dfMini Mp3 player from utilizing classes.
 // Enabler for mocks.

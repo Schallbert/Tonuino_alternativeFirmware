@@ -44,7 +44,7 @@ protected:
                                              5);
 
         // set mp3 status to "not playing"
-        ON_CALL(*m_pPinCtrl, digital_read(DFMINI_STATUS_ISIDLE)).WillByDefault(Return(true));
+        ON_CALL(*m_pPinCtrl, digital_read(DFMINI_PIN_ISIDLE)).WillByDefault(Return(true));
     }
 
     virtual void TearDown()

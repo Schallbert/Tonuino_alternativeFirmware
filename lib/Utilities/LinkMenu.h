@@ -2,9 +2,7 @@
 #define VOICEMENU_H
 
 #include "../Config/Tonuino_config.h"
-#include <Folder.h>
-
-class Folder;
+#include "Folder.h"
 
 /* 
 Once a new card is detected, It has to be linked to an existing folder on the SD card.

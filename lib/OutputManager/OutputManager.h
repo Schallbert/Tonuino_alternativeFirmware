@@ -1,16 +1,13 @@
 #ifndef OUTPUTMANAGER_H
 #define OUTPUTMANAGER_H
 
-#include <Arduino_interface.h>
-#include <PowerManager_interface.h>
-#include <Mp3PlayerControl_interface.h>
-#include <InputManager.h> // Use Enums
+#include "PowerManager_interface.h"
+#include "Mp3PlayerControl_interface.h"
+#include "InputManager.h" // Use Enums
 
 #include "../Utilities/LinkMenu.h"
 #include "../Utilities/DeleteMenu.h"
 #include "../Utilities/SimpleTimer.h"
-
-class NfcTag;
 
 class OutputManager
 {

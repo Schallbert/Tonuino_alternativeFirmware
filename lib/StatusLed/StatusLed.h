@@ -1,9 +1,7 @@
 #ifndef STATUSLED_H
     #define STATUSLED_H
 
-#ifndef ARDUINO_H
-    #include "Arduino.h"
-#endif
+ #include "Arduino.h"
 
 class StatusLed
 { 

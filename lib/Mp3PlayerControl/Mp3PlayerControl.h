@@ -1,10 +1,10 @@
 #ifndef MP3PLAYERCONTROL_H
 #define MP3PLAYERCONTROL_H
 
-#include "../Mp3PlayerControl_interface/Mp3PlayerControl_interface.h"
+#include "Arduino_interface.h"
 
-#include <Arduino_interface.h>
-#include <DFMiniMp3_interface.h>
+#include "../Mp3PlayerControl_interface/Mp3PlayerControl_interface.h"
+#include "DFMiniMp3_interface.h"
 
 #include "../Config/Tonuino_config.h"
 #include "../Config/Arduino_config.h"

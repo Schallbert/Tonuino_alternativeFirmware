@@ -2,16 +2,11 @@
 
 System::System()
 {
-    // Initializes all objects needed
+    // Set dependency objects ------------------------------
+
+    // First, secure power supply
     m_pIdleTimer = new SimpleTimer();
     m_pPwrCtrl = new PowerManager(m_pIdleTimer);
-
-#if DEBUGSERIAL
-    m_pUsbSerial->com_begin(9600); // Some debug output via serial
-    m_pUsbSerial->com_println("Booting");
-#endif
-
-    // Set dependency objects ------------------------------
     // Controller direct
     m_pPinControl = new Arduino_pins();
     m_pUsbSerial = new Arduino_com();
@@ -26,15 +21,21 @@ System::System()
     m_pNfcTagReader = new NfcTag(m_pReader); // Constructor injection of concrete reader
     m_pDfMini = new DfMini();
     m_pMp3 = new Mp3PlayerControl(m_pDfMini, m_pPinControl, m_pUsbSerial, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
-    m_pUserInput = UserInput_Factory::getInstance(UserInput_Factory::ThreeButtons);
+
+    // Notify System up
+#if DEBUGSERIAL
+    m_pUsbSerial->com_begin(9600); // Some debug output via serial
+    m_pUsbSerial->com_println("Booted, now initializing");
+#endif
 
     // Initialize objects if needed ------------------------
+    m_pUserInput = UserInput_Factory::getInstance(UserInput_Factory::ThreeButtons);
     //init UserInput
     m_pUserInput->set_input_pins(PINPLPS, PINPREV, PINNEXT);
     m_pUserInput->init();
 
 #if DEBUGSERIAL
-    m_pUsbSerial->com_println("Started.");
+    m_pUsbSerial->com_println("Complete.");
 #endif
 }
 
@@ -42,7 +43,7 @@ System::~System()
 {
 
 #if DEBUGSERIAL
-    m_pUsbSerial->com_println("Shutdown");
+    m_pUsbSerial->com_println("Shuttind down...");
 #endif
 
     // delete dependency objects

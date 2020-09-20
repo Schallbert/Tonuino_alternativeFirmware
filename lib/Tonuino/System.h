@@ -3,20 +3,21 @@
 
 // project includes -------
 
-#include <Folder.h>
-#include <NfcTag.h>
-#include <Arduino_implementation.h>
-#include <Mp3PlayerControl.h>
-#include <DFMiniMp3_implementation.h>
-#include <EEPROM_implementation.h>
-#include <MFRC522_implementation.h>
-#include  <UserInput_implementation.h>
-#include <PowerManager.h>
-#include <InputManager.h>
-#include <OutputManager.h>
+//#include "Folder.h"
+#include "NfcTag.h"
+#include "Arduino_implementation.h"
+#include "Mp3PlayerControl.h"
+#include "DFMiniMp3_implementation.h"
+#include "EEPROM_implementation.h"
+#include "MFRC522_implementation.h"
+#include "UserInput_implementation.h"
+#include "PowerManager.h"
+#include "InputManager.h"
+#include "OutputManager.h"
 
 #include "../Utilities/SimpleTimer.h"
 
+class Folder;
 
 /* This is the "main" class of the project.
 // It contains all the objects and dependencies needed for operation.

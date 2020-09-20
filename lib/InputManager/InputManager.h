@@ -1,14 +1,10 @@
 #ifndef INPUTMANAGER_H
 #define INPUTMANAGER_H
 
-
-#include <Arduino_interface.h>
-#include <NfcTag.h>
-#include <UserInput_interface.h>
-
-#include "../Config/Arduino_config.h"
-
-
+#include "Arduino_interface.h"
+#include "NfcTag.h"
+#include "UserInput_interface.h"
+#include "Arduino_config.h"
 
 class InputManager
 {

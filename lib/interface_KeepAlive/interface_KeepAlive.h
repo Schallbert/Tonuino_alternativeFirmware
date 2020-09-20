@@ -1,7 +1,7 @@
 #ifndef KEEPALIVE_H //include guard
 #define KEEPALIVE_H
 
-#include <Arduino.h>
+#include "Arduino.h"
 
 class KeepAlive
 {

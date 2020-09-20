@@ -29,9 +29,11 @@ void setup()
 // - Option: Card stays on system or can be removed while playing? Config?
 // - Unit tests for UserInput
 // - general refactoring
+// - solve naming differences (underscores) of HAL with namespaces
+// - rename NfcTag to more fitting name like mp3Ctrl
 // - Integration testing on device
-// - Lib cleanup in solution (lib manager)
-// - Solve build warnings (clickEncoder)
+// - Lib cleanup in solution (lib manager) DONE
+// - Solve build warnings (clickEncoder) DONE
 
 void loop()
 {

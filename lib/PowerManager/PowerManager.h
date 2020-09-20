@@ -1,8 +1,8 @@
 #ifndef POWERMANAGER_H
 #define POWERMANAGER_H
 
-#include <StatusLed.h>
-#include <interface_KeepAlive.h>
+#include "StatusLed.h"
+#include "interface_KeepAlive.h"
 
 #include "PowerManager_interface.h"
 #include "../Config/Arduino_config.h"
