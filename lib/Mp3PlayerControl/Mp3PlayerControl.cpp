@@ -17,6 +17,7 @@ Mp3PlayerControl::Mp3PlayerControl(DfMiniMp3_interface *pPlayer,
     wait_player_ready();
     m_pDfMiniMp3->setEq(DFMINI_EQ_SETTING);
     m_pDfMiniMp3->setVolume(VOLUME_INIT);
+    m_pDfMiniMp3->checkPlayerNotification(); // INIT (static) message system to "no_message"
 }
 void Mp3PlayerControl::loop()
 {
@@ -87,7 +88,10 @@ void Mp3PlayerControl::dont_skip_current_track()
 
 void Mp3PlayerControl::autoplay()
 {
-    // Autoplay implementation
+// Autoplay implementation
+#if DEBUGSERIAL
+    m_pUsb->com_println(m_pDfMiniMp3->checkPlayerNotification());
+#endif
     if (m_pDfMiniMp3->checkTrackFinished())
     {
         Folder::ePlayMode mode = m_pCurrentFolder->get_play_mode();

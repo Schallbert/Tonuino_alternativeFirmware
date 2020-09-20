@@ -2,6 +2,7 @@
 #define DFMINIMP3_INTERFACE_H
 
 #include <Arduino_types.h>
+//#include <std::string>
 
 // Wrapper class to separate dependency on dfMini Mp3 player from utilizing classes.
 // Enabler for mocks.
@@ -17,6 +18,30 @@ public:
         DfMp3_Eq_Classic,
         DfMp3_Eq_Bass
     };
+
+    enum eDfMiniNotify
+    {
+        noMessage = 0,
+        playFinished,
+        playSourceOnline,
+        playSourceInserted,
+        playSourceRemoved,
+        playerError
+    };
+
+public:
+    static inline const char *stringFromDfMiniNotify(eDfMiniNotify value)
+    {
+        static const char *DFMININOTIFY_STRING[] = {
+            "",
+            "DfMini: finished playing track",
+            "DfMini: SD card online",
+            "DfMini: SD card inserted",
+            "DfMini: SD Card removed",
+            "DfMini: Com Error"};
+
+        return DFMININOTIFY_STRING[value];
+    }
 
 public:
     virtual ~DfMiniMp3_interface(){};
@@ -35,6 +60,7 @@ public:
     virtual void playFolderTrack(uint8_t folderId, uint8_t trackId) = 0;
     virtual void playAdvertisement(uint16_t trackId) = 0;
     virtual uint8_t getFolderTrackCount(uint8_t folderId) = 0;
+    virtual eDfMiniNotify checkPlayerNotification() = 0;
     virtual bool checkTrackFinished() = 0;
 };
 #endif // DFMINIMP3_INTERFACE_H
