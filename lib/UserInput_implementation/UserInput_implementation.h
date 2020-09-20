@@ -2,7 +2,7 @@
 #define USERINPUT_IMPLEMENTATION_H
 
 #include <UserInput_interface.h>
-#include "../ClickEncoder/ClickEncoder.h"
+#include "ClickEncoder.h"
 
 
 class UserInput_ClickEncoder : public UserInput

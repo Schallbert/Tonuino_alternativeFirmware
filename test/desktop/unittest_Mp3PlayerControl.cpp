@@ -1,8 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <Mp3PlayerControl.h>
-#include <DFMiniMp3_implementation.h>
-
 #include <SimpleTimer.h>
 #include "mocks/unittest_Folder_mocks.h"
 #include "mocks/unittest_DfMiniMp3_mocks.h"
