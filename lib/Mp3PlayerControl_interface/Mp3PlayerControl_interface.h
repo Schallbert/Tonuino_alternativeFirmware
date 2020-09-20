@@ -3,13 +3,14 @@
 
 #include "Folder.h" 
 
+// API to control the MP3 player hardware
 class Mp3PlayerControl_interface
 {
 public:
     virtual ~Mp3PlayerControl_interface(){};
 
 public:
-    // Listen for DFminiMp3 replies, call autoplay routine
+    // Call in main loop. Listens for DFminiMp3 replies & autoplays next song
     virtual void loop() = 0;
     // Increases volume (<= VOLUME_MAX)
     virtual void volume_up() = 0;

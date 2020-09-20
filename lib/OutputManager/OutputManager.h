@@ -14,7 +14,7 @@ class OutputManager
 public:
     OutputManager(Arduino_interface_com *pUsb,
                   PowerManager_interface *pPwrCtrl,
-                  NfcTag *pNfcReader,
+                  NfcTagControl *pNfcReader,
                   Mp3PlayerControl_interface *pMp3,
                   SimpleTimer *pMenuTimer,
                   EEPROM_interface *pEeprom,
@@ -75,7 +75,7 @@ private:
     // members by dependency injection
     Arduino_interface_com *m_pUsb{nullptr};
     PowerManager_interface *m_pSysPwr{nullptr};
-    NfcTag *m_pNfcTagReader{nullptr};
+    NfcTagControl *m_pNfcTagReader{nullptr};
     Mp3PlayerControl_interface *m_pMp3{nullptr};
     SimpleTimer *m_pMenuTimer{nullptr};
     EEPROM_interface *m_pEeprom{nullptr};

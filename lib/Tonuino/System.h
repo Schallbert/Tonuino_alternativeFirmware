@@ -4,7 +4,7 @@
 // project includes -------
 
 //#include "Folder.h"
-#include "NfcTag.h"
+#include "NfcTagControl.h"
 #include "Arduino_implementation.h"
 #include "Mp3PlayerControl.h"
 #include "DFMiniMp3_implementation.h"
@@ -55,7 +55,7 @@ private:
     // Periphery
     // Init tag reader
     Mfrc522 *m_pReader{nullptr};
-    NfcTag *m_pNfcTagReader{nullptr}; // Constructor injection of concrete reader
+    NfcTagControl *m_pNfcTagReader{nullptr}; // Constructor injection of concrete reader
     // DFPlayer Mini setup
     DfMini *m_pDfMini{nullptr};
     Mp3PlayerControl *m_pMp3{nullptr};

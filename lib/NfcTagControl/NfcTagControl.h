@@ -6,12 +6,12 @@
 
 
 // this object stores nfc tag data
-class NfcTag
+class NfcTagControl
 {
 public:
-    // Create NfcTag object with dependency-injected NfcReader object
-    NfcTag(MFRC522_interface *pMfrc522);
-    ~NfcTag();
+    // Create NfcTagControl object with dependency-injected NfcReader object
+    NfcTagControl(MFRC522_interface *pMfrc522);
+    ~NfcTagControl();
 
 public:
     // Returns true if a tag is present in the reader's vicinity.

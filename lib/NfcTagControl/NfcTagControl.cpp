@@ -1,27 +1,27 @@
-#include "NfcTag.h"
+#include "NfcTagControl.h"
 
-NfcTag::NfcTag(MFRC522_interface *pMfrc522)
+NfcTagControl::NfcTagControl(MFRC522_interface *pMfrc522)
 {
     m_pMfrc522 = pMfrc522; // make internal variable point to external object
     m_pMfrc522->initReader();
     m_pBuffer = new uint8_t[MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY]();
 }
 
-NfcTag::~NfcTag()
+NfcTagControl::~NfcTagControl()
 {
     delete[] m_pBuffer;
 }
 
-bool NfcTag::is_card_present()
+bool NfcTagControl::is_card_present()
 {
     return m_pMfrc522->isCardPresent();
 }
-bool NfcTag::is_new_card_present()
+bool NfcTagControl::is_new_card_present()
 {
     return m_pMfrc522->isNewCardPresent();
 }
 
-bool NfcTag::write_folder_to_card(const Folder &sourceFolder)
+bool NfcTagControl::write_folder_to_card(const Folder &sourceFolder)
 {
     m_oFolder = sourceFolder; // Copy source folder to member object
     if (!m_oFolder.is_valid())
@@ -33,7 +33,7 @@ bool NfcTag::write_folder_to_card(const Folder &sourceFolder)
     return m_pMfrc522->writeCard(blockAddressToReadWrite, m_pBuffer);
 }
 
-bool NfcTag::erase_card()
+bool NfcTagControl::erase_card()
 {
     for (int i = 0; i < MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY; ++i) // 7-15: Empty
     {
@@ -42,7 +42,7 @@ bool NfcTag::erase_card()
     return m_pMfrc522->writeCard(blockAddressToReadWrite, m_pBuffer);
 }
 
-bool NfcTag::read_folder_from_card(Folder &targetFolder)
+bool NfcTagControl::read_folder_from_card(Folder &targetFolder)
 {
     if (m_pMfrc522->readCard(blockAddressToReadWrite, m_pBuffer))
     {
@@ -56,7 +56,7 @@ bool NfcTag::read_folder_from_card(Folder &targetFolder)
     return false; //unknown or corrupted card
 }
 
-void NfcTag::folder_to_buffer()
+void NfcTagControl::folder_to_buffer()
 {
     m_pBuffer[0] = (byte)(cui32MagicCookie >> 24);                       // 0
     m_pBuffer[1] = (byte)((cui32MagicCookie >> 16) & 0xFF);              // 1
@@ -71,7 +71,7 @@ void NfcTag::folder_to_buffer()
     }
 }
 
-void NfcTag::buffer_to_folder()
+void NfcTagControl::buffer_to_folder()
 {
     // Transfer m_pBuffer from card read to nfcTag's variables
     m_ui32CardCookie = ((uint32_t)m_pBuffer[0] << 24) |
@@ -85,7 +85,7 @@ void NfcTag::buffer_to_folder()
     m_oFolder = Folder(folderId, playMode, trackCount);
 }
 
-bool NfcTag::is_known_card()
+bool NfcTagControl::is_known_card()
 {
     if (m_ui32CardCookie != cui32MagicCookie)
     {

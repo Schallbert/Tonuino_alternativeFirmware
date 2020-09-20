@@ -10,6 +10,10 @@
 #include "../Config/Arduino_config.h"
 #include "../Utilities/SimpleTimer.h"
 
+// Implementation of Player controller interface. 
+// Uses Software Serial to communicate with DfMiniMp3 player. 
+// Dependencies use interfaces themselves for
+// Hardware abstraction and better testabililty.
 class Mp3PlayerControl : public Mp3PlayerControl_interface
 {
 public:

@@ -25,12 +25,12 @@ void setup()
 // TODO:::::::
 // - Refactor pseudo timer in Mp3PlayerControl DONE
 // - Rethink folder creation (trackCount renewal) DONE
-// - Use class forward declaration for quicker compiles
+// - Use class forward declaration for quicker compiles DONE
 // - Option: Card stays on system or can be removed while playing? Config?
 // - Unit tests for UserInput
 // - general refactoring
 // - solve naming differences (underscores) of HAL with namespaces
-// - rename NfcTag to more fitting name like mp3Ctrl
+// - rename NfcTagControl to more fitting name like mp3Ctrl
 // - Integration testing on device
 // - Lib cleanup in solution (lib manager) DONE
 // - Solve build warnings (clickEncoder) DONE

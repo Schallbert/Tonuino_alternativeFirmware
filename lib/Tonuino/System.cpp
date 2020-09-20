@@ -18,7 +18,7 @@ System::System()
     m_pDfMiniMsgTimeout = new SimpleTimer();
     // Periphery
     m_pReader = new Mfrc522();
-    m_pNfcTagReader = new NfcTag(m_pReader); // Constructor injection of concrete reader
+    m_pNfcTagReader = new NfcTagControl(m_pReader); // Constructor injection of concrete reader
     m_pDfMini = new DfMini();
     m_pMp3 = new Mp3PlayerControl(m_pDfMini, m_pPinControl, m_pUsbSerial, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
 

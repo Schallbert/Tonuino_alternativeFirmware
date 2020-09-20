@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 #include "mocks/unittest_NfcTag_mocks.h"
 
-class NfcTag;
+class NfcTagControl;
 
 using ::testing::_;
 using ::testing::NiceMock;
@@ -16,7 +16,7 @@ protected:
     virtual void SetUp()
     {
         m_pMfrc = new NiceMock<Mock_MFRC522>;
-        m_pNfc = new NfcTag(m_pMfrc);
+        m_pNfc = new NfcTagControl(m_pMfrc);
         m_pTestFolder = new Folder(fakeBufferData[4],
                                    (Folder::ePlayMode)fakeBufferData[5],
                                    fakeBufferData[6]);
@@ -31,7 +31,7 @@ protected:
 
 protected:
     NiceMock<Mock_MFRC522>* m_pMfrc{nullptr};
-    NfcTag* m_pNfc{nullptr};
+    NfcTagControl* m_pNfc{nullptr};
     Folder* m_pTestFolder{nullptr};
 };
 
@@ -40,7 +40,7 @@ TEST_F(NfcTagReadWrite, IsCalledOnConstruction)
 {
     Mock_MFRC522 mfrc;
     EXPECT_CALL(mfrc, initReader()).Times(1);
-    NfcTag m_pNfc(&mfrc);
+    NfcTagControl m_pNfc(&mfrc);
 }
 
 TEST_F(NfcTagReadWrite, Write_invalidFolder_ReturnsFalse)
