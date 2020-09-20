@@ -22,11 +22,10 @@ void UserInput_ClickEncoder::init()
     }
 
     //Call constructor of encoder class
-    encoder = new ClickEncoder(pinA, pinB, pinSwitch, encStepsPerNotch, switchActiveState);
+    encoder = new ClickEncoder(pinA, pinB, pinSwitch, ENC_STEPSPERNOTCH, ENC_ACTIVESTATE);
     //set defaults
     encoderPosition = 0;
     encoder->setAccelerationEnabled(false);
-    encoder->setDoubleClickTime(doubleClickTime);
     state = ready;
 }
 
@@ -161,7 +160,9 @@ void UserInput_ClickEncoder::userinput_refresh()
 
 // Constructor: DigitalButton_SupportsLongPress
 UserInput_3Buttons::DigitalButton_SupportsLongPress::DigitalButton_SupportsLongPress(
-    int8_t pinId, bool active) : DigitalButton{pinId, active}, longPressTime(800), longPressRepeatInterval(400)
+    int8_t pinId, bool active) : DigitalButton{pinId, active},
+                                 longPressTime(ENC_HOLDTIME),
+                                 longPressRepeatInterval(ENC_LONGPRESSREPEATINTERVAL)
 {
 }
 
@@ -186,10 +187,6 @@ void UserInput_3Buttons::init()
     prevButton = new DigitalButton_SupportsLongPress(pinPrev, switchActiveState);
     plpsButton = new DigitalButton_SupportsLongPress(pinPlayPauseAbort, switchActiveState);
     nextButton = new DigitalButton_SupportsLongPress(pinNext, switchActiveState);
-    //Set defaults
-    prevButton->setDoubleClickTime(doubleClickTime);
-    plpsButton->setDoubleClickTime(doubleClickTime);
-    nextButton->setDoubleClickTime(doubleClickTime);
     state = ready;
 }
 

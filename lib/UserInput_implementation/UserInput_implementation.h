@@ -2,8 +2,8 @@
 #define USERINPUT_IMPLEMENTATION_H
 
 #include <UserInput_interface.h>
+#include "Tonuino_config.h"
 #include "ClickEncoder.h"
-
 
 class UserInput_ClickEncoder : public UserInput
 {
@@ -43,18 +43,15 @@ private:
     // using its constructor while not all constructor's init variables are defined yet
     ClickEncoder *encoder;
     // INPUT PINS
-    uint8_t pinA = 0;
-    uint8_t pinB = 0;
-    uint8_t pinSwitch = 0;
-    // PARAMETERS AND DEFAULT VALUES
-    InterfaceState_e state = uninitialized;
-    bool switchActiveState = false;
-    uint16_t doubleClickTime = 400;
-    uint8_t encStepsPerNotch = 4;
+    uint8_t pinA{0};
+    uint8_t pinB{0};
+    uint8_t pinSwitch{0};
+    // PARAMETERS
+    InterfaceState_e state{uninitialized};
     // Business logic variables
-    volatile int16_t encoderPosition;
-    volatile int16_t encoderDiff;
-    ClickEncoder::Button buttonState;
+    volatile int16_t encoderPosition{0};
+    volatile int16_t encoderDiff{0};
+    ClickEncoder::Button buttonState{ClickEncoder::Open};
 
 }; // UserInput_ClickEncoder
 
@@ -76,9 +73,16 @@ class UserInput_3Buttons : public UserInput
 private:
     struct ButtonStates
     {
-        ClickEncoder::Button plpsButton = ClickEncoder::Open;
-        ClickEncoder::Button nextButton = ClickEncoder::Open;
-        ClickEncoder::Button prevButton = ClickEncoder::Open;
+        ClickEncoder::Button plpsButton{ClickEncoder::Open};
+        ClickEncoder::Button nextButton{ClickEncoder::Open};
+        ClickEncoder::Button prevButton{ClickEncoder::Open};
+    };
+
+    // Wrapper for Button (is a ClickEncoder instance, too)
+    class DigitalButton : public ClickEncoder
+    {
+    public:
+        explicit DigitalButton(int8_t BTN, bool active = false) : ClickEncoder(-1, -1, BTN, 1, active){}; // Constructor for using a button (not the encoder)
     };
 
     class DigitalButton_SupportsLongPress : public DigitalButton
@@ -94,11 +98,11 @@ private:
         bool handle_repeat_long_pressed(void);
 
     private:
-        uint16_t longPressTime;           //mSec
-        uint16_t longPressRepeatInterval; //mSec
-        volatile uint16_t longPressCount = 0;
-        bool longPressActive = false;
-        ClickEncoder::Button buttonState; //enum to hold buttonState
+        uint16_t longPressTime{0};           //mSec
+        uint16_t longPressRepeatInterval{0}; //mSec
+        volatile uint16_t longPressCount{0};
+        bool longPressActive{false};
+        ClickEncoder::Button buttonState{Button::Open}; //enum to hold buttonState
     };                                    //  DigitalButton_SupportsLongPress
 
 public:

@@ -27,9 +27,11 @@ void setup()
 // - Rethink folder creation (trackCount renewal) DONE
 // - Use class forward declaration for quicker compiles
 // - Option: Card stays on system or can be removed while playing? Config?
+// - Unit tests for UserInput
+// - general refactoring
 // - Integration testing on device
 // - Lib cleanup in solution (lib manager)
-// - Solve build warnings DONE
+// - Solve build warnings (clickEncoder)
 
 void loop()
 {

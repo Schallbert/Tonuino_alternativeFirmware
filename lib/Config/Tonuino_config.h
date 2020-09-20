@@ -1,8 +1,6 @@
 #ifndef TONUINO_CONFIG_H
 #define TONUINO_CONFIG_H
 
-#include <DFMiniMp3_interface.h>
-
 //DEBUG OUTPUT [just write "false" to disable debug output on serial]
 #define DEBUGSERIAL false
 
@@ -40,5 +38,16 @@
 //MP3 defines
 #define WAIT_DFMINI_READY 1 // 1 sec
 #define TIMEOUT_PROMPT_PLAYED 10 // 10 sec
+
+//Clickencoder / button defines
+#undef ENC_BUTTONINTERVAL
+#undef ENC_DOUBLECLICKTIME
+#undef ENC_HOLDTIME
+#define ENC_BUTTONINTERVAL          20      // check button every x milliseconds, also debouce time
+#define ENC_DOUBLECLICKTIME         400     // second click within x ms
+#define ENC_HOLDTIME                1000    // report held button after 1.2s
+#define ENC_LONGPRESSREPEATINTERVAL 400     // reports repeating-held every x ms
+#define ENC_STEPSPERNOTCH           4       // resolution of encoder.
+#define ENC_ACTIVESTATE             false   // button's "pressed" state
 
 #endif // TONUINO_CONFIG_H
