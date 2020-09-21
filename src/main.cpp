@@ -26,14 +26,13 @@ void setup()
 // - Refactor pseudo timer in Mp3PlayerControl DONE
 // - Rethink folder creation (trackCount renewal) DONE
 // - Use class forward declaration for quicker compiles DONE
-// - Option: Card stays on system or can be removed while playing? Config?
-// - Unit tests for UserInput
-// - general refactoring
-// - solve naming differences (underscores) of HAL with namespaces
-// - rename NfcTagControl to more fitting name like mp3Ctrl
-// - Integration testing on device
 // - Lib cleanup in solution (lib manager) DONE
 // - Solve build warnings (clickEncoder) DONE
+// - refactor MFRC522_implementation for testability. BIG TASK
+// - Unit tests for UserInput (?), StatusLed (?), and MFRC522_implementation
+// - solve naming differences (underscores) of HAL with namespaces!
+// - Integration testing on device
+// - FEATURE: Card stays on system or can be removed while playing? Config?
 
 void loop()
 {
