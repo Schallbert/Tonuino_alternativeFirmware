@@ -90,7 +90,9 @@ void Mp3PlayerControl::autoplay()
 {
 // Autoplay implementation
 #if DEBUGSERIAL
-    m_pUsb->com_println(m_pDfMiniMp3->checkPlayerNotification());
+    m_pUsb->com_println(
+        m_pDfMiniMp3->stringFromDfMiniNotify(
+            m_pDfMiniMp3->checkPlayerNotification()));
 #endif
     if (m_pDfMiniMp3->checkTrackFinished())
     {

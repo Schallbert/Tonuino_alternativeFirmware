@@ -3,9 +3,6 @@
 void Mfrc522::initReader()
 {
     m_pMfrc522.PCD_Init(); // Init MFRC522
-#if DEBUGSERIAL
-    m_pMfrc522.PCD_DumpVersionToSerial(); // Show details of PCD - MFRC522 Card Reader
-#endif
 }
 
 bool Mfrc522::isCardPresent()
@@ -23,6 +20,7 @@ bool Mfrc522::writeCard(byte blockAddr, byte *dataToWrite)
     MFRC522::StatusCode status = MFRC522::STATUS_ERROR;
     if (!setCardOnline())
     {
+        m_eNotification = MFRC522_interface::errorTagSetOnlineFailed;
         return false;
     }
 
@@ -51,10 +49,7 @@ bool Mfrc522::writeCard(byte blockAddr, byte *dataToWrite)
 
     if (status != MFRC522::STATUS_OK)
     {
-#if DEBUGSERIAL
-        Serial.print(F("write: ERROR: nfc write failed. "));
-        Serial.println(m_pMfrc522.GetStatusCodeName(status));
-#endif
+        m_eNotification = MFRC522_interface::errorTagWrite;
         return false;
     }
     return true;
@@ -93,10 +88,7 @@ bool Mfrc522::readCard(byte blockAddr, byte *readResult)
 
     if (status != MFRC522::STATUS_OK)
     {
-#if DEBUGSERIAL
-        Serial.print(F("read: ERROR: nfc read failed. "));
-        Serial.println(m_pMfrc522.GetStatusCodeName(status));
-#endif
+        m_eNotification = MFRC522_interface::errorTagRead;
         return false;
     }
     return true;
@@ -118,7 +110,7 @@ MFRC522::StatusCode Mfrc522::writeUltraLight(byte blockAddr, byte *data)
         memset(buffer, 0, NFCTAG_MEMORY_TO_OCCUPY);
         // copy 4byte block from data to buffer
         memcpy(buffer, data + (i * MIFARE_UL_BLOCK_SIZE), MIFARE_UL_BLOCK_SIZE);
-            status = (MFRC522::StatusCode)m_pMfrc522.MIFARE_Write(blockAddr + i, buffer, ui8_bufSize);
+        status = (MFRC522::StatusCode)m_pMfrc522.MIFARE_Write(blockAddr + i, buffer, ui8_bufSize);
         if (status != MFRC522::STATUS_OK)
         {
             return status;
@@ -161,9 +153,7 @@ void Mfrc522::setCardOffline()
 {
     m_pMfrc522.PICC_HaltA();
     m_pMfrc522.PCD_StopCrypto1();
-#if DEBUGSERIAL
-    Serial.println(F("setCardOffline: Done"));
-#endif
+    m_eNotification = MFRC522_interface::tagOffline;
 }
 
 bool Mfrc522::setCardOnline()
@@ -171,21 +161,13 @@ bool Mfrc522::setCardOnline()
     // Try reading card
     if (m_pMfrc522.PICC_ReadCardSerial() != MFRC522::STATUS_OK)
     {
-#if DEBUGSERIAL
-        Serial.println(F("setCardOnline: ERROR: Couldn't detect card."));
-#endif
+        m_eNotification = MFRC522_interface::errorTagSetOnlineFailed;
         setCardOffline();
         return false;
     }
-#if DEBUGSERIAL
-    Serial.print(F("PICC type: "));
-    Serial.println(m_pMfrc522.PICC_GetTypeName(m_tagType));
-#endif
     if (!getTagType())
     {
-#if DEBUGSERIAL
-        Serial.print(F("authenticateCard: ERROR: Tag Type could not be read."));
-#endif
+        m_eNotification = MFRC522_interface::errorTagAuthenticateFailed;
         return false;
     }
     return true;
@@ -195,17 +177,13 @@ bool Mfrc522::authenticateMini1k4k()
 {
     MFRC522::StatusCode status;
     status = m_pMfrc522.PCD_Authenticate(
-                                        MFRC522::PICC_CMD_MF_AUTH_KEY_A, 
-                                        m_ui8TrailerBlockMini1k4k, 
-                                        &m_eKey, 
-                                        &(m_pMfrc522.uid)
-                                        );
+        MFRC522::PICC_CMD_MF_AUTH_KEY_A,
+        m_ui8TrailerBlockMini1k4k,
+        &m_eKey,
+        &(m_pMfrc522.uid));
     if (status != MFRC522::STATUS_OK)
     {
-#if DEBUGSERIAL
-        Serial.print(F("authenticateMini1k4k: ERROR: failed:"));
-        Serial.println(m_pMfrc522.GetStatusCodeName(status));
-#endif
+        m_eNotification = MFRC522_interface::errorTagAuthenticateFailed;
         return false;
     }
     return true;
@@ -218,10 +196,7 @@ bool Mfrc522::authenticateUltraLight()
     status = m_pMfrc522.PCD_NTAG216_AUTH(m_eKey.keyByte, pACK);
     if (status != MFRC522::STATUS_OK)
     {
-#if DEBUGSERIAL
-        Serial.print(F("authenticateUltraLight: ERROR: failed:"));
-        Serial.println(m_pMfrc522.GetStatusCodeName(status));
-#endif
+        m_eNotification = MFRC522_interface::errorTagAuthenticateFailed;
         return false;
     }
     return true;
@@ -239,34 +214,26 @@ void Mfrc522::checkBlockAddressUltraLight(byte &blockAddress)
     if (blockAddress < ULTRALIGHTSTARTPAGE)
     {
         blockAddress = ULTRALIGHTSTARTPAGE;
-#if DEBUGSERIAL
-        Serial.print(F("read: WARNING: requested block address protected! Corrected. "));
-#endif
+        m_eNotification = MFRC522_interface::errorTagRequestOutOfRange;
     }
     else if (blockAddress > ULTRALIGHTSTOPPAGE)
     {
         blockAddress = ULTRALIGHTSTOPPAGE;
-#if DEBUGSERIAL
-        Serial.print(F("read: WARNING: requested block address out of range! Corrected. "));
-#endif
+        m_eNotification = MFRC522_interface::errorTagRequestOutOfRange;
     }
 }
-void Mfrc522::checkBlockAddressMini1k4k(byte& blockAddress)
+void Mfrc522::checkBlockAddressMini1k4k(byte &blockAddress)
 {
     if (blockAddress == 0)
     {
         // 0 is reserved!
         blockAddress = 1;
-#if DEBUGSERIAL
-        Serial.print(F("read: WARNING: requested block address factory occupied! Corrected to 1. "));
-#endif
+        m_eNotification = MFRC522_interface::errorTagRequestOutOfRange;
     }
     if ((blockAddress % 4) == SECTORSTRAILERBLOCKMINI1K4K)
     {
         ++blockAddress;
-#if DEBUGSERIAL
-        Serial.print(F("read: WARNING: requested block address factory occupied! Corrected by +1. "));
-#endif
+        m_eNotification = MFRC522_interface::errorTagRequestOutOfRange;
     }
     // 4Blocks per sector
     m_ui8SectorMini1k4k = blockAddress / 4;

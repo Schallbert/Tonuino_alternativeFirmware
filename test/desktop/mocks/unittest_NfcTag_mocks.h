@@ -25,8 +25,9 @@ public:
     void initReader() override;
     bool isCardPresent() override;
     bool isNewCardPresent() override;
-    bool writeCard(byte blockAddr, byte *dataToWrite) override;
     bool readCard(byte blockAddr, byte *readResult) override;
+    bool writeCard(byte blockAddr, byte *dataToWrite) override;
+    eMFRC522Notify checkMFRC522Notification() override;
 };
 
 
@@ -41,6 +42,7 @@ public:
     MOCK_METHOD(bool, isNewCardPresent, (), (override));
     MOCK_METHOD(bool, writeCard, (byte blockAddr, byte *dataToWrite), (override));
     MOCK_METHOD(bool, readCard, (byte blockAddr, byte *readResult), (override));
+    MOCK_METHOD(eMFRC522Notify, checkMFRC522Notification, (), (override));
 
     void DelegateToFake()
     {
@@ -53,8 +55,6 @@ public:
 private:
     Fake_MFRC522 m_FakeRead {};
 };
-
-
 
 // MATCHERS
 MATCHER_P2(arrayByteCompare, bytes, size, "Compares array bites and throws errors for each byte that does not match.")

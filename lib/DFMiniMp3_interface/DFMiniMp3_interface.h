@@ -28,6 +28,7 @@ public:
         playerError
     };
 
+#if DEBUGSERIAL
 public:
     static inline const char *stringFromDfMiniNotify(eDfMiniNotify value)
     {
@@ -41,6 +42,7 @@ public:
 
         return DFMININOTIFY_STRING[value];
     }
+#endif
 
 public:
     virtual ~DfMiniMp3_interface(){};
