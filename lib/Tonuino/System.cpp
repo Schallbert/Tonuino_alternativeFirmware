@@ -24,7 +24,7 @@ System::System()
 
     // Notify System up
 #if DEBUGSERIAL
-    m_pUsbSerial->com_begin(9600); // Some debug output via serial
+    m_pUsbSerial->com_begin(DEBUGSERIAL_BAUDRATE); // Some debug output via serial
     m_pUsbSerial->com_println("Booted, now initializing");
 #endif
 

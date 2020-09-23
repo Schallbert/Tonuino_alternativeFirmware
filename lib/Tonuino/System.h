@@ -64,6 +64,7 @@ private:
 
     // Work member objects -----------------------
     InputManager m_inputManager{InputManager(m_pPinControl,
+                                             m_pUsbSerial,
                                              m_pUserInput,
                                              m_pNfcTagReader)};
     OutputManager m_outputManager{OutputManager(m_pUsbSerial,

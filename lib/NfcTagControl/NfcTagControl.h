@@ -29,6 +29,11 @@ public:
     bool is_known_card();
     // Sets tag contents the system writes to to 0
     bool erase_card();
+    // Gets notification message from card reader
+    #if DEBUGSERIAL
+    const char * get_nfcReader_notification() 
+    { return m_pMfrc522->stringFromMFRC522Notify(checkMFRC522Notification()); };
+    #endif 
 
 private:
     // Handle Read: converts bytestream from NFC tag to folder/ cookie data

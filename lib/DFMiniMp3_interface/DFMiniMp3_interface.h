@@ -28,22 +28,6 @@ public:
         playerError
     };
 
-#if DEBUGSERIAL
-public:
-    static inline const char *stringFromDfMiniNotify(eDfMiniNotify value)
-    {
-        static const char *DFMININOTIFY_STRING[] = {
-            "",
-            "DfMini: finished playing track",
-            "DfMini: SD card online",
-            "DfMini: SD card inserted",
-            "DfMini: SD Card removed",
-            "DfMini: Com Error"};
-
-        return DFMININOTIFY_STRING[value];
-    }
-#endif
-
 public:
     virtual ~DfMiniMp3_interface(){};
 
@@ -63,5 +47,6 @@ public:
     virtual uint8_t getFolderTrackCount(uint8_t folderId) = 0;
     virtual eDfMiniNotify checkPlayerNotification() = 0;
     virtual bool checkTrackFinished() = 0;
+    virtual const char *stringFromDfMiniNotify(eDfMiniNotify value) = 0;
 };
 #endif // DFMINIMP3_INTERFACE_H

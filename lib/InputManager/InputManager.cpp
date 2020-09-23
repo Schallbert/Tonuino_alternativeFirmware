@@ -14,6 +14,9 @@ uint32_t InputManager::getRandomSeed()
 
 InputManager::eCardState InputManager::getCardState()
 {
+#if DEBUGSERIAL
+    m_pUsb->println(get_nfcReader_notification());
+#endif
     if (m_pNfcTagReader->is_card_present())
     {
         if (!m_pNfcTagReader->is_new_card_present())

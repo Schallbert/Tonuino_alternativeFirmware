@@ -41,7 +41,7 @@ public:
     }
 
 private:
-// Had to solve this in a static method, a static class member variable would lead to linker errors. Couldn't inline.
+    // Had to solve this in a static method, a static class member variable would lead to linker errors. Couldn't inline.
     static DfMiniMp3_interface::eDfMiniNotify setMessage(DfMiniMp3_interface::eDfMiniNotify incomingMessage)
     {
         static DfMiniMp3_interface::eDfMiniNotify m_eMessage = DfMiniMp3_interface::noMessage;
@@ -61,6 +61,22 @@ class DfMini : public DfMiniMp3_interface
 {
 public:
     ~DfMini(){};
+
+#if DEBUGSERIAL
+public:
+    const char *stringFromDfMiniNotify(eDfMiniNotify value) override
+    {
+        static const char *DFMININOTIFY_STRING[] = {
+            "",
+            "DfMini: finished playing track",
+            "DfMini: SD card online",
+            "DfMini: SD card inserted",
+            "DfMini: SD Card removed",
+            "DfMini: Com Error"};
+
+        return DFMININOTIFY_STRING[value];
+    }
+#endif
 
 public:
     void begin() override { m_dfMiniMp3.begin(); };
@@ -92,7 +108,7 @@ public:
     bool checkTrackFinished() override
     {
         return false;
-       // return (Mp3Notify::getMessage() == DfMiniMp3_interface::playFinished);
+        // return (Mp3Notify::getMessage() == DfMiniMp3_interface::playFinished);
     };
 
 private:
