@@ -12,7 +12,7 @@ System::System()
     m_pUsbSerial = new Arduino_com();
     m_pDelayControl = new Arduino_delay();
     m_pEeprom = new Eeprom();
-     // Timers
+    // Timers
     m_pMenuTimer = new SimpleTimer();
     m_pLullabyeTimer = new SimpleTimer();
     m_pDfMiniMsgTimeout = new SimpleTimer();
@@ -73,6 +73,9 @@ bool System::loop()
     UserInput::UserRequest_e userEvent = m_inputManager.getUserInput();
     m_outputManager.setInputStates(cardState, userEvent);
     m_outputManager.runDispatcher();
+#if DEBUGSERIAL
+    m_pMp3->print_debug_message();
+#endif
 
     return (!m_pPwrCtrl->get_shutdown_request());
 }
