@@ -10,8 +10,8 @@
 #include "../Config/Arduino_config.h"
 #include "../Utilities/SimpleTimer.h"
 
-// Implementation of Player controller interface. 
-// Uses Software Serial to communicate with DfMiniMp3 player. 
+// Implementation of Player controller interface.
+// Uses Software Serial to communicate with DfMiniMp3 player.
 // Dependencies use interfaces themselves for
 // Hardware abstraction and better testabililty.
 class Mp3PlayerControl : public Mp3PlayerControl_interface
@@ -20,7 +20,7 @@ public:
     Mp3PlayerControl(DfMiniMp3_interface *pPlayer,
                      Arduino_interface_pins *pPinCtrl,
                      Arduino_interface_com *pUsb,
-                     SimpleTimer *pLullabyeTimer, 
+                     SimpleTimer *pLullabyeTimer,
                      SimpleTimer *pDfMiniMsgTimeout);
 
 public:
@@ -46,6 +46,16 @@ public:
     void dont_skip_current_track();
     // Starts inquiry to player to return number of tracks in selected folder.
     uint8_t get_trackCount_of_folder(uint8_t folderId);
+//#if DEBUGSERIAL
+    // Prints message from player periphery or player controller to Serial.
+    void print_debug_message()
+    {
+        m_pUsb->com_println("PLAYER CONTROL DEBUG:");
+        m_pUsb->com_println(stringFromPlayerCtrlNotify(m_debugMessage));
+        m_pUsb->com_println("MP3 DEBUG: DfMiniMp3");
+        m_pUsb->com_println(m_pDfMiniMp3->getPlayerNotification());
+    };
+//#endif
 
 private:
     // Waits for DfMiniMp3 player's serial connection to be ready for new commands
@@ -58,6 +68,44 @@ private:
     bool check_folder();
 
 private:
+    enum eDebugMessage
+    {
+        noMessage = 0,
+        volumeUp,
+        volumeDown,
+        autoplayOneLargeTrack,
+        autoplayLullabye,
+        autoplayNext,
+        next_noFolder,
+        next,
+        prev_noFolder,
+        prev,
+        play_noFolder,
+        play
+    };
+
+#if DEBUGSERIAL
+    const char *stringFromPlayerCtrlNotify(eDebugMessage value)
+    {
+        static const char *NOTIFY_STRING[] = {
+            "No Message",
+            "volume up",
+            "volume down",
+            "autoplay: OneLargeTrack complete. Paused",
+            "autoplay: Lullabye timeout. Paused",
+            "autoplay: next track",
+            "next: no folder linked!",
+            "next track",
+            "prev: now folder linked!",
+            "previous track",
+            "play: no folder linked!",
+            "play folder"};
+
+        return NOTIFY_STRING[value];
+    };
+#endif
+
+private:
     // Solution for constructor error found here: https://stackoverflow.com/questions/35762196/expected-a-type-specifier-error-when-creating-an-object-of-a-class-inside-anot
     //SoftwareSerial m_Mp3SwSerial{SoftwareSerial(DFMINI_RX, DFMINI_TX)}; // Does not work with m_Mp3SwSerial(DFMINI_RX, DFMINI_TX) because compiler interprets this as a class method call
     //DFMiniMp3<SoftwareSerial, Mp3Notify> m_dfMiniMp3{DFMiniMp3<SoftwareSerial, Mp3Notify>(m_Mp3SwSerial)};
@@ -67,6 +115,8 @@ private:
     SimpleTimer *m_pLullabyeTimer{nullptr};
     SimpleTimer *m_pDfMiniMsgTimeout{nullptr};
     Folder *m_pCurrentFolder{nullptr};
+
+    eDebugMessage m_debugMessage{noMessage};
 };
 
 #endif // MP3PLAYERCONTROL_H

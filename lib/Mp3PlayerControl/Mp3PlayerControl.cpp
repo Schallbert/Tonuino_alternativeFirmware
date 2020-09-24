@@ -17,7 +17,7 @@ Mp3PlayerControl::Mp3PlayerControl(DfMiniMp3_interface *pPlayer,
     wait_player_ready();
     m_pDfMiniMp3->setEq(DFMINI_EQ_SETTING);
     m_pDfMiniMp3->setVolume(VOLUME_INIT);
-    m_pDfMiniMp3->checkPlayerNotification(); // INIT (static) message system to "no_message"
+    m_debugMessage = noMessage;
 }
 void Mp3PlayerControl::loop()
 {
@@ -32,10 +32,7 @@ void Mp3PlayerControl::volume_up()
         wait_player_ready();
         m_pDfMiniMp3->increaseVolume();
     }
-#if DEBUGSERIAL
-    m_pUsb->com_println("volume_up()");
-    m_pUsb->com_print(m_pDfMiniMp3->getVolume());
-#endif
+    m_debugMessage = volumeUp;
 }
 void Mp3PlayerControl::volume_down()
 {
@@ -45,10 +42,7 @@ void Mp3PlayerControl::volume_down()
         wait_player_ready();
         m_pDfMiniMp3->decreaseVolume();
     }
-#if DEBUGSERIAL
-    m_pUsb->com_println("volume_down()");
-    m_pUsb->com_print(m_pDfMiniMp3->getVolume());
-#endif
+    m_debugMessage = volumeDown;
 }
 bool Mp3PlayerControl::is_playing()
 {
@@ -88,38 +82,27 @@ void Mp3PlayerControl::dont_skip_current_track()
 
 void Mp3PlayerControl::autoplay()
 {
-// Autoplay implementation
-#if DEBUGSERIAL
-    m_pUsb->com_println(
-        m_pDfMiniMp3->stringFromDfMiniNotify(
-            m_pDfMiniMp3->checkPlayerNotification()));
-#endif
+    // Autoplay implementation
     if (m_pDfMiniMp3->checkTrackFinished())
     {
         Folder::ePlayMode mode = m_pCurrentFolder->get_play_mode();
         if (mode == Folder::ONELARGETRACK)
         {
-#if DEBUGSERIAL
-            m_pUsb->com_println("autoplay: ONELARGETRACK active: pause");
-#endif
+            m_debugMessage = autoplayOneLargeTrack;
             wait_player_ready();
             m_pDfMiniMp3->stop();
             return;
         }
         else if (mode == Folder::LULLABYE && m_pLullabyeTimer->is_elapsed())
         {
-#if DEBUGSERIAL
-            m_pUsb->com_println("autoplay: LULLABYE timeout expired: pause");
-#endif
+            m_debugMessage = autoplayLullabye;
             wait_player_ready();
             m_pDfMiniMp3->stop();
             return;
         }
         else
         {
-#if DEBUGSERIAL
-            m_pUsb->com_println("autoplay: next_track");
-#endif
+            m_debugMessage = autoplayNext;
             next_track();
         }
     }
@@ -129,9 +112,7 @@ void Mp3PlayerControl::next_track()
 {
     if (!check_folder())
     {
-#if DEBUGSERIAL
-        m_pUsb->com_println("next_track: No folder linked");
-#endif
+        m_debugMessage = next_noFolder;
         wait_player_ready();
         m_pDfMiniMp3->playAdvertisement(MSG_ERROR_FOLDER);
         return; // Cannot play a track if the card is not linked.
@@ -139,19 +120,15 @@ void Mp3PlayerControl::next_track()
     wait_player_ready();
     m_pDfMiniMp3->playFolderTrack(m_pCurrentFolder->get_folder_id(),
                                   m_pCurrentFolder->get_next_track());
-#if DEBUGSERIAL
-    m_pUsb->com_println("next_track:");
-    m_pUsb->com_print(m_pCurrentFolder->get_current_track());
-#endif
+
+    m_debugMessage = next;
 }
 
 void Mp3PlayerControl::prev_track()
 {
     if (!check_folder())
     {
-#if DEBUGSERIAL
-        m_pUsb->com_println("prev_track: No folder linked");
-#endif
+        m_debugMessage = prev_noFolder;
         wait_player_ready();
         m_pDfMiniMp3->playAdvertisement(MSG_ERROR_FOLDER);
         return; // Cannot play a track if the card is not linked.
@@ -159,10 +136,7 @@ void Mp3PlayerControl::prev_track()
     wait_player_ready();
     m_pDfMiniMp3->playFolderTrack(m_pCurrentFolder->get_folder_id(),
                                   m_pCurrentFolder->get_prev_track());
-#if DEBUGSERIAL
-    m_pUsb->com_println("prev_track():");
-    m_pUsb->com_print(m_pCurrentFolder->get_current_track());
-#endif
+    m_debugMessage = prev;
 }
 
 void Mp3PlayerControl::play_folder(Folder *currentFolder)
@@ -172,19 +146,14 @@ void Mp3PlayerControl::play_folder(Folder *currentFolder)
     {
         wait_player_ready();
         m_pDfMiniMp3->playAdvertisement(MSG_ERROR_FOLDER);
-#if DEBUGSERIAL
-        m_pUsb->com_println("play_folder: No folder linked");
-#endif
+        m_debugMessage = play_noFolder;
         return; // Cannot play a track if the card is not linked.
     }
     // Start playing folder: first track of current folder.
     wait_player_ready();
     m_pDfMiniMp3->playFolderTrack(m_pCurrentFolder->get_folder_id(),
                                   m_pCurrentFolder->get_current_track());
-#if DEBUGSERIAL
-    m_pUsb->com_println("play_folder: folderId: ");
-    m_pUsb->com_print(m_pCurrentFolder->get_folder_id());
-#endif
+    m_debugMessage = play;
 }
 
 void Mp3PlayerControl::play_specific_file(uint16_t fileId)

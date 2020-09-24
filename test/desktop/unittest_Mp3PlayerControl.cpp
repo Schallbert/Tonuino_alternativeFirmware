@@ -43,9 +43,58 @@ protected:
     NiceMock<Mock_com> *m_pUsb;
     SimpleTimer *m_pLullabyeTimer{nullptr};
     SimpleTimer *m_pDfMiniMsgTimeout{nullptr};
-    
+
     Mp3PlayerControl *m_pMp3PlrCtrl;
 };
+
+class DebugOutput : public PlayerCtrl{};
+
+#if DEBUGSERIAL
+TEST_F(DebugOutput, messageHeadersCorrect)
+{
+    EXPECT_CALL(*m_pUsb, com_println(_)).Times(2); // message content
+    EXPECT_CALL(*m_pUsb, com_println("PLAYER CONTROL DEBUG:"));
+    EXPECT_CALL(*m_pUsb, com_println("MP3 DEBUG: DfMiniMp3"));
+
+    m_pMp3PlrCtrl->print_debug_message();
+}
+
+TEST_F(DebugOutput, noAction_printsNoMessage)
+{
+    EXPECT_CALL(*m_pUsb, com_println(_)).Times(3); // message content
+    EXPECT_CALL(*m_pUsb, com_println("No Message"));
+
+    m_pMp3PlrCtrl->print_debug_message();
+}
+
+TEST_F(DebugOutput, volumeUp_printsVolUp)
+{
+    EXPECT_CALL(*m_pUsb, com_println(_)).Times(3); // message content
+    EXPECT_CALL(*m_pUsb, com_println("volume up"));
+
+    m_pMp3PlrCtrl->volume_up();
+    m_pMp3PlrCtrl->print_debug_message();
+}
+
+TEST_F(DebugOutput, volumeDown_printsVolDown)
+{
+    EXPECT_CALL(*m_pUsb, com_println(_)).Times(3); // message content
+    EXPECT_CALL(*m_pUsb, com_println("volume down"));
+
+    m_pMp3PlrCtrl->volume_down();
+    m_pMp3PlrCtrl->print_debug_message();
+}
+
+TEST_F(DebugOutput, play_printsPlay)
+{
+    Folder testFolder(1, Folder::ALBUM, 8);
+    EXPECT_CALL(*m_pUsb, com_println(_)).Times(3); // message content
+    EXPECT_CALL(*m_pUsb, com_println("play folder"));
+
+    m_pMp3PlrCtrl->play_folder(&testFolder);
+    m_pMp3PlrCtrl->print_debug_message();
+}
+#endif
 
 TEST_F(PlayerCtrl, ClassConstructorMethodsCalled)
 {
@@ -179,7 +228,7 @@ TEST_F(PlayerCtrl, autoplay_LULLABYE_trackFinished_timeout_stop)
     m_pLullabyeTimer->start(LULLABYE_TIMEOUT_SECS);
     for (int i = 0; i < (LULLABYE_TIMEOUT_SECS); ++i)
     {
-         m_pLullabyeTimer->timer_tick();
+        m_pLullabyeTimer->timer_tick();
     }
     EXPECT_CALL(*m_pDfMini, checkTrackFinished()).WillOnce(Return(true));
     EXPECT_CALL(*m_pDfMini, playFolderTrack(_, 1)).Times(1); // play_folder calls first track.
@@ -190,22 +239,20 @@ TEST_F(PlayerCtrl, autoplay_LULLABYE_trackFinished_timeout_stop)
 
 TEST_F(PlayerCtrl, dontSkip_notPlaying_Timeout)
 {
-    ON_CALL(*m_pPinCtrl, digital_read(_)).WillByDefault(Return(true));       // not playing
-    EXPECT_CALL(*m_pDfMini, loop()).Times(WAIT_DFMINI_READY)
-                                   .WillOnce(InvokeWithoutArgs(m_pDfMiniMsgTimeout, &SimpleTimer::timer_tick));                                //called twice before timeout
+    ON_CALL(*m_pPinCtrl, digital_read(_)).WillByDefault(Return(true));                                                                   // not playing
+    EXPECT_CALL(*m_pDfMini, loop()).Times(WAIT_DFMINI_READY).WillOnce(InvokeWithoutArgs(m_pDfMiniMsgTimeout, &SimpleTimer::timer_tick)); //called twice before timeout
     m_pMp3PlrCtrl->dont_skip_current_track();
 }
 
 TEST_F(PlayerCtrl, dontSkip_notFinishing_Timeout)
 {
-    ON_CALL(*m_pPinCtrl, digital_read(_)).WillByDefault(Return(false));       // not playing
-    EXPECT_CALL(*m_pDfMini, loop()).Times(TIMEOUT_PROMPT_PLAYED)
-                                   .WillRepeatedly(InvokeWithoutArgs(m_pDfMiniMsgTimeout, &SimpleTimer::timer_tick));                                //called twice before timeout
+    ON_CALL(*m_pPinCtrl, digital_read(_)).WillByDefault(Return(false));                                                                            // not playing
+    EXPECT_CALL(*m_pDfMini, loop()).Times(TIMEOUT_PROMPT_PLAYED).WillRepeatedly(InvokeWithoutArgs(m_pDfMiniMsgTimeout, &SimpleTimer::timer_tick)); //called twice before timeout
     m_pMp3PlrCtrl->dont_skip_current_track();
 }
 
 TEST_F(PlayerCtrl, dontSkip_playing_noTimeout)
-{                                                               
+{
     // timeout not elapsing
     EXPECT_CALL(*m_pPinCtrl, digital_read(_)).Times(3).WillOnce(Return(false)).WillOnce(Return(false)).WillRepeatedly(Return(true)); // not playing
     EXPECT_CALL(*m_pDfMini, loop()).Times(1);                                                                                        //called once before isplaying returns true
@@ -223,7 +270,7 @@ TEST_F(PlayerCtrl, nextTrack_FolderSAVEPROGRESS_dependencyNotSet_noop)
 {
     Mock_Eeprom mockEeprom;
     Folder testFolder(1, Folder::SAVEPROGRESS, 8);
-    // dependencies not set 
+    // dependencies not set
     EXPECT_CALL(*m_pDfMini, playFolderTrack(_, _)).Times(0);
     m_pMp3PlrCtrl->play_folder(&testFolder);
     m_pMp3PlrCtrl->next_track();
@@ -233,7 +280,7 @@ TEST_F(PlayerCtrl, nextTrack_FolderRANDOM_dependencyNotSet_noop)
 {
     Mock_Eeprom mockEeprom;
     Folder testFolder(1, Folder::RANDOM, 8);
-    // dependencies not set 
+    // dependencies not set
     EXPECT_CALL(*m_pDfMini, playFolderTrack(_, _)).Times(0);
     m_pMp3PlrCtrl->play_folder(&testFolder);
     m_pMp3PlrCtrl->next_track();
@@ -243,7 +290,7 @@ TEST_F(PlayerCtrl, nextTrack_FolderALBUM_dependencyNotSet_playsNext)
 {
     Mock_Eeprom mockEeprom;
     Folder testFolder(1, Folder::SAVEPROGRESS, 8);
-    // dependencies not set 
+    // dependencies not set
     EXPECT_CALL(*m_pDfMini, playFolderTrack(_, _)).Times(0);
     m_pMp3PlrCtrl->play_folder(&testFolder);
     m_pMp3PlrCtrl->next_track();
@@ -265,7 +312,7 @@ TEST_F(PlayerCtrl, nextTrack_FolderSAVEPROGRESS_dependencySet_playsNext)
     Folder testFolder(1, Folder::SAVEPROGRESS, 8);
     testFolder.setup_dependencies(&mockEeprom, 0);
     EXPECT_CALL(*m_pDfMini, playFolderTrack(_, _)).Times(2);
-    
+
     m_pMp3PlrCtrl->play_folder(&testFolder);
     m_pMp3PlrCtrl->next_track();
 }

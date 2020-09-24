@@ -44,7 +44,7 @@ private:
     // Had to solve this in a static method, a static class member variable would lead to linker errors. Couldn't inline.
     static DfMiniMp3_interface::eDfMiniNotify setMessage(DfMiniMp3_interface::eDfMiniNotify incomingMessage)
     {
-        static DfMiniMp3_interface::eDfMiniNotify m_eMessage = DfMiniMp3_interface::noMessage;
+        auto m_eMessage = DfMiniMp3_interface::noMessage;
         if (incomingMessage != DfMiniMp3_interface::noMessage)
         {
             m_eMessage = incomingMessage;
@@ -61,22 +61,6 @@ class DfMini : public DfMiniMp3_interface
 {
 public:
     ~DfMini(){};
-
-#if DEBUGSERIAL
-public:
-    const char *stringFromDfMiniNotify(eDfMiniNotify value) override
-    {
-        static const char *DFMININOTIFY_STRING[] = {
-            "",
-            "DfMini: finished playing track",
-            "DfMini: SD card online",
-            "DfMini: SD card inserted",
-            "DfMini: SD Card removed",
-            "DfMini: Com Error"};
-
-        return DFMININOTIFY_STRING[value];
-    }
-#endif
 
 public:
     void begin() override { m_dfMiniMp3.begin(); };
@@ -101,15 +85,30 @@ public:
     {
         return static_cast<uint8_t>(m_dfMiniMp3.getFolderTrackCount(static_cast<uint16_t>(folderId)));
     };
-    DfMiniMp3_interface::eDfMiniNotify checkPlayerNotification() override
+    const char* getPlayerNotification() override
     {
-        return Mp3Notify::getMessage();
+        return stringFromDfMiniNotify(Mp3Notify::getMessage());
     };
     bool checkTrackFinished() override
     {
-        return false;
-        // return (Mp3Notify::getMessage() == DfMiniMp3_interface::playFinished);
+        return (Mp3Notify::getMessage() == DfMiniMp3_interface::playFinished);
     };
+
+    #if DEBUGSERIAL
+private:
+    const char *stringFromDfMiniNotify(eDfMiniNotify value)
+    {
+        static const char *NOTIFY_STRING[] = {
+            "No Message",
+            "finished playing track",
+            "SD card online",
+            "SD card inserted",
+            "SD Card removed",
+            "Com Error"};
+
+        return NOTIFY_STRING[value];
+    }
+#endif
 
 private:
     // Solution for constructor error found here:

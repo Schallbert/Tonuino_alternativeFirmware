@@ -45,8 +45,7 @@ public:
     virtual void playFolderTrack(uint8_t folderId, uint8_t trackId) = 0;
     virtual void playAdvertisement(uint16_t trackId) = 0;
     virtual uint8_t getFolderTrackCount(uint8_t folderId) = 0;
-    virtual eDfMiniNotify checkPlayerNotification() = 0;
     virtual bool checkTrackFinished() = 0;
-    virtual const char *stringFromDfMiniNotify(eDfMiniNotify value) = 0;
+    virtual const char* getPlayerNotification() = 0;
 };
 #endif // DFMINIMP3_INTERFACE_H
