@@ -2,15 +2,16 @@
 #define NFCTAG_H
 
 #include "MFRC522_interface.h"
+#include "Arduino_interface.h"
 #include "Folder.h"
-
 
 // this object stores nfc tag data
 class NfcTagControl
 {
 public:
     // Create NfcTagControl object with dependency-injected NfcReader object
-    NfcTagControl(MFRC522_interface *pMfrc522);
+    NfcTagControl(MFRC522_interface *pMfrc522,
+                  Arduino_interface_com *pUsb);
     ~NfcTagControl();
 
 public:
@@ -34,7 +35,7 @@ public:
         m_pUsb->com_println("NFC DEBUG: MFRC522");
         m_pUsb->com_println(m_pMfrc522->getMFRC522Notification());
     };
-//#endif
+    //#endif
 
 private:
     // Handle Read: converts bytestream from NFC tag to folder/ cookie data
@@ -52,9 +53,10 @@ private:
 public:
     static const uint32_t cui32MagicCookie{0x1337b437}; // Magic Id to tag all cards
 private:
+    MFRC522_interface *m_pMfrc522{nullptr};          // NfcReader object to interact with
+    Arduino_interface_com *m_pUsb{nullptr};          // USB_COM serial debug interface
     uint32_t m_ui32CardCookie{0};                    //Cookie read from card to compare against magic ID
     static const uint8_t blockAddressToReadWrite{4}; // sector 1 block 0 for Mini1k4k, page 4-7 for UltraLight
-    MFRC522_interface *m_pMfrc522{nullptr};          // NfcReader object to interact with
     uint8_t *m_pBuffer{nullptr};                     // Buffer to read/write from/to tag reader
     Folder m_oFolder{};                              //Uninitialized!
 };
