@@ -12,13 +12,23 @@ NfcTagControl::~NfcTagControl()
     delete[] m_pBuffer;
 }
 
-bool NfcTagControl::is_card_present()
+MFRC522_interface::eTagState NfcTagControl::get_tag_presence()
 {
-    return m_pMfrc522->isCardPresent();
-}
-bool NfcTagControl::is_new_card_present()
-{
-    return m_pMfrc522->isNewCardPresent();
+    // Adds "known tag" information if a new tag has been placed.
+    // Otherwise, just wrapper for layer down method.
+    auto tagPresence = m_pMfrc522->getTagPresence();
+    if (tagPresence == MFRC522_interface::NEW_TAG)
+    {
+        if (is_known_card())
+        {
+            return MFRC522_interface::NEW_KNOWN_TAG;
+        }
+        else
+        {
+            return MFRC522_interface::NEW_UNKNOWN_TAG;
+        }
+    }
+    return tagPresence;
 }
 
 bool NfcTagControl::write_folder_to_card(const Folder &sourceFolder)
@@ -26,6 +36,7 @@ bool NfcTagControl::write_folder_to_card(const Folder &sourceFolder)
     m_oFolder = sourceFolder; // Copy source folder to member object
     if (!m_oFolder.is_valid())
     {
+        m_oFolder = Folder(); // re-init to empty object
         return false;
     }
     folder_to_buffer(); // Set buffer according to local folder data
@@ -87,6 +98,8 @@ void NfcTagControl::buffer_to_folder()
 
 bool NfcTagControl::is_known_card()
 {
+    Folder dummy;
+    read_folder_from_card(dummy); // gets magic cookie.
     if (m_ui32CardCookie != cui32MagicCookie)
     {
         // Card has never been written with Magic Cookie:

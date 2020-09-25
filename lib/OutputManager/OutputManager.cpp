@@ -26,15 +26,15 @@ void OutputManager::runDispatcher()
     // dispatch table contains function pointers
     // cardStates = ROWS, userInput = COLUMNS
     typedef OutputManager OM;
-    static const dispatcher dispatchTable[InputManager::NUMBER_OF_CARD_STATES]
+    static const dispatcher dispatchTable[InputManager::NUMBER_OF_TAG_STATES]
                                          [UserInput::NUMBER_OF_REQUESTS - 1] =
                                              {
                                                  //NOAC,     PL_PS,     PP_LP,     NEXT_,     PREV_,     INC_V,     DEC_V,
-                                                 {&OM::none, &OM::plPs, &OM::help, &OM::next, &OM::prev, &OM::incV, &OM::decV}, // NO_CARD
-                                                 {&OM::none, &OM::plPs, &OM::delt, &OM::next, &OM::prev, &OM::incV, &OM::decV}, // ACTIVE_KNOWN_CARD,
-                                                 {&OM::read, &OM::read, &OM::read, &OM::read, &OM::read, &OM::read, &OM::read}, // NEW_KNOWN_CARD,
-                                                 {&OM::none, &OM::linC, &OM::abrt, &OM::linN, &OM::linP, &OM::none, &OM::none}, // UNKNOWN_CARD_MENU,
-                                                 {&OM::none, &OM::delC, &OM::abrt, &OM::none, &OM::none, &OM::none, &OM::none}, // DELETE_CARD_MENU,
+                                                 {&OM::none, &OM::plPs, &OM::help, &OM::next, &OM::prev, &OM::incV, &OM::decV}, // NO_TAG
+                                                 {&OM::none, &OM::plPs, &OM::delt, &OM::next, &OM::prev, &OM::incV, &OM::decV}, // ACTIVE_KNOWN_TAG,
+                                                 {&OM::read, &OM::read, &OM::read, &OM::read, &OM::read, &OM::read, &OM::read}, // NEW_KNOWN_TAG,
+                                                 {&OM::none, &OM::linC, &OM::abrt, &OM::linN, &OM::linP, &OM::none, &OM::none}, // NEW_UNKNOWN_TAG,
+                                                 {&OM::none, &OM::delC, &OM::abrt, &OM::none, &OM::none, &OM::none, &OM::none}, // DELETE_TAG_MENU,
                                              };
     dispatcher dispatchExecutor = dispatchTable[m_eCardState][m_eUserInput];
     (this->*dispatchExecutor)();
@@ -44,8 +44,8 @@ void OutputManager::handleInputErrors()
 {
     bool bError = false;
     // Check for index out of bounds
-    if ((InputManager::NO_CARD > m_eCardState) ||
-        (m_eCardState >= InputManager::NUMBER_OF_CARD_STATES))
+    if ((InputManager::NO_TAG > m_eCardState) ||
+        (m_eCardState >= InputManager::NUMBER_OF_TAG_STATES))
     {
         bError = true;
 #ifdef DEBUGSERIAL
@@ -73,7 +73,7 @@ void OutputManager::handleInputErrors()
         m_pMp3->play_specific_file(MSG_ERROR);
         m_pMp3->dont_skip_current_track();
         m_eUserInput = UserInput::NO_ACTION;
-        m_eCardState = InputManager::NO_CARD;
+        m_eCardState = InputManager::NO_TAG;
     }
 }
 
@@ -81,7 +81,7 @@ void OutputManager::handleDeleteMenu()
 {
     // order of these two condition statements is CRITICAL!
     if ((m_deleteMenu.is_state(DeleteMenu::DELETE_MENU)) &&
-        (m_eCardState == InputManager::NEW_KNOWN_CARD))
+        (m_eCardState == InputManager::NEW_KNOWN_TAG))
     {
         m_deleteMenu.set_ready();
     }
@@ -89,14 +89,14 @@ void OutputManager::handleDeleteMenu()
     // lock state in menu, waiting for card to be placed that shall be deleted
     if (!m_deleteMenu.is_state(DeleteMenu::NO_MENU))
     {
-        m_eCardState = InputManager::DELETE_CARD_MENU; // delete menu entered
+        m_eCardState = InputManager::DELETE_TAG_MENU; // delete menu entered
         m_pSysPwr->set_delMenu();
     }
 }
 
 void OutputManager::handleLinkMenu()
 {
-    if (m_eCardState == InputManager::UNKNOWN_CARD_MENU)
+    if (m_eCardState == InputManager::NEW_UNKNOWN_TAG)
     {
         if (m_linkMenu.get_state() == LinkMenu::NO_MENU)
         {
@@ -105,7 +105,7 @@ void OutputManager::handleLinkMenu()
     }
     else if (!m_linkMenu.get_state() == LinkMenu::NO_MENU)
     {
-        m_eCardState = InputManager::UNKNOWN_CARD_MENU; // keeps in link menu
+        m_eCardState = InputManager::NEW_UNKNOWN_TAG; // keeps in link menu
         m_pSysPwr->set_linkMenu();
     }
 }
@@ -123,7 +123,7 @@ void OutputManager::read()
     {
         m_pMp3->play_specific_file(MSG_ERROR_CARDREAD);
         m_pMp3->dont_skip_current_track();
-        m_eCardState = InputManager::NO_CARD;
+        m_eCardState = InputManager::NO_TAG;
     }
 }
 

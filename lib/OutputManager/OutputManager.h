@@ -28,7 +28,7 @@ public:
 
 public:
     // Sets input states from card and buttons, and determines internal state.
-    void setInputStates(InputManager::eTagState cardState, UserInput::UserRequest_e userInput);
+    void setInputStates(MFRC522_interface::eTagState cardState, UserInput::UserRequest_e userInput);
     // Runs desicion table that calls functions depending on user input
     void runDispatcher();
 
@@ -85,7 +85,7 @@ private:
     Folder m_currentFolder{};
     LinkMenu m_linkMenu{};
     DeleteMenu m_deleteMenu{};
-    InputManager::eTagState m_eCardState{InputManager::NO_CARD};
+    MFRC522_interface::eTagState m_eCardState{MFRC522_interface::NO_TAG};
     UserInput::UserRequest_e m_eUserInput{UserInput::NO_ACTION};
 };
 

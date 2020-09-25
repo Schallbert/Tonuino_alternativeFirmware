@@ -1,28 +1,25 @@
 #include "MFRC522_implementation.h"
 
-
-if (m_pNfcTagReader->is_card_present())
+MFRC522_interface::eTagState Mfrc522::getTagPresence()
+{
+    if (m_pMfrc522.PICC_ReadCardSerial())
     {
-        if (!m_pNfcTagReader->is_new_card_present())
+        // A card is present!
+        if (!m_pMfrc522.PICC_IsNewCardPresent())
         {
-            return ACTIVE_KNOWN_CARD;
+            return ACTIVE_KNOWN_TAG;
         }
-        else // New card detected: runs once as new card is automatically set to ActiveCard
+        else 
         {
-            Folder dummyFolder;
-            if (m_pNfcTagReader->read_folder_from_card(dummyFolder))
+            // New card detected: runs once as new card is automatically set to ActiveCard
+            if (setCardOnline()) 
             {
-                return NEW_KNOWN_CARD;
-            }
-            else // New card but folder cannot be read
-            {
-                if (!m_pNfcTagReader->is_known_card())
-                {
-                    return UNKNOWN_CARD_MENU;
-                }
+                return NEW_TAG;
             }
         }
     }
+    return NO_TAG;
+}
 
 
 const char *Mfrc522::stringFromMFRC522Notify(eMFRC522Notify value)
@@ -51,16 +48,6 @@ const char *Mfrc522::checkMFRC522Notification()
 void Mfrc522::initReader()
 {
     m_pMfrc522.PCD_Init(); // Init MFRC522
-}
-
-bool Mfrc522::isCardPresent()
-{
-    return m_pMfrc522.PICC_ReadCardSerial();
-}
-
-bool Mfrc522::isNewCardPresent()
-{
-    return m_pMfrc522.PICC_IsNewCardPresent();
 }
 
 bool Mfrc522::writeTag(byte blockAddr, byte *dataToWrite)
@@ -218,6 +205,7 @@ bool Mfrc522::setCardOnline()
         m_eNotification = errorTagAuthenticateFailed;
         return false;
     }
+    m_eNotification = tagOnline;
     return true;
 }
 

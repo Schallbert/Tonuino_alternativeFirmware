@@ -19,28 +19,28 @@ InputManager::eTagState InputManager::getCardState()
 #endif
     if (m_pNfcTagReader->is_card_present())
     {
-        if (!m_pNfcTagReader->is_new_card_present())
+        if (!m_pNfcTagReader->is_NEW_TAG_present())
         {
-            return ACTIVE_KNOWN_CARD;
+            return ACTIVE_KNOWN_TAG;
         }
         else // New card detected: runs once as new card is automatically set to ActiveCard
         {
             Folder dummyFolder;
             if (m_pNfcTagReader->read_folder_from_card(dummyFolder))
             {
-                return NEW_KNOWN_CARD;
+                return NEW_KNOWN_TAG;
             }
             else // New card but folder cannot be read
             {
                 if (!m_pNfcTagReader->is_known_card())
                 {
-                    return UNKNOWN_CARD_MENU;
+                    return NEW_UNKNOWN_TAG;
                 }
             }
         }
     }
 
-    return NO_CARD;
+    return NO_TAG;
 }
 
 UserInput::UserRequest_e InputManager::getUserInput()

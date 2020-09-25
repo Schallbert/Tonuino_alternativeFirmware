@@ -30,6 +30,7 @@ public:
     };
 
 public:
+    void initReader() override;
     MFRC522_interface::eTagState getTagPresence(void) override;
     bool writeTag(byte blockAddr, byte *dataToWrite) override;
     bool readTag(byte blockAddr, byte *readResult) override;

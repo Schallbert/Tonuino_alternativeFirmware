@@ -8,16 +8,6 @@
 
 class InputManager
 {
-public:
-    enum eTagState
-    {
-        NO_CARD = 0,       // allow certain actions (help, deleteCard etc)
-        ACTIVE_KNOWN_CARD, // full playback
-        NEW_KNOWN_CARD,    // read card, get folder, full playback
-        UNKNOWN_CARD_MENU, // play voice menu, link folder to card
-        DELETE_CARD_MENU,  // delete card menu
-        NUMBER_OF_CARD_STATES
-    };
 
 public:
     InputManager(Arduino_interface_pins *pPinCtrl,

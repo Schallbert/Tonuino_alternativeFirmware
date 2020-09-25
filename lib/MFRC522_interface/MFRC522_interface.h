@@ -9,23 +9,27 @@ class MFRC522_interface
 public:
     enum eTagState
     {
-        NO_CARD = 0,       // allow certain actions (help, deleteCard etc)
-        ACTIVE_KNOWN_CARD, // full playback
-        NEW_KNOWN_CARD,    // read card, get folder, full playback
-        UNKNOWN_CARD_MENU, // play voice menu, link folder to card
-        DELETE_CARD_MENU,  // delete card menu
-        NUMBER_OF_CARD_STATES
+        NO_TAG = 0,       // allow certain actions (help, deleteCard etc)
+        ACTIVE_KNOWN_TAG, // full playback
+        NEW_TAG,          // another card placed
+        NEW_KNOWN_TAG,    // read card, get folder, full playback
+        NEW_UNKNOWN_TAG, // play voice menu, link folder to card
+        DELETE_TAG_MENU, // delete card menu
+        NUMBER_OF_TAG_STATES = 5
     };
 
 public:
     virtual ~MFRC522_interface(){};
 
 public:
-    // returns state of
+    // initializes the NFC reader (serial etc.)
+    virtual void initReader() = 0;
+    // returns presence state of NFC tag
     virtual MFRC522_interface::eTagState getTagPresence(void) = 0;
+    // Returns true on successful write of data to a sector->block of the tag
     virtual bool writeTag(byte blockAddr, byte *dataToWrite) = 0;
-    // Returns true on successful read of a 16byte chunk
-    // of data to a sector->block of the card
+    // Returns true on successful read
+    // of data to a sector->block of the tag
     virtual bool readTag(byte blockAddr, byte *readResult) = 0;
     // Debug function. Returns notification from NFC reader system.
     virtual const char *checkMFRC522Notification() = 0;

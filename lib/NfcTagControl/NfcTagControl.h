@@ -14,19 +14,14 @@ public:
     ~NfcTagControl();
 
 public:
-    // Returns true if a tag is present in the reader's vicinity.
-    bool is_card_present();
-    // Returns true if a not currently active tag is present in the reader's vicinity.
-    bool is_new_card_present();
+    // Returns tag state of presence to requesting entity.
+    MFRC522_interface::eTagState get_tag_presence();
     // takes a reference to an existing folder and copies the card's saved data into that object
     // [cookie, folderId, playMode, trackCount]
     bool read_folder_from_card(Folder &targetFolder);
     // writes an existing source folder's data to card (by reference)
     // writes cookie to card
     bool write_folder_to_card(const Folder &sourceFolder);
-    // Returns true if the current card is known to the system
-    // if it has the "magic cookie" equal to system's
-    bool is_known_card();
     // Sets tag contents the system writes to to 0
     bool erase_card();
     // Gets notification message from card reader
@@ -42,6 +37,9 @@ private:
     // Prepare Write: copies folder and cookie information to buffer for card
     // Converts 16Byte package
     void folder_to_buffer();
+    // Returns true if the current card is known to the system
+    // if it has the "magic cookie" equal to system's
+    bool is_known_card();
 
 public:
     static const uint32_t cui32MagicCookie{0x1337b437}; // Magic Id to tag all cards
