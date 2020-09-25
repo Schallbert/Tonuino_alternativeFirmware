@@ -20,7 +20,7 @@ bool Mfrc522::writeCard(byte blockAddr, byte *dataToWrite)
     MFRC522::StatusCode status = MFRC522::STATUS_ERROR;
     if (!setCardOnline())
     {
-        m_eNotification = MFRC522_interface::errorTagSetOnlineFailed;
+        m_eNotification = errorTagSetOnlineFailed;
         return false;
     }
 
@@ -49,7 +49,7 @@ bool Mfrc522::writeCard(byte blockAddr, byte *dataToWrite)
 
     if (status != MFRC522::STATUS_OK)
     {
-        m_eNotification = MFRC522_interface::errorTagWrite;
+        m_eNotification = errorTagWrite;
         return false;
     }
     return true;
@@ -88,7 +88,7 @@ bool Mfrc522::readCard(byte blockAddr, byte *readResult)
 
     if (status != MFRC522::STATUS_OK)
     {
-        m_eNotification = MFRC522_interface::errorTagRead;
+        m_eNotification = errorTagRead;
         return false;
     }
     return true;
@@ -153,7 +153,7 @@ void Mfrc522::setCardOffline()
 {
     m_pMfrc522.PICC_HaltA();
     m_pMfrc522.PCD_StopCrypto1();
-    m_eNotification = MFRC522_interface::tagOffline;
+    m_eNotification = tagOffline;
 }
 
 bool Mfrc522::setCardOnline()
@@ -161,13 +161,13 @@ bool Mfrc522::setCardOnline()
     // Try reading card
     if (m_pMfrc522.PICC_ReadCardSerial() != MFRC522::STATUS_OK)
     {
-        m_eNotification = MFRC522_interface::errorTagSetOnlineFailed;
+        m_eNotification = errorTagSetOnlineFailed;
         setCardOffline();
         return false;
     }
     if (!getTagType())
     {
-        m_eNotification = MFRC522_interface::errorTagAuthenticateFailed;
+        m_eNotification = errorTagAuthenticateFailed;
         return false;
     }
     return true;
@@ -183,7 +183,7 @@ bool Mfrc522::authenticateMini1k4k()
         &(m_pMfrc522.uid));
     if (status != MFRC522::STATUS_OK)
     {
-        m_eNotification = MFRC522_interface::errorTagAuthenticateFailed;
+        m_eNotification = errorTagAuthenticateFailed;
         return false;
     }
     return true;
@@ -196,7 +196,7 @@ bool Mfrc522::authenticateUltraLight()
     status = m_pMfrc522.PCD_NTAG216_AUTH(m_eKey.keyByte, pACK);
     if (status != MFRC522::STATUS_OK)
     {
-        m_eNotification = MFRC522_interface::errorTagAuthenticateFailed;
+        m_eNotification = errorTagAuthenticateFailed;
         return false;
     }
     return true;
@@ -214,12 +214,12 @@ void Mfrc522::checkBlockAddressUltraLight(byte &blockAddress)
     if (blockAddress < ULTRALIGHTSTARTPAGE)
     {
         blockAddress = ULTRALIGHTSTARTPAGE;
-        m_eNotification = MFRC522_interface::errorTagRequestOutOfRange;
+        m_eNotification = errorTagRequestOutOfRange;
     }
     else if (blockAddress > ULTRALIGHTSTOPPAGE)
     {
         blockAddress = ULTRALIGHTSTOPPAGE;
-        m_eNotification = MFRC522_interface::errorTagRequestOutOfRange;
+        m_eNotification = errorTagRequestOutOfRange;
     }
 }
 void Mfrc522::checkBlockAddressMini1k4k(byte &blockAddress)
@@ -228,12 +228,12 @@ void Mfrc522::checkBlockAddressMini1k4k(byte &blockAddress)
     {
         // 0 is reserved!
         blockAddress = 1;
-        m_eNotification = MFRC522_interface::errorTagRequestOutOfRange;
+        m_eNotification = errorTagRequestOutOfRange;
     }
     if ((blockAddress % 4) == SECTORSTRAILERBLOCKMINI1K4K)
     {
         ++blockAddress;
-        m_eNotification = MFRC522_interface::errorTagRequestOutOfRange;
+        m_eNotification = errorTagRequestOutOfRange;
     }
     // 4Blocks per sector
     m_ui8SectorMini1k4k = blockAddress / 4;
@@ -241,3 +241,21 @@ void Mfrc522::checkBlockAddressMini1k4k(byte &blockAddress)
     // (init 0xFFFFFFFF), we won't touch those!
     m_ui8TrailerBlockMini1k4k = m_ui8SectorMini1k4k * 4 + 3;
 }
+
+  const char* Mfrc522::stringFromMFRC522Notify(eMFRC522Notify value)
+    {
+#if DEBUGSERIAL
+        static const char *NOTIFY_STRING[] = {
+            "",
+            "MFRC522: Tag online",
+            "MFRC522: Tag offline",
+            "MFRC522: Tag write Error",
+            "MFRC522: Tag read Error",
+            "DfMini: Tag set online failed",
+            "DfMini: Tag authentication failed",
+            "DfMini: request out of Memory Range"};
+
+        return NOTIFY_STRING[value];
+#endif
+        return "";
+    }

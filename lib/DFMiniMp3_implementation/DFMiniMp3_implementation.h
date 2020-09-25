@@ -85,7 +85,7 @@ public:
     {
         return static_cast<uint8_t>(m_dfMiniMp3.getFolderTrackCount(static_cast<uint16_t>(folderId)));
     };
-    const char* getPlayerNotification() override
+    const char *getPlayerNotification() override
     {
         return stringFromDfMiniNotify(Mp3Notify::getMessage());
     };
@@ -94,10 +94,10 @@ public:
         return (Mp3Notify::getMessage() == DfMiniMp3_interface::playFinished);
     };
 
-    #if DEBUGSERIAL
 private:
     const char *stringFromDfMiniNotify(eDfMiniNotify value)
     {
+#if DEBUGSERIAL
         static const char *NOTIFY_STRING[] = {
             "No Message",
             "finished playing track",
@@ -107,8 +107,9 @@ private:
             "Com Error"};
 
         return NOTIFY_STRING[value];
-    }
 #endif
+        return "";
+    }
 
 private:
     // Solution for constructor error found here:

@@ -9,14 +9,27 @@
 class Mfrc522 : public MFRC522_interface
 {
 public:
+    enum eMFRC522Notify
+    {
+        noMessage = 0,
+        tagOnline,
+        tagOffline,
+        errorTagWrite,
+        errorTagRead,
+        errorTagSetOnlineFailed,
+        errorTagAuthenticateFailed,
+        errorTagRequestOutOfRange
+    };
+
+public:
     void initReader(void) override;
     bool isCardPresent(void) override;
     bool isNewCardPresent(void) override;
     bool writeCard(byte blockAddr, byte *dataToWrite) override;
     bool readCard(byte blockAddr, byte *readResult) override;
-    MFRC522_interface::eMFRC522Notify checkMFRC522Notification() override
+    const char *checkMFRC522Notification() override
     {
-        return m_eNotification;
+        return stringFromMFRC522Notify(m_eNotification);
     };
 
 private:
@@ -26,18 +39,20 @@ private:
     // Read data from block for different NFC types
     MFRC522::StatusCode readMini1k4k(byte blockAddr, byte *result);
     MFRC522::StatusCode readUltraLight(byte blockAddr, byte *result);
-    // Halts communication to card and stops crypto functions
+    // Halts communication to card and stops crypto methods
     void setCardOffline();
     // Returns true if communications to a card is successfully established
     bool setCardOnline();
     // Returns true if card authentication succeeds
     bool authenticateMini1k4k();
     bool authenticateUltraLight();
-    // Helper function, writes tag type to instance variable
+    // Helper method, writes tag type to instance variable
     bool getTagType();
-    // Helper function that limites block address to memory range
+    // Helper method that limites block address to memory range
     void checkBlockAddressMini1k4k(byte &blockAddress);
     void checkBlockAddressUltraLight(byte &blockAddress);
+    // Helper method, for debugging. Sends message string to requesting entity
+    static inline const char *stringFromMFRC522Notify(eMFRC522Notify value);
 
 private:
     MFRC522 m_pMfrc522{MFRC522(SS_PIN, RST_PIN)};
