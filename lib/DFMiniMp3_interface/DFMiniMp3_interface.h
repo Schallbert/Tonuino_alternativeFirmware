@@ -18,16 +18,6 @@ public:
         DfMp3_Eq_Bass
     };
 
-    enum eDfMiniNotify
-    {
-        noMessage = 0,
-        playFinished,
-        playSourceOnline,
-        playSourceInserted,
-        playSourceRemoved,
-        playerError
-    };
-
 public:
     virtual ~DfMiniMp3_interface(){};
 

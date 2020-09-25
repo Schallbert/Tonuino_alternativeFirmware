@@ -7,6 +7,17 @@
 
 class Mp3Notify
 {
+    public:
+     enum eDfMiniNotify
+    {
+        noMessage = 0,
+        playFinished,
+        playSourceOnline,
+        playSourceInserted,
+        playSourceRemoved,
+        playerError
+    };
+
 private:
     // Disallow creating an instance of this object
     Mp3Notify() {}
@@ -14,38 +25,38 @@ private:
 public:
     static void OnError(uint16_t errorCode)
     {
-        setMessage(DfMiniMp3_interface::playerError);
+        setMessage(playerError);
     }
     static void OnPlayFinished(DfMp3_PlaySources src, uint16_t track)
     {
-        setMessage(DfMiniMp3_interface::playFinished);
+        setMessage(playFinished);
     }
     static void OnPlaySourceOnline(uint16_t code)
     {
-        setMessage(DfMiniMp3_interface::playSourceOnline);
+        setMessage(playSourceOnline);
     }
     static void OnPlaySourceInserted(uint16_t code)
     {
-        setMessage(DfMiniMp3_interface::playSourceInserted);
+        setMessage(playSourceInserted);
     }
     static void OnPlaySourceRemoved(uint16_t code)
     {
-        setMessage(DfMiniMp3_interface::playSourceRemoved);
+        setMessage(playSourceRemoved);
     }
     // returns true if track has been set finished
     // to set state call method setFinished = true
     // to get state call method setFinished = false
-    static DfMiniMp3_interface::eDfMiniNotify getMessage()
+    static eDfMiniNotify getMessage()
     {
-        return setMessage(DfMiniMp3_interface::noMessage);
+        return setMessage(noMessage);
     }
 
 private:
     // Had to solve this in a static method, a static class member variable would lead to linker errors. Couldn't inline.
-    static DfMiniMp3_interface::eDfMiniNotify setMessage(DfMiniMp3_interface::eDfMiniNotify incomingMessage)
+    static eDfMiniNotify setMessage(eDfMiniNotify incomingMessage)
     {
-        auto m_eMessage = DfMiniMp3_interface::noMessage;
-        if (incomingMessage != DfMiniMp3_interface::noMessage)
+        auto m_eMessage = noMessage;
+        if (incomingMessage != noMessage)
         {
             m_eMessage = incomingMessage;
         }
@@ -91,11 +102,11 @@ public:
     };
     bool checkTrackFinished() override
     {
-        return (Mp3Notify::getMessage() == DfMiniMp3_interface::playFinished);
+        return (Mp3Notify::getMessage() == Mp3Notify::playFinished);
     };
 
 private:
-    const char *stringFromDfMiniNotify(eDfMiniNotify value)
+    static inline const char *stringFromDfMiniNotify(Mp3Notify::eDfMiniNotify value)
     {
 #if DEBUGSERIAL
         static const char *NOTIFY_STRING[] = {
