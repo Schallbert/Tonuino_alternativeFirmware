@@ -25,8 +25,8 @@ public:
     bool write_folder_to_card(const Folder &sourceFolder);
     // Sets tag contents the system writes to to 0
     bool erase_card();
-    // Gets notification message from card reader
-    //#if DEBUGSERIAL
+// Gets notification message from card reader
+#if DEBUGSERIAL
     // Prints message from player periphery or player controller to Serial.
     void print_debug_message()
     {
@@ -35,7 +35,7 @@ public:
         m_pUsb->com_println("NFC DEBUG: MFRC522");
         m_pUsb->com_println(m_pMfrc522->getMFRC522Notification());
     };
-    //#endif
+#endif
 
 private:
     // Handle Read: converts bytestream from NFC tag to folder/ cookie data
@@ -47,7 +47,7 @@ private:
     // Returns true if the current card is known to the system
     // if it has the "magic cookie" equal to system's
     bool is_known_card();
-
+    // string interpretation of this class's Tag State
     static inline const char *stringFromNfcTagNotify(MFRC522_interface::eTagState value);
 
 public:
