@@ -4,7 +4,7 @@ void Fake_MFRC522::initReader() { return; }
 bool Fake_MFRC522::isCardPresent() { return true; }
 bool Fake_MFRC522::isNewCardPresent() { return true; }
 bool Fake_MFRC522::writeTag(byte blockAddr, byte *dataToWrite) { return true; }
-const char *Fake_MFRC522::checkMFRC522Notification() { return "no Message"; }
+const char *Fake_MFRC522::getMFRC522Notification() { return "no Message"; }
 
 bool Fake_MFRC522::readTag(byte blockAddr, byte *readResult)
 {

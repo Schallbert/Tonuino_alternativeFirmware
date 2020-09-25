@@ -32,7 +32,7 @@ public:
     // of data to a sector->block of the tag
     virtual bool readTag(byte blockAddr, byte *readResult) = 0;
     // Debug function. Returns notification from NFC reader system.
-    virtual const char *checkMFRC522Notification() = 0;
+    virtual const char *getMFRC522Notification() = 0;
 
 public:
     static const uint8_t NFCTAG_MEMORY_TO_OCCUPY = 16; //bytes

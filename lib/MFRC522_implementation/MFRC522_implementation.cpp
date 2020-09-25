@@ -9,10 +9,10 @@ MFRC522_interface::eTagState Mfrc522::getTagPresence()
         {
             return ACTIVE_KNOWN_TAG;
         }
-        else 
+        else
         {
             // New card detected: runs once as new card is automatically set to ActiveCard
-            if (setCardOnline()) 
+            if (setCardOnline())
             {
                 return NEW_TAG;
             }
@@ -20,7 +20,6 @@ MFRC522_interface::eTagState Mfrc522::getTagPresence()
     }
     return NO_TAG;
 }
-
 
 const char *Mfrc522::stringFromMFRC522Notify(eMFRC522Notify value)
 {
@@ -40,7 +39,7 @@ const char *Mfrc522::stringFromMFRC522Notify(eMFRC522Notify value)
     return "";
 }
 
-const char *Mfrc522::checkMFRC522Notification()
+const char *Mfrc522::getMFRC522Notification()
 {
     return stringFromMFRC522Notify(m_eNotification);
 }

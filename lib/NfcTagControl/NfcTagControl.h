@@ -25,10 +25,16 @@ public:
     // Sets tag contents the system writes to to 0
     bool erase_card();
     // Gets notification message from card reader
-    #if DEBUGSERIAL
-    const char * get_nfcReader_notification() 
-    { return m_pMfrc522->stringFromMFRC522Notify(checkMFRC522Notification()); };
-    #endif 
+    //#if DEBUGSERIAL
+    // Prints message from player periphery or player controller to Serial.
+    void print_debug_message()
+    {
+        m_pUsb->com_println("NFC CONTROL DEBUG:");
+        m_pUsb->com_println(stringFromNfcTagNotify(get_tag_presence()));
+        m_pUsb->com_println("NFC DEBUG: MFRC522");
+        m_pUsb->com_println(m_pMfrc522->getMFRC522Notification());
+    };
+//#endif
 
 private:
     // Handle Read: converts bytestream from NFC tag to folder/ cookie data
@@ -40,6 +46,8 @@ private:
     // Returns true if the current card is known to the system
     // if it has the "magic cookie" equal to system's
     bool is_known_card();
+
+    static inline const char *stringFromNfcTagNotify(MFRC522_interface::eTagState value);
 
 public:
     static const uint32_t cui32MagicCookie{0x1337b437}; // Magic Id to tag all cards

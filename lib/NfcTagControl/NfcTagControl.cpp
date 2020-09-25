@@ -108,3 +108,20 @@ bool NfcTagControl::is_known_card()
     }
     return true;
 }
+
+const char *NfcTagControl::stringFromNfcTagNotify(MFRC522_interface::eTagState value)
+{
+#if DEBUGSERIAL
+    static const char *NOTIFY_STRING[] = {
+        "no tag detected",
+        "Tag: active, known",
+        "",
+        "Tag: new, known",
+        "Tag: new, unknown",
+        "",
+        "Error: request out of Range"};
+
+    return NOTIFY_STRING[value];
+#endif
+    return "";
+}

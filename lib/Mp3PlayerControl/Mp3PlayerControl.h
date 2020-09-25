@@ -46,7 +46,7 @@ public:
     void dont_skip_current_track();
     // Starts inquiry to player to return number of tracks in selected folder.
     uint8_t get_trackCount_of_folder(uint8_t folderId);
-//#if DEBUGSERIAL
+#if DEBUGSERIAL
     // Prints message from player periphery or player controller to Serial.
     void print_debug_message()
     {
@@ -55,7 +55,7 @@ public:
         m_pUsb->com_println("MP3 DEBUG: DfMiniMp3");
         m_pUsb->com_println(m_pDfMiniMp3->getPlayerNotification());
     };
-//#endif
+#endif
 
 private:
     // Waits for DfMiniMp3 player's serial connection to be ready for new commands

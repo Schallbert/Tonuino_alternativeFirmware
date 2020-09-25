@@ -27,7 +27,7 @@ public:
     bool isNewCardPresent() override;
     bool readTag(byte blockAddr, byte *readResult) override;
     bool writeTag(byte blockAddr, byte *dataToWrite) override;
-    const char *checkMFRC522Notification()  override;
+    const char *getMFRC522Notification()  override;
 };
 
 
@@ -42,7 +42,7 @@ public:
     MOCK_METHOD(bool, isNewCardPresent, (), (override));
     MOCK_METHOD(bool, writeTag, (byte blockAddr, byte *dataToWrite), (override));
     MOCK_METHOD(bool, readTag, (byte blockAddr, byte *readResult), (override));
-    MOCK_METHOD(const char *, checkMFRC522Notification, (), (override));
+    MOCK_METHOD(const char *, getMFRC522Notification, (), (override));
 
     void DelegateToFake()
     {
