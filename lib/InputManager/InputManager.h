@@ -9,7 +9,7 @@
 class InputManager
 {
 public:
-    enum eCardState
+    enum eTagState
     {
         NO_CARD = 0,       // allow certain actions (help, deleteCard etc)
         ACTIVE_KNOWN_CARD, // full playback
@@ -30,7 +30,7 @@ public:
 
 public:
     uint32_t getRandomSeed();
-    eCardState getCardState();
+    eTagState getCardState();
     UserInput::UserRequest_e getUserInput();
 
 private:

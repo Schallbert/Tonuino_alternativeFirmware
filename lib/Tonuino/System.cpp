@@ -69,7 +69,7 @@ System::~System()
 
 bool System::loop()
 {
-    InputManager::eCardState cardState = m_inputManager.getCardState();
+    InputManager::eTagState cardState = m_inputManager.getCardState();
     UserInput::UserRequest_e userEvent = m_inputManager.getUserInput();
     m_outputManager.setInputStates(cardState, userEvent);
     m_outputManager.runDispatcher();

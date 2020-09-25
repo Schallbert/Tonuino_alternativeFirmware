@@ -30,7 +30,7 @@ public:
     };
 
 public:
-    MFRC522_interface::eCardState getTagPresence(void) override;
+    MFRC522_interface::eTagState getTagPresence(void) override;
     bool writeTag(byte blockAddr, byte *dataToWrite) override;
     bool readTag(byte blockAddr, byte *readResult) override;
     const char *checkMFRC522Notification() override;

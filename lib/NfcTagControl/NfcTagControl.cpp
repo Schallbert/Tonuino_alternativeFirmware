@@ -30,7 +30,7 @@ bool NfcTagControl::write_folder_to_card(const Folder &sourceFolder)
     }
     folder_to_buffer(); // Set buffer according to local folder data
     // Get card online and authenticate
-    return m_pMfrc522->writeCard(blockAddressToReadWrite, m_pBuffer);
+    return m_pMfrc522->writeTag(blockAddressToReadWrite, m_pBuffer);
 }
 
 bool NfcTagControl::erase_card()
@@ -39,12 +39,12 @@ bool NfcTagControl::erase_card()
     {
         m_pBuffer[i] = 0x00;
     }
-    return m_pMfrc522->writeCard(blockAddressToReadWrite, m_pBuffer);
+    return m_pMfrc522->writeTag(blockAddressToReadWrite, m_pBuffer);
 }
 
 bool NfcTagControl::read_folder_from_card(Folder &targetFolder)
 {
-    if (m_pMfrc522->readCard(blockAddressToReadWrite, m_pBuffer))
+    if (m_pMfrc522->readTag(blockAddressToReadWrite, m_pBuffer))
     {
         buffer_to_folder();
         if (m_oFolder.is_initiated())

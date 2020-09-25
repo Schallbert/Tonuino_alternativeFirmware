@@ -7,7 +7,7 @@
 class MFRC522_interface
 {
 public:
-    enum eCardState
+    enum eTagState
     {
         NO_CARD = 0,       // allow certain actions (help, deleteCard etc)
         ACTIVE_KNOWN_CARD, // full playback
@@ -22,7 +22,7 @@ public:
 
 public:
     // returns state of
-    virtual MFRC522_interface::eCardState getTagPresence(void) = 0;
+    virtual MFRC522_interface::eTagState getTagPresence(void) = 0;
     virtual bool writeTag(byte blockAddr, byte *dataToWrite) = 0;
     // Returns true on successful read of a 16byte chunk
     // of data to a sector->block of the card

@@ -12,7 +12,7 @@ uint32_t InputManager::getRandomSeed()
     return ADCSeed; // Init Arduino random generator
 }
 
-InputManager::eCardState InputManager::getCardState()
+InputManager::eTagState InputManager::getCardState()
 {
 #if DEBUGSERIAL
     m_pUsb->println(get_nfcReader_notification());
