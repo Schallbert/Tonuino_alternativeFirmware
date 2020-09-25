@@ -27,10 +27,7 @@ public:
     bool isNewCardPresent(void) override;
     bool writeCard(byte blockAddr, byte *dataToWrite) override;
     bool readCard(byte blockAddr, byte *readResult) override;
-    const char *checkMFRC522Notification() override
-    {
-        return stringFromMFRC522Notify(m_eNotification);
-    };
+    const char *checkMFRC522Notification() override;
 
 private:
     // Write data to block for for different NFC types

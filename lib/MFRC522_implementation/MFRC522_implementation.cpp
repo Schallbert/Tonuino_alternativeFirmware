@@ -1,5 +1,28 @@
 #include "MFRC522_implementation.h"
 
+const char *Mfrc522::stringFromMFRC522Notify(eMFRC522Notify value)
+{
+#if DEBUGSERIAL
+    static const char *NOTIFY_STRING[] = {
+        "no Message",
+        "Tag online",
+        "Tag offline",
+        "Tag write Error",
+        "Tag read Error",
+        "Tag set online failed",
+        "Tag authentication failed",
+        "request out of Memory Range"};
+
+    return NOTIFY_STRING[value];
+#endif
+    return "";
+}
+
+const char *Mfrc522::checkMFRC522Notification()
+{
+    return stringFromMFRC522Notify(m_eNotification);
+}
+
 void Mfrc522::initReader()
 {
     m_pMfrc522.PCD_Init(); // Init MFRC522
@@ -241,21 +264,3 @@ void Mfrc522::checkBlockAddressMini1k4k(byte &blockAddress)
     // (init 0xFFFFFFFF), we won't touch those!
     m_ui8TrailerBlockMini1k4k = m_ui8SectorMini1k4k * 4 + 3;
 }
-
-  const char* Mfrc522::stringFromMFRC522Notify(eMFRC522Notify value)
-    {
-#if DEBUGSERIAL
-        static const char *NOTIFY_STRING[] = {
-            "",
-            "MFRC522: Tag online",
-            "MFRC522: Tag offline",
-            "MFRC522: Tag write Error",
-            "MFRC522: Tag read Error",
-            "DfMini: Tag set online failed",
-            "DfMini: Tag authentication failed",
-            "DfMini: request out of Memory Range"};
-
-        return NOTIFY_STRING[value];
-#endif
-        return "";
-    }
