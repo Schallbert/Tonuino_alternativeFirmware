@@ -6,24 +6,27 @@
 // Enabler for mocking MFRC522 behavior.
 class MFRC522_interface
 {
+public:
+    enum eCardState
+    {
+        NO_CARD = 0,       // allow certain actions (help, deleteCard etc)
+        ACTIVE_KNOWN_CARD, // full playback
+        NEW_KNOWN_CARD,    // read card, get folder, full playback
+        UNKNOWN_CARD_MENU, // play voice menu, link folder to card
+        DELETE_CARD_MENU,  // delete card menu
+        NUMBER_OF_CARD_STATES
+    };
 
 public:
     virtual ~MFRC522_interface(){};
 
 public:
-    // Inits communication to card reader
-    virtual void initReader(void) = 0;
-    // Returns true if a card can be detected on reader
-    virtual bool isCardPresent(void) = 0;
-    // Returns true if a card that is not the currently active one
-    // is present on the reader
-    virtual bool isNewCardPresent(void) = 0;
-    // Returns true on successful write of a 16byte chunk
-    // of data to a sector->block of the card
-    virtual bool writeCard(byte blockAddr, byte *dataToWrite) = 0;
+    // returns state of
+    virtual MFRC522_interface::eCardState getTagPresence(void) = 0;
+    virtual bool writeTag(byte blockAddr, byte *dataToWrite) = 0;
     // Returns true on successful read of a 16byte chunk
     // of data to a sector->block of the card
-    virtual bool readCard(byte blockAddr, byte *readResult) = 0;
+    virtual bool readTag(byte blockAddr, byte *readResult) = 0;
     // Debug function. Returns notification from NFC reader system.
     virtual const char *checkMFRC522Notification() = 0;
 

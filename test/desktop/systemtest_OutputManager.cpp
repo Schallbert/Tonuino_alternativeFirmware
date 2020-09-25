@@ -239,7 +239,7 @@ TEST_F(OutputManagerTest, linkMenu_linkMenuPlayModeSelect_playModeInvalidSelecti
 TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_configureSuccessful)
 {
     ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(8));
-    ON_CALL(*m_pMfrc, writeCard(_, _)).WillByDefault(Return(true));
+    ON_CALL(*m_pMfrc, writeTag(_, _)).WillByDefault(Return(true));
     ON_CALL(*m_pMfrc, readCard(_, _)).WillByDefault(Return(true));
     m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NEXT_TRACK);
     m_pOutputManager->runDispatcher();
@@ -265,7 +265,7 @@ TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_writesInfoToCard)
     m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::NEXT_TRACK);
     m_pOutputManager->runDispatcher(); // should set link menu to playmode ALBUM
     m_pOutputManager->setInputStates(InputManager::UNKNOWN_CARD_MENU, UserInput::PLAY_PAUSE);
-    EXPECT_CALL(*m_pMfrc, writeCard(_, _));                        // Make sure card info is written
+    EXPECT_CALL(*m_pMfrc, writeTag(_, _));                        // Make sure card info is written
     m_pOutputManager->runDispatcher(); // should log playmode and complete linkMenu
 }
 
@@ -278,7 +278,7 @@ MATCHER_P3(folderOk, expFolderId, expPlayMode, expTrackCnt, ""){
 TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_startsPlaybackWithCorrectSettings)
 {
     ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(8));
-    ON_CALL(*m_pMfrc, writeCard(_, _)).WillByDefault(Return(true)); 
+    ON_CALL(*m_pMfrc, writeTag(_, _)).WillByDefault(Return(true)); 
     ON_CALL(*m_pMfrc, readCard(_, _)).WillByDefault(Return(true));
 
     // Simulate navigation through linkMenu with folder1, playMode Album, 8 tracks
@@ -333,7 +333,7 @@ TEST_F(OutputManagerTest, deleteCardMenu_deleteNotReady_confirmDeletion_replaysD
 
 TEST_F(OutputManagerTest, deleteCardMenu_deletionReady_confirmDeletion_playsDeleteConfirmPrompt)
 {
-    ON_CALL(*m_pMfrc, writeCard(_, _)).WillByDefault(Return(true));
+    ON_CALL(*m_pMfrc, writeTag(_, _)).WillByDefault(Return(true));
     m_pOutputManager->setInputStates(InputManager::ACTIVE_KNOWN_CARD, UserInput::PP_LONGPRESS); 
     m_pOutputManager->runDispatcher(); // enter delete menu
     m_pOutputManager->setInputStates(InputManager::NEW_KNOWN_CARD, UserInput::NO_ACTION); // get delete menu ready
@@ -472,7 +472,7 @@ TEST_F(OutputManagerTest, dispatcher_read_noUpdateOfFolderInfoNecessary_cardNotU
     ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(fakeBufferData[6]));
 
     m_pOutputManager->setInputStates(InputManager::NEW_KNOWN_CARD, UserInput::NO_ACTION); 
-    EXPECT_CALL(*m_pMfrc, writeCard(_, _)).Times(0); // no need to update card
+    EXPECT_CALL(*m_pMfrc, writeTag(_, _)).Times(0); // no need to update card
     EXPECT_CALL(*m_pMp3, play_specific_file(MSG_ERROR_CARDREAD)).Times(0);
     m_pOutputManager->runDispatcher(); 
 }
@@ -486,7 +486,7 @@ TEST_F(OutputManagerTest, dispatcher_read_updateOfFolderInfoNecessary_cardUpdate
     ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(9));
 
     m_pOutputManager->setInputStates(InputManager::NEW_KNOWN_CARD, UserInput::NO_ACTION); 
-    EXPECT_CALL(*m_pMfrc, writeCard(_, arrayByteCompare(
+    EXPECT_CALL(*m_pMfrc, writeTag(_, arrayByteCompare(
                                 updatedExpectedBuffer,
                                 MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY
                                 ))).Times(1);

@@ -52,20 +52,20 @@ TEST_F(NfcTagReadWrite, Write_invalidFolder_ReturnsFalse)
 
 TEST_F(NfcTagReadWrite, Write_validFolder_IsCalled)
 {
-    EXPECT_CALL(*m_pMfrc, writeCard(_, _)).Times(1);
+    EXPECT_CALL(*m_pMfrc, writeTag(_, _)).Times(1);
     m_pNfc->write_folder_to_card(*m_pTestFolder);
 }
 
 TEST_F(NfcTagReadWrite, Write_validFolder_IsCalledWithCorrectBlockAddr)
 {
-    EXPECT_CALL(*m_pMfrc, writeCard(4, _)).Times(1);
+    EXPECT_CALL(*m_pMfrc, writeTag(4, _)).Times(1);
     m_pNfc->write_folder_to_card(*m_pTestFolder);
 }
 
 TEST_F(NfcTagReadWrite, Write_validFolder_IsCalledWithCorrectPayload)
 {
     EXPECT_TRUE(m_pTestFolder->is_valid());
-    EXPECT_CALL(*m_pMfrc, writeCard(_, arrayByteCompare(
+    EXPECT_CALL(*m_pMfrc, writeTag(_, arrayByteCompare(
                                 fakeBufferData,
                                 MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY
                                 ))).Times(1);
@@ -75,48 +75,48 @@ TEST_F(NfcTagReadWrite, Write_validFolder_IsCalledWithCorrectPayload)
 TEST_F(NfcTagReadWrite, Write_validFolder_writeSuccess)
 {
     EXPECT_TRUE(m_pTestFolder->is_valid());
-    EXPECT_CALL(*m_pMfrc, writeCard(_, _)).WillOnce(Return(true));
+    EXPECT_CALL(*m_pMfrc, writeTag(_, _)).WillOnce(Return(true));
     EXPECT_TRUE(m_pNfc->write_folder_to_card(*m_pTestFolder));
 }
 
 TEST_F(NfcTagReadWrite, Read_NotSuccessful_returnsFalse)
 {
     Folder resultFolder;
-    EXPECT_CALL(*m_pMfrc, readCard(_, _)).WillOnce(Return(false));
+    EXPECT_CALL(*m_pMfrc, readTag(_, _)).WillOnce(Return(false));
     EXPECT_FALSE(m_pNfc->read_folder_from_card(resultFolder));
 }
 
 TEST_F(NfcTagReadWrite, Read_Successful_ReadFolderNotInitialized_returnsFalse)
 {
     Folder resultFolder;
-    EXPECT_CALL(*m_pMfrc, readCard(_, _)).WillOnce(Return(true));
+    EXPECT_CALL(*m_pMfrc, readTag(_, _)).WillOnce(Return(true));
     EXPECT_FALSE(m_pNfc->read_folder_from_card(resultFolder));
 }
 
 TEST_F(NfcTagReadWrite, Read_IsCalledWithCorrectBlockAddr)
 {
     Folder resultFolder;
-    EXPECT_CALL(*m_pMfrc, readCard(4, _)).WillOnce(Return(true));
+    EXPECT_CALL(*m_pMfrc, readTag(4, _)).WillOnce(Return(true));
     m_pNfc->read_folder_from_card(resultFolder);
 }
 
 TEST_F(NfcTagReadWrite, Read_IsCalledWithCorrectPayload)
 {
     Folder resultFolder;
-    EXPECT_CALL(*m_pMfrc, readCard(_, arrayByteCompare(
+    EXPECT_CALL(*m_pMfrc, readTag(_, arrayByteCompare(
                                   fakeBufferData,
                                   MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY
                                   )));
     // sets buffer to a certain value
     m_pNfc->write_folder_to_card(*m_pTestFolder);
-    // read with this buffer sets correct argument at readCard
+    // read with this buffer sets correct argument at readTag
     m_pNfc->read_folder_from_card(resultFolder);
 }
 
 TEST_F(NfcTagReadWrite, Read_Successful_bufferEmpty_NoOverwriteOfSourceFolder)
 {
     Folder resultFolder(27, Folder::LULLABYE, 5);
-    EXPECT_CALL(*m_pMfrc, readCard(_, _)).WillOnce(Return(true));
+    EXPECT_CALL(*m_pMfrc, readTag(_, _)).WillOnce(Return(true));
     EXPECT_FALSE(m_pNfc->read_folder_from_card(resultFolder));
     EXPECT_EQ(27, resultFolder.get_folder_id());
     EXPECT_EQ(Folder::LULLABYE, resultFolder.get_play_mode());
@@ -126,8 +126,8 @@ TEST_F(NfcTagReadWrite, Read_Successful_bufferEmpty_NoOverwriteOfSourceFolder)
 TEST_F(NfcTagReadWrite, Read_Successful_bufferSet_returnsKnownCard)
 {
     Folder resultFolder;
-    m_pMfrc->DelegateToFake(); // Delegates readCard() call to fake object
-    EXPECT_CALL(*m_pMfrc, readCard(_, _));
+    m_pMfrc->DelegateToFake(); // Delegates readTag() call to fake object
+    EXPECT_CALL(*m_pMfrc, readTag(_, _));
 
     EXPECT_TRUE(m_pNfc->read_folder_from_card(resultFolder));
     EXPECT_TRUE(m_pNfc->is_known_card());
@@ -136,8 +136,8 @@ TEST_F(NfcTagReadWrite, Read_Successful_bufferSet_returnsKnownCard)
 TEST_F(NfcTagReadWrite, Read_Successful_bufferSet_returnsCorrectFolderData)
 {
     Folder resultFolder;
-    m_pMfrc->DelegateToFake(); // Delegates readCard() call to fake object
-    EXPECT_CALL(*m_pMfrc, readCard(_, _));
+    m_pMfrc->DelegateToFake(); // Delegates readTag() call to fake object
+    EXPECT_CALL(*m_pMfrc, readTag(_, _));
 
     EXPECT_TRUE(m_pNfc->read_folder_from_card(resultFolder));
     EXPECT_EQ(m_pTestFolder->get_folder_id(), resultFolder.get_folder_id());
@@ -147,9 +147,9 @@ TEST_F(NfcTagReadWrite, Read_Successful_bufferSet_returnsCorrectFolderData)
 
 TEST_F(NfcTagReadWrite, Erase)
 {
-    // Compare if input of writeCard buffer is really 0
+    // Compare if input of writeTag buffer is really 0
     byte emptyBuffer[MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY] = {};
-    EXPECT_CALL(*m_pMfrc, writeCard(_, arrayByteCompare(
+    EXPECT_CALL(*m_pMfrc, writeTag(_, arrayByteCompare(
                                   emptyBuffer,
                                   MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY
                                   )));

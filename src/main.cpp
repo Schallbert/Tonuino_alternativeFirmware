@@ -29,11 +29,12 @@ void setup()
 // - Lib cleanup in solution (lib manager) DONE
 // - Solve build warnings (clickEncoder) DONE
 // - refactor MFRC522_implementation for testability. BIG TASK
-// - test with DEBUGSERIAL on
+// - test with DEBUGSERIAL on DONE
 // - Unit tests for UserInput (?), StatusLed (?), and MFRC522_implementation
 // - solve naming differences (underscores) of HAL with namespaces!
 // - Integration testing on device
 // - FEATURE: Card stays on system or can be removed while playing? Config?
+// - FEATURE: add combination of lullabye & saveprogress ^^ (Hörbuch)
 
 void loop()
 {

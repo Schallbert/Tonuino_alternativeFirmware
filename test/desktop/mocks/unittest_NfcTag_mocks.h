@@ -25,8 +25,8 @@ public:
     void initReader() override;
     bool isCardPresent() override;
     bool isNewCardPresent() override;
-    bool readCard(byte blockAddr, byte *readResult) override;
-    bool writeCard(byte blockAddr, byte *dataToWrite) override;
+    bool readTag(byte blockAddr, byte *readResult) override;
+    bool writeTag(byte blockAddr, byte *dataToWrite) override;
     const char *checkMFRC522Notification()  override;
 };
 
@@ -40,15 +40,15 @@ public:
     MOCK_METHOD(void, initReader, (), (override));
     MOCK_METHOD(bool, isCardPresent, (), (override));
     MOCK_METHOD(bool, isNewCardPresent, (), (override));
-    MOCK_METHOD(bool, writeCard, (byte blockAddr, byte *dataToWrite), (override));
-    MOCK_METHOD(bool, readCard, (byte blockAddr, byte *readResult), (override));
+    MOCK_METHOD(bool, writeTag, (byte blockAddr, byte *dataToWrite), (override));
+    MOCK_METHOD(bool, readTag, (byte blockAddr, byte *readResult), (override));
     MOCK_METHOD(const char *, checkMFRC522Notification, (), (override));
 
     void DelegateToFake()
     {
-        ON_CALL(*this, readCard).WillByDefault([this](byte blockAddr, byte *readResult) 
+        ON_CALL(*this, readTag).WillByDefault([this](byte blockAddr, byte *readResult) 
         {
-            return m_FakeRead.readCard(blockAddr, readResult);
+            return m_FakeRead.readTag(blockAddr, readResult);
         });
     }
 

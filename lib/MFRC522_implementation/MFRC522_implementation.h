@@ -6,6 +6,14 @@
 #include "MFRC522.h"
 #include "MFRC522_interface.h"
 
+// move card presence enum down to here
+// isCardPresent to return this enum
+// get rid of initReader()?
+// make implementation testable
+
+// outsource card types to an own calss
+// 
+
 class Mfrc522 : public MFRC522_interface
 {
 public:
@@ -22,11 +30,9 @@ public:
     };
 
 public:
-    void initReader(void) override;
-    bool isCardPresent(void) override;
-    bool isNewCardPresent(void) override;
-    bool writeCard(byte blockAddr, byte *dataToWrite) override;
-    bool readCard(byte blockAddr, byte *readResult) override;
+    MFRC522_interface::eCardState getTagPresence(void) override;
+    bool writeTag(byte blockAddr, byte *dataToWrite) override;
+    bool readTag(byte blockAddr, byte *readResult) override;
     const char *checkMFRC522Notification() override;
 
 private:

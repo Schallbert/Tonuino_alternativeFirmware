@@ -1,5 +1,30 @@
 #include "MFRC522_implementation.h"
 
+
+if (m_pNfcTagReader->is_card_present())
+    {
+        if (!m_pNfcTagReader->is_new_card_present())
+        {
+            return ACTIVE_KNOWN_CARD;
+        }
+        else // New card detected: runs once as new card is automatically set to ActiveCard
+        {
+            Folder dummyFolder;
+            if (m_pNfcTagReader->read_folder_from_card(dummyFolder))
+            {
+                return NEW_KNOWN_CARD;
+            }
+            else // New card but folder cannot be read
+            {
+                if (!m_pNfcTagReader->is_known_card())
+                {
+                    return UNKNOWN_CARD_MENU;
+                }
+            }
+        }
+    }
+
+
 const char *Mfrc522::stringFromMFRC522Notify(eMFRC522Notify value)
 {
 #if DEBUGSERIAL
@@ -38,7 +63,7 @@ bool Mfrc522::isNewCardPresent()
     return m_pMfrc522.PICC_IsNewCardPresent();
 }
 
-bool Mfrc522::writeCard(byte blockAddr, byte *dataToWrite)
+bool Mfrc522::writeTag(byte blockAddr, byte *dataToWrite)
 {
     MFRC522::StatusCode status = MFRC522::STATUS_ERROR;
     if (!setCardOnline())
@@ -78,7 +103,7 @@ bool Mfrc522::writeCard(byte blockAddr, byte *dataToWrite)
     return true;
 }
 
-bool Mfrc522::readCard(byte blockAddr, byte *readResult)
+bool Mfrc522::readTag(byte blockAddr, byte *readResult)
 {
     MFRC522::StatusCode status = MFRC522::STATUS_ERROR;
     if (!setCardOnline())
