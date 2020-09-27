@@ -1,9 +1,9 @@
 #ifndef NFCTAG_FACTORY_H
 #define NFCTAG_FACTORY_H
 
-#include "MFRC522.h"
 #include "NfcTag_interface.h"
-#include "NfcTag_implementation_MifareMini1k4k.h"
+#include "NfcTag_MifareMini1k4k.h"
+#include "NfcTag_MifareUltralight.h"
 
 class NfcTag_factory
 {
@@ -14,33 +14,33 @@ public:
         switch (tagType)
         {
         case MFRC522::PICC_TYPE_MIFARE_MINI:
-            m_pObject = new NfcTag_MifareMini1k4k;
+            m_pNfcTag = new NfcTag_MifareMini1k4k;
             break;
         case MFRC522::PICC_TYPE_MIFARE_1K:
-            m_pObject = new NfcTag_MifareMini1k4k;
+            m_pNfcTag = new NfcTag_MifareMini1k4k;
             break;
         case MFRC522::PICC_TYPE_MIFARE_4K:
-            m_pObject = new NfcTag_MifareMini1k4k;
+            m_pNfcTag = new NfcTag_MifareMini1k4k;
             break;
         case MFRC522::PICC_TYPE_MIFARE_UL:
-            m_pObject = new NfcTag_implementation_MifareUltraLight;
+            m_pNfcTag = new NfcTag_MifareUltraLight;
             break;
         default:
-            m_pObject = nullptr;
+            m_pNfcTag = nullptr;
         }
-        return m_pObject;
+        return m_pNfcTag;
     }
 
     static void removeInstance()
     {
-        if (m_pObject)
+        if (m_pNfcTag)
         {
-            delete m_pObject;
+            delete m_pNfcTag;
         }
     }
 
 private:
-    static NfcTag_interface *m_pObject;
+    static NfcTag_interface *m_pNfcTag;
 };
 
 #endif //NFCTAG_FACTORY_H

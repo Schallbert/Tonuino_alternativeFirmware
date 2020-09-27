@@ -1,20 +1,22 @@
 #ifndef NFC_H
 #define NFC_H
 
-#include "Arduino_types.h"
 #include "Arduino_config.h"
-#include "MFRC522.h"
+#include "MFRC522_interface.h" // to access actual HW
 #include "Nfc_interface.h"
+#include "NfcTag_factory.h"
 
 // move card presence enum down to here
 // isCardPresent to return this enum
 // make implementation testable
 
 // outsource card types to an own calss
-// 
+//
 
 class Nfc : public Nfc_interface
 {
+public:
+    Nfc(MFRC522_interface *pMfrc522) : m_pMfrc522(pMfrc522){};
 
 public:
     void initNfc() override;
@@ -34,9 +36,7 @@ private:
     static inline const char *stringFromNfcNotify(eMFRC522Notify value);
 
 private:
-    MFRC522 m_pMfrc522{MFRC522(SS_PIN, RST_PIN)};
-    MFRC522::PICC_Type m_tagType{MFRC522::PICC_TYPE_UNKNOWN};
-    
+    MFRC522_interface *m_pMfrc522{nullptr};
     eMFRC522Notify m_eNotification{noMessage};
 };
 #endif // NFC_H

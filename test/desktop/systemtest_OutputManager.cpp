@@ -3,7 +3,7 @@
 
 #include <SimpleTimer.h>
 #include <NfcControl.h>
-#include <MFRC522_interface.h>
+#include <Nfc_interface.h>
 
 #include "mocks/unittest_NfcTag_mocks.h"
 #include "mocks/unittest_Folder_mocks.h"

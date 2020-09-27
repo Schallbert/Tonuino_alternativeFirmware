@@ -1,7 +1,7 @@
 #ifndef NFCCONTROL_H
 #define NFCCONTROL_H
 
-#include "MFRC522_interface.h"
+#include "Nfc_interface.h"
 #include "Arduino_interface.h"
 #include "Folder.h"
 

@@ -3,7 +3,7 @@
 
 #include <gmock/gmock.h>
 #include <Arduino_types.h>
-#include <MFRC522_interface.h>
+#include <Nfc_interface.h>
 #include <NfcControl.h>
 
 // FAKES
