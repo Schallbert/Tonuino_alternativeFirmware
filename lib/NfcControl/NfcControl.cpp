@@ -4,7 +4,7 @@ NfcControl::NfcControl(MFRC522_interface *pMfrc522,
                              Arduino_interface_com *pUsb) : m_pMfrc522(pMfrc522),
                                                             m_pUsb(pUsb)
 {
-    m_pMfrc522->initReader();
+    m_pMfrc522->initNfc();
     m_pBuffer = new uint8_t[MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY]();
 }
 
