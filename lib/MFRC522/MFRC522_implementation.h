@@ -8,6 +8,8 @@
 // Introduced for clarity and testability.
 class MFRC522_implementation : public MFRC522_interface
 {
+    public:
+    MFRC522_implementation(){};
 
     public:
     void init() { m_Mfrc522.PCD_Init(); };
