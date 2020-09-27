@@ -55,7 +55,7 @@ private:
     // Periphery
     // Init tag reader
     Mfrc522 *m_pReader{nullptr};
-    NfcControl *m_pNfcTagReader{nullptr}; // Constructor injection of concrete reader
+    NfcControl *m_pNfc{nullptr}; // Constructor injection of concrete reader
     // DFPlayer Mini setup
     DfMini *m_pDfMini{nullptr};
     Mp3PlayerControl *m_pMp3{nullptr};
@@ -66,10 +66,10 @@ private:
     InputManager m_inputManager{InputManager(m_pPinControl,
                                              m_pUsbSerial,
                                              m_pUserInput,
-                                             m_pNfcTagReader)};
+                                             m_pNfc)};
     OutputManager m_outputManager{OutputManager(m_pUsbSerial,
                                                 m_pPwrCtrl,
-                                                m_pNfcTagReader,
+                                                m_pNfc,
                                                 m_pMp3,
                                                 m_pMenuTimer,
                                                 m_pEeprom,

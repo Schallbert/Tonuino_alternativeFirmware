@@ -18,7 +18,7 @@ System::System()
     m_pDfMiniMsgTimeout = new SimpleTimer();
     // Periphery
     m_pReader = new Mfrc522();
-    m_pNfcTagReader = new NfcTagControl(m_pReader, m_pUsbSerial); // Constructor injection of concrete reader
+    m_pNfc = new NfcControl(m_pReader, m_pUsbSerial); // Constructor injection of concrete reader
     m_pDfMini = new DfMini();
     m_pMp3 = new Mp3PlayerControl(m_pDfMini, m_pPinControl, m_pUsbSerial, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
 
@@ -52,7 +52,7 @@ System::~System()
     delete m_pDelayControl;
     delete m_pEeprom;
     delete m_pReader;
-    delete m_pNfcTagReader;
+    delete m_pNfc;
     delete m_pDfMini;
     delete m_pMp3;
     delete m_pMenuTimer;
@@ -76,7 +76,7 @@ bool System::loop()
     m_outputManager.runDispatcher();
 #if DEBUGSERIAL
     m_pMp3->print_debug_message();
-    m_pNfcTagReader->print_debug_message();
+    m_pNfc->print_debug_message();
 #endif
 
     return (!m_pPwrCtrl->get_shutdown_request());

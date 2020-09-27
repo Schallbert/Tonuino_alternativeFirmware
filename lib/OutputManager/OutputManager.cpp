@@ -112,7 +112,7 @@ void OutputManager::handleLinkMenu()
 
 void OutputManager::read()
 {
-    if (m_pNfcTagReader->read_folder_from_card(m_currentFolder))
+    if (m_pNfc->read_folder_from_card(m_currentFolder))
     {
         updateFolderInformation();
         m_currentFolder.setup_dependencies(m_pEeprom, m_ui32RandomSeed); // TODO: SOLVE maybe on top level?
@@ -142,7 +142,7 @@ void OutputManager::delC()
         m_pMenuTimer->stop();
         m_pMp3->play_specific_file(MSG_CONFIRMED);
         m_pMp3->dont_skip_current_track();
-        if (!m_pNfcTagReader->erase_card())
+        if (!m_pNfc->erase_card())
         {
             m_pMp3->play_specific_file(MSG_ERROR_CARDREAD);
             m_pMp3->dont_skip_current_track();
@@ -201,7 +201,7 @@ void OutputManager::linC()
         {
             m_pMp3->play_specific_file(MSG_TAGCONFSUCCESS);
             m_pMp3->dont_skip_current_track();
-            if (m_pNfcTagReader->write_folder_to_card(m_currentFolder))
+            if (m_pNfc->write_folder_to_card(m_currentFolder))
             {
                 read();
             }
@@ -250,6 +250,6 @@ void OutputManager::updateFolderInformation()
         m_currentFolder = Folder(m_currentFolder.get_folder_id(),
                                  m_currentFolder.get_play_mode(),
                                  ui8RealTrackCnt);
-        m_pNfcTagReader->write_folder_to_card(m_currentFolder); // update folder information on card
+        m_pNfc->write_folder_to_card(m_currentFolder); // update folder information on card
     }
 }
