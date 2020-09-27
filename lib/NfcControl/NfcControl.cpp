@@ -1,11 +1,11 @@
 #include "NfcControl.h"
 
-NfcControl::NfcControl(MFRC522_interface *pMfrc522,
+NfcControl::NfcControl(Nfc_interface *pMfrc522,
                              Arduino_interface_com *pUsb) : m_pMfrc522(pMfrc522),
                                                             m_pUsb(pUsb)
 {
     m_pMfrc522->initNfc();
-    m_pBuffer = new uint8_t[MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY]();
+    m_pBuffer = new uint8_t[Nfc_interface::NFCTAG_MEMORY_TO_OCCUPY]();
 }
 
 NfcControl::~NfcControl()
@@ -13,20 +13,20 @@ NfcControl::~NfcControl()
     delete[] m_pBuffer;
 }
 
-MFRC522_interface::eTagState NfcControl::get_tag_presence()
+Nfc_interface::eTagState NfcControl::get_tag_presence()
 {
     // Adds "known tag" information if a new tag has been placed.
     // Otherwise, just wrapper for layer down method.
     auto tagPresence = m_pMfrc522->getTagPresence();
-    if (tagPresence == MFRC522_interface::NEW_TAG)
+    if (tagPresence == Nfc_interface::NEW_TAG)
     {
         if (is_known_card())
         {
-            return MFRC522_interface::NEW_KNOWN_TAG;
+            return Nfc_interface::NEW_KNOWN_TAG;
         }
         else
         {
-            return MFRC522_interface::NEW_UNKNOWN_TAG;
+            return Nfc_interface::NEW_UNKNOWN_TAG;
         }
     }
     return tagPresence;
@@ -47,7 +47,7 @@ bool NfcControl::write_folder_to_card(const Folder &sourceFolder)
 
 bool NfcControl::erase_card()
 {
-    for (int i = 0; i < MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY; ++i) // 7-15: Empty
+    for (int i = 0; i < Nfc_interface::NFCTAG_MEMORY_TO_OCCUPY; ++i) // 7-15: Empty
     {
         m_pBuffer[i] = 0x00;
     }
@@ -77,7 +77,7 @@ void NfcControl::folder_to_buffer()
     m_pBuffer[4] = (byte)m_oFolder.get_folder_id();                      // 4: folder picked by the user
     m_pBuffer[5] = (byte)m_oFolder.get_play_mode();                      // 5: playback mode picked by the user
     m_pBuffer[6] = (byte)m_oFolder.get_track_count();                    // 6: track count of that m_oFolder
-    for (int i = 7; i < MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY; ++i) // 7-15: Empty
+    for (int i = 7; i < Nfc_interface::NFCTAG_MEMORY_TO_OCCUPY; ++i) // 7-15: Empty
     {
         m_pBuffer[i] = 0x00;
     }
@@ -110,7 +110,7 @@ bool NfcControl::is_known_card()
     return true;
 }
 
-const char *NfcControl::stringFromNfcTagNotify(MFRC522_interface::eTagState value)
+const char *NfcControl::stringFromNfcTagNotify(Nfc_interface::eTagState value)
 {
 #if DEBUGSERIAL
     static const char *NOTIFY_STRING[] = {

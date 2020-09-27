@@ -1,6 +1,6 @@
-#include "MFRC522_implementation.h"
+#include "Nfc.h"
 
-MFRC522_interface::eTagState Mfrc522::getTagPresence()
+Nfc_interface::eTagState Nfc::getTagPresence()
 {
     if (m_pMfrc522.PICC_ReadCardSerial())
     {
@@ -21,7 +21,7 @@ MFRC522_interface::eTagState Mfrc522::getTagPresence()
     return NO_TAG;
 }
 
-const char *Mfrc522::stringFromMFRC522Notify(eMFRC522Notify value)
+const char *Nfc::stringFromNfcNotify(eMFRC522Notify value)
 {
 #if DEBUGSERIAL
     static const char *NOTIFY_STRING[] = {
@@ -39,17 +39,17 @@ const char *Mfrc522::stringFromMFRC522Notify(eMFRC522Notify value)
     return "";
 }
 
-const char *Mfrc522::getMFRC522Notification()
+const char *Nfc::getNfcNotification()
 {
-    return stringFromMFRC522Notify(m_eNotification);
+    return stringFromNfcNotify(m_eNotification);
 }
 
-void Mfrc522::initNfc()
+void Nfc::initNfc()
 {
     m_pMfrc522.PCD_Init(); // Init MFRC522
 }
 
-bool Mfrc522::writeTag(byte blockAddr, byte *dataToWrite)
+bool Nfc::writeTag(byte blockAddr, byte *dataToWrite)
 {
     MFRC522::StatusCode status = MFRC522::STATUS_ERROR;
     if (!setCardOnline())
@@ -89,7 +89,7 @@ bool Mfrc522::writeTag(byte blockAddr, byte *dataToWrite)
     return true;
 }
 
-bool Mfrc522::readTag(byte blockAddr, byte *readResult)
+bool Nfc::readTag(byte blockAddr, byte *readResult)
 {
     MFRC522::StatusCode status = MFRC522::STATUS_ERROR;
     if (!setCardOnline())
@@ -128,12 +128,12 @@ bool Mfrc522::readTag(byte blockAddr, byte *readResult)
     return true;
 }
 
-MFRC522::StatusCode Mfrc522::writeMini1k4k(byte blockAddr, byte *data)
+MFRC522::StatusCode Nfc::writeMini1k4k(byte blockAddr, byte *data)
 {
     return (MFRC522::StatusCode)m_pMfrc522.MIFARE_Write(blockAddr, data, NFCTAG_MEMORY_TO_OCCUPY);
 }
 
-MFRC522::StatusCode Mfrc522::writeUltraLight(byte blockAddr, byte *data)
+MFRC522::StatusCode Nfc::writeUltraLight(byte blockAddr, byte *data)
 {
     MFRC522::StatusCode status = MFRC522::STATUS_ERROR;
     byte buffer[NFCTAG_MEMORY_TO_OCCUPY] = {};
@@ -153,7 +153,7 @@ MFRC522::StatusCode Mfrc522::writeUltraLight(byte blockAddr, byte *data)
     return status;
 }
 
-MFRC522::StatusCode Mfrc522::readMini1k4k(byte blockAddr, byte *result)
+MFRC522::StatusCode Nfc::readMini1k4k(byte blockAddr, byte *result)
 {
     MFRC522::StatusCode status = MFRC522::STATUS_ERROR;
     byte ui8_bufSize = NFCTAG_MEMORY_TO_OCCUPY + 2; // Account for checksum
@@ -164,7 +164,7 @@ MFRC522::StatusCode Mfrc522::readMini1k4k(byte blockAddr, byte *result)
     return status;
 }
 
-MFRC522::StatusCode Mfrc522::readUltraLight(byte blockAddr, byte *result)
+MFRC522::StatusCode Nfc::readUltraLight(byte blockAddr, byte *result)
 {
     MFRC522::StatusCode status = MFRC522::STATUS_OK;
     byte ui8_bufSize = NFCTAG_MEMORY_TO_OCCUPY + 2; // Account for checksum
@@ -183,14 +183,14 @@ MFRC522::StatusCode Mfrc522::readUltraLight(byte blockAddr, byte *result)
     return status;
 }
 
-void Mfrc522::setCardOffline()
+void Nfc::setCardOffline()
 {
     m_pMfrc522.PICC_HaltA();
     m_pMfrc522.PCD_StopCrypto1();
     m_eNotification = tagOffline;
 }
 
-bool Mfrc522::setCardOnline()
+bool Nfc::setCardOnline()
 {
     // Try reading card
     if (m_pMfrc522.PICC_ReadCardSerial() != MFRC522::STATUS_OK)
@@ -208,7 +208,7 @@ bool Mfrc522::setCardOnline()
     return true;
 }
 
-bool Mfrc522::authenticateMini1k4k()
+bool Nfc::authenticateMini1k4k()
 {
     MFRC522::StatusCode status;
     status = m_pMfrc522.PCD_Authenticate(
@@ -224,7 +224,7 @@ bool Mfrc522::authenticateMini1k4k()
     return true;
 }
 
-bool Mfrc522::authenticateUltraLight()
+bool Nfc::authenticateUltraLight()
 {
     MFRC522::StatusCode status;
     byte pACK[] = {0, 0}; //16 bit PassWord ACK returned by the NFCtag
@@ -237,13 +237,13 @@ bool Mfrc522::authenticateUltraLight()
     return true;
 }
 
-bool Mfrc522::getTagType()
+bool Nfc::getTagType()
 {
     m_tagType = m_pMfrc522.PICC_GetType(m_pMfrc522.uid.sak);
     return (m_tagType != MFRC522::PICC_TYPE_UNKNOWN);
 }
 
-void Mfrc522::checkAndRectifyBlockAddressUltraLight(byte &blockAddress)
+void Nfc::checkAndRectifyBlockAddressUltraLight(byte &blockAddress)
 {
     // Make sure that blockAddr is within allowed range for MIFARE ultralight
     if (blockAddress < ULTRALIGHTSTARTPAGE)
@@ -257,7 +257,7 @@ void Mfrc522::checkAndRectifyBlockAddressUltraLight(byte &blockAddress)
         m_eNotification = errorTagRequestOutOfRange;
     }
 }
-void Mfrc522::checkAndRectifyBlockAddress(byte &blockAddress)
+void Nfc::checkAndRectifyBlockAddress(byte &blockAddress)
 {
     if (blockAddress == 0)
     {

@@ -6,20 +6,20 @@
 
 class NfcTag_MifareUltralight : public NfcTag_interface
 {
-    public:
-    NfcTag_MifareUltralight(MFRC522_interface *pMfrc522) : m_pMfrc522(pMfrc522){}
+public:
+    NfcTag_MifareUltralight(Nfc_interface *pMfrc522) : m_pMfrc522(pMfrc522) {}
 
-    public:
+public:
     bool readTag(byte blockAddress, byte *readResult) override;
     bool writeTag(byte blockAddress, byte *dataToWrite) override;
-    eMFRC522Notify getMFRC522Notification() override { return m_eNotification; };
+    eMFRC522Notify getNfcNotification() override { return m_eNotification; };
 
-    private:
+private:
     bool authenticateTag() override;
     void checkAndRectifyBlockAddress(byte &blockAddress) override;
 
-    private:
-    MFRC522_interface *m_pMfrc522{nullptr};
+private:
+    Nfc_interface *m_pMfrc522{nullptr};
     eMFRC522Notify m_eNotification{noMessage};
     static const byte MIFARE_UL_BLOCK_SIZE{4};
     static const byte ULTRALIGHTSTARTPAGE{4};

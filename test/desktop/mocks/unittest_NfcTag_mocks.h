@@ -18,7 +18,7 @@ static const byte fakeBufferData[16]{
     (byte)5,                                         // 6 TrackCount
     0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-class Fake_MFRC522 : public MFRC522_interface
+class Fake_MFRC522 : public Nfc_interface
 {
 public:
     virtual ~Fake_MFRC522() {}; // MUST BE DEFINED; ELSE VTABLE INCLUDE ERRORS
@@ -27,12 +27,12 @@ public:
     bool isNewCardPresent() override;
     bool readTag(byte blockAddr, byte *readResult) override;
     bool writeTag(byte blockAddr, byte *dataToWrite) override;
-    const char *getMFRC522Notification()  override;
+    const char *getNfcNotification()  override;
 };
 
 
 // MOCKS
-class Mock_MFRC522 : public MFRC522_interface
+class Mock_MFRC522 : public Nfc_interface
 {
 public:
     // Method:  output name   input   overrides functionality of interface
@@ -42,7 +42,7 @@ public:
     MOCK_METHOD(bool, isNewCardPresent, (), (override));
     MOCK_METHOD(bool, writeTag, (byte blockAddr, byte *dataToWrite), (override));
     MOCK_METHOD(bool, readTag, (byte blockAddr, byte *readResult), (override));
-    MOCK_METHOD(const char *, getMFRC522Notification, (), (override));
+    MOCK_METHOD(const char *, getNfcNotification, (), (override));
 
     void DelegateToFake()
     {

@@ -54,7 +54,7 @@ private:
     SimpleTimer *m_pDfMiniMsgTimeout{nullptr};
     // Periphery
     // Init tag reader
-    Mfrc522 *m_pReader{nullptr};
+    Nfc *m_pReader{nullptr};
     NfcControl *m_pNfc{nullptr}; // Constructor injection of concrete reader
     // DFPlayer Mini setup
     DfMini *m_pDfMini{nullptr};

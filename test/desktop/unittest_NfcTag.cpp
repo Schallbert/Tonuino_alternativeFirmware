@@ -67,7 +67,7 @@ TEST_F(NfcTagReadWrite, Write_validFolder_IsCalledWithCorrectPayload)
     EXPECT_TRUE(m_pTestFolder->is_valid());
     EXPECT_CALL(*m_pMfrc, writeTag(_, arrayByteCompare(
                                 fakeBufferData,
-                                MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY
+                                Nfc_interface::NFCTAG_MEMORY_TO_OCCUPY
                                 ))).Times(1);
     m_pNfc->write_folder_to_card(*m_pTestFolder);
 }
@@ -105,7 +105,7 @@ TEST_F(NfcTagReadWrite, Read_IsCalledWithCorrectPayload)
     Folder resultFolder;
     EXPECT_CALL(*m_pMfrc, readTag(_, arrayByteCompare(
                                   fakeBufferData,
-                                  MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY
+                                  Nfc_interface::NFCTAG_MEMORY_TO_OCCUPY
                                   )));
     // sets buffer to a certain value
     m_pNfc->write_folder_to_card(*m_pTestFolder);
@@ -148,10 +148,10 @@ TEST_F(NfcTagReadWrite, Read_Successful_bufferSet_returnsCorrectFolderData)
 TEST_F(NfcTagReadWrite, Erase)
 {
     // Compare if input of writeTag buffer is really 0
-    byte emptyBuffer[MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY] = {};
+    byte emptyBuffer[Nfc_interface::NFCTAG_MEMORY_TO_OCCUPY] = {};
     EXPECT_CALL(*m_pMfrc, writeTag(_, arrayByteCompare(
                                   emptyBuffer,
-                                  MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY
+                                  Nfc_interface::NFCTAG_MEMORY_TO_OCCUPY
                                   )));
     m_pNfc->erase_card();
 }

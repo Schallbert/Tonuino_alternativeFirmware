@@ -488,7 +488,7 @@ TEST_F(OutputManagerTest, dispatcher_read_updateOfFolderInfoNecessary_cardUpdate
     m_pOutputManager->setInputStates(InputManager::NEW_KNOWN_TAG, UserInput::NO_ACTION); 
     EXPECT_CALL(*m_pMfrc, writeTag(_, arrayByteCompare(
                                 updatedExpectedBuffer,
-                                MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY
+                                Nfc_interface::NFCTAG_MEMORY_TO_OCCUPY
                                 ))).Times(1);
     m_pOutputManager->runDispatcher(); 
 }

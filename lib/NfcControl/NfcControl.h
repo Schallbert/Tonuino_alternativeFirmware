@@ -10,13 +10,13 @@ class NfcControl
 {
 public:
     // Create NfcControl object with dependency-injected NfcReader object
-    NfcControl(MFRC522_interface *pMfrc522,
+    NfcControl(Nfc_interface *pMfrc522,
                   Arduino_interface_com *pUsb);
     ~NfcControl();
 
 public:
     // Returns tag state of presence to requesting entity.
-    MFRC522_interface::eTagState get_tag_presence();
+    Nfc_interface::eTagState get_tag_presence();
     // takes a reference to an existing folder and copies the card's saved data into that object
     // [cookie, folderId, playMode, trackCount]
     bool read_folder_from_card(Folder &targetFolder);
@@ -33,7 +33,7 @@ public:
         m_pUsb->com_println("NFC CONTROL DEBUG:");
         m_pUsb->com_println(stringFromNfcTagNotify(get_tag_presence()));
         m_pUsb->com_println("NFC DEBUG: MFRC522");
-        m_pUsb->com_println(m_pMfrc522->getMFRC522Notification());
+        m_pUsb->com_println(m_pMfrc522->getNfcNotification());
     };
 #endif
 
@@ -48,12 +48,12 @@ private:
     // if it has the "magic cookie" equal to system's
     bool is_known_card();
     // string interpretation of this class's Tag State
-    static inline const char *stringFromNfcTagNotify(MFRC522_interface::eTagState value);
+    static inline const char *stringFromNfcTagNotify(Nfc_interface::eTagState value);
 
 public:
     static const uint32_t cui32MagicCookie{0x1337b437}; // Magic Id to tag all cards
 private:
-    MFRC522_interface *m_pMfrc522{nullptr};          // NfcReader object to interact with
+    Nfc_interface *m_pMfrc522{nullptr};          // NfcReader object to interact with
     Arduino_interface_com *m_pUsb{nullptr};          // USB_COM serial debug interface
     uint32_t m_ui32CardCookie{0};                    //Cookie read from card to compare against magic ID
     static const uint8_t blockAddressToReadWrite{4}; // sector 1 block 0 for Mini1k4k, page 4-7 for UltraLight

@@ -23,16 +23,18 @@ public:
     virtual ~NfcTag_interface(){};
 
 public:
+    // Read data from block for implemented NFC types
     virtual bool readTag(byte blockAddress, byte *readResult) = 0;
+    // Write data to block for for implemented NFC types
     virtual bool writeTag(byte blockAddress, byte *dataToWrite) = 0;
     // Debug function. Returns notification from NFC reader system.
-    virtual eMFRC522Notify getMFRC522Notification() = 0;
+    virtual eMFRC522Notify getNfcNotification() = 0;
 
 private:
     virtual bool authenticateTag() = 0;
     virtual void checkAndRectifyBlockAddress(byte &blockAddress) = 0;
 
-    private:
+private:
     MFRC522::MIFARE_Key m_eKey = {{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}}; // 6 byte key, factory default all set.
 };
 

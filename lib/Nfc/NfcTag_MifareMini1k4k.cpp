@@ -12,7 +12,7 @@ bool NfcTag_MifareMini1k4k::readTag(byte blockAddress, byte *readResult)
     byte buffer[ui8_bufSize] = {};
     // NFC read procedure for certain types of Tag/Cards: Block of 18 bytes incl. checksum
     status = m_pMfrc522->MIFARE_Read(blockAddress, buffer, &ui8_bufSize);
-    memcpy(readResult, buffer+2, NFCTAG_MEMORY_TO_OCCUPY); // ignores checksum bytes [0,1] // TODO: VERIFY!!!
+    memcpy(readResult, buffer, NFCTAG_MEMORY_TO_OCCUPY); // ignores checksum bytes
     return (status == MFRC522::STATUS_OK);
 }
 
@@ -48,12 +48,10 @@ void NfcTag_MifareMini1k4k::checkAndRectifyBlockAddress(byte &blockAddress)
     if (blockAddress == 0)
     {
         blockAddress = 1; // 0 is reserved!
-        m_eNotification = errorTagRequestOutOfRange;
     }
     if ((blockAddress % 4) == SECTORSTRAILERBLOCKMINI1K4K)
     {
         ++blockAddress;
-        m_eNotification = errorTagRequestOutOfRange;
     }
     // 4Blocks per sector
     m_ui8SectorMini1k4k = blockAddress / 4;
