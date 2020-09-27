@@ -3,6 +3,7 @@
 
 #include "MFRC522.h"
 #include "NfcTag_interface.h"
+#include "NfcTag_implementation_MifareMini1k4k.h"
 
 class NfcTag_factory
 {
@@ -13,13 +14,13 @@ public:
         switch (tagType)
         {
         case MFRC522::PICC_TYPE_MIFARE_MINI:
-            m_pObject = new NfcTag_implementation_MifareMini1k4k;
+            m_pObject = new NfcTag_MifareMini1k4k;
             break;
         case MFRC522::PICC_TYPE_MIFARE_1K:
-            m_pObject = new NfcTag_implementation_MifareMini1k4k;
+            m_pObject = new NfcTag_MifareMini1k4k;
             break;
         case MFRC522::PICC_TYPE_MIFARE_4K:
-            m_pObject = new NfcTag_implementation_MifareMini1k4k;
+            m_pObject = new NfcTag_MifareMini1k4k;
             break;
         case MFRC522::PICC_TYPE_MIFARE_UL:
             m_pObject = new NfcTag_implementation_MifareUltraLight;

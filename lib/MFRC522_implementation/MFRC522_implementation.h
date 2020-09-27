@@ -8,7 +8,6 @@
 
 // move card presence enum down to here
 // isCardPresent to return this enum
-// get rid of initReader()?
 // make implementation testable
 
 // outsource card types to an own calss
@@ -16,21 +15,9 @@
 
 class Mfrc522 : public MFRC522_interface
 {
-public:
-    enum eMFRC522Notify
-    {
-        noMessage = 0,
-        tagOnline,
-        tagOffline,
-        errorTagWrite,
-        errorTagRead,
-        errorTagSetOnlineFailed,
-        errorTagAuthenticateFailed,
-        errorTagRequestOutOfRange
-    };
 
 public:
-    void initReader() override;
+    void initNfc() override;
     MFRC522_interface::eTagState getTagPresence(void) override;
     bool writeTag(byte blockAddr, byte *dataToWrite) override;
     bool readTag(byte blockAddr, byte *readResult) override;

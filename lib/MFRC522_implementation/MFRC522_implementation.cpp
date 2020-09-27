@@ -44,7 +44,7 @@ const char *Mfrc522::getMFRC522Notification()
     return stringFromMFRC522Notify(m_eNotification);
 }
 
-void Mfrc522::initReader()
+void Mfrc522::initNfc()
 {
     m_pMfrc522.PCD_Init(); // Init MFRC522
 }
@@ -243,7 +243,7 @@ bool Mfrc522::getTagType()
     return (m_tagType != MFRC522::PICC_TYPE_UNKNOWN);
 }
 
-void Mfrc522::checkBlockAddressUltraLight(byte &blockAddress)
+void Mfrc522::checkAndRectifyBlockAddressUltraLight(byte &blockAddress)
 {
     // Make sure that blockAddr is within allowed range for MIFARE ultralight
     if (blockAddress < ULTRALIGHTSTARTPAGE)
@@ -257,7 +257,7 @@ void Mfrc522::checkBlockAddressUltraLight(byte &blockAddress)
         m_eNotification = errorTagRequestOutOfRange;
     }
 }
-void Mfrc522::checkBlockAddressMini1k4k(byte &blockAddress)
+void Mfrc522::checkAndRectifyBlockAddress(byte &blockAddress)
 {
     if (blockAddress == 0)
     {

@@ -39,7 +39,7 @@ protected:
 TEST_F(NfcTagReadWrite, IsCalledOnConstruction)
 {
     Mock_MFRC522 mfrc;
-    EXPECT_CALL(mfrc, initReader()).Times(1);
+    EXPECT_CALL(mfrc, initNfc()).Times(1);
     NfcControl m_pNfc(&mfrc);
 }
 

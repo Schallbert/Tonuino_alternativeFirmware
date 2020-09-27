@@ -22,7 +22,7 @@ class Fake_MFRC522 : public MFRC522_interface
 {
 public:
     virtual ~Fake_MFRC522() {}; // MUST BE DEFINED; ELSE VTABLE INCLUDE ERRORS
-    void initReader() override;
+    void initNfc() override;
     bool isCardPresent() override;
     bool isNewCardPresent() override;
     bool readTag(byte blockAddr, byte *readResult) override;
@@ -37,7 +37,7 @@ class Mock_MFRC522 : public MFRC522_interface
 public:
     // Method:  output name   input   overrides functionality of interface
     // IF THE METHOD IS INPUTS VOID; JUST WRITE () NEVER WRITE (void) !!!
-    MOCK_METHOD(void, initReader, (), (override));
+    MOCK_METHOD(void, initNfc, (), (override));
     MOCK_METHOD(bool, isCardPresent, (), (override));
     MOCK_METHOD(bool, isNewCardPresent, (), (override));
     MOCK_METHOD(bool, writeTag, (byte blockAddr, byte *dataToWrite), (override));

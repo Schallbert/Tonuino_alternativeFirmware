@@ -13,8 +13,8 @@ public:
         ACTIVE_KNOWN_TAG, // full playback
         NEW_TAG,          // another card placed
         NEW_KNOWN_TAG,    // read card, get folder, full playback
-        NEW_UNKNOWN_TAG, // play voice menu, link folder to card
-        DELETE_TAG_MENU, // delete card menu
+        NEW_UNKNOWN_TAG,  // play voice menu, link folder to card
+        DELETE_TAG_MENU,  // delete card menu
         NUMBER_OF_TAG_STATES = 5
     };
 
@@ -23,7 +23,7 @@ public:
 
 public:
     // initializes the NFC reader (serial etc.)
-    virtual void initReader() = 0;
+    virtual void initNfc() = 0;
     // returns presence state of NFC tag
     virtual MFRC522_interface::eTagState getTagPresence(void) = 0;
     // Returns true on successful write of data to a sector->block of the tag
