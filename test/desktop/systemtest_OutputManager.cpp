@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 
 #include <SimpleTimer.h>
-#include <NfcTagControl.h>
+#include <NfcControl.h>
 #include <MFRC522_interface.h>
 
 #include "mocks/unittest_NfcTag_mocks.h"
@@ -31,7 +31,7 @@ protected:
 
         m_pSysPwr = new NiceMock<Mock_PowerManager>;
         m_pMfrc = new NiceMock<Mock_MFRC522>;
-        m_pNfcTag = new NfcTagControl(m_pMfrc);
+        m_pNfcTag = new NfcControl(m_pMfrc);
         m_pMenuTimer = new SimpleTimer{};
         m_pEeprom = new NiceMock<Mock_Eeprom>;
 
@@ -69,7 +69,7 @@ protected:
 
     NiceMock<Mock_PowerManager> *m_pSysPwr{nullptr};
     NiceMock<Mock_MFRC522> *m_pMfrc{nullptr};
-    NfcTagControl *m_pNfcTag{nullptr};
+    NfcControl *m_pNfcTag{nullptr};
 
     SimpleTimer *m_pMenuTimer{nullptr};
     NiceMock<Mock_Eeprom> *m_pEeprom{nullptr};

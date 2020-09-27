@@ -63,11 +63,12 @@ private:
     MFRC522::PICC_Type m_tagType{MFRC522::PICC_TYPE_UNKNOWN};
     MFRC522::MIFARE_Key m_eKey = {{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}}; // 6 byte key, factory default all set.
     static const byte MIFARE_UL_BLOCK_SIZE{4};
-    const byte ULTRALIGHTSTARTPAGE{4};
-    const byte ULTRALIGHTSTOPPAGE{11};
+    static const byte ULTRALIGHTSTARTPAGE{4};
+    static const byte ULTRALIGHTSTOPPAGE{11};
+    static const byte SECTORSTRAILERBLOCKMINI1K4K{3};
     byte m_ui8SectorMini1k4k = {0};
     byte m_ui8TrailerBlockMini1k4k{3};
-    const byte SECTORSTRAILERBLOCKMINI1K4K{3};
+    
     eMFRC522Notify m_eNotification{noMessage};
 };
 #endif // MFRC522_IMPLEMENTATION_H

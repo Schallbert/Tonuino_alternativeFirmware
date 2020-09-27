@@ -1,6 +1,6 @@
-#include "NfcTagControl.h"
+#include "NfcControl.h"
 
-NfcTagControl::NfcTagControl(MFRC522_interface *pMfrc522,
+NfcControl::NfcControl(MFRC522_interface *pMfrc522,
                              Arduino_interface_com *pUsb) : m_pMfrc522(pMfrc522),
                                                             m_pUsb(pUsb)
 {
@@ -8,12 +8,12 @@ NfcTagControl::NfcTagControl(MFRC522_interface *pMfrc522,
     m_pBuffer = new uint8_t[MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY]();
 }
 
-NfcTagControl::~NfcTagControl()
+NfcControl::~NfcControl()
 {
     delete[] m_pBuffer;
 }
 
-MFRC522_interface::eTagState NfcTagControl::get_tag_presence()
+MFRC522_interface::eTagState NfcControl::get_tag_presence()
 {
     // Adds "known tag" information if a new tag has been placed.
     // Otherwise, just wrapper for layer down method.
@@ -32,7 +32,7 @@ MFRC522_interface::eTagState NfcTagControl::get_tag_presence()
     return tagPresence;
 }
 
-bool NfcTagControl::write_folder_to_card(const Folder &sourceFolder)
+bool NfcControl::write_folder_to_card(const Folder &sourceFolder)
 {
     m_oFolder = sourceFolder; // Copy source folder to member object
     if (!m_oFolder.is_valid())
@@ -45,7 +45,7 @@ bool NfcTagControl::write_folder_to_card(const Folder &sourceFolder)
     return m_pMfrc522->writeTag(blockAddressToReadWrite, m_pBuffer);
 }
 
-bool NfcTagControl::erase_card()
+bool NfcControl::erase_card()
 {
     for (int i = 0; i < MFRC522_interface::NFCTAG_MEMORY_TO_OCCUPY; ++i) // 7-15: Empty
     {
@@ -54,7 +54,7 @@ bool NfcTagControl::erase_card()
     return m_pMfrc522->writeTag(blockAddressToReadWrite, m_pBuffer);
 }
 
-bool NfcTagControl::read_folder_from_card(Folder &targetFolder)
+bool NfcControl::read_folder_from_card(Folder &targetFolder)
 {
     if (m_pMfrc522->readTag(blockAddressToReadWrite, m_pBuffer))
     {
@@ -68,7 +68,7 @@ bool NfcTagControl::read_folder_from_card(Folder &targetFolder)
     return false; //unknown or corrupted card
 }
 
-void NfcTagControl::folder_to_buffer()
+void NfcControl::folder_to_buffer()
 {
     m_pBuffer[0] = (byte)(cui32MagicCookie >> 24);                       // 0
     m_pBuffer[1] = (byte)((cui32MagicCookie >> 16) & 0xFF);              // 1
@@ -83,7 +83,7 @@ void NfcTagControl::folder_to_buffer()
     }
 }
 
-void NfcTagControl::buffer_to_folder()
+void NfcControl::buffer_to_folder()
 {
     // Transfer m_pBuffer from card read to nfcTag's variables
     m_ui32CardCookie = ((uint32_t)m_pBuffer[0] << 24) |
@@ -97,7 +97,7 @@ void NfcTagControl::buffer_to_folder()
     m_oFolder = Folder(folderId, playMode, trackCount);
 }
 
-bool NfcTagControl::is_known_card()
+bool NfcControl::is_known_card()
 {
     Folder dummy;
     read_folder_from_card(dummy); // gets magic cookie.
@@ -110,7 +110,7 @@ bool NfcTagControl::is_known_card()
     return true;
 }
 
-const char *NfcTagControl::stringFromNfcTagNotify(MFRC522_interface::eTagState value)
+const char *NfcControl::stringFromNfcTagNotify(MFRC522_interface::eTagState value)
 {
 #if DEBUGSERIAL
     static const char *NOTIFY_STRING[] = {

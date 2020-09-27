@@ -4,15 +4,15 @@
 #include <gmock/gmock.h>
 #include <Arduino_types.h>
 #include <MFRC522_interface.h>
-#include <NfcTagControl.h>
+#include <NfcControl.h>
 
 // FAKES
 // Fake buffer data for NFC tag read
 static const byte fakeBufferData[16]{
-    (byte)(NfcTagControl::cui32MagicCookie >> 24),          // 0
-    (byte)((NfcTagControl::cui32MagicCookie >> 16) & 0xFF), // 1
-    (byte)((NfcTagControl::cui32MagicCookie >> 8) & 0xFF),  // 2
-    (byte)(NfcTagControl::cui32MagicCookie & 0xFF),         // 3
+    (byte)(NfcControl::cui32MagicCookie >> 24),          // 0
+    (byte)((NfcControl::cui32MagicCookie >> 16) & 0xFF), // 1
+    (byte)((NfcControl::cui32MagicCookie >> 8) & 0xFF),  // 2
+    (byte)(NfcControl::cui32MagicCookie & 0xFF),         // 3
     (byte)1,                                         // 4 FolderId
     (byte)Folder::LULLABYE,                          // 5 ePlayMode
     (byte)5,                                         // 6 TrackCount

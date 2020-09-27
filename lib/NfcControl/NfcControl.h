@@ -1,18 +1,18 @@
-#ifndef NFCTAG_H
-#define NFCTAG_H
+#ifndef NFCCONTROL_H
+#define NFCCONTROL_H
 
 #include "MFRC522_interface.h"
 #include "Arduino_interface.h"
 #include "Folder.h"
 
 // this object stores nfc tag data
-class NfcTagControl
+class NfcControl
 {
 public:
-    // Create NfcTagControl object with dependency-injected NfcReader object
-    NfcTagControl(MFRC522_interface *pMfrc522,
+    // Create NfcControl object with dependency-injected NfcReader object
+    NfcControl(MFRC522_interface *pMfrc522,
                   Arduino_interface_com *pUsb);
-    ~NfcTagControl();
+    ~NfcControl();
 
 public:
     // Returns tag state of presence to requesting entity.
@@ -61,4 +61,4 @@ private:
     Folder m_oFolder{};                              //Uninitialized!
 };
 
-#endif //NFCTAG_H
+#endif //NFCCONTROL_H
