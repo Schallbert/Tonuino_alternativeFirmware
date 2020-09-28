@@ -1,11 +1,11 @@
 #include "NfcControl.h"
 
-NfcControl::NfcControl(Nfc_interface *pMfrc522,
-                             Arduino_interface_com *pUsb) : m_pMfrc522(pMfrc522),
+NfcControl::NfcControl(Nfc_interface *pNfc,
+                             Arduino_interface_com *pUsb) : m_pNfc(pNfc),
                                                             m_pUsb(pUsb)
 {
-    m_pMfrc522->initNfc();
-    m_pBuffer = new uint8_t[NfcTag_interface::NFCTAG_MEMORY_TO_OCCUPY]();
+    m_pNfc->initNfc();
+    m_pBuffer = new uint8_t[NFCTAG_MEMORY_TO_OCCUPY]();
 }
 
 NfcControl::~NfcControl()
@@ -17,7 +17,7 @@ Nfc_interface::eTagState NfcControl::get_tag_presence()
 {
     // Adds "known tag" information if a new tag has been placed.
     // Otherwise, just wrapper for layer down method.
-    auto tagPresence = m_pMfrc522->getTagPresence();
+    auto tagPresence = m_pNfc->getTagPresence();
     if (tagPresence == Nfc_interface::NEW_TAG)
     {
         if (is_known_card())
@@ -42,21 +42,21 @@ bool NfcControl::write_folder_to_card(const Folder &sourceFolder)
     }
     folder_to_buffer(); // Set buffer according to local folder data
     // Get card online and authenticate
-    return m_pMfrc522->writeTag(blockAddressToReadWrite, m_pBuffer);
+    return m_pNfc->writeTag(blockAddressToReadWrite, m_pBuffer);
 }
 
 bool NfcControl::erase_card()
 {
-    for (int i = 0; i < Nfc_interface::NFCTAG_MEMORY_TO_OCCUPY; ++i) // 7-15: Empty
+    for (int i = 0; i < NFCTAG_MEMORY_TO_OCCUPY; ++i) // 7-15: Empty
     {
         m_pBuffer[i] = 0x00;
     }
-    return m_pMfrc522->writeTag(blockAddressToReadWrite, m_pBuffer);
+    return m_pNfc->writeTag(blockAddressToReadWrite, m_pBuffer);
 }
 
 bool NfcControl::read_folder_from_card(Folder &targetFolder)
 {
-    if (m_pMfrc522->readTag(blockAddressToReadWrite, m_pBuffer))
+    if (m_pNfc->readTag(blockAddressToReadWrite, m_pBuffer))
     {
         buffer_to_folder();
         if (m_oFolder.is_initiated())
@@ -77,7 +77,7 @@ void NfcControl::folder_to_buffer()
     m_pBuffer[4] = (byte)m_oFolder.get_folder_id();                      // 4: folder picked by the user
     m_pBuffer[5] = (byte)m_oFolder.get_play_mode();                      // 5: playback mode picked by the user
     m_pBuffer[6] = (byte)m_oFolder.get_track_count();                    // 6: track count of that m_oFolder
-    for (int i = 7; i < Nfc_interface::NFCTAG_MEMORY_TO_OCCUPY; ++i) // 7-15: Empty
+    for (int i = 7; i < NFCTAG_MEMORY_TO_OCCUPY; ++i) // 7-15: Empty
     {
         m_pBuffer[i] = 0x00;
     }

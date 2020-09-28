@@ -33,6 +33,5 @@ public:
     virtual bool readTag(byte blockAddr, byte *readResult) = 0;
     // Debug function. Returns notification from NFC reader system.
     virtual const char *getNfcNotification() = 0;
-
 };
 #endif // NFC_INTERFACE_H

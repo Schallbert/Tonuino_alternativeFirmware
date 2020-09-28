@@ -2,10 +2,10 @@
 
 Nfc_interface::eTagState Nfc::getTagPresence()
 {
-    if (m_pMfrc522->isCardPresent())
+    if (m_pNfc->isCardPresent())
     {
         // A card is present!
-        if (!m_pMfrc522->isNewCardPresent())
+        if (!m_pNfc->isNewCardPresent())
         {
             return ACTIVE_KNOWN_TAG;
         }
@@ -46,7 +46,7 @@ const char *Nfc::getNfcNotification()
 
 void Nfc::initNfc()
 {
-    m_pMfrc522->init(); // Init MFRC522
+    m_pNfc->init(); // Init MFRC522
 }
 
 bool Nfc::writeTag(byte blockAddr, byte *dataToWrite)
@@ -83,15 +83,15 @@ bool Nfc::readTag(byte blockAddr, byte *readResult)
 
 void Nfc::setCardOffline()
 {
-    m_pMfrc522->tagHalt();
-    m_pMfrc522->tagLogoff();
+    m_pNfc->tagHalt();
+    m_pNfc->tagLogoff();
     m_eNotification = tagOffline;
 }
 
 bool Nfc::setCardOnline()
 {
     // Try reading card
-    if (!m_pMfrc522->isCardPresent())
+    if (!m_pNfc->isCardPresent())
     {
         setCardOffline();
         m_eNotification = errorTagSetOnlineFailed;
@@ -107,7 +107,7 @@ bool Nfc::setCardOnline()
 
 bool Nfc::getTagType()
 {
-    m_tagType = m_pMfrc522->getTagType();
+    m_tagType = m_pNfc->getTagType();
     if(m_tagType != MFRC522_interface::PICC_TYPE_UNKNOWN)
     {
         return true;

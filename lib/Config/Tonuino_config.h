@@ -40,6 +40,9 @@
 #define WAIT_DFMINI_READY 1 // 1 sec
 #define TIMEOUT_PROMPT_PLAYED 10 // 10 sec
 
+//NFC defines
+#define NFCTAG_MEMORY_TO_OCCUPY 16  //bytes
+
 //Clickencoder / button defines
 #undef ENC_BUTTONINTERVAL
 #undef ENC_DOUBLECLICKTIME

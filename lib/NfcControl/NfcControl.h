@@ -10,8 +10,8 @@ class NfcControl
 {
 public:
     // Create NfcControl object with dependency-injected NfcReader object
-    NfcControl(Nfc_interface *pMfrc522,
-                  Arduino_interface_com *pUsb);
+    NfcControl(Nfc_interface *pNfc,
+               Arduino_interface_com *pUsb);
     ~NfcControl();
 
 public:
@@ -33,7 +33,7 @@ public:
         m_pUsb->com_println("NFC CONTROL DEBUG:");
         m_pUsb->com_println(stringFromNfcTagNotify(get_tag_presence()));
         m_pUsb->com_println("NFC DEBUG: MFRC522");
-        m_pUsb->com_println(m_pMfrc522->getNfcNotification());
+        m_pUsb->com_println(m_pNfc->getNfcNotification());
     };
 #endif
 
@@ -53,7 +53,7 @@ private:
 public:
     static const uint32_t cui32MagicCookie{0x1337b437}; // Magic Id to tag all cards
 private:
-    Nfc_interface *m_pMfrc522{nullptr};          // NfcReader object to interact with
+    Nfc_interface *m_pNfc{nullptr};                  // NfcReader object to interact with
     Arduino_interface_com *m_pUsb{nullptr};          // USB_COM serial debug interface
     uint32_t m_ui32CardCookie{0};                    //Cookie read from card to compare against magic ID
     static const uint8_t blockAddressToReadWrite{4}; // sector 1 block 0 for Mini1k4k, page 4-7 for UltraLight

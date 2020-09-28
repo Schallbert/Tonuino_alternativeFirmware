@@ -18,9 +18,6 @@ public:
 
 private:
     virtual void checkAndRectifyBlockAddress(byte &blockAddress) = 0;
-
-public:
-    static const uint8_t NFCTAG_MEMORY_TO_OCCUPY = 16; //bytes
 };
 
 #endif // NFCTAG_INTERFACE_H
