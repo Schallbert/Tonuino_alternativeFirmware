@@ -1,5 +1,5 @@
-#ifndef NFC_H
-#define NFC_H
+#ifndef NFC_IMPLEMENTATION_H
+#define NFC_IMPLEMENTATION_H
 
 #include "Arduino_config.h"
 #include "../MFRC522/MFRC522_interface.h" // to access actual HW
@@ -13,7 +13,7 @@
 // outsource card types to an own calss
 //
 
-class Nfc : public Nfc_interface
+class Nfc_implementation : public Nfc_interface
 {
 public:
     enum eNfcNotify
@@ -29,8 +29,8 @@ public:
     };
 
 public:
-    Nfc(MFRC522_interface *pMfrc522) : m_pMfrc522(pMfrc522){};
-    ~Nfc() { NfcTag_interface::removeInstance(); };
+    Nfc_implementation(MFRC522_interface *pMfrc522) : m_pMfrc522(pMfrc522){};
+    ~Nfc_implementation() { NfcTag_interface::removeInstance(); };
 
 public:
     void initNfc() override;
@@ -54,4 +54,4 @@ private:
     MFRC522_interface::Tag_Type m_tagType{MFRC522_interface::PICC_TYPE_UNKNOWN};
     eNfcNotify m_eNotification{noMessage};
 };
-#endif // NFC_H
+#endif // NFC_IMPLEMENTATION_H

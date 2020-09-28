@@ -5,11 +5,12 @@
 
 //#include "Folder.h"
 #include "NfcControl.h"
+#include "Nfc_implementation.h"
+#include "MFRC522_implementation.h"
 #include "Arduino_implementation.h"
 #include "Mp3PlayerControl.h"
 #include "DFMiniMp3_implementation.h"
 #include "EEPROM_implementation.h"
-#include "MFRC522_implementation.h"
 #include "UserInput_implementation.h"
 #include "PowerManager.h"
 #include "InputManager.h"
@@ -54,23 +55,23 @@ private:
     SimpleTimer *m_pDfMiniMsgTimeout{nullptr};
     // Periphery
     // Init tag reader
-    Nfc *m_pReader{nullptr};
-    NfcControl *m_pNfc{nullptr}; // Constructor injection of concrete reader
+    MFRC522_implementation *m_pMfrc522{nullptr}; // concrete NFC HW
+    Nfc_interface *m_pNfc{nullptr};
+    NfcControl *m_pNfcCtrl{nullptr}; // Constructor injection of concrete reader
     // DFPlayer Mini setup
     DfMini *m_pDfMini{nullptr};
-    Mp3PlayerControl *m_pMp3{nullptr};
+    Mp3PlayerControl *m_pMp3Ctrl{nullptr};
     // User Input
     UserInput *m_pUserInput{nullptr};
 
     // Work member objects -----------------------
     InputManager m_inputManager{InputManager(m_pPinControl,
                                              m_pUsbSerial,
-                                             m_pUserInput,
-                                             m_pNfc)};
+                                             m_pUserInput)};
     OutputManager m_outputManager{OutputManager(m_pUsbSerial,
                                                 m_pPwrCtrl,
-                                                m_pNfc,
-                                                m_pMp3,
+                                                m_pNfcCtrl,
+                                                m_pMp3Ctrl,
                                                 m_pMenuTimer,
                                                 m_pEeprom,
                                                 m_inputManager.getRandomSeed())};

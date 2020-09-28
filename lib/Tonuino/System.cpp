@@ -17,10 +17,11 @@ System::System()
     m_pLullabyeTimer = new SimpleTimer();
     m_pDfMiniMsgTimeout = new SimpleTimer();
     // Periphery
-    m_pReader = new Nfc();
-    m_pNfc = new NfcControl(m_pReader, m_pUsbSerial); // Constructor injection of concrete reader
+    m_pMfrc522 = new MFRC522_implementation();
+    m_pNfc = new Nfc_implementation(m_pMfrc522);
+    m_pNfcCtrl = new NfcControl(m_pNfc, m_pUsbSerial); // Constructor injection of concrete reader
     m_pDfMini = new DfMini();
-    m_pMp3 = new Mp3PlayerControl(m_pDfMini, m_pPinControl, m_pUsbSerial, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
+    m_pMp3Ctrl = new Mp3PlayerControl(m_pDfMini, m_pPinControl, m_pUsbSerial, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
 
     // Notify System up
 #if DEBUGSERIAL
@@ -54,7 +55,7 @@ System::~System()
     delete m_pReader;
     delete m_pNfc;
     delete m_pDfMini;
-    delete m_pMp3;
+    delete m_pMp3Ctrl;
     delete m_pMenuTimer;
     delete m_pLullabyeTimer;
     delete m_pIdleTimer;
@@ -75,7 +76,7 @@ bool System::loop()
     m_outputManager.setInputStates(cardState, userEvent);
     m_outputManager.runDispatcher();
 #if DEBUGSERIAL
-    m_pMp3->print_debug_message();
+    m_pMp3Ctrl->print_debug_message();
     m_pNfc->print_debug_message();
 #endif
 

@@ -1,6 +1,6 @@
-#include "Nfc.h"
+#include "Nfc_implementation.h"
 
-Nfc_interface::eTagState Nfc::getTagPresence()
+Nfc_interface::eTagState Nfc_implementation::getTagPresence()
 {
     if (m_pNfc->isCardPresent())
     {
@@ -21,7 +21,7 @@ Nfc_interface::eTagState Nfc::getTagPresence()
     return NO_TAG;
 }
 
-const char *Nfc::stringFromNfcNotify(eNfcNotify value)
+const char *Nfc_implementation::stringFromNfcNotify(eNfcNotify value)
 {
 #if DEBUGSERIAL
     static const char *NOTIFY_STRING[] = {
@@ -39,17 +39,17 @@ const char *Nfc::stringFromNfcNotify(eNfcNotify value)
     return "";
 }
 
-const char *Nfc::getNfcNotification()
+const char *Nfc_implementation::getNfcNotification()
 {
     return stringFromNfcNotify(m_eNotification);
 }
 
-void Nfc::initNfc()
+void Nfc_implementation::initNfc()
 {
     m_pNfc->init(); // Init MFRC522
 }
 
-bool Nfc::writeTag(byte blockAddr, byte *dataToWrite)
+bool Nfc_implementation::writeTag(byte blockAddr, byte *dataToWrite)
 {
     NfcTag_interface *pNfcTag = NfcTag_factory::getInstance(m_tagType);
     if(!pNfcTag)
@@ -65,7 +65,7 @@ bool Nfc::writeTag(byte blockAddr, byte *dataToWrite)
     return true;
 }
 
-bool Nfc::readTag(byte blockAddr, byte *readResult)
+bool Nfc_implementation::readTag(byte blockAddr, byte *readResult)
 {
    NfcTag_interface *pNfcTag = NfcTag_factory::getInstance(m_tagType);
     if(!pNfcTag)
@@ -81,14 +81,14 @@ bool Nfc::readTag(byte blockAddr, byte *readResult)
     return true;
 }
 
-void Nfc::setCardOffline()
+void Nfc_implementation::setCardOffline()
 {
     m_pNfc->tagHalt();
     m_pNfc->tagLogoff();
     m_eNotification = tagOffline;
 }
 
-bool Nfc::setCardOnline()
+bool Nfc_implementation::setCardOnline()
 {
     // Try reading card
     if (!m_pNfc->isCardPresent())
@@ -105,7 +105,7 @@ bool Nfc::setCardOnline()
     return true;
 }
 
-bool Nfc::getTagType()
+bool Nfc_implementation::getTagType()
 {
     m_tagType = m_pNfc->getTagType();
     if(m_tagType != MFRC522_interface::PICC_TYPE_UNKNOWN)

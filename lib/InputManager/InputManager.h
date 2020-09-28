@@ -12,11 +12,9 @@ class InputManager
 public:
     InputManager(Arduino_interface_pins *pPinCtrl,
                  Arduino_interface_com *pUsb,
-                 UserInput *pUserInput,
-                 ) : m_pPinControl(pPinCtrl),
-                                              m_pUsb(pUsb),
-                                              m_pUserInput(pUserInput),
-                                              {};
+                 UserInput *pUserInput) : m_pPinControl(pPinCtrl),
+                                          m_pUsb(pUsb),
+                                          m_pUserInput(pUserInput){};
 
 public:
     uint32_t getRandomSeed();
