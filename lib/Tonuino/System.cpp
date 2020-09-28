@@ -52,8 +52,9 @@ System::~System()
     delete m_pUsbSerial;
     delete m_pDelayControl;
     delete m_pEeprom;
-    delete m_pReader;
+    delete m_pMfrc522;
     delete m_pNfc;
+    delete m_pNfcCtrl;
     delete m_pDfMini;
     delete m_pMp3Ctrl;
     delete m_pMenuTimer;

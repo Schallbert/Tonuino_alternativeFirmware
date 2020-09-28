@@ -1,17 +1,16 @@
 #ifndef NFCTAG_FACTORY_H
 #define NFCTAG_FACTORY_H
 
-#include "NfcTag_interface.h"
-#include "../NfcTag/NfcTag_MifareMini1k4k.h"
-#include "../NfcTag/NfcTag_MifareUltralight.h"
-#include 
+#include "../NfcTag/NfcTag_interface/NfcTag_interface.h"
+#include "../NfcTag/NfcTag_implementation/NfcTag_MifareMini1k4k.h"
+#include "../NfcTag/NfcTag_implementation/NfcTag_MifareUltralight.h"
 
 class NfcTag_factory
 {
 
 public:
     // Returns a de-facto singleton of correct tag-Type
-    static NfcTag_interface *getInstance(MFRC522_interface::Tag_Type tagType, MFRC522_interface *pMfrc522)
+    static NfcTag_interface *getInstance(MFRC522_interface::eTagType tagType, MFRC522_interface *pMfrc522)
     {
         removeInstance(); // remove "old" instance if necessary
         switch (tagType)
@@ -19,7 +18,7 @@ public:
         case MFRC522_interface::PICC_TYPE_MIFARE_MINI:
             m_pNfcTag = new NfcTag_MifareMini1k4k(pMfrc522);
             break;
-        case MFRC522_interfac::PICC_TYPE_MIFARE_1K:
+        case MFRC522_interface::PICC_TYPE_MIFARE_1K:
             m_pNfcTag = new NfcTag_MifareMini1k4k(pMfrc522);
             break;
         case MFRC522_interface::PICC_TYPE_MIFARE_4K:

@@ -6,7 +6,7 @@ void OutputManager::setInputStates(InputManager::eTagState cardState, UserInput:
     m_eCardState = cardState;
     m_eUserInput = userInput;
 
-    m_pSysPwr->set_playback(m_pMp3->is_playing());
+    m_pSysPwr->set_playback(m_pMp3Ctrl->is_playing());
 
     handleDeleteMenu();
     handleLinkMenu();
@@ -70,8 +70,8 @@ void OutputManager::handleInputErrors()
 
     if (bError)
     {
-        m_pMp3->play_specific_file(MSG_ERROR);
-        m_pMp3->dont_skip_current_track();
+        m_pMp3Ctrl->play_specific_file(MSG_ERROR);
+        m_pMp3Ctrl->dont_skip_current_track();
         m_eUserInput = UserInput::NO_ACTION;
         m_eCardState = InputManager::NO_TAG;
     }
@@ -117,20 +117,20 @@ void OutputManager::read()
         updateFolderInformation();
         m_currentFolder.setup_dependencies(m_pEeprom, m_ui32RandomSeed); // TODO: SOLVE maybe on top level?
 
-        m_pMp3->play_folder(&m_currentFolder);
+        m_pMp3Ctrl->play_folder(&m_currentFolder);
     }
     else
     {
-        m_pMp3->play_specific_file(MSG_ERROR_CARDREAD);
-        m_pMp3->dont_skip_current_track();
+        m_pMp3Ctrl->play_specific_file(MSG_ERROR_CARDREAD);
+        m_pMp3Ctrl->dont_skip_current_track();
         m_eCardState = InputManager::NO_TAG;
     }
 }
 
 void OutputManager::delt()
 {
-    m_pMp3->play_specific_file(MSG_DELETETAG);
-    m_pMp3->dont_skip_current_track();
+    m_pMp3Ctrl->play_specific_file(MSG_DELETETAG);
+    m_pMp3Ctrl->dont_skip_current_track();
     m_pMenuTimer->start(MENU_TIMEOUT_SECS);
     m_deleteMenu.init(); // keep in delete menu
 }
@@ -140,19 +140,19 @@ void OutputManager::delC()
     if (m_deleteMenu.is_state(DeleteMenu::DELETE_READY))
     { // Do delete the card.
         m_pMenuTimer->stop();
-        m_pMp3->play_specific_file(MSG_CONFIRMED);
-        m_pMp3->dont_skip_current_track();
+        m_pMp3Ctrl->play_specific_file(MSG_CONFIRMED);
+        m_pMp3Ctrl->dont_skip_current_track();
         if (!m_pNfc->erase_card())
         {
-            m_pMp3->play_specific_file(MSG_ERROR_CARDREAD);
-            m_pMp3->dont_skip_current_track();
+            m_pMp3Ctrl->play_specific_file(MSG_ERROR_CARDREAD);
+            m_pMp3Ctrl->dont_skip_current_track();
         }
         m_deleteMenu.leave();
         m_pSysPwr->set_playback(false);
     }
     else
     {
-        m_pMp3->play_specific_file(MSG_DELETETAG);
+        m_pMp3Ctrl->play_specific_file(MSG_DELETETAG);
         m_pMenuTimer->stop(); // restart menu timer
         m_pMenuTimer->start(MENU_TIMEOUT_SECS);
     }
@@ -163,7 +163,7 @@ void OutputManager::abrt()
     m_pMenuTimer->stop();
     m_deleteMenu.leave();
     m_linkMenu.select_abort();
-    m_pMp3->play_specific_file(MSG_ABORTED);
+    m_pMp3Ctrl->play_specific_file(MSG_ABORTED);
 }
 
 void OutputManager::linC()
@@ -173,13 +173,13 @@ void OutputManager::linC()
     case LinkMenu::NO_MENU:
         m_linkMenu.init(); // runs card link method on UNKNOWN_CARD detected
         m_pSysPwr->set_linkMenu();
-        m_pMp3->play_specific_file(MSG_SELECT_FOLDERID); // prompts user to select folder ID
-        m_pMp3->dont_skip_current_track();
+        m_pMp3Ctrl->play_specific_file(MSG_SELECT_FOLDERID); // prompts user to select folder ID
+        m_pMp3Ctrl->dont_skip_current_track();
         break;
     case LinkMenu::FOLDER_SELECT:
         m_linkMenu.select_confirm();
-        m_pMp3->play_specific_file(MSG_SELECT_PLAYMODE);
-        m_pMp3->dont_skip_current_track();
+        m_pMp3Ctrl->play_specific_file(MSG_SELECT_PLAYMODE);
+        m_pMp3Ctrl->dont_skip_current_track();
         break;
     case LinkMenu::PLAYMODE_SELECT:
         m_linkMenu.select_confirm(); // done!
@@ -188,19 +188,19 @@ void OutputManager::linC()
         // link folder information complete! Obtain folder and save to card.
         uint8_t folderId = m_linkMenu.get_folderId();
         Folder::ePlayMode playMode = m_linkMenu.get_playMode();
-        uint8_t trackCount = m_pMp3->get_trackCount_of_folder(folderId);
+        uint8_t trackCount = m_pMp3Ctrl->get_trackCount_of_folder(folderId);
         // Create new folder object and copy to main's folder object
         m_currentFolder = Folder(folderId, playMode, trackCount);
         if (!m_currentFolder.is_initiated())
         {
-            m_pMp3->play_specific_file(MSG_ERROR_FOLDER);
-            m_pMp3->dont_skip_current_track();
+            m_pMp3Ctrl->play_specific_file(MSG_ERROR_FOLDER);
+            m_pMp3Ctrl->dont_skip_current_track();
             abrt();
         }
         else
         {
-            m_pMp3->play_specific_file(MSG_TAGCONFSUCCESS);
-            m_pMp3->dont_skip_current_track();
+            m_pMp3Ctrl->play_specific_file(MSG_TAGCONFSUCCESS);
+            m_pMp3Ctrl->dont_skip_current_track();
             if (m_pNfc->write_folder_to_card(m_currentFolder))
             {
                 read();
@@ -208,8 +208,8 @@ void OutputManager::linC()
             else // Couldn't write to card due to folder setup error.
             {
 
-                m_pMp3->play_specific_file(MSG_ERROR_CARDREAD);
-                m_pMp3->dont_skip_current_track();
+                m_pMp3Ctrl->play_specific_file(MSG_ERROR_CARDREAD);
+                m_pMp3Ctrl->dont_skip_current_track();
                 abrt();
             }
         }
@@ -225,13 +225,13 @@ void OutputManager::linC()
 void OutputManager::changeOption(uint16_t option)
 {
     // play folderId of current choice, e.g. "one".
-    m_pMp3->play_specific_file(option);
-    m_pMp3->dont_skip_current_track();
+    m_pMp3Ctrl->play_specific_file(option);
+    m_pMp3Ctrl->dont_skip_current_track();
     if (m_linkMenu.get_state() == LinkMenu::FOLDER_SELECT)
     {
         // play preview of selected folder's contents
         Folder previewFolder = Folder(static_cast<uint8_t>(option), Folder::ONELARGETRACK, 1);
-        m_pMp3->play_folder(&previewFolder);
+        m_pMp3Ctrl->play_folder(&previewFolder);
     }
 }
 
@@ -239,10 +239,10 @@ void OutputManager::updateFolderInformation()
 {
     // update trackCount (might change when folders on SD card are modified content-wise)
     uint8_t ui8SavedTrackCnt = m_currentFolder.get_track_count();
-    uint8_t ui8RealTrackCnt = m_pMp3->get_trackCount_of_folder(m_currentFolder.get_folder_id());
+    uint8_t ui8RealTrackCnt = m_pMp3Ctrl->get_trackCount_of_folder(m_currentFolder.get_folder_id());
     if (ui8RealTrackCnt == 0)
     {
-        m_pMp3->play_specific_file(MSG_ERROR_FOLDER); // folder without tracks on SD card. Error.
+        m_pMp3Ctrl->play_specific_file(MSG_ERROR_FOLDER); // folder without tracks on SD card. Error.
         return;
     }
     if (ui8SavedTrackCnt != ui8RealTrackCnt)

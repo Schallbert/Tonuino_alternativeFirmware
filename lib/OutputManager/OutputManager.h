@@ -14,14 +14,14 @@ class OutputManager
 public:
     OutputManager(Arduino_interface_com *pUsb,
                   PowerManager_interface *pPwrCtrl,
-                  NfcControl *pNfcReader,
+                  NfcControl *pNfcCtrl,
                   Mp3PlayerControl_interface *pMp3,
                   SimpleTimer *pMenuTimer,
                   EEPROM_interface *pEeprom,
                   uint32_t ui32Seed) : m_pUsb(pUsb),
                                        m_pSysPwr(pPwrCtrl),
-                                       m_pNfc(pNfcReader),
-                                       m_pMp3(pMp3),
+                                       m_pNfcCtrl(pNfcCtrl),
+                                       m_pMp3Ctrl(pMp3),
                                        m_pMenuTimer(pMenuTimer),
                                        m_pEeprom(pEeprom),
                                        m_ui32RandomSeed(ui32Seed){};
@@ -47,17 +47,17 @@ private:
     // No action performed
     void none(){};
     // Play/pause
-    void plPs() { m_pMp3->play_pause(); };
+    void plPs() { m_pMp3Ctrl->play_pause(); };
     // next track
-    void next() { m_pMp3->next_track(); };
+    void next() { m_pMp3Ctrl->next_track(); };
     // previous track
-    void prev() { m_pMp3->prev_track(); };
+    void prev() { m_pMp3Ctrl->prev_track(); };
     // increase volume
-    void incV() { m_pMp3->volume_up(); };
+    void incV() { m_pMp3Ctrl->volume_up(); };
     // decrease volume
-    void decV() { m_pMp3->volume_down(); };
+    void decV() { m_pMp3Ctrl->volume_down(); };
     // play help prompt
-    void help() { m_pMp3->play_specific_file(MSG_HELP); };
+    void help() { m_pMp3Ctrl->play_specific_file(MSG_HELP); };
     // delete and unlink NFC card
     void delt(); // delete menu entry
     void delC(); // confirm deletion
@@ -75,8 +75,8 @@ private:
     // members by dependency injection
     Arduino_interface_com *m_pUsb{nullptr};
     PowerManager_interface *m_pSysPwr{nullptr};
-    NfcControl *m_pNfc{nullptr};
-    Mp3PlayerControl_interface *m_pMp3{nullptr};
+    NfcControl *m_pNfcCtrl{nullptr};
+    Mp3PlayerControl_interface *m_pMp3Ctrl{nullptr};
     SimpleTimer *m_pMenuTimer{nullptr};
     EEPROM_interface *m_pEeprom{nullptr};
     uint32_t m_ui32RandomSeed{0};

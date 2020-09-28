@@ -1,4 +1,4 @@
-#include "NfcTag_MifareMini1k4k.h"
+#include "../NfcTag/NfcTag_implementation/NfcTag_MifareMini1k4k.h"
 
 bool NfcTag_MifareMini1k4k::readTag(byte blockAddress, byte *readResult)
 {
