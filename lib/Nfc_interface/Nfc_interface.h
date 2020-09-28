@@ -34,7 +34,5 @@ public:
     // Debug function. Returns notification from NFC reader system.
     virtual const char *getNfcNotification() = 0;
 
-public:
-    static const uint8_t NFCTAG_MEMORY_TO_OCCUPY = 16; //bytes
 };
 #endif // NFC_INTERFACE_H

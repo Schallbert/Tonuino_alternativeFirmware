@@ -3,7 +3,7 @@
 bool NfcTag_MifareUltralight::readTag(byte blockAddress, byte *readResult)
 {
     checkAndRectifyBlockAddress(blockAddress);
-    if (!authenticateTag())
+    if (!m_pMfrc522->tagLogin(m_ui8TrailerBlockMini1k4k)
     {
         return false;
     }
@@ -13,22 +13,21 @@ bool NfcTag_MifareUltralight::readTag(byte blockAddress, byte *readResult)
 
     for (uint8_t i = 0; i < MIFARE_UL_BLOCK_SIZE; ++i)
     {
-        status = m_pMfrc522->MIFARE_Read(blockAddress + 1, buffer, &ui8_bufSize);
+        status = m_pMfrc522->tagRead(blockAddress + 1, buffer, &ui8_bufSize);
         if (status != MFRC522::STATUS_OK)
         {
-            m_eNotification = errorTagRead;
             return false;
         }
         // copy 4byte block from buffer2 to buffer
         memcpy(readResult + (i * MIFARE_UL_BLOCK_SIZE), buffer, MIFARE_UL_BLOCK_SIZE);
     }
-    return status;
+    return true;
 }
 
 bool NfcTag_MifareUltralight::writeTag(byte blockAddress, byte *dataToWrite)
 {
     checkAndRectifyBlockAddress(blockAddress);
-    if (!authenticateTag())
+    if (!m_pMfrc522->tagLogin(m_ui8TrailerBlockMini1k4k)
     {
         return false;
     }
@@ -41,24 +40,11 @@ bool NfcTag_MifareUltralight::writeTag(byte blockAddress, byte *dataToWrite)
         memset(buffer, 0, NFCTAG_MEMORY_TO_OCCUPY);
         // copy 4byte block from data to buffer
         memcpy(buffer, dataToWrite + (i * MIFARE_UL_BLOCK_SIZE), MIFARE_UL_BLOCK_SIZE);
-        status = (MFRC522::StatusCode)m_pMfrc522->MIFARE_Write(blockAddress + i, buffer, ui8_bufSize);
+        status = (MFRC522::StatusCode)m_pMfrc522->tagWrite(blockAddress + i, buffer, ui8_bufSize);
         if (status != MFRC522::STATUS_OK)
         {
-            return status;
+            return false;
         }
-    }
-    return status;
-}
-
-bool NfcTag_MifareUltralight::authenticateTag()
-{
-    MFRC522::StatusCode status;
-    byte pACK[] = {0, 0}; //16 bit PassWord ACK returned by the NFCtag
-    status = m_pMfrc522->PCD_NTAG216_AUTH(m_eKey.keyByte, pACK);
-    if (status != MFRC522::STATUS_OK)
-    {
-        m_eNotification = errorTagAuthenticateFailed;
-        return false;
     }
     return true;
 }

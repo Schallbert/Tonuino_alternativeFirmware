@@ -2,10 +2,10 @@
 
 Nfc_interface::eTagState Nfc::getTagPresence()
 {
-    if (m_pMfrc522->)
+    if (m_pMfrc522->isCardPresent())
     {
         // A card is present!
-        if (!m_pMfrc522.PICC_IsNewCardPresent())
+        if (!m_pMfrc522->isNewCardPresent())
         {
             return ACTIVE_KNOWN_TAG;
         }
@@ -21,7 +21,7 @@ Nfc_interface::eTagState Nfc::getTagPresence()
     return NO_TAG;
 }
 
-const char *Nfc::stringFromNfcNotify(eMFRC522Notify value)
+const char *Nfc::stringFromNfcNotify(eNfcNotify value)
 {
 #if DEBUGSERIAL
     static const char *NOTIFY_STRING[] = {
@@ -30,9 +30,9 @@ const char *Nfc::stringFromNfcNotify(eMFRC522Notify value)
         "Tag offline",
         "Tag write Error",
         "Tag read Error",
+        "Tag type Error: unknown or not implemented",
         "Tag set online failed",
-        "Tag authentication failed",
-        "request out of Memory Range"};
+        "Warning: request out of Memory Range"};
 
     return NOTIFY_STRING[value];
 #endif
@@ -46,40 +46,59 @@ const char *Nfc::getNfcNotification()
 
 void Nfc::initNfc()
 {
-    m_pMfrc522.PCD_Init(); // Init MFRC522
+    m_pMfrc522->init(); // Init MFRC522
 }
 
 bool Nfc::writeTag(byte blockAddr, byte *dataToWrite)
 {
-    NfcTag_interface *pNfcTag = NfcTag_factory::getInstance();
-    return pNfcTag->writeTag(blockAddr, dataToWrite);
+    NfcTag_interface *pNfcTag = NfcTag_factory::getInstance(m_tagType);
+    if(!pNfcTag)
+    {
+        // returned nullptr, not implemented
+        m_eNotification = errorTagTypeNotImplemented;
+    }
+    if(!pNfcTag->writeTag(blockAddr, dataToWrite))
+    {
+        m_eNotification = errorTagWrite;
+        return false;
+    }
+    return true;
 }
 
 bool Nfc::readTag(byte blockAddr, byte *readResult)
 {
-    NfcTag_interface *pNfcTag = NfcTag_factory::getInstance();
-    return pNfcTag->readTag(blockAddr, dataToWrite);
+   NfcTag_interface *pNfcTag = NfcTag_factory::getInstance(m_tagType);
+    if(!pNfcTag)
+    {
+        // returned nullptr, not implemented
+        m_eNotification = errorTagTypeNotImplemented;
+    }
+    if(!pNfcTag->readTag(blockAddr, readResult))
+    {
+        m_eNotification = errorTagRead;
+        return false;
+    }
+    return true;
 }
 
 void Nfc::setCardOffline()
 {
-    m_pMfrc522.PICC_HaltA();
-    m_pMfrc522.PCD_StopCrypto1();
+    m_pMfrc522->tagHalt();
+    m_pMfrc522->tagLogoff();
     m_eNotification = tagOffline;
 }
 
 bool Nfc::setCardOnline()
 {
     // Try reading card
-    if (m_pMfrc522.PICC_ReadCardSerial() != MFRC522::STATUS_OK)
+    if (!m_pMfrc522->isCardPresent())
     {
-        m_eNotification = errorTagSetOnlineFailed;
         setCardOffline();
+        m_eNotification = errorTagSetOnlineFailed;
         return false;
     }
     if (!getTagType())
     {
-        m_eNotification = errorTagAuthenticateFailed;
         return false;
     }
     m_eNotification = tagOnline;
@@ -88,6 +107,11 @@ bool Nfc::setCardOnline()
 
 bool Nfc::getTagType()
 {
-    m_tagType = m_pMfrc522.PICC_GetType(m_pMfrc522.uid.sak);
-    return (m_tagType != MFRC522::PICC_TYPE_UNKNOWN);
+    m_tagType = m_pMfrc522->getTagType();
+    if(m_tagType != MFRC522_interface::PICC_TYPE_UNKNOWN)
+    {
+        return true;
+    }
+    m_eNotification = errorTagRead;
+    return false;
 }

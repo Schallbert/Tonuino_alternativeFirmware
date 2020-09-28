@@ -2,45 +2,30 @@
 
 bool NfcTag_MifareMini1k4k::readTag(byte blockAddress, byte *readResult)
 {
+    bool status{false};
     checkAndRectifyBlockAddress(blockAddress);
-    if (!authenticateTag())
+    if (!m_pMfrc522->tagLogin(m_ui8TrailerBlockMini1k4k))
     {
-        return false;
+        return status;
     }
-    MFRC522::StatusCode status = MFRC522::STATUS_ERROR;
     byte ui8_bufSize = NFCTAG_MEMORY_TO_OCCUPY + 2; // Account for checksum
     byte buffer[ui8_bufSize] = {};
     // NFC read procedure for certain types of Tag/Cards: Block of 18 bytes incl. checksum
-    status = m_pMfrc522->MIFARE_Read(blockAddress, buffer, &ui8_bufSize);
+    status = m_pMfrc522->tagRead(blockAddress, buffer, &ui8_bufSize);
     memcpy(readResult, buffer, NFCTAG_MEMORY_TO_OCCUPY); // ignores checksum bytes
-    return (status == MFRC522::STATUS_OK);
+    return (status);
 }
 
 bool NfcTag_MifareMini1k4k::writeTag(byte blockAddress, byte *dataToWrite)
 {
+    bool status{false};
     checkAndRectifyBlockAddress(blockAddress);
-    if (!authenticateTag())
+    if (!m_pMfrc522->tagLogin(m_ui8TrailerBlockMini1k4k))
     {
-        return false;
+        return status;
     }
-    MFRC522::StatusCode status = m_pMfrc522->MIFARE_Write(blockAddress, dataToWrite, NFCTAG_MEMORY_TO_OCCUPY);
-    return (status == MFRC522::STATUS_OK);
-}
-
-bool NfcTag_MifareMini1k4k::authenticateTag()
-{
-    MFRC522::StatusCode status;
-    status = m_pMfrc522->PCD_Authenticate(
-        MFRC522::PICC_CMD_MF_AUTH_KEY_A,
-        m_ui8TrailerBlockMini1k4k,
-        &m_eKey,
-        &(m_pMfrc522->uid));
-    if (status != MFRC522::STATUS_OK)
-    {
-        m_eNotification = errorTagAuthenticateFailed;
-        return false;
-    }
-    return true;
+    status = m_pMfrc522->tagWrite(blockAddress, dataToWrite, NFCTAG_MEMORY_TO_OCCUPY);
+    return status;
 }
 
 void NfcTag_MifareMini1k4k::checkAndRectifyBlockAddress(byte &blockAddress)

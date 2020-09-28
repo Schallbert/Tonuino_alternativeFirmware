@@ -5,7 +5,7 @@ NfcControl::NfcControl(Nfc_interface *pMfrc522,
                                                             m_pUsb(pUsb)
 {
     m_pMfrc522->initNfc();
-    m_pBuffer = new uint8_t[Nfc_interface::NFCTAG_MEMORY_TO_OCCUPY]();
+    m_pBuffer = new uint8_t[NfcTag_interface::NFCTAG_MEMORY_TO_OCCUPY]();
 }
 
 NfcControl::~NfcControl()
