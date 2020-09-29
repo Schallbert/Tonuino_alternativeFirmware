@@ -3,6 +3,8 @@
 
 #include "Arduino_DIcontainer_interface.h"
 #include "PowerManager_interface.h"
+#include "NfcControl.h"
+#include "UserInput_interface.h"
 #include "Mp3PlayerControl_interface.h"
 
 #include "../Utilities/LinkMenu.h"
@@ -24,7 +26,7 @@ public:
 
 public:
     // Sets input states from card and buttons, and determines internal state.
-    void setInputStates(Nfc_interface::eTagState cardState, UserInput::UserRequest_e userInput);
+    void setInputStates(Nfc_interface::eTagState tagState, UserInput::UserRequest_e userInput);
     // Runs desicion table that calls functions depending on user input
     void runDispatcher();
 
@@ -79,7 +81,7 @@ private:
     Folder m_currentFolder{};
     LinkMenu m_linkMenu{};
     DeleteMenu m_deleteMenu{};
-    Nfc_interface::eTagState m_eCardState{Nfc_interface::NO_TAG};
+    Nfc_interface::eTagState m_eTagState{Nfc_interface::NO_TAG};
     UserInput::UserRequest_e m_eUserInput{UserInput::NO_ACTION};
 };
 

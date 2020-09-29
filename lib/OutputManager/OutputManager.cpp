@@ -1,9 +1,9 @@
 #include "OutputManager.h"
 
-void OutputManager::setInputStates(Nfc_interface::eTagState cardState, UserInput::UserRequest_e userInput)
+void OutputManager::setInputStates(Nfc_interface::eTagState tagState, UserInput::UserRequest_e userInput)
 {
     // set_state to input values, modify if currently in menu
-    m_eCardState = cardState;
+    m_eTagState = tagState;
     m_eUserInput = userInput;
 
     m_pSysPwr->set_playback(m_pMp3Ctrl->is_playing());
@@ -26,7 +26,7 @@ void OutputManager::runDispatcher()
     // dispatch table contains function pointers
     // cardStates = ROWS, userInput = COLUMNS
     typedef OutputManager OM;
-    static const dispatcher dispatchTable[InputManager::NUMBER_OF_TAG_STATES]
+    static const dispatcher dispatchTable[Nfc_interface::NUMBER_OF_TAG_STATES]
                                          [UserInput::NUMBER_OF_REQUESTS - 1] =
                                              {
                                                  //NOAC,     PL_PS,     PP_LP,     NEXT_,     PREV_,     INC_V,     DEC_V,
@@ -36,7 +36,7 @@ void OutputManager::runDispatcher()
                                                  {&OM::none, &OM::linC, &OM::abrt, &OM::linN, &OM::linP, &OM::none, &OM::none}, // NEW_UNKNOWN_TAG,
                                                  {&OM::none, &OM::delC, &OM::abrt, &OM::none, &OM::none, &OM::none, &OM::none}, // DELETE_TAG_MENU,
                                              };
-    dispatcher dispatchExecutor = dispatchTable[m_eCardState][m_eUserInput];
+    dispatcher dispatchExecutor = dispatchTable[m_eTagState][m_eUserInput];
     (this->*dispatchExecutor)();
 }
 
@@ -44,8 +44,8 @@ void OutputManager::handleInputErrors()
 {
     bool bError = false;
     // Check for index out of bounds
-    if ((InputManager::NO_TAG > m_eCardState) ||
-        (m_eCardState >= InputManager::NUMBER_OF_TAG_STATES))
+    if ((Nfc_interface::NO_TAG > m_eTagState) ||
+        (m_eTagState >= Nfc_interface::NUMBER_OF_TAG_STATES))
     {
         bError = true;
 #ifdef DEBUGSERIAL
@@ -73,7 +73,7 @@ void OutputManager::handleInputErrors()
         m_pMp3Ctrl->play_specific_file(MSG_ERROR);
         m_pMp3Ctrl->dont_skip_current_track();
         m_eUserInput = UserInput::NO_ACTION;
-        m_eCardState = InputManager::NO_TAG;
+        m_eTagState = Nfc_interface::NO_TAG;
     }
 }
 
@@ -81,7 +81,7 @@ void OutputManager::handleDeleteMenu()
 {
     // order of these two condition statements is CRITICAL!
     if ((m_deleteMenu.is_state(DeleteMenu::DELETE_MENU)) &&
-        (m_eCardState == InputManager::NEW_KNOWN_TAG))
+        (m_eTagState == Nfc_interface::NEW_KNOWN_TAG))
     {
         m_deleteMenu.set_ready();
     }
@@ -89,14 +89,14 @@ void OutputManager::handleDeleteMenu()
     // lock state in menu, waiting for card to be placed that shall be deleted
     if (!m_deleteMenu.is_state(DeleteMenu::NO_MENU))
     {
-        m_eCardState = InputManager::DELETE_TAG_MENU; // delete menu entered
+        m_eTagState = Nfc_interface::DELETE_TAG_MENU; // delete menu entered
         m_pSysPwr->set_delMenu();
     }
 }
 
 void OutputManager::handleLinkMenu()
 {
-    if (m_eCardState == InputManager::NEW_UNKNOWN_TAG)
+    if (m_eTagState == Nfc_interface::NEW_UNKNOWN_TAG)
     {
         if (m_linkMenu.get_state() == LinkMenu::NO_MENU)
         {
@@ -105,17 +105,17 @@ void OutputManager::handleLinkMenu()
     }
     else if (!m_linkMenu.get_state() == LinkMenu::NO_MENU)
     {
-        m_eCardState = InputManager::NEW_UNKNOWN_TAG; // keeps in link menu
+        m_eTagState = Nfc_interface::NEW_UNKNOWN_TAG; // keeps in link menu
         m_pSysPwr->set_linkMenu();
     }
 }
 
 void OutputManager::read()
 {
-    if (m_pNfc->read_folder_from_card(m_currentFolder))
+    if (m_pNfcCtrl->read_folder_from_card(m_currentFolder))
     {
         updateFolderInformation();
-        m_currentFolder.setup_dependencies(m_pEeprom, m_ui32RandomSeed); // TODO: SOLVE maybe on top level?
+        m_currentFolder.setup_dependencies(m_pArduinoHal); // TODO: SOLVE maybe on top level?
 
         m_pMp3Ctrl->play_folder(&m_currentFolder);
     }
@@ -123,7 +123,7 @@ void OutputManager::read()
     {
         m_pMp3Ctrl->play_specific_file(MSG_ERROR_CARDREAD);
         m_pMp3Ctrl->dont_skip_current_track();
-        m_eCardState = InputManager::NO_TAG;
+        m_eTagState = Nfc_interface::NO_TAG;
     }
 }
 
@@ -142,7 +142,7 @@ void OutputManager::delC()
         m_pMenuTimer->stop();
         m_pMp3Ctrl->play_specific_file(MSG_CONFIRMED);
         m_pMp3Ctrl->dont_skip_current_track();
-        if (!m_pNfc->erase_card())
+        if (!m_pNfcCtrl->erase_card())
         {
             m_pMp3Ctrl->play_specific_file(MSG_ERROR_CARDREAD);
             m_pMp3Ctrl->dont_skip_current_track();
@@ -201,7 +201,7 @@ void OutputManager::linC()
         {
             m_pMp3Ctrl->play_specific_file(MSG_TAGCONFSUCCESS);
             m_pMp3Ctrl->dont_skip_current_track();
-            if (m_pNfc->write_folder_to_card(m_currentFolder))
+            if (m_pNfcCtrl->write_folder_to_card(m_currentFolder))
             {
                 read();
             }
@@ -250,6 +250,6 @@ void OutputManager::updateFolderInformation()
         m_currentFolder = Folder(m_currentFolder.get_folder_id(),
                                  m_currentFolder.get_play_mode(),
                                  ui8RealTrackCnt);
-        m_pNfc->write_folder_to_card(m_currentFolder); // update folder information on card
+        m_pNfcCtrl->write_folder_to_card(m_currentFolder); // update folder information on card
     }
 }
