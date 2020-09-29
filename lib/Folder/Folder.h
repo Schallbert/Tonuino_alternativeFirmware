@@ -68,11 +68,11 @@ private:
     bool is_trackQueue_set();
 
 private:
-    Arduino_DIcontainer_interface* m_pArduinoHal{nullptr};
     uint8_t m_ui8FolderId{0};
     ePlayMode m_ePlayMode{Folder::UNDEFINED};
     uint8_t m_ui8TrackCount{0};
     uint8_t *m_pTrackQueue{nullptr};
+    Arduino_DIcontainer_interface* m_pArduinoHal{nullptr};
     uint8_t m_ui8CurrentQueueEntry{0};
 };
 

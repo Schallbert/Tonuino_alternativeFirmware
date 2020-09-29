@@ -109,8 +109,8 @@ private:
     // Solution for constructor error found here: https://stackoverflow.com/questions/35762196/expected-a-type-specifier-error-when-creating-an-object-of-a-class-inside-anot
     //SoftwareSerial m_Mp3SwSerial{SoftwareSerial(DFMINI_RX, DFMINI_TX)}; // Does not work with m_Mp3SwSerial(DFMINI_RX, DFMINI_TX) because compiler interprets this as a class method call
     //DFMiniMp3<SoftwareSerial, Mp3Notify> m_dfMiniMp3{DFMiniMp3<SoftwareSerial, Mp3Notify>(m_Mp3SwSerial)};
-    DfMiniMp3_interface *m_pDfMiniMp3{nullptr};
     Arduino_DIcontainer_interface * m_pArduinoHal{nullptr};
+    DfMiniMp3_interface *m_pDfMiniMp3{nullptr};
     SimpleTimer *m_pLullabyeTimer{nullptr};
     SimpleTimer *m_pDfMiniMsgTimeout{nullptr};
     Folder *m_pCurrentFolder{nullptr};

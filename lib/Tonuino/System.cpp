@@ -3,13 +3,13 @@
 System::System()
 {
     // Set dependency objects ------------------------------
-    
+
     // Controller Hardware Abstraction
     m_pArduinoHal = new Arduino_DIcontainer();
     // First, secure power supply
     m_pIdleTimer = new SimpleTimer();
     m_pPwrCtrl = new PowerManager(m_pIdleTimer);
-    
+
     // Timers
     m_pMenuTimer = new SimpleTimer();
     m_pLullabyeTimer = new SimpleTimer();
@@ -23,9 +23,9 @@ System::System()
 
     // Notify System up
 #if DEBUGSERIAL
-
-    m_pUsbSerial->com_begin(DEBUGSERIAL_BAUDRATE); // Some debug output via serial
-    m_pUsbSerial->com_println("Booted, now initializing");
+    Arduino_interface_com *pSerial = m_pArduinoHal->getSerial();
+    pSerial->com_begin(DEBUGSERIAL_BAUDRATE); // Some debug output via serial
+    pSerial->com_println("Booted, now initializing");
 #endif
 
     // Initialize objects if needed ------------------------
@@ -35,7 +35,7 @@ System::System()
     m_pUserInput->init();
 
 #if DEBUGSERIAL
-    m_pUsbSerial->com_println("Complete.");
+    pSerial->com_println("Complete.");
 #endif
 }
 
@@ -43,7 +43,7 @@ System::~System()
 {
 
 #if DEBUGSERIAL
-    m_pUsbSerial->com_println("Shutting down...");
+    m_pArduinoHal->getSerial()->com_println("Shutting down...");
 #endif
 
     // delete dependency objects
@@ -56,7 +56,7 @@ System::~System()
     delete m_pLullabyeTimer;
     delete m_pIdleTimer;
     delete m_pDfMiniMsgTimeout;
-    
+
     m_pUserInput = nullptr;
 
     // finally shut down system
@@ -68,7 +68,7 @@ System::~System()
 
 bool System::loop()
 {
-    m_outputManager.setInputStates(m_pNfcCtrl.get_tag_presence(), m_pUserInput->get_user_request());
+    m_outputManager.setInputStates(m_pNfcCtrl->get_tag_presence(), m_pUserInput->get_user_request());
     m_outputManager.runDispatcher();
 #if DEBUGSERIAL
     m_pMp3Ctrl->print_debug_message();
