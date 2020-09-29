@@ -1,7 +1,5 @@
 #include "NfcControl.h"
 
-
-
 NfcControl::NfcControl(Nfc_interface *pNfc,
                              Arduino_interface_com *pUsb) : m_pNfc(pNfc),
                                                             m_pUsb(pUsb)
@@ -129,8 +127,7 @@ const char *NfcControl::stringFromNfcTagNotify(Nfc_interface::eTagState value)
         "",
         "Tag: new, known",
         "Tag: new, unknown",
-        "",
-        "Error: request out of Range"};
+        ""};
 
     return NOTIFY_STRING[value];
 #endif

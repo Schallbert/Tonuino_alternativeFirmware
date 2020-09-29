@@ -30,6 +30,7 @@ void setup()
 // - Solve build warnings (clickEncoder) DONE
 // - refactor MFRC522_implementation for testability. BIG TASK
 // - test with DEBUGSERIAL on DONE
+// - code smell: Delete menu in NfcTag enum?!
 // - Unit tests for UserInput (?), StatusLed (?), and MFRC522_implementation
 // - solve naming differences (underscores) of HAL with namespaces!
 // - Integration testing on device

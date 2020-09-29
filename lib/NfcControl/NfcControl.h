@@ -42,7 +42,7 @@ private:
     // Returns true if the current card is known to the system
     // if it has the "magic cookie" equal to system's
     bool is_known_card();
-    // string interpretation of this class's Tag State
+    // string interpretation of this class's Tag State (defined in Nfc_interface.h)
     static inline const char *stringFromNfcTagNotify(Nfc_interface::eTagState value);
 
 public:
