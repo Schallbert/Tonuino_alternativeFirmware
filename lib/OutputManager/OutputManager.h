@@ -3,7 +3,6 @@
 
 #include "PowerManager_interface.h"
 #include "Mp3PlayerControl_interface.h"
-#include "InputManager.h" // Use Enums
 
 #include "../Utilities/LinkMenu.h"
 #include "../Utilities/DeleteMenu.h"

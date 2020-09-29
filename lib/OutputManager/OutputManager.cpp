@@ -1,6 +1,6 @@
 #include "OutputManager.h"
 
-void OutputManager::setInputStates(InputManager::eTagState cardState, UserInput::UserRequest_e userInput)
+void OutputManager::setInputStates(Nfc_interface::eTagState cardState, UserInput::UserRequest_e userInput)
 {
     // set_state to input values, modify if currently in menu
     m_eCardState = cardState;

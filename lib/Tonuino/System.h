@@ -65,15 +65,11 @@ private:
     UserInput *m_pUserInput{nullptr};
 
     // Work member objects -----------------------
-    InputManager m_inputManager{InputManager(m_pPinControl,
-                                             m_pUsbSerial,
-                                             m_pUserInput)};
     OutputManager m_outputManager{OutputManager(m_pUsbSerial,
                                                 m_pPwrCtrl,
                                                 m_pNfcCtrl,
                                                 m_pMp3Ctrl,
                                                 m_pMenuTimer,
-                                                m_pEeprom,
-                                                m_inputManager.getRandomSeed())};
+                                                m_pEeprom)};
 };
 #endif // SYSTEM_H

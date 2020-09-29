@@ -71,14 +71,11 @@ System::~System()
 
 bool System::loop()
 {
-    // TODO: CLEANUP INPUTMANAGER
-    InputManager::eTagState cardState = m_inputManager.getCardState();
-    UserInput::UserRequest_e userEvent = m_inputManager.getUserInput();
-    m_outputManager.setInputStates(cardState, userEvent);
+    m_outputManager.setInputStates(m_pNfcCtrl.get_tag_presence(), m_pUserInput->get_user_request());
     m_outputManager.runDispatcher();
 #if DEBUGSERIAL
     m_pMp3Ctrl->print_debug_message();
-    m_pNfc->print_debug_message();
+    m_pNfcCtrl->print_debug_message();
 #endif
 
     return (!m_pPwrCtrl->get_shutdown_request());

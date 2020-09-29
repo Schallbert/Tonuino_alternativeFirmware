@@ -77,9 +77,40 @@ public:
     {
         Serial.print(i);
     }
-    void com_println(const char* str) override
+    void com_println(const char *str) override
     {
         Serial.println(str);
+    }
+};
+
+class Arduino_random : public Arduino_interface_random
+{
+   
+
+public:
+    uint8_t random_generateUi8()
+    { 
+        return random(0xFF);
+    }
+
+     private:
+    void random_generateSeed(byte floatingAnalogPin_Id)
+    {
+        if (floatingAnalogPin_Id == 0)
+        {
+            randomSeed(1);
+        }
+        else
+        {
+            uint32_t ADC_LSB;
+        uint32_t ADCSeed;
+        for (uint8_t i = 0; i < 128; i++)
+        {
+            ADC_LSB = analogRead(floatingAnalogPin_Id) & 0x1;
+            ADCSeed ^= ADC_LSB << (i % 32);
+        }
+        randomSeed(ADCSeed); // Init Arduino random generator
+        }      
     }
 };
 

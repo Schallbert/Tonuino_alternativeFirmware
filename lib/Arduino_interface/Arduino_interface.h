@@ -43,4 +43,20 @@ public:
     virtual void com_print(uint8_t i) = 0;
     virtual void com_println(const char *str) = 0;
 };
+
+class Arduino_interface_random
+{
+    public:
+    virtual ~Arduino_interface_random(){};
+
+    public:
+    // generates a seed for the random generator to use.
+    // utilizes floating analog pin for noise input.
+    // If input is 0, seed will use a constant and the generator
+    // will always output the exact same sequence if asked.
+    virtual void random_generateSeed(byte floatingAnalogPin_Id) = 0;
+    // returns a pseudo random value between 0 and 255. 
+    // Don't forget to call generateSeed first.
+    virtual uint8_t random_generateUi8() = 0;
+};
 #endif //ARDUINO_INTERFACE_H
