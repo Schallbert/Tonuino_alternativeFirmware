@@ -49,7 +49,7 @@ void OutputManager::handleInputErrors()
     {
         bError = true;
 #ifdef DEBUGSERIAL
-        m_pUsb->com_println("runDispatcher(): cardState out of range!");
+        m_pArduinoHal->getSerial()->com_println("runDispatcher(): cardState out of range!");
 #endif
     }
     else if ((UserInput::NO_ACTION > m_eUserInput) ||
@@ -57,14 +57,14 @@ void OutputManager::handleInputErrors()
     {
         bError = true;
 #ifdef DEBUGSERIAL
-        m_pUsb->com_println("runDispatcher(): userInput out of range!");
+        m_pArduinoHal->getSerial()->com_println("runDispatcher(): userInput out of range!");
 #endif
     }
     else if (m_eUserInput == UserInput::ERROR)
     {
         bError = true;
 #ifdef DEBUGSERIAL
-        m_pUsb->com_println("runDispatcher(): userInput internal error!");
+        m_pArduinoHal->getSerial()->com_println("runDispatcher(): userInput internal error!");
 #endif
     }
 

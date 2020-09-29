@@ -1,7 +1,8 @@
 #ifndef FOLDER_H
 #define FOLDER_H
 
-#include <EEPROM_interface.h>
+#include "Arduino_config.h"
+#include "Arduino_DIcontainer_interface.h"
 
 class Folder
 {
@@ -46,7 +47,7 @@ public:
     // Returns track count of folder [number], yielded from MP3 player request
     uint8_t get_track_count();
     // Tries to initiate the track queue by using injected dependencies depending on play mode
-    void setup_dependencies(EEPROM_interface *pEeprom, uint32_t ui32RndmSeed); // Dependency injection: Random seed & eeprom
+    void setup_dependencies(Arduino_DIcontainer_interface *pArduinoHal); // Dependency injection: Random seed & eeprom
     // Returns true if the folder can be fully setup and is ready to be used in other modules
     bool is_valid();
     // Returns true if folder is setup with relevant data (id, track count, playmode)
@@ -67,12 +68,11 @@ private:
     bool is_trackQueue_set();
 
 private:
+    Arduino_DIcontainer_interface* m_pArduinoHal{nullptr};
     uint8_t m_ui8FolderId{0};
     ePlayMode m_ePlayMode{Folder::UNDEFINED};
     uint8_t m_ui8TrackCount{0};
     uint8_t *m_pTrackQueue{nullptr};
-    EEPROM_interface *m_pEeprom{nullptr}; // external dependency
-    uint32_t m_ui32RndmSeed{0};
     uint8_t m_ui8CurrentQueueEntry{0};
 };
 

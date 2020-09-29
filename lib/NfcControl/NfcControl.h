@@ -49,7 +49,7 @@ public:
     static const uint32_t cui32MagicCookie{0x1337b437}; // Magic Id to tag all cards
 private:
     Nfc_interface *m_pNfc{nullptr};                  // NfcReader object to interact with
-    Arduino_interface_com *m_pUsb{nullptr};          // USB_COM serial debug interface
+    Arduino_interface_com *m_pSerial{nullptr};          // USB_COM serial debug interface
     uint32_t m_ui32CardCookie{0};                    //Cookie read from card to compare against magic ID
     static const uint8_t blockAddressToReadWrite{4}; // sector 1 block 0 for Mini1k4k, page 4-7 for UltraLight
     uint8_t *m_pBuffer{nullptr};                     // Buffer to read/write from/to tag reader

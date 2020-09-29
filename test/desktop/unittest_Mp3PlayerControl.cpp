@@ -20,10 +20,10 @@ protected:
     {
         m_pDfMini = new NiceMock<Mock_DfMiniMp3>;
         m_pPinCtrl = new NiceMock<Mock_pinCtrl>;
-        m_pUsb = new NiceMock<Mock_com>;
+        m_pSerial = new NiceMock<Mock_com>;
         m_pLullabyeTimer = new SimpleTimer{};
         m_pDfMiniMsgTimeout = new SimpleTimer{};
-        m_pMp3PlrCtrl = new Mp3PlayerControl(m_pDfMini, m_pPinCtrl, m_pUsb, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
+        m_pMp3PlrCtrl = new Mp3PlayerControl(m_pDfMini, m_pPinCtrl, m_pSerial, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
     }
 
     virtual void TearDown()
@@ -32,7 +32,7 @@ protected:
 
         delete m_pDfMini;
         delete m_pPinCtrl;
-        delete m_pUsb;
+        delete m_pSerial;
         delete m_pLullabyeTimer;
         delete m_pDfMiniMsgTimeout;
     }
@@ -40,7 +40,7 @@ protected:
 protected:
     NiceMock<Mock_DfMiniMp3> *m_pDfMini;
     NiceMock<Mock_pinCtrl> *m_pPinCtrl;
-    NiceMock<Mock_com> *m_pUsb;
+    NiceMock<Mock_com> *m_pSerial;
     SimpleTimer *m_pLullabyeTimer{nullptr};
     SimpleTimer *m_pDfMiniMsgTimeout{nullptr};
 
@@ -52,25 +52,25 @@ class DebugOutput : public PlayerCtrl{};
 #if DEBUGSERIAL
 TEST_F(DebugOutput, messageHeadersCorrect)
 {
-    EXPECT_CALL(*m_pUsb, com_println(_)).Times(2); // message content
-    EXPECT_CALL(*m_pUsb, com_println("PLAYER CONTROL DEBUG:"));
-    EXPECT_CALL(*m_pUsb, com_println("MP3 DEBUG: DfMiniMp3"));
+    EXPECT_CALL(*m_pSerial, com_println(_)).Times(2); // message content
+    EXPECT_CALL(*m_pSerial, com_println("PLAYER CONTROL DEBUG:"));
+    EXPECT_CALL(*m_pSerial, com_println("MP3 DEBUG: DfMiniMp3"));
 
     m_pMp3PlrCtrl->print_debug_message();
 }
 
 TEST_F(DebugOutput, noAction_printsNoMessage)
 {
-    EXPECT_CALL(*m_pUsb, com_println(_)).Times(3); // message content
-    EXPECT_CALL(*m_pUsb, com_println("No Message"));
+    EXPECT_CALL(*m_pSerial, com_println(_)).Times(3); // message content
+    EXPECT_CALL(*m_pSerial, com_println("No Message"));
 
     m_pMp3PlrCtrl->print_debug_message();
 }
 
 TEST_F(DebugOutput, volumeUp_printsVolUp)
 {
-    EXPECT_CALL(*m_pUsb, com_println(_)).Times(3); // message content
-    EXPECT_CALL(*m_pUsb, com_println("volume up"));
+    EXPECT_CALL(*m_pSerial, com_println(_)).Times(3); // message content
+    EXPECT_CALL(*m_pSerial, com_println("volume up"));
 
     m_pMp3PlrCtrl->volume_up();
     m_pMp3PlrCtrl->print_debug_message();
@@ -78,8 +78,8 @@ TEST_F(DebugOutput, volumeUp_printsVolUp)
 
 TEST_F(DebugOutput, volumeDown_printsVolDown)
 {
-    EXPECT_CALL(*m_pUsb, com_println(_)).Times(3); // message content
-    EXPECT_CALL(*m_pUsb, com_println("volume down"));
+    EXPECT_CALL(*m_pSerial, com_println(_)).Times(3); // message content
+    EXPECT_CALL(*m_pSerial, com_println("volume down"));
 
     m_pMp3PlrCtrl->volume_down();
     m_pMp3PlrCtrl->print_debug_message();
@@ -88,8 +88,8 @@ TEST_F(DebugOutput, volumeDown_printsVolDown)
 TEST_F(DebugOutput, play_printsPlay)
 {
     Folder testFolder(1, Folder::ALBUM, 8);
-    EXPECT_CALL(*m_pUsb, com_println(_)).Times(3); // message content
-    EXPECT_CALL(*m_pUsb, com_println("play folder"));
+    EXPECT_CALL(*m_pSerial, com_println(_)).Times(3); // message content
+    EXPECT_CALL(*m_pSerial, com_println("play folder"));
 
     m_pMp3PlrCtrl->play_folder(&testFolder);
     m_pMp3PlrCtrl->print_debug_message();
@@ -101,7 +101,7 @@ TEST_F(PlayerCtrl, ClassConstructorMethodsCalled)
     EXPECT_CALL(*m_pDfMini, begin());
     EXPECT_CALL(*m_pDfMini, setEq(DFMINI_EQ_SETTING));
     EXPECT_CALL(*m_pDfMini, setVolume(VOLUME_INIT));
-    Mp3PlayerControl myMp3(m_pDfMini, m_pPinCtrl, m_pUsb, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
+    Mp3PlayerControl myMp3(m_pDfMini, m_pPinCtrl, m_pSerial, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
 }
 
 TEST_F(PlayerCtrl, AutoPlayCalledOnLoop)

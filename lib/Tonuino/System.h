@@ -62,11 +62,10 @@ private:
     UserInput *m_pUserInput{nullptr};
 
     // Work member objects -----------------------
-    OutputManager m_outputManager{OutputManager(m_pUsbSerial,
+    OutputManager m_outputManager{OutputManager(m_pArduinoHal,
                                                 m_pPwrCtrl,
                                                 m_pNfcCtrl,
                                                 m_pMp3Ctrl,
-                                                m_pMenuTimer,
-                                                m_pEeprom)};
+                                                m_pMenuTimer)};
 };
 #endif // SYSTEM_H

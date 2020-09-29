@@ -1,7 +1,7 @@
 #ifndef MP3PLAYERCONTROL_H
 #define MP3PLAYERCONTROL_H
 
-#include "Arduino_interface.h"
+#include "Arduino_DIcontainer_interface.h"
 
 #include "../Mp3PlayerControl_interface/Mp3PlayerControl_interface.h"
 #include "DFMiniMp3_interface.h"
@@ -17,9 +17,8 @@
 class Mp3PlayerControl : public Mp3PlayerControl_interface
 {
 public:
-    Mp3PlayerControl(DfMiniMp3_interface *pPlayer,
-                     Arduino_interface_pins *pPinCtrl,
-                     Arduino_interface_com *pUsb,
+    Mp3PlayerControl(Arduino_DIcontainer_interface *pArduinoHal,
+                     DfMiniMp3_interface *pPlayer,
                      SimpleTimer *pLullabyeTimer,
                      SimpleTimer *pDfMiniMsgTimeout);
 
@@ -50,10 +49,11 @@ public:
     // Prints message from player periphery or player controller to Serial.
     void print_debug_message()
     {
-        m_pUsb->com_println("PLAYER CONTROL DEBUG:");
-        m_pUsb->com_println(stringFromPlayerCtrlNotify(m_debugMessage));
-        m_pUsb->com_println("MP3 DEBUG: DfMiniMp3");
-        m_pUsb->com_println(m_pDfMiniMp3->getPlayerNotification());
+        Arduino_interface_com *m_pSerial = m_pArduinoHal->getSerial();
+        m_pSerial->com_println("PLAYER CONTROL DEBUG:");
+        m_pSerial->com_println(stringFromPlayerCtrlNotify(m_debugMessage));
+        m_pSerial->com_println("MP3 DEBUG: DfMiniMp3");
+        m_pSerial->com_println(m_pDfMiniMp3->getPlayerNotification());
     };
 #endif
 
@@ -110,8 +110,7 @@ private:
     //SoftwareSerial m_Mp3SwSerial{SoftwareSerial(DFMINI_RX, DFMINI_TX)}; // Does not work with m_Mp3SwSerial(DFMINI_RX, DFMINI_TX) because compiler interprets this as a class method call
     //DFMiniMp3<SoftwareSerial, Mp3Notify> m_dfMiniMp3{DFMiniMp3<SoftwareSerial, Mp3Notify>(m_Mp3SwSerial)};
     DfMiniMp3_interface *m_pDfMiniMp3{nullptr};
-    Arduino_interface_pins *m_pPinCtrl{nullptr};
-    Arduino_interface_com *m_pUsb{nullptr};
+    Arduino_DIcontainer_interface * m_pArduinoHal{nullptr};
     SimpleTimer *m_pLullabyeTimer{nullptr};
     SimpleTimer *m_pDfMiniMsgTimeout{nullptr};
     Folder *m_pCurrentFolder{nullptr};

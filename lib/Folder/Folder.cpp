@@ -7,12 +7,12 @@ Folder::Folder(uint8_t ui8FolderId,
                                         m_ePlayMode(ePlayMode),
                                         m_ui8TrackCount(ui8TrackCount) {}
 // Copy Constructor
+
 Folder::Folder(const Folder &cpySrcFolder) : m_ui8FolderId(cpySrcFolder.m_ui8FolderId),
                                              m_ePlayMode(cpySrcFolder.m_ePlayMode),
                                              m_ui8TrackCount(cpySrcFolder.m_ui8TrackCount),
                                              m_pTrackQueue(new uint8_t[cpySrcFolder.m_ui8TrackCount + 1]()),
-                                             m_pEeprom(cpySrcFolder.m_pEeprom),
-                                             m_ui32RndmSeed(cpySrcFolder.m_ui32RndmSeed)
+                                             m_pArduinoHal(cpySrcFolder.m_pArduinoHal)
 {
     if (deep_copy_queue(cpySrcFolder.m_pTrackQueue))
     {
@@ -30,8 +30,7 @@ Folder &Folder::operator=(const Folder &cpySrcFolder)
     m_ePlayMode = cpySrcFolder.m_ePlayMode;
     m_ui8TrackCount = cpySrcFolder.m_ui8TrackCount;
     m_pTrackQueue = new uint8_t[cpySrcFolder.m_ui8TrackCount + 1]();
-    m_pEeprom = cpySrcFolder.m_pEeprom;
-    m_ui32RndmSeed = cpySrcFolder.m_ui32RndmSeed;
+    m_pArduinoHal = cpySrcFolder.m_pArduinoHal;
     if (deep_copy_queue(cpySrcFolder.m_pTrackQueue))
     {
         m_ui8CurrentQueueEntry = cpySrcFolder.m_ui8CurrentQueueEntry;
@@ -90,11 +89,11 @@ bool Folder::is_dependency_set()
     // Dependencies only strictly necessary for certain playmodes
     if (m_ePlayMode == Folder::SAVEPROGRESS)
     {
-        return (m_pEeprom != nullptr);
+        return (m_pArduinoHal != nullptr);
     }
     else if (m_ePlayMode == Folder::RANDOM)
     {
-        return (m_ui32RndmSeed > 0);
+        return (m_pArduinoHal != nullptr);
     }
     else
         return true; // no dependencies needed
@@ -121,10 +120,10 @@ uint8_t Folder::get_current_track()
     }
 }
 
-void Folder::setup_dependencies(EEPROM_interface *pEeprom, uint32_t ui32RndmSeed)
+void Folder::setup_dependencies(Arduino_DIcontainer_interface *pArduinoHal)
 {
-    m_pEeprom = pEeprom;
-    m_ui32RndmSeed = ui32RndmSeed;
+    m_pArduinoHal = pArduinoHal;
+    m_pArduinoHal->getRandom()->random_generateSeed(PINANALOG_RNDMGEN);
     is_valid(); // Call to setup play queue in case dependencies are correctly linked
 }
 
@@ -144,7 +143,7 @@ uint8_t Folder::get_next_track()
     }
     if (m_ePlayMode == ePlayMode::SAVEPROGRESS)
     {
-        m_pEeprom->write(m_ui8FolderId, m_pTrackQueue[m_ui8CurrentQueueEntry]);
+        m_pArduinoHal->getEeprom()->write(m_ui8FolderId, m_pTrackQueue[m_ui8CurrentQueueEntry]);
     }
     return m_pTrackQueue[m_ui8CurrentQueueEntry];
 }
@@ -166,7 +165,7 @@ uint8_t Folder::get_prev_track()
     }
     if (m_ePlayMode == ePlayMode::SAVEPROGRESS)
     {
-        m_pEeprom->write(m_ui8FolderId, m_pTrackQueue[m_ui8CurrentQueueEntry]);
+        m_pArduinoHal->getEeprom()->write(m_ui8FolderId, m_pTrackQueue[m_ui8CurrentQueueEntry]);
     }
     return m_pTrackQueue[m_ui8CurrentQueueEntry];
 }
@@ -196,12 +195,12 @@ void Folder::setup_track_queue()
     }
     case ePlayMode::SAVEPROGRESS:
         init_sorted_queue();
-        m_ui8CurrentQueueEntry = m_pEeprom->read(m_ui8FolderId);
+        m_ui8CurrentQueueEntry = m_pArduinoHal->getEeprom()->read(m_ui8FolderId);
         if (m_ui8CurrentQueueEntry > m_ui8TrackCount || m_ui8CurrentQueueEntry == 0)
         {
-            // m_pEeprom has never been written, contains some unknown value
+            //  m_pArduinoHal->getEeprom() has never been written, contains some unknown value
             m_ui8CurrentQueueEntry = 1; // set to first track
-            m_pEeprom->write(m_ui8FolderId, m_ui8CurrentQueueEntry);
+            m_pArduinoHal->getEeprom()->write(m_ui8FolderId, m_ui8CurrentQueueEntry);
         }
         break;
 
@@ -232,17 +231,16 @@ void Folder::shuffle_queue()
     uint8_t i = 1; // start at queue[1], queue[0] is always 0!
     uint8_t j = 1;
     uint8_t rnd = 0;
-    uint32_t lfsr = m_ui32RndmSeed | 0x01; //Avoid seed being 0, in this case generator will lock up
+    Arduino_interface_random *pRnd = m_pArduinoHal->getRandom();
     bool alreadyInQueue = false;
     // Fill queue with non-repeating, random contents.
     while (i <= m_ui8TrackCount)
     {
-        // Calculate pseudo random number based on a XOR'ed shift register
+        // Calculate pseudo random number
         // Number between 1 and m_ui8TrackCount is acceptable
         while (true)
         {
-            lfsr = (lfsr >> 1) ^ ((lfsr & 1) ? 0xd0000001u : 0); /* taps 32 31 29 1 */
-            rnd = (uint8_t)(lfsr & 0xFF);
+            rnd = pRnd->random_generateUi8();
             if ((rnd > 0) && (rnd <= m_ui8TrackCount))
             {
                 break;
@@ -254,8 +252,7 @@ void Folder::shuffle_queue()
         {
             if (m_pTrackQueue[j] == rnd)
             {
-                // Random number already used
-                alreadyInQueue = true;
+                alreadyInQueue = true; // Random number already used
                 break;
             }
             ++j;

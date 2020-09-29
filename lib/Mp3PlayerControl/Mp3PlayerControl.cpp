@@ -1,18 +1,16 @@
 #include "Mp3PlayerControl.h"
 
-Mp3PlayerControl::Mp3PlayerControl(DfMiniMp3_interface *pPlayer,
-                                   Arduino_interface_pins *pPinCtrl,
-                                   Arduino_interface_com *pUsb,
+Mp3PlayerControl::Mp3PlayerControl(Arduino_DIcontainer_interface *pArduinoHal,
+                                   DfMiniMp3_interface *pPlayer,
                                    SimpleTimer *pLullabyeTimer,
-                                   SimpleTimer *pDfMiniMsgTimeout) : m_pDfMiniMp3(pPlayer),
-                                                                     m_pPinCtrl(pPinCtrl),
-                                                                     m_pUsb(pUsb),
+                                   SimpleTimer *pDfMiniMsgTimeout) : m_pArduinoHal(pArduinoHal),
+                                                                     m_pDfMiniMp3(pPlayer),
                                                                      m_pLullabyeTimer(pLullabyeTimer),
                                                                      m_pDfMiniMsgTimeout(pDfMiniMsgTimeout)
 {
 
     // Init communication with module and setup
-    m_pPinCtrl->pin_mode(DFMINI_PIN_ISIDLE, INPUT);
+    m_pArduinoHal->getPins()->pin_mode(DFMINI_PIN_ISIDLE, INPUT);
     m_pDfMiniMp3->begin(); // Init
     wait_player_ready();
     m_pDfMiniMp3->setEq(DFMINI_EQ_SETTING);
@@ -46,7 +44,7 @@ void Mp3PlayerControl::volume_down()
 }
 bool Mp3PlayerControl::is_playing()
 {
-    return !(m_pPinCtrl->digital_read(DFMINI_PIN_ISIDLE));
+    return !(m_pArduinoHal->getPins()->digital_read(DFMINI_PIN_ISIDLE));
 }
 void Mp3PlayerControl::play_pause()
 {

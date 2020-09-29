@@ -1,6 +1,7 @@
 #ifndef OUTPUTMANAGER_H
 #define OUTPUTMANAGER_H
 
+#include "Arduino_DIcontainer_interface.h"
 #include "PowerManager_interface.h"
 #include "Mp3PlayerControl_interface.h"
 
@@ -11,17 +12,15 @@
 class OutputManager
 {
 public:
-    OutputManager(Arduino_interface_com *pUsb,
+    OutputManager(Arduino_DIcontainer_interface * pArduinoHal,
                   PowerManager_interface *pPwrCtrl,
                   NfcControl *pNfcCtrl,
                   Mp3PlayerControl_interface *pMp3Ctrl,
-                  SimpleTimer *pMenuTimer,
-                  EEPROM_interface *pEeprom) : m_pUsb(pUsb),
+                  SimpleTimer *pMenuTimer) : m_pArduinoHal(pArduinoHal),
                                        m_pSysPwr(pPwrCtrl),
                                        m_pNfcCtrl(pNfcCtrl),
                                        m_pMp3Ctrl(pMp3Ctrl),
-                                       m_pMenuTimer(pMenuTimer),
-                                       m_pEeprom(pEeprom){};
+                                       m_pMenuTimer(pMenuTimer){};
 
 public:
     // Sets input states from card and buttons, and determines internal state.
@@ -70,12 +69,11 @@ private:
 private:
     typedef void (OutputManager::*dispatcher)(); // table of function pointers
     // members by dependency injection
-    Arduino_interface_com *m_pUsb{nullptr};
+    Arduino_DIcontainer_interface *m_pArduinoHal{nullptr};
     PowerManager_interface *m_pSysPwr{nullptr};
     NfcControl *m_pNfcCtrl{nullptr};
     Mp3PlayerControl_interface *m_pMp3Ctrl{nullptr};
     SimpleTimer *m_pMenuTimer{nullptr};
-    EEPROM_interface *m_pEeprom{nullptr};
 
     // Member objects
     Folder m_currentFolder{};

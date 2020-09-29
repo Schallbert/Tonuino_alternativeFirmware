@@ -26,7 +26,7 @@ protected:
     virtual void SetUp()
     {
         m_pPinCtrl = new NiceMock<Mock_pinCtrl>;
-        m_pUsb = new NiceMock<Mock_com>;
+        m_pSerial = new NiceMock<Mock_com>;
         m_pMp3 = new NiceMock<Mock_Mp3PlayerControl>;
 
         m_pSysPwr = new NiceMock<Mock_PowerManager>;
@@ -35,7 +35,7 @@ protected:
         m_pMenuTimer = new SimpleTimer{};
         m_pEeprom = new NiceMock<Mock_Eeprom>;
 
-        m_pOutputManager = new OutputManager(m_pUsb,
+        m_pOutputManager = new OutputManager(m_pSerial,
                                              m_pSysPwr,
                                              m_pNfcTag,
                                              m_pMp3,
@@ -53,7 +53,7 @@ protected:
         delete m_pMp3;
         delete m_pMfrc;
 
-        delete m_pUsb;
+        delete m_pSerial;
         delete m_pSysPwr;
         delete m_pNfcTag;
         delete m_pPinCtrl;
@@ -63,7 +63,7 @@ protected:
 
 protected:
     NiceMock<Mock_pinCtrl> *m_pPinCtrl;
-    NiceMock<Mock_com> *m_pUsb;
+    NiceMock<Mock_com> *m_pSerial;
 
     NiceMock<Mock_Mp3PlayerControl> *m_pMp3;
 
