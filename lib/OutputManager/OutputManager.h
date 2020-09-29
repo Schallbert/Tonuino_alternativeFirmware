@@ -14,16 +14,14 @@ public:
     OutputManager(Arduino_interface_com *pUsb,
                   PowerManager_interface *pPwrCtrl,
                   NfcControl *pNfcCtrl,
-                  Mp3PlayerControl_interface *pMp3,
+                  Mp3PlayerControl_interface *pMp3Ctrl,
                   SimpleTimer *pMenuTimer,
-                  EEPROM_interface *pEeprom,
-                  uint32_t ui32Seed) : m_pUsb(pUsb),
+                  EEPROM_interface *pEeprom) : m_pUsb(pUsb),
                                        m_pSysPwr(pPwrCtrl),
                                        m_pNfcCtrl(pNfcCtrl),
-                                       m_pMp3Ctrl(pMp3),
+                                       m_pMp3Ctrl(pMp3Ctrl),
                                        m_pMenuTimer(pMenuTimer),
-                                       m_pEeprom(pEeprom),
-                                       m_ui32RandomSeed(ui32Seed){};
+                                       m_pEeprom(pEeprom){};
 
 public:
     // Sets input states from card and buttons, and determines internal state.
@@ -78,7 +76,6 @@ private:
     Mp3PlayerControl_interface *m_pMp3Ctrl{nullptr};
     SimpleTimer *m_pMenuTimer{nullptr};
     EEPROM_interface *m_pEeprom{nullptr};
-    uint32_t m_ui32RandomSeed{0};
 
     // Member objects
     Folder m_currentFolder{};
