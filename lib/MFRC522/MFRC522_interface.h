@@ -2,6 +2,7 @@
 #define MFRC522_INTERFACE_H
 
 #include "Arduino_types.h"
+#include "Arduino_config.h"
 
 class MFRC522_interface
 {

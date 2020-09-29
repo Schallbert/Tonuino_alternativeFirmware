@@ -1,5 +1,7 @@
 #include "NfcControl.h"
 
+
+
 NfcControl::NfcControl(Nfc_interface *pNfc,
                              Arduino_interface_com *pUsb) : m_pNfc(pNfc),
                                                             m_pUsb(pUsb)
@@ -12,6 +14,14 @@ NfcControl::~NfcControl()
 {
     delete[] m_pBuffer;
 }
+
+void NfcControl::print_debug_message()
+    {
+        m_pUsb->com_println("NFC CONTROL DEBUG:");
+        m_pUsb->com_println(stringFromNfcTagNotify(get_tag_presence()));
+        m_pUsb->com_println("NFC DEBUG: MFRC522");
+        m_pUsb->com_println(m_pNfc->getNfcNotification());
+    };
 
 Nfc_interface::eTagState NfcControl::get_tag_presence()
 {

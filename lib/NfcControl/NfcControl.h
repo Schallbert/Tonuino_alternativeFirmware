@@ -29,13 +29,7 @@ public:
 // Gets notification message from card reader
 #if DEBUGSERIAL
     // Prints message from player periphery or player controller to Serial.
-    void print_debug_message()
-    {
-        m_pUsb->com_println("NFC CONTROL DEBUG:");
-        m_pUsb->com_println(stringFromNfcTagNotify(get_tag_presence()));
-        m_pUsb->com_println("NFC DEBUG: MFRC522");
-        m_pUsb->com_println(m_pNfc->getNfcNotification());
-    };
+    void print_debug_message();
 #endif
 
 private:

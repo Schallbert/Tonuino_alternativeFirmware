@@ -52,7 +52,7 @@ void Nfc_implementation::initNfc()
 bool Nfc_implementation::writeTag(byte blockAddr, byte *dataToWrite)
 {
     bool status{false};
-    NfcTag_interface *pNfcTag = NfcTag_factory::getInstance(m_tagType);
+    NfcTag_interface *pNfcTag = NfcTag_factory::getInstance(m_tagType, m_pMfrc522);
     if (!pNfcTag)
     {
         return status; // returned nullptr, not implemented
@@ -66,7 +66,7 @@ bool Nfc_implementation::writeTag(byte blockAddr, byte *dataToWrite)
 bool Nfc_implementation::readTag(byte blockAddr, byte *readResult)
 {
     bool status{false};
-    NfcTag_interface *pNfcTag = NfcTag_factory::getInstance(m_tagType);
+    NfcTag_interface *pNfcTag = NfcTag_factory::getInstance(m_tagType, m_pMfrc522);
     if (!pNfcTag)
     {
         return status; // returned nullptr, not implemented
