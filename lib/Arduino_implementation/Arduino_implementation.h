@@ -1,8 +1,9 @@
 #ifndef ARDUINO_IMPLEMENTATION_H
 #define ARDUINO_IMPLEMENTATION_H
 
-#include <Arduino.h>
-#include <Arduino_interface.h>
+#include "Arduino.h"
+#include "EEPROM.h"
+#include "Arduino_interface.h"
 
 class Arduino_pins : public Arduino_interface_pins
 {
@@ -85,15 +86,13 @@ public:
 
 class Arduino_random : public Arduino_interface_random
 {
-   
-
 public:
     uint8_t random_generateUi8()
-    { 
+    {
         return random(0xFF);
     }
 
-     private:
+private:
     void random_generateSeed(byte floatingAnalogPin_Id)
     {
         if (floatingAnalogPin_Id == 0)
@@ -103,14 +102,27 @@ public:
         else
         {
             uint32_t ADC_LSB;
-        uint32_t ADCSeed;
-        for (uint8_t i = 0; i < 128; i++)
-        {
-            ADC_LSB = analogRead(floatingAnalogPin_Id) & 0x1;
-            ADCSeed ^= ADC_LSB << (i % 32);
+            uint32_t ADCSeed;
+            for (uint8_t i = 0; i < 128; i++)
+            {
+                ADC_LSB = analogRead(floatingAnalogPin_Id) & 0x1;
+                ADCSeed ^= ADC_LSB << (i % 32);
+            }
+            randomSeed(ADCSeed); // Init Arduino random generator
         }
-        randomSeed(ADCSeed); // Init Arduino random generator
-        }      
+    }
+};
+
+class Arduino_eeprom : public Arduino_interface_eeprom
+{
+public:
+    uint8_t read(uint8_t memId)
+    {
+        return EEPROM.read(static_cast<int>(memId));
+    }
+    void write(uint8_t memId, uint8_t contents)
+    {
+        EEPROM.update(static_cast<int>(memId), contents);
     }
 };
 

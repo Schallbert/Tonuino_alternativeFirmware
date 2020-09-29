@@ -3,19 +3,19 @@
 
 // project includes -------
 
-//#include "Folder.h"
-#include "NfcControl.h"
-#include "Nfc_implementation.h"
+// ARDUINO HAL
+#include "Arduino_DIcontainer.h"
+// NFC
 #include "MFRC522_implementation.h"
-#include "Arduino_implementation.h"
-#include "Mp3PlayerControl.h"
+#include "Nfc_implementation.h"
+#include "NfcControl.h"
+// MP3
 #include "DFMiniMp3_implementation.h"
-#include "EEPROM_implementation.h"
+#include "Mp3PlayerControl.h"
+// MISC
 #include "UserInput_implementation.h"
 #include "PowerManager.h"
-#include "InputManager.h"
 #include "OutputManager.h"
-
 #include "../Utilities/SimpleTimer.h"
 
 class Folder;
@@ -43,11 +43,8 @@ public:
 private:
     // Dependency objects -------------------------------------
     PowerManager *m_pPwrCtrl{nullptr};
-    // Arduino hardware control
-    Arduino_pins *m_pPinControl{nullptr};
-    Arduino_com *m_pUsbSerial{nullptr};
-    Arduino_delay *m_pDelayControl{nullptr};
-    Eeprom *m_pEeprom{nullptr};
+    // Arduino Hardware Abstraction Layer
+    Arduino_DIcontainer *m_pArduinoHal{nullptr};
     // timer instances
     SimpleTimer *m_pMenuTimer{nullptr};
     SimpleTimer *m_pLullabyeTimer{nullptr};
