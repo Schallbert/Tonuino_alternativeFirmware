@@ -19,18 +19,18 @@ public:
     enum eNfcNotify
     {
         noMessage = 0,
-        tagOnline,
-        tagOffline,
-        errorTagWrite,
-        errorTagRead,
-        errorTagTypeNotImplemented,
-        errorTagSetOnlineFailed,
-        warningTagRequestOutOfRange
+        tagWriteSuccess,
+        tagReadSuccess,
+        tagWriteError,
+        tagReadError,
+        tagTypeNotImplementedError,
+        tagSetOnlineFailed,
+        tagRequestOutOfRangeWwrning
     };
 
 public:
     Nfc_implementation(MFRC522_interface *pMfrc522) : m_pMfrc522(pMfrc522){};
-    ~Nfc_implementation() { NfcTag_interface::removeInstance(); };
+    ~Nfc_implementation() { NfcTag_factory::removeInstance(); };
 
 public:
     void initNfc() override;
@@ -41,17 +41,19 @@ public:
 
 private:
     // Halts communication to card and stops crypto methods
-    void setCardOffline();
+    void setTagOffline();
     // Returns true if communications to a card is successfully established
-    bool setCardOnline();
+    bool setTagOnline();
     // Helper method, writes tag type to instance variable
     bool getTagType();
     // Helper method, for debugging. Sends message string to requesting entity
     static inline const char *stringFromNfcNotify(eNfcNotify value);
+    // Helper method, for better readability: takes status of function and returns input Notification
+    void setNotification(bool status, eNfcNotify sucessMessage, eNfcNotify failureMessage);
 
 private:
     MFRC522_interface *m_pMfrc522{nullptr};
-    MFRC522_interface::Tag_Type m_tagType{MFRC522_interface::PICC_TYPE_UNKNOWN};
+    MFRC522_interface::eTagType m_tagType{MFRC522_interface::PICC_TYPE_UNKNOWN};
     eNfcNotify m_eNotification{noMessage};
 };
 #endif // NFC_IMPLEMENTATION_H

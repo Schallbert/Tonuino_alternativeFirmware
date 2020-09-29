@@ -13,6 +13,7 @@ bool NfcTag_MifareMini1k4k::readTag(byte blockAddress, byte *readResult)
     // NFC read procedure for certain types of Tag/Cards: Block of 18 bytes incl. checksum
     status = m_pMfrc522->tagRead(blockAddress, buffer, &ui8_bufSize);
     memcpy(readResult, buffer, NFCTAG_MEMORY_TO_OCCUPY); // ignores checksum bytes
+    m_pMfrc522->tagHalt();
     return (status);
 }
 
@@ -25,6 +26,7 @@ bool NfcTag_MifareMini1k4k::writeTag(byte blockAddress, byte *dataToWrite)
         return status;
     }
     status = m_pMfrc522->tagWrite(blockAddress, dataToWrite, NFCTAG_MEMORY_TO_OCCUPY);
+    m_pMfrc522->tagHalt();
     return status;
 }
 

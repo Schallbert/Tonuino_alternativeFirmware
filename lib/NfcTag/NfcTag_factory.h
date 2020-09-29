@@ -25,7 +25,7 @@ public:
             m_pNfcTag = new NfcTag_MifareMini1k4k(pMfrc522);
             break;
         case MFRC522_interface::PICC_TYPE_MIFARE_UL:
-            m_pNfcTag = new NfcTag_MifareUltraLight(pMfrc522);
+            m_pNfcTag = new NfcTag_MifareUltralight(pMfrc522);
             break;
         default:
             m_pNfcTag = nullptr;

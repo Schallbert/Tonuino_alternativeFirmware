@@ -2,17 +2,17 @@
 
 Nfc_interface::eTagState Nfc_implementation::getTagPresence()
 {
-    if (m_pNfc->isCardPresent())
+    if (m_pMfrc522->isCardPresent())
     {
         // A card is present!
-        if (!m_pNfc->isNewCardPresent())
+        if (!m_pMfrc522->isNewCardPresent())
         {
             return ACTIVE_KNOWN_TAG;
         }
         else
         {
             // New card detected: runs once as new card is automatically set to ActiveCard
-            if (setCardOnline())
+            if (setTagOnline())
             {
                 return NEW_TAG;
             }
@@ -26,11 +26,11 @@ const char *Nfc_implementation::stringFromNfcNotify(eNfcNotify value)
 #if DEBUGSERIAL
     static const char *NOTIFY_STRING[] = {
         "no Message",
-        "Tag online",
-        "Tag offline",
+        "Tag Write Success",
+        "Tag Read Success",
         "Tag write Error",
         "Tag read Error",
-        "Tag type Error: unknown or not implemented",
+        "Tag type unknown/not implemented",
         "Tag set online failed",
         "Warning: request out of Memory Range"};
 
@@ -46,72 +46,74 @@ const char *Nfc_implementation::getNfcNotification()
 
 void Nfc_implementation::initNfc()
 {
-    m_pNfc->init(); // Init MFRC522
+    m_pMfrc522->init(); // Init MFRC522
 }
 
 bool Nfc_implementation::writeTag(byte blockAddr, byte *dataToWrite)
 {
+    bool status{false};
     NfcTag_interface *pNfcTag = NfcTag_factory::getInstance(m_tagType);
-    if(!pNfcTag)
+    if (!pNfcTag)
     {
-        // returned nullptr, not implemented
-        m_eNotification = errorTagTypeNotImplemented;
+        return status; // returned nullptr, not implemented
     }
-    if(!pNfcTag->writeTag(blockAddr, dataToWrite))
-    {
-        m_eNotification = errorTagWrite;
-        return false;
-    }
-    return true;
+    status = pNfcTag->writeTag(blockAddr, dataToWrite);
+    setTagOffline();
+    setNotification(status, tagWriteSuccess, tagWriteError);
+    return status;
 }
 
 bool Nfc_implementation::readTag(byte blockAddr, byte *readResult)
 {
-   NfcTag_interface *pNfcTag = NfcTag_factory::getInstance(m_tagType);
-    if(!pNfcTag)
+    bool status{false};
+    NfcTag_interface *pNfcTag = NfcTag_factory::getInstance(m_tagType);
+    if (!pNfcTag)
     {
-        // returned nullptr, not implemented
-        m_eNotification = errorTagTypeNotImplemented;
+        return status; // returned nullptr, not implemented
     }
-    if(!pNfcTag->readTag(blockAddr, readResult))
-    {
-        m_eNotification = errorTagRead;
-        return false;
-    }
-    return true;
+    status = pNfcTag->readTag(blockAddr, readResult);
+    setTagOffline();
+    setNotification(status, tagReadSuccess, tagReadError);
+    return status;
 }
 
-void Nfc_implementation::setCardOffline()
+void Nfc_implementation::setNotification(bool status, eNfcNotify successMessage, eNfcNotify failureMessage)
 {
-    m_pNfc->tagHalt();
-    m_pNfc->tagLogoff();
-    m_eNotification = tagOffline;
+    if(status)
+    {
+         m_eNotification = successMessage;
+    }
+    else
+    {
+        m_eNotification = failureMessage;
+    } 
 }
 
-bool Nfc_implementation::setCardOnline()
+void Nfc_implementation::setTagOffline()
 {
+    m_pMfrc522->tagHalt();
+    m_pMfrc522->tagLogoff();
+}
+
+bool Nfc_implementation::setTagOnline()
+{
+    
+    bool status{false};
     // Try reading card
-    if (!m_pNfc->isCardPresent())
-    {
-        setCardOffline();
-        m_eNotification = errorTagSetOnlineFailed;
-        return false;
-    }
-    if (!getTagType())
-    {
-        return false;
-    }
-    m_eNotification = tagOnline;
-    return true;
+    status = m_pMfrc522->isCardPresent();
+    status &= getTagType();
+    return status;
 }
 
 bool Nfc_implementation::getTagType()
 {
-    m_tagType = m_pNfc->getTagType();
-    if(m_tagType != MFRC522_interface::PICC_TYPE_UNKNOWN)
+    bool status{true};
+    m_tagType = m_pMfrc522->getTagType();
+    if (m_tagType == (MFRC522_interface::PICC_TYPE_UNKNOWN ||
+                      MFRC522_interface::PICC_TYPE_NOT_COMPLETE))
     {
-        return true;
+        status = false;
     }
-    m_eNotification = errorTagRead;
-    return false;
+    setNotification(status, noMessage, tagTypeNotImplementedError);
+    return status;
 }
