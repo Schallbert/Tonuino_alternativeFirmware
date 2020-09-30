@@ -3,7 +3,7 @@
 
 #include "Arduino_DIcontainer_interface.h"
 #include "PowerManager_interface.h"
-#include "NfcControl.h"
+#include "../Nfc/NfcControl/NfcControl.h"
 #include "UserInput_interface.h"
 #include "Mp3PlayerControl_interface.h"
 

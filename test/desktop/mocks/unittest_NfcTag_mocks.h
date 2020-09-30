@@ -1,10 +1,10 @@
 #ifndef UNITTEST_NFCTAG_MOCKS_H
 #define UNITTEST_NFCTAG_MOCKS_H
 
-#include <gmock/gmock.h>
-#include <Arduino_types.h>
-#include <Nfc_interface.h>
-#include <NfcControl.h>
+#include "gmock/gmock.h"
+#include "Arduino_types.h"
+#include "../Nfc/Nfc_interface/Nfc_interface.h"
+#include "../Nfc/NfcControl/NfcControl.h>
 
 // FAKES
 // Fake buffer data for NFC tag read
@@ -23,8 +23,8 @@ class Fake_MFRC522 : public Nfc_interface
 public:
     virtual ~Fake_MFRC522() {}; // MUST BE DEFINED; ELSE VTABLE INCLUDE ERRORS
     void initNfc() override;
-    bool isCardPresent() override;
-    bool isNewCardPresent() override;
+    bool isTagPresent() override;
+    bool isNewTagPresent() override;
     bool readTag(byte blockAddr, byte *readResult) override;
     bool writeTag(byte blockAddr, byte *dataToWrite) override;
     const char *getNfcNotification()  override;
@@ -38,8 +38,8 @@ public:
     // Method:  output name   input   overrides functionality of interface
     // IF THE METHOD IS INPUTS VOID; JUST WRITE () NEVER WRITE (void) !!!
     MOCK_METHOD(void, initNfc, (), (override));
-    MOCK_METHOD(bool, isCardPresent, (), (override));
-    MOCK_METHOD(bool, isNewCardPresent, (), (override));
+    MOCK_METHOD(bool, isTagPresent, (), (override));
+    MOCK_METHOD(bool, isNewTagPresent, (), (override));
     MOCK_METHOD(bool, writeTag, (byte blockAddr, byte *dataToWrite), (override));
     MOCK_METHOD(bool, readTag, (byte blockAddr, byte *readResult), (override));
     MOCK_METHOD(const char *, getNfcNotification, (), (override));

@@ -7,8 +7,8 @@
 #include "Arduino_DIcontainer.h"
 // NFC
 #include "MFRC522_implementation.h"
-#include "Nfc_implementation.h"
-#include "NfcControl.h"
+#include "../Nfc/Nfc_implementation/Nfc_implementation.h"
+#include "../Nfc/NfcControl/NfcControl.h"
 // MP3
 #include "DFMiniMp3_implementation.h"
 #include "Mp3PlayerControl.h"

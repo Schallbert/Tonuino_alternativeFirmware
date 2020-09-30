@@ -4,7 +4,7 @@
 #include "Arduino_config.h"
 #include "../MFRC522/MFRC522_interface.h" // to access actual HW
 #include "../Nfc_interface/Nfc_interface.h"
-#include "../NfcTag/NfcTag_factory.h"
+#include "../NfcTag_implementation/NfcTag_factory.h"
 
 // move card presence enum down to here
 // isCardPresent to return this enum

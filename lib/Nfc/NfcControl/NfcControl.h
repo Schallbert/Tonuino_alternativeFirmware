@@ -2,7 +2,7 @@
 #define NFCCONTROL_H
 
 #include "Tonuino_config.h"
-#include "Nfc_interface.h"
+#include "../Nfc_interface/Nfc_interface.h"
 #include "Arduino_interface.h"
 #include "Folder.h"
 

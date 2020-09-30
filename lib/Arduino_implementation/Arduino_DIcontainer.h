@@ -9,6 +9,7 @@ class Arduino_DIcontainer : public Arduino_DIcontainer_interface
 public:
     Arduino_DIcontainer()
     {
+        // implementations
         m_pPins = new Arduino_pins();
         m_pDelay = new Arduino_delay();
         m_pSerial = new Arduino_com();
@@ -25,6 +26,7 @@ public:
     };
 
 public:
+    // public methods returning a pointer to the implementation via public interface
     Arduino_interface_pins *getPins() override { return m_pPins; };
     Arduino_interface_delay *getDelay() override { return m_pDelay; };
     Arduino_interface_com *getSerial() override { return m_pSerial; };
