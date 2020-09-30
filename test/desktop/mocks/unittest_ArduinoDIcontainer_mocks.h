@@ -1,6 +1,7 @@
 #ifndef UNITTEST_ARDUINODICONTAINER_MOCKS_H
 #define UNITTEST_ARDUINODICONTAINER_MOCKS_H
 
+#include <gmock/gmock.h>
 #include "../Arduino/Arduino_interface/Arduino_DIcontainer_interface.h"
 
 class Mock_ArduinoDIcontainer : public Arduino_DIcontainer_interface

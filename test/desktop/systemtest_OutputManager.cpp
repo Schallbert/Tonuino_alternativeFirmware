@@ -2,8 +2,8 @@
 #include <gmock/gmock.h>
 
 #include <SimpleTimer.h>
-#include <NfcControl.h>
-#include <Nfc_interface.h>
+#include "../Nfc/NfcControl/NfcControl.h"
+#include "../Nfc/Nfc_interface/Nfc_interface.h"
 
 #include "mocks/unittest_NfcTag_mocks.h"
 #include "mocks/unittest_DfMiniMp3_mocks.h"

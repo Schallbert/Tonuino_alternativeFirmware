@@ -4,7 +4,7 @@
 #include "gmock/gmock.h"
 #include "../Arduino/Arduino_interface/Arduino_types.h"
 #include "../Nfc/Nfc_interface/Nfc_interface.h"
-#include "../Nfc/NfcControl/NfcControl.h>
+#include "../Nfc/NfcControl/NfcControl.h"
 
 // FAKES
 // Fake buffer data for NFC tag read
