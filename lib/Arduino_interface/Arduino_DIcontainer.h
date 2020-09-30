@@ -26,7 +26,7 @@ public:
 
 public:
     Arduino_interface_pins *getPins() override { return m_pPins; };
-    Arduino_interface_delay *geDelay() override { return m_pDelay; };
+    Arduino_interface_delay *getDelay() override { return m_pDelay; };
     Arduino_interface_com *getSerial() override { return m_pSerial; };
     Arduino_interface_random *getRandom() override { return m_pRandom; };
     Arduino_interface_eeprom *getEeprom() override { return m_pEeprom; };

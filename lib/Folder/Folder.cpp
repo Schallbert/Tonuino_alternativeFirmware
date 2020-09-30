@@ -143,7 +143,7 @@ uint8_t Folder::get_next_track()
     }
     if (m_ePlayMode == ePlayMode::SAVEPROGRESS)
     {
-        m_pArduinoHal->getEeprom()->write(m_ui8FolderId, m_pTrackQueue[m_ui8CurrentQueueEntry]);
+        m_pArduinoHal->getEeprom()->eeprom_write(m_ui8FolderId, m_pTrackQueue[m_ui8CurrentQueueEntry]);
     }
     return m_pTrackQueue[m_ui8CurrentQueueEntry];
 }
@@ -165,7 +165,7 @@ uint8_t Folder::get_prev_track()
     }
     if (m_ePlayMode == ePlayMode::SAVEPROGRESS)
     {
-        m_pArduinoHal->getEeprom()->write(m_ui8FolderId, m_pTrackQueue[m_ui8CurrentQueueEntry]);
+        m_pArduinoHal->getEeprom()->eeprom_write(m_ui8FolderId, m_pTrackQueue[m_ui8CurrentQueueEntry]);
     }
     return m_pTrackQueue[m_ui8CurrentQueueEntry];
 }
@@ -195,12 +195,12 @@ void Folder::setup_track_queue()
     }
     case ePlayMode::SAVEPROGRESS:
         init_sorted_queue();
-        m_ui8CurrentQueueEntry = m_pArduinoHal->getEeprom()->read(m_ui8FolderId);
+        m_ui8CurrentQueueEntry = m_pArduinoHal->getEeprom()->eeprom_read(m_ui8FolderId);
         if (m_ui8CurrentQueueEntry > m_ui8TrackCount || m_ui8CurrentQueueEntry == 0)
         {
             //  m_pArduinoHal->getEeprom() has never been written, contains some unknown value
             m_ui8CurrentQueueEntry = 1; // set to first track
-            m_pArduinoHal->getEeprom()->write(m_ui8FolderId, m_ui8CurrentQueueEntry);
+            m_pArduinoHal->getEeprom()->eeprom_write(m_ui8FolderId, m_ui8CurrentQueueEntry);
         }
         break;
 

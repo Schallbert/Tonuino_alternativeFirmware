@@ -116,11 +116,11 @@ private:
 class Arduino_eeprom : public Arduino_interface_eeprom
 {
 public:
-    uint8_t read(uint8_t memId)
+    uint8_t eeprom_read(uint8_t memId)
     {
         return EEPROM.read(static_cast<int>(memId));
     }
-    void write(uint8_t memId, uint8_t contents)
+    void eeprom_write(uint8_t memId, uint8_t contents)
     {
         EEPROM.update(static_cast<int>(memId), contents);
     }

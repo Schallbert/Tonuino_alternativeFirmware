@@ -36,4 +36,18 @@ public:
     MOCK_METHOD(void, com_print, (uint8_t i), (override));
     MOCK_METHOD(void, com_println, (const char *str), (override));
 };
+
+class Mock_random : public Arduino_interface_random
+{
+    public:
+    MOCK_METHOD(void, random_random_generateSeed, (byte floatingAnalogPin_Id), (override));
+    Mock_METHOD(uint8_t, random_generateUi8, (), (override));
+};
+
+class Mock_eeprom : public Arduino_interface_eeprom
+{
+    public:
+    MOCK_METHOD(uint8_t, eeprom_read, (uint8_t memId), (override));
+    Mock_METHOD(void, eeprom_write, (uint8_t memId, uint8_t contents), (override));
+};
 #endif //ARDUINO_INTERFACE_H#endif // ARDUINOIF_MOCKS_H

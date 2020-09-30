@@ -66,7 +66,7 @@ public:
     virtual ~Arduino_interface_eeprom(){};
 
 public:
-    virtual uint8_t read(uint8_t memId) = 0;
-    virtual void write(uint8_t memId, uint8_t contents) = 0;
+    virtual uint8_t eeprom_read(uint8_t memId) = 0;
+    virtual void eeprom_write(uint8_t memId, uint8_t contents) = 0;
 };
 #endif //ARDUINO_INTERFACE_H
