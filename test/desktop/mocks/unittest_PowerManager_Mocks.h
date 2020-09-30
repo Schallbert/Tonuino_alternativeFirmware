@@ -2,7 +2,7 @@
 #define UNITTEST_POWERMANAGER_MOCKS_H
 
 #include <gmock/gmock.h>
-#include <Arduino_types.h>
+#include "../Arduino/Arduino_interface/Arduino_types.h"
 #include <PowerManager_interface.h>
 
 class Mock_PowerManager : public PowerManager_interface

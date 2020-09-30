@@ -1,7 +1,7 @@
 #ifndef OUTPUTMANAGER_H
 #define OUTPUTMANAGER_H
 
-#include "Arduino_DIcontainer_interface.h"
+#include "../Arduino/Arduino_interface/Arduino_DIcontainer_interface.h"
 #include "PowerManager_interface.h"
 #include "../Nfc/NfcControl/NfcControl.h"
 #include "UserInput_interface.h"

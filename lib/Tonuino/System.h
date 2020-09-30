@@ -4,7 +4,7 @@
 // project includes -------
 
 // ARDUINO HAL
-#include "Arduino_DIcontainer.h"
+#include "../Arduino/Arduino_implementation/Arduino_DIcontainer.h"
 // NFC
 #include "MFRC522_implementation.h"
 #include "../Nfc/Nfc_implementation/Nfc_implementation.h"

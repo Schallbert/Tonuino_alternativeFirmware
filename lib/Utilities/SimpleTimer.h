@@ -1,7 +1,7 @@
 #ifndef SIMPLETIMER_H
 #define SIMPLETIMER_H
 
-#include <Arduino_types.h>
+#include "../Arduino/Arduino_interface/Arduino_types.h"
 
 /*
 class TimerManager

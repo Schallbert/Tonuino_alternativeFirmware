@@ -1,7 +1,7 @@
 #ifndef ARDUINO_DICONTAINER_INTERFACE_H
 #define ARDUINO_DICONTAINER_INTERFACE_H
 
-#include "Arduino_interface.h"
+#include "../Arduino/Arduino_interface/Arduino_interface.h"
 
 class Arduino_DIcontainer_interface
 {

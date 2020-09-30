@@ -2,7 +2,7 @@
 #define UNITTEST_NFCTAG_MOCKS_H
 
 #include "gmock/gmock.h"
-#include "Arduino_types.h"
+#include "../Arduino/Arduino_interface/Arduino_types.h"
 #include "../Nfc/Nfc_interface/Nfc_interface.h"
 #include "../Nfc/NfcControl/NfcControl.h>
 

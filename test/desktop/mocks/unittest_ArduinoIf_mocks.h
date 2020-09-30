@@ -1,8 +1,8 @@
 #ifndef ARDUINOIF_MOCKS_H
 #define ARDUINOIF_MOCKS_H
 
-#include <Arduino_types.h>
-#include <Arduino_interface.h>
+#include "../Arduino/Arduino_interface/Arduino_types.h"
+#include "../Arduino/Arduino_interface/Arduino_interface.h"
 
 // Interface class for Arduino pin manipulation functions
 // Preparation for mocking
