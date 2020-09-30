@@ -1,10 +1,10 @@
-#ifndef MP3PLAYERCONTROL_H
-#define MP3PLAYERCONTROL_H
+#ifndef MP3PLAYERCONTROL_IMPLEMENTATION_H
+#define MP3PLAYERCONTROL_IMPLEMENTATION_H
 
 #include "../Arduino/Arduino_interface/Arduino_DIcontainer_interface.h"
 
 #include "../Mp3PlayerControl_interface/Mp3PlayerControl_interface.h"
-#include "DFMiniMp3_interface.h"
+#include "../Mp3/DFMiniMp3_interface/DFMiniMp3_interface.h"
 
 #include "../Config/Tonuino_config.h"
 #include "../Config/Arduino_config.h"
@@ -118,4 +118,4 @@ private:
     eDebugMessage m_debugMessage{noMessage};
 };
 
-#endif // MP3PLAYERCONTROL_H
+#endif // MP3PLAYERCONTROL_IMPLEMENTATION_H

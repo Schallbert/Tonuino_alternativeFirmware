@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <Mp3PlayerControl.h>
+#include "../Mp3/Mp3PlayerControl_implementation/Mp3PlayerControl_implementation.h"
 #include <SimpleTimer.h>
 #include "mocks/unittest_DfMiniMp3_mocks.h"
 #include "mocks/unittest_ArduinoIf_mocks.h"

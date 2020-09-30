@@ -10,8 +10,8 @@
 #include "../Nfc/Nfc_implementation/Nfc_implementation.h"
 #include "../Nfc/NfcControl/NfcControl.h"
 // MP3
-#include "DFMiniMp3_implementation.h"
-#include "Mp3PlayerControl.h"
+#include "../Mp3/DFMiniMp3_implementation/DFMiniMp3_implementation.h"
+#include "../Mp3/Mp3PlayerControl_implementation/Mp3PlayerControl_implementation.h"
 // MISC
 #include "UserInput_implementation.h"
 #include "PowerManager.h"

@@ -1,7 +1,7 @@
 #ifndef DFMINIMP3_IMPLEMENTATION_H
 #define DFMINIMP3_IMPLEMENTATION_H
 #include <DFMiniMp3.h>
-#include <DFMiniMp3_interface.h>
+#include "../Mp3/DFMiniMp3_interface/DFMiniMp3_interface.h"
 #include <Arduino_config.h>
 #include <SoftwareSerial.h>
 

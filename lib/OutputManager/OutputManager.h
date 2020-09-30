@@ -5,7 +5,7 @@
 #include "PowerManager_interface.h"
 #include "../Nfc/NfcControl/NfcControl.h"
 #include "UserInput_interface.h"
-#include "Mp3PlayerControl_interface.h"
+#include "../Mp3/Mp3PlayerControl_interface/Mp3PlayerControl_interface.h"
 
 #include "../Utilities/LinkMenu.h"
 #include "../Utilities/DeleteMenu.h"
