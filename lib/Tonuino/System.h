@@ -6,7 +6,7 @@
 // ARDUINO HAL
 #include "../Arduino/Arduino_implementation/Arduino_DIcontainer.h"
 // NFC
-#include "MFRC522_implementation.h"
+#include "../Nfc/MFRC522/MFRC522_implementation.h"
 #include "../Nfc/Nfc_implementation/Nfc_implementation.h"
 #include "../Nfc/NfcControl/NfcControl.h"
 // MP3

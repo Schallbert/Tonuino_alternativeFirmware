@@ -1,7 +1,7 @@
 #ifndef MFRC522_IMPLEMENTATION_H
 #define MFRC522_IMPLEMENTATION_H
 
-#include "MFRC522_interface.h"
+#include "../Nfc/MFRC522/MFRC522_interface.h"
 #include "MFRC522.h"
 
 // Wrapper class for actual MFRC522 Library implementation.
