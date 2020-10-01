@@ -24,10 +24,11 @@ class Fake_Nfc : public Nfc_interface
 public:
     virtual ~Fake_Nfc() {}; // MUST BE DEFINED; ELSE VTABLE INCLUDE ERRORS
     void initNfc() override;
-    bool isTagPresent() override;
-    bool isNewTagPresent() override;
-    bool readTag(byte blockAddr, byte *readResult) override;
-    bool writeTag(byte blockAddr, byte *dataToWrite) override;
+    Nfc_interface::eTagState getTagPresence() override;
+    // returns true, simulating successful write
+    bool writeTag(byte blockAddress, byte *dataToWrite) override;
+    // copies fakeBufferData to "readResult", simulating read from NFC tag
+    bool readTag(byte blockAddress, byte *readResult) override;
     const char *getNfcNotification()  override;
 };
 
@@ -46,9 +47,9 @@ public:
 
     void DelegateToFake()
     {
-        ON_CALL(*this, readTag).WillByDefault([this](byte blockAddr, byte *readResult) 
+        ON_CALL(*this, readTag).WillByDefault([this](byte blockAddress, byte *readResult) 
         {
-            return m_FakeRead.readTag(blockAddr, readResult);
+            return m_FakeRead.readTag(blockAddress, readResult);
         });
     }
 
@@ -58,7 +59,13 @@ private:
 
 class Mock_NfcTag : public NfcTag_interface
 {
-    
+     public:
+    MOCK_METHOD(bool, readTag, (byte blockAddress, byte *readResult), (override));
+    // Write data to block for for implemented NFC types
+    MOCK_METHOD(bool, writeTag, (byte blockAddress, byte *dataToWrite), (override));
+
+//private:
+    //MOCK_METHOD(void, checkAndRectifyBlockAddress(byte &blockAddress));
 };
 
 // MATCHERS
