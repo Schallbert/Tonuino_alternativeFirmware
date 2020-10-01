@@ -5,6 +5,7 @@
 #include "mocks/unittest_ArduinoDIcontainer_mocks.h"
 
 using ::testing::NiceMock;
+using ::testing::_;
 using ::testing::Return;
 
 // TEST_F FIXTURE
@@ -30,6 +31,7 @@ protected:
 // This fixture will return Mock_eeprom dependency
 class folderMethods : public folderInvalid
 {
+    protected:
     virtual void SetUp()
     {
         folderInvalid::SetUp();
@@ -40,7 +42,7 @@ class folderMethods : public folderInvalid
     virtual void TearDown()
     {
         delete m_pEeprom;
-        folderInvalid.TearDown();
+        folderInvalid::TearDown();
     }
 
 protected:
@@ -55,7 +57,7 @@ protected:
     virtual void SetUp()
     {
         folderMethods::SetUp();
-        testFolder = new Folder((2, Folder::ALBUM, 10);
+        testFolder = new Folder(2, Folder::ALBUM, 10);
         testFolder->setup_dependencies(m_pADIC);
     }
 
@@ -84,7 +86,7 @@ protected:
     virtual void TearDown()
     {
         delete m_pRandom;
-        folderInvalid.TearDown();
+        folderInvalid::TearDown();
     }
 
 protected:
@@ -105,45 +107,45 @@ TEST_F(folderInvalid, folderIdIs0)
 TEST_F(folderInvalid, playModeIsUndefined)
 {
     Folder testFolder;
-    ASSERT_EQ(Folder::UNDEFINED, testFolder->get_play_mode());
+    ASSERT_EQ(Folder::UNDEFINED, testFolder.get_play_mode());
 }
 TEST_F(folderInvalid, trackCountIs0)
 {
     Folder testFolder;
-    ASSERT_EQ(0, testFolder->get_track_count());
+    ASSERT_EQ(0, testFolder.get_track_count());
 }
 TEST_F(folderInvalid, currentTrackIs0)
 {
     Folder testFolder;
-    ASSERT_EQ(0, testFolder->get_current_track());
+    ASSERT_EQ(0, testFolder.get_current_track());
 }
 TEST_F(folderInvalid, nextTrackIs0)
 {
     Folder testFolder;
-    ASSERT_EQ(0, testFolder->get_next_track());
+    ASSERT_EQ(0, testFolder.get_next_track());
 }
 TEST_F(folderInvalid, prevTrackIs0)
 {
     Folder testFolder;
-    ASSERT_EQ(0, testFolder->get_prev_track());
+    ASSERT_EQ(0, testFolder.get_prev_track());
 }
 TEST_F(folderInvalid, dependenciesSetup_isValidReturnsFalse)
 {
     Folder testFolder(1, Folder::ALBUM, 0);
-    testFolder->setup_dependencies(m_pADIC);
-    ASSERT_FALSE(testFolder->is_valid());
+    testFolder.setup_dependencies(m_pADIC);
+    ASSERT_FALSE(testFolder.is_valid());
 }
 TEST_F(folderInvalid, playModeUndefined_isValidReturnsFalse)
 {
     Folder testFolder(1, Folder::UNDEFINED, 24);
-    testFolder->setup_dependencies(m_pADIC);
-    ASSERT_FALSE(testFolder->is_valid());
+    testFolder.setup_dependencies(m_pADIC);
+    ASSERT_FALSE(testFolder.is_valid());
 }
 TEST_F(folderInvalid, folderIdIs0_isValidReturnsFalse)
 {
     Folder testFolder(0, Folder::ALBUM, 24);
-    testFolder->setup_dependencies(m_pADIC);
-    ASSERT_FALSE(testFolder->is_valid());
+    testFolder.setup_dependencies(m_pADIC);
+    ASSERT_FALSE(testFolder.is_valid());
 }
 TEST_F(folderMethods, folder_ALBUM_valid)
 {
@@ -154,7 +156,7 @@ TEST_F(folderMethods, folder_ALBUM_valid)
 TEST_F(folderMethods, copyConstructor_workingOK)
 {
     // Arrange
-    EXPECT_CALL(m_pEeprom, eeprom_read(254)).WillOnce(Return(13));
+    EXPECT_CALL(*m_pEeprom, eeprom_read(254)).WillOnce(Return(13));
     Folder testFolder(254, Folder::SAVEPROGRESS, 16);
     testFolder.setup_dependencies(m_pADIC);
     // Act
@@ -165,7 +167,7 @@ TEST_F(folderMethods, copyConstructor_workingOK)
 
 TEST_F(folderMethods, copyConstructor_valuesOK)
 {
-    EXPECT_CALL(m_pEeprom, eeprom_read(254)).WillOnce(Return(13));
+    EXPECT_CALL(*m_pEeprom, eeprom_read(254)).WillOnce(Return(13));
     Folder testFolder(54, Folder::SAVEPROGRESS, 16);
     testFolder.setup_dependencies(m_pADIC);
 
@@ -181,7 +183,7 @@ TEST_F(folderMethods, copyConstructor_valuesOK)
 TEST_F(folderMethods, assignmentOperator_workingOK)
 {
     Folder testFolder(254, Folder::ALBUM, 10);
-    testFolder.setup_dependencies(&m_pADIC);
+    testFolder.setup_dependencies(m_pADIC);
     Folder copyFolder = Folder();
 
     copyFolder = testFolder;
@@ -192,7 +194,7 @@ TEST_F(folderMethods, assignmentOperator_workingOK)
 TEST_F(folderMethods, assignmentOperator_valuesOK)
 {
     Folder testFolder(254, Folder::ALBUM, 10);
-    testFolder->setup_dependencies(&m_pADIC);
+    testFolder.setup_dependencies(m_pADIC);
     Folder copyFolder = Folder();
 
     copyFolder = testFolder;
@@ -264,8 +266,8 @@ TEST_F(folderDependencies, RANDOM_trackCountIs10_trackQueueLoopComplete)
         .WillOnce(Return(4))
         .WillOnce(Return(7))
         .WillOnce(Return(5))
-        .WillOnce(Return(6))
-    testFolder->setup_dependencies(m_pADIC);
+        .WillOnce(Return(6));
+    testFolder.setup_dependencies(m_pADIC);
     // take sample that track queue is correctly setup
     // ALSO CONFIRMS THAT TRACK LIST IS OK BECAUSE OF WILLONCE STRUCTURE
     EXPECT_EQ(1, testFolder.get_current_track());
@@ -288,9 +290,9 @@ TEST_F(folderDependencies, RANDOM_trackCountIs10_willNotAllowSameTrackMultipleTi
         .WillOnce(Return(4))
         .WillOnce(Return(7))
         .WillOnce(Return(5))
-        .WillOnce(Return(6))
+        .WillOnce(Return(6));
 
-    testFolder->setup_dependencies(m_pADIC);
+    testFolder.setup_dependencies(m_pADIC);
     // take sample that track queue is correctly setup
     testFolder.get_next_track();
     ASSERT_EQ(2, testFolder.get_next_track());
@@ -313,9 +315,9 @@ TEST_F(folderDependencies, RANDOM_trackCountIs10_willNotAllowTrackNumber0)
         .WillOnce(Return(4))
         .WillOnce(Return(7))
         .WillOnce(Return(5))
-        .WillOnce(Return(6))
+        .WillOnce(Return(6));
 
-    testFolder->setup_dependencies(m_pADIC);
+    testFolder.setup_dependencies(m_pADIC);
     // take sample that track queue is correctly setup
     ASSERT_EQ(10, testFolder.get_next_track());
 }
@@ -336,9 +338,9 @@ TEST_F(folderDependencies, RANDOM_trackCountIs10_willNotAllowTrackNumberOutOfRan
         .WillOnce(Return(4))
         .WillOnce(Return(7))
         .WillOnce(Return(5))
-        .WillOnce(Return(6))
+        .WillOnce(Return(6));
 
-    testFolder->setup_dependencies(m_pADIC);
+    testFolder.setup_dependencies(m_pADIC);
     // take sample that track queue is correctly setup
     ASSERT_EQ(10, testFolder.get_next_track());
 }
@@ -348,9 +350,9 @@ TEST_F(folderDependencies, SAVEPROGRESS_trackLoadIsWorking)
     Folder testFolder(99, Folder::SAVEPROGRESS, 16);
 
     ON_CALL(*m_pEeprom, eeprom_read(_)).WillByDefault(Return(13));
-    testFolder->setup_dependencies(m_pADIC);
+    testFolder.setup_dependencies(m_pADIC);
 
-    EXPECT_EQ(13, testFolder->get_current_track());
+    EXPECT_EQ(13, testFolder.get_current_track());
 }
 
 TEST_F(folderDependencies, SAVEPROGRESS_trackSaveIsWorking)
@@ -359,23 +361,23 @@ TEST_F(folderDependencies, SAVEPROGRESS_trackSaveIsWorking)
     ON_CALL(*m_pEeprom, eeprom_read(_)).WillByDefault(Return(13));
 
     EXPECT_CALL(*m_pEeprom, eeprom_write(254, 14));
-    testFolder->setup_dependencies(m_pADIC);
-    EXPECT_EQ(14, testFolder->get_next_track());
+    testFolder.setup_dependencies(m_pADIC);
+    EXPECT_EQ(14, testFolder.get_next_track());
 }
 
 TEST_F(folderDependencies, SAVEPROGRESS_EepromRead0_currentTrackDefaultsTo1)
 {
     Folder testFolder(99, Folder::SAVEPROGRESS, 16);
-    ON_CALL(*m_pEeprom, eeprom_read(_)).WilByDefault(Return(0));
+    ON_CALL(*m_pEeprom, eeprom_read(_)).WillByDefault(Return(0));
     
-    testFolder->setup_dependencies(m_pADIC);
-    EXPECT_EQ(1, testFolder->get_current_track());
+    testFolder.setup_dependencies(m_pADIC);
+    EXPECT_EQ(1, testFolder.get_current_track());
 }
 TEST_F(folderDependencies, SAVEPROGRESS_EepromReadOutOfRange_currentTrackDefaultsTo1)
 {
     Folder testFolder(99, Folder::SAVEPROGRESS, 16);
-    ON_CALL(*m_pEeprom, eeprom_read(_)).WilByDefault(Return(17));
+    ON_CALL(*m_pEeprom, eeprom_read(_)).WillByDefault(Return(17));
     
-    testFolder->setup_dependencies(m_pADIC);
-    EXPECT_EQ(1, testFolder->get_current_track());
+    testFolder.setup_dependencies(m_pADIC);
+    EXPECT_EQ(1, testFolder.get_current_track());
 }

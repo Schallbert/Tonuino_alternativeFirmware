@@ -21,37 +21,37 @@ public:
 
     // "Tunnels" DIcontainer.
     // Returns a mock instance of any of the corresponding parent methods.
-    void DelegateToMockPins(Mock_pinCtrl &pins)
+    void DelegateToMockPins(Mock_pinCtrl *pins)
     {
-        m_pins = pins;
-        ON_CALL(*this, getPins).WillByDefault(Return(m_pins()));
+        m_pPins = pins;
+        ON_CALL(*this, getPins).WillByDefault(Return(m_pPins));
     };
-    void DelegateToMockDelay(Mock_delay &delay)
+    void DelegateToMockDelay(Mock_delay *delay)
     {
-        m_delay = delay;
-        ON_CALL(*this, getDelay).WillByDefault(Return(m_delay));
+        m_pDelay = delay;
+        ON_CALL(*this, getDelay).WillByDefault(Return(m_pDelay));
     };
-    void DelegateToMockSerial(Mock_serial &serial)
+    void DelegateToMockSerial(Mock_serial *serial)
     {
-        m_serial = serial;
-        ON_CALL(*this, getSerial).WillByDefault(Return(m_serial));
+        m_pSerial = serial;
+        ON_CALL(*this, getSerial).WillByDefault(Return(m_pSerial));
     };
-    void DelegateToMockRandom(Mock_random random)
+    void DelegateToMockRandom(Mock_random *random)
     {
-        m_random = random;
-        ON_CALL(*this, getRandom).WillByDefault(Return(m_random));
+        m_pRandom = random;
+        ON_CALL(*this, getRandom).WillByDefault(Return(m_pRandom));
     };
-    void DelegateToMockEeprom(Mock_eeprom eeprom)
+    void DelegateToMockEeprom(Mock_eeprom *eeprom)
     {
-        m_eeprom = eeprom;
-        ON_CALL(*this, getEeprom).WillByDefault(Return(m_eeprom));
+        m_pEeprom = eeprom;
+        ON_CALL(*this, getEeprom).WillByDefault(Return(m_pEeprom));
     };
 
 private:
-    Mock_pinCtrl *m_pins{nullptr};
-    Mock_delay *m_delay{nullptr};
-    Mock_serial *m_serial{nullptr};
-    Mock_random *m_random{nullptr};
-    Mock_eeprom *m_eeprom{nullptr};
+    Mock_pinCtrl *m_pPins{nullptr};
+    Mock_delay *m_pDelay{nullptr};
+    Mock_serial *m_pSerial{nullptr};
+    Mock_random *m_pRandom{nullptr};
+    Mock_eeprom *m_pEeprom{nullptr};
 };
 #endif // UNITTEST_ARDUINODICONTAINER_MOCKS_H

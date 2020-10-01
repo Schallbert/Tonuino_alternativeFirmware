@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include "mocks/unittest_ArduinoIf_mocks.h"
 #include "../Nfc/NfcControl/NfcControl.h"
 #include "mocks/unittest_Nfc_mocks.h"
 
@@ -15,7 +16,8 @@ protected:
     virtual void SetUp()
     {
         m_pNfc = new NiceMock<Mock_Nfc>;
-        m_pNfcCtrl = new NfcControl(m_pNfc);
+        m_pSerial = new NiceMock<Mock_serial>;
+        m_pNfcCtrl = new NfcControl(m_pNfc, m_pSerial);
         m_pTestFolder = new Folder(fakeBufferData[4],
                                    (Folder::ePlayMode)fakeBufferData[5],
                                    fakeBufferData[6]);
@@ -23,19 +25,22 @@ protected:
 
     virtual void TearDown()
     {
-        delete m_pNfc;
+        
         delete m_pNfcCtrl;
+        delete m_pNfc;
+        delete m_pSerial;
         delete m_pTestFolder;
     }
 
 protected:
-    NiceMock<Mock_Nfc>* m_pNfc{nullptr};
+    Arduino_interface_com *m_pSerial{nullptr};
+    Nfc_interface* m_pNfc{nullptr};
     NfcControl* m_pNfcCtrl{nullptr};
     Folder* m_pTestFolder{nullptr};
 };
 
-class NfcCtrlRead : public NfcCtrlWrite;
-class NfcCtrlTagPresence : public NfcCtrlWrite;
+class NfcCtrlRead : public NfcCtrlWrite{};
+class NfcCtrlTagPresence : public NfcCtrlWrite{};
 
 // TESTS
 TEST_F(NfcCtrlWrite, initNfc_IsCalledOnConstruction)

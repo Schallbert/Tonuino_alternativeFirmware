@@ -1,7 +1,7 @@
 #include "NfcControl.h"
 
 NfcControl::NfcControl(Nfc_interface *pNfc,
-                             Arduino_interface_com *pUsb) : m_pNfc(pNfc),
+                       Arduino_interface_com *pUsb) : m_pNfc(pNfc),
                                                             m_pSerial(pUsb)
 {
     m_pNfc->initNfc();
