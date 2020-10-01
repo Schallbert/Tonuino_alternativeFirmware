@@ -5,7 +5,7 @@
 #include "../Nfc/NfcControl/NfcControl.h"
 #include "../Nfc/Nfc_interface/Nfc_interface.h"
 
-#include "mocks/unittest_NfcTag_mocks.h"
+#include "mocks/unittest_Nfc_mocks.h"
 #include "mocks/unittest_DfMiniMp3_mocks.h"
 #include "mocks/unittest_ArduinoIf_mocks.h"
 #include "mocks/unittest_PowerManager_mocks.h"

@@ -1,4 +1,4 @@
-#include "unittest_NfcTag_mocks.h"
+#include "unittest_Nfc_mocks.h"
 
 void Fake_Nfc::initNfc()
 {

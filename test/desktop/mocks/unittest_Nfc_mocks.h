@@ -7,7 +7,6 @@
 #include "../Nfc/NfcTag_interface/NfcTag_interface.h"
 #include "../Nfc/MFRC522/MFRC522_interface.h"
 
-
 // FAKES
 // Fake buffer data for NFC tag read
 static const byte fakeBufferData[16]{
@@ -15,27 +14,26 @@ static const byte fakeBufferData[16]{
     (byte)((NfcControl::cui32MagicCookie >> 16) & 0xFF), // 1
     (byte)((NfcControl::cui32MagicCookie >> 8) & 0xFF),  // 2
     (byte)(NfcControl::cui32MagicCookie & 0xFF),         // 3
-    (byte)1,                                         // 4 FolderId
-    (byte)Folder::LULLABYE,                          // 5 ePlayMode
-    (byte)5,                                         // 6 TrackCount
+    (byte)1,                                             // 4 FolderId
+    (byte)Folder::LULLABYE,                              // 5 ePlayMode
+    (byte)5,                                             // 6 TrackCount
     0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 class Fake_Nfc : public Nfc_interface
 {
 public:
-    virtual ~Fake_Nfc() {}; // MUST BE DEFINED; ELSE VTABLE INCLUDE ERRORS
+    virtual ~Fake_Nfc(){}; // MUST BE DEFINED; ELSE VTABLE INCLUDE ERRORS
     void initNfc() override;
     Nfc_interface::eTagState getTagPresence() override;
     // returns true, simulating successful write
     bool writeTag(byte blockAddress, byte *dataToWrite) override;
     // copies fakeBufferData to "readResult", simulating read from NFC tag
     bool readTag(byte blockAddress, byte *readResult) override;
-    const char *getNfcNotification()  override;
+    const char *getNfcNotification() override;
 };
 
-
 // MOCKS
-// Mocks the general NFC interface 
+// Mocks the general NFC interface
 class Mock_Nfc : public Nfc_interface
 {
 public:
@@ -49,40 +47,39 @@ public:
 
     void DelegateToFake()
     {
-        ON_CALL(*this, readTag).WillByDefault([this](byte blockAddress, byte *readResult) 
-        {
+        ON_CALL(*this, readTag).WillByDefault([this](byte blockAddress, byte *readResult) {
             return m_FakeRead.readTag(blockAddress, readResult);
         });
     }
 
 private:
-    Fake_Nfc m_FakeRead {};
+    Fake_Nfc m_FakeRead{};
 };
 
 // Mocks connection between Nfc top level and downstream MFCR interface
 class Mock_NfcTag : public NfcTag_interface
 {
-     public:
+public:
     MOCK_METHOD(bool, readTag, (byte blockAddress, byte *readResult), (override));
     // Write data to block for for implemented NFC types
     MOCK_METHOD(bool, writeTag, (byte blockAddress, byte *dataToWrite), (override));
 
-//private:
+    //private:
     //MOCK_METHOD(void, checkAndRectifyBlockAddress(byte &blockAddress));
 };
 
 // Mocks out actual library Hardware access
 class Mock_MFRC522 : public MFRC522_interface
 {
-    public:
-    MOCK_METHOD(void init, (), (override));
-    MOCK_METHOD(void softPowerDown, (), (override));
-    MOCK_METHOD(void softPowerUp, (), (override));
-    MOCK_METHOD(void tagHalt, (), (override));
-    MOCK_METHOD(void tagLogoff, (), (override));
-    MOCK_METHOD(MFRC522_interface::eTagType getTagType, (), (override));
-    MOCK_METHOD(bool isNewCardPresent, (), (override));
-    MOCK_METHOD(bool isCardPresent, (), (override));
+public:
+    MOCK_METHOD(void, init, (), (override));
+    MOCK_METHOD(void, softPowerDown, (), (override));
+    MOCK_METHOD(void, softPowerUp, (), (override));
+    MOCK_METHOD(void, tagHalt, (), (override));
+    MOCK_METHOD(void, tagLogoff, (), (override));
+    MOCK_METHOD(MFRC522_interface::eTagType, getTagType, (), (override));
+    MOCK_METHOD(bool, isNewCardPresent, (), (override));
+    MOCK_METHOD(bool, isCardPresent, (), (override));
 };
 
 // MATCHERS
