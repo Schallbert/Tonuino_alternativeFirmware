@@ -6,13 +6,8 @@
 #include "../Nfc_interface/Nfc_interface.h"
 #include "../NfcTag_implementation/NfcTag_factory.h"
 
-// move card presence enum down to here
-// isCardPresent to return this enum
-// make implementation testable
-
-// outsource card types to an own calss
-//
-
+// forwards power up etc. directly to MFRC interface
+// channels read/write requests to downstream NfcTag objects.
 class Nfc_implementation : public Nfc_interface
 {
 public:

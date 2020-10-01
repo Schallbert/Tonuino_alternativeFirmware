@@ -5,6 +5,7 @@
 #include "../Arduino/Arduino_interface/Arduino_types.h"
 #include "../Nfc/Nfc_interface/Nfc_interface.h"
 #include "../Nfc/NfcTag_interface/NfcTag_interface.h"
+#include "../Nfc/MFRC522/MFRC522_interface.h"
 
 
 // FAKES
@@ -34,6 +35,7 @@ public:
 
 
 // MOCKS
+// Mocks the general NFC interface 
 class Mock_Nfc : public Nfc_interface
 {
 public:
@@ -57,6 +59,7 @@ private:
     Fake_Nfc m_FakeRead {};
 };
 
+// Mocks connection between Nfc top level and downstream MFCR interface
 class Mock_NfcTag : public NfcTag_interface
 {
      public:
@@ -66,6 +69,20 @@ class Mock_NfcTag : public NfcTag_interface
 
 //private:
     //MOCK_METHOD(void, checkAndRectifyBlockAddress(byte &blockAddress));
+};
+
+// Mocks out actual library Hardware access
+class Mock_MFRC522 : public MFRC522_interface
+{
+    public:
+    MOCK_METHOD(void init, (), (override));
+    MOCK_METHOD(void softPowerDown, (), (override));
+    MOCK_METHOD(void softPowerUp, (), (override));
+    MOCK_METHOD(void tagHalt, (), (override));
+    MOCK_METHOD(void tagLogoff, (), (override));
+    MOCK_METHOD(MFRC522_interface::eTagType getTagType, (), (override));
+    MOCK_METHOD(bool isNewCardPresent, (), (override));
+    MOCK_METHOD(bool isCardPresent, (), (override));
 };
 
 // MATCHERS
