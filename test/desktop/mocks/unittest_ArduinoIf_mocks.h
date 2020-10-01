@@ -1,6 +1,7 @@
 #ifndef ARDUINOIF_MOCKS_H
 #define ARDUINOIF_MOCKS_H
 
+#include <gmock/gmock.h>
 #include "../Arduino/Arduino_interface/Arduino_types.h"
 #include "../Arduino/Arduino_interface/Arduino_interface.h"
 
@@ -40,7 +41,7 @@ public:
 class Mock_random : public Arduino_interface_random
 {
 public:
-    MOCK_METHOD(void, random_random_generateSeed, (byte floatingAnalogPin_Id), (override));
+    MOCK_METHOD(void, random_generateSeed, (byte floatingAnalogPin_Id), (override));
     MOCK_METHOD(uint8_t, random_generateUi8, (), (override));
 };
 

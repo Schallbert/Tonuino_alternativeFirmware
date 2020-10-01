@@ -27,10 +27,10 @@ public:
     // returns presence state of NFC tag
     virtual Nfc_interface::eTagState getTagPresence(void) = 0;
     // Returns true on successful write of data to a sector->block of the tag
-    virtual bool writeTag(byte blockAddr, byte *dataToWrite) = 0;
+    virtual bool writeTag(byte blockAddress, byte *dataToWrite) = 0;
     // Returns true on successful read
     // of data to a sector->block of the tag
-    virtual bool readTag(byte blockAddr, byte *readResult) = 0;
+    virtual bool readTag(byte blockAddress, byte *readResult) = 0;
     // Debug function. Returns notification from NFC reader system.
     virtual const char *getNfcNotification() = 0;
 };

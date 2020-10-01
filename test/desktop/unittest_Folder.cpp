@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <Folder.h>
+#include "mocks/unittest_ArduinoIf_mocks.h"
 #include "mocks/unittest_ArduinoDIcontainer_mocks.h"
 
 using ::testing::Return;    
@@ -41,7 +42,7 @@ TEST(folder, folder_invalid_prevTrackIs0)
 }
 TEST(folder, folder_invalid_trackCount0_isValidReturnsFalse)
 {
-    
+    Mock_ArduinoDIcontainer arduDIcontainer;
     Folder testFolder(1, Folder::ALBUM, 0);
     testFolder.setup_dependencies(&arduDIcontainer);
     ASSERT_FALSE(testFolder.is_valid());
