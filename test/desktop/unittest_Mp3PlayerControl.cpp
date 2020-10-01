@@ -19,7 +19,7 @@ protected:
     {
         m_pDfMini = new NiceMock<Mock_DfMiniMp3>;
         m_pArduinoHal = new NiceMock<Mock_ArduinoDIcontainer>;
-        m_pArduinoSerial = new NiceMock<Mock_com>;
+        m_pArduinoSerial = new NiceMock<Mock_serial>;
         m_pLullabyeTimer = new SimpleTimer{};
         m_pDfMiniMsgTimeout = new SimpleTimer{};
         m_pMp3PlrCtrl = new Mp3PlayerControl(m_pDfMini, m_pPinCtrl, m_pArduinoSerial, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
@@ -40,7 +40,7 @@ protected:
     NiceMock<Mock_DfMiniMp3> *m_pDfMini;
     NiceMock<Mock_pinCtrl> *m_pPinCtrl;
     NiceMock<Mock_ArduinoDIcontainer> *m_pArduinoHal;
-    NiceMock<Mock_com> *m_pArduinoSerial;
+    NiceMock<Mock_serial> *m_pArduinoSerial;
     SimpleTimer *m_pLullabyeTimer{nullptr};
     SimpleTimer *m_pDfMiniMsgTimeout{nullptr};
 

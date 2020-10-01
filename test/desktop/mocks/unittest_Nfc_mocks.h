@@ -6,6 +6,7 @@
 #include "../Nfc/Nfc_interface/Nfc_interface.h"
 #include "../Nfc/NfcTag_interface/NfcTag_interface.h"
 #include "../Nfc/MFRC522/MFRC522_interface.h"
+#include "../Nfc/NfcControl/NfcControl.h"
 
 // FAKES
 // Fake buffer data for NFC tag read

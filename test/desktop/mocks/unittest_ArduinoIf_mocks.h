@@ -30,7 +30,7 @@ public:
 
 // Class to interface Arduino's com port and print out information
 // All info taken from "USBAPI.h" & "CDC.cpp"
-class Mock_com : public Arduino_interface_com
+class Mock_serial : public Arduino_interface_com
 {
 public:
     MOCK_METHOD(void, com_begin, (unsigned long baudrate), (override));

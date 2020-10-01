@@ -1,244 +1,381 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <Folder.h>
+#include "Folder.h"
 #include "mocks/unittest_ArduinoIf_mocks.h"
 #include "mocks/unittest_ArduinoDIcontainer_mocks.h"
 
-using ::testing::Return;    
-TEST(folder, folder_invalid)
+using ::testing::NiceMock;
+using ::testing::Return;
+
+// TEST_F FIXTURE
+// This fixture will provide the dependency container
+// (which actually is empty!)
+class folderInvalid : public ::testing::Test
+{
+protected:
+    virtual void SetUp()
+    {
+        m_pADIC = new NiceMock<Mock_ArduinoDIcontainer>;
+    }
+
+    virtual void TearDown()
+    {
+        delete m_pADIC;
+    }
+
+protected:
+    NiceMock<Mock_ArduinoDIcontainer> *m_pADIC{nullptr};
+};
+
+// This fixture will return Mock_eeprom dependency
+class folderMethods : public folderInvalid
+{
+    virtual void SetUp()
+    {
+        folderInvalid::SetUp();
+        m_pEeprom = new NiceMock<Mock_eeprom>;
+        folderInvalid::m_pADIC->DelegateToMockEeprom(m_pEeprom);
+    }
+
+    virtual void TearDown()
+    {
+        delete m_pEeprom;
+        folderInvalid.TearDown();
+    }
+
+protected:
+    NiceMock<Mock_eeprom> *m_pEeprom{nullptr};
+};
+
+// This fixture will return Mock_eeprom dependency
+// and a valid folder object
+class folderAlbum : public folderMethods
+{
+protected:
+    virtual void SetUp()
+    {
+        folderMethods::SetUp();
+        testFolder = new Folder((2, Folder::ALBUM, 10);
+        testFolder->setup_dependencies(m_pADIC);
+    }
+
+    virtual void TearDown()
+    {
+        delete testFolder;
+        folderMethods::TearDown();
+    }
+
+protected:
+    Folder *testFolder{nullptr};
+};
+
+// This fixture will both return a Mock_eeprom and Mock_Random
+// from Dependency container
+class folderDependencies : public folderMethods
+{
+protected:
+    virtual void SetUp()
+    {
+        folderInvalid::SetUp();
+        m_pRandom = new NiceMock<Mock_random>;
+        folderInvalid::m_pADIC->DelegateToMockRandom(m_pRandom);
+    }
+
+    virtual void TearDown()
+    {
+        delete m_pRandom;
+        folderInvalid.TearDown();
+    }
+
+protected:
+    NiceMock<Mock_random> *m_pRandom{nullptr};
+};
+
+// TESTS
+TEST_F(folderInvalid, folder_defaultConstructor_isInvalid)
 {
     Folder testFolder;
     ASSERT_EQ(false, testFolder.is_valid());
 }
-TEST(folder, folder_invalid_idIs0)
+TEST_F(folderInvalid, folderIdIs0)
 {
     Folder testFolder;
     ASSERT_EQ(0, testFolder.get_folder_id());
 }
-TEST(folder, folder_invalid_playModeIsUndefined)
+TEST_F(folderInvalid, playModeIsUndefined)
 {
     Folder testFolder;
-    ASSERT_EQ(Folder::UNDEFINED, testFolder.get_play_mode());
+    ASSERT_EQ(Folder::UNDEFINED, testFolder->get_play_mode());
 }
-TEST(folder, folder_invalid_trackCountIs0)
+TEST_F(folderInvalid, trackCountIs0)
 {
     Folder testFolder;
-    ASSERT_EQ(0, testFolder.get_track_count());
+    ASSERT_EQ(0, testFolder->get_track_count());
 }
-TEST(folder, folder_invalid_currentTrackIs0)
+TEST_F(folderInvalid, currentTrackIs0)
 {
     Folder testFolder;
-    ASSERT_EQ(0, testFolder.get_current_track());
+    ASSERT_EQ(0, testFolder->get_current_track());
 }
-TEST(folder, folder_invalid_nextTrackIs0)
+TEST_F(folderInvalid, nextTrackIs0)
 {
     Folder testFolder;
-    ASSERT_EQ(0, testFolder.get_next_track());
+    ASSERT_EQ(0, testFolder->get_next_track());
 }
-TEST(folder, folder_invalid_prevTrackIs0)
+TEST_F(folderInvalid, prevTrackIs0)
 {
     Folder testFolder;
-    ASSERT_EQ(0, testFolder.get_prev_track());
+    ASSERT_EQ(0, testFolder->get_prev_track());
 }
-TEST(folder, folder_invalid_trackCount0_isValidReturnsFalse)
+TEST_F(folderInvalid, dependenciesSetup_isValidReturnsFalse)
 {
-    Mock_ArduinoDIcontainer arduDIcontainer;
     Folder testFolder(1, Folder::ALBUM, 0);
-    testFolder.setup_dependencies(&arduDIcontainer);
-    ASSERT_FALSE(testFolder.is_valid());
+    testFolder->setup_dependencies(m_pADIC);
+    ASSERT_FALSE(testFolder->is_valid());
 }
-TEST(folder, folder_invalid_playModeUndefined_isValidReturnsFalse)
+TEST_F(folderInvalid, playModeUndefined_isValidReturnsFalse)
 {
-    Mock_ArduinoDIcontainer arduDIcontainer;
     Folder testFolder(1, Folder::UNDEFINED, 24);
-    testFolder.setup_dependencies(&arduDIcontainer);
-    ASSERT_FALSE(testFolder.is_valid());
+    testFolder->setup_dependencies(m_pADIC);
+    ASSERT_FALSE(testFolder->is_valid());
 }
-TEST(folder, folder_invalid_folderIdIs0_isValidReturnsFalse)
+TEST_F(folderInvalid, folderIdIs0_isValidReturnsFalse)
 {
-    Mock_ArduinoDIcontainer arduDIcontainer;
     Folder testFolder(0, Folder::ALBUM, 24);
-    testFolder.setup_dependencies(&arduDIcontainer);
-    ASSERT_FALSE(testFolder.is_valid());
+    testFolder->setup_dependencies(m_pADIC);
+    ASSERT_FALSE(testFolder->is_valid());
 }
-TEST(folder, folder_ALBUM_valid)
+TEST_F(folderMethods, folder_ALBUM_valid)
 {
-    Mock_ArduinoDIcontainer arduDIcontainer;
     Folder testFolder(2, Folder::ALBUM, 10);
-    testFolder.setup_dependencies(&arduDIcontainer);
+    testFolder.setup_dependencies(m_pADIC);
     ASSERT_TRUE(testFolder.is_valid());
 }
-TEST(folder, folder_copyConstructor_workingOK)
+TEST_F(folderMethods, copyConstructor_workingOK)
 {
-    Mock_ArduinoDIcontainer arduDIcontainer;
-    Mock_eeprom eeprom;
-    ON_CALL(arduDIcontainer, getEeprom()).WillByDefault(Return(&eeprom));
-    EXPECT_CALL(eeprom, read(254)).WillOnce(Return(13));
+    // Arrange
+    EXPECT_CALL(m_pEeprom, eeprom_read(254)).WillOnce(Return(13));
     Folder testFolder(254, Folder::SAVEPROGRESS, 16);
-    testFolder.setup_dependencies(&arduDIcontainer);
+    testFolder.setup_dependencies(m_pADIC);
+    // Act
     Folder copyFolder(testFolder);
-    // Check if variables are set OK
+    // Assert
     EXPECT_TRUE(copyFolder.is_valid());
+}
+
+TEST_F(folderMethods, copyConstructor_valuesOK)
+{
+    EXPECT_CALL(m_pEeprom, eeprom_read(254)).WillOnce(Return(13));
+    Folder testFolder(54, Folder::SAVEPROGRESS, 16);
+    testFolder.setup_dependencies(m_pADIC);
+
+    Folder copyFolder(testFolder);
+
     // Validate that contents is copied OK
     EXPECT_EQ(13, copyFolder.get_current_track());
     EXPECT_EQ(254, copyFolder.get_folder_id());
     EXPECT_EQ(Folder::SAVEPROGRESS, copyFolder.get_play_mode());
     EXPECT_EQ(16, copyFolder.get_track_count());
 }
-TEST(folder, folder_assignmentOperator_workingOK)
+
+TEST_F(folderMethods, assignmentOperator_workingOK)
 {
-    Mock_ArduinoDIcontainer arduDIcontainer;
     Folder testFolder(254, Folder::ALBUM, 10);
-    testFolder.setup_dependencies(&arduDIcontainer);
+    testFolder.setup_dependencies(&m_pADIC);
     Folder copyFolder = Folder();
+
     copyFolder = testFolder;
     // Check if variables are set OK
     EXPECT_TRUE(copyFolder.is_valid());
+}
+
+TEST_F(folderMethods, assignmentOperator_valuesOK)
+{
+    Folder testFolder(254, Folder::ALBUM, 10);
+    testFolder->setup_dependencies(&m_pADIC);
+    Folder copyFolder = Folder();
+
+    copyFolder = testFolder;
+
     // Validate that contents is copied OK
     EXPECT_EQ(1, copyFolder.get_current_track());
     EXPECT_EQ(254, copyFolder.get_folder_id());
     EXPECT_EQ(Folder::ALBUM, copyFolder.get_play_mode());
     EXPECT_EQ(10, copyFolder.get_track_count());
-} 
-TEST(folder, folder_ALBUM_idIs2)
-{
-    Mock_ArduinoDIcontainer arduDIcontainer;
-    Folder testFolder(2, Folder::ALBUM, 10);
-    testFolder.setup_dependencies(&arduDIcontainer);
-    ASSERT_EQ(2, testFolder.get_folder_id());
 }
-TEST(folder, folder_ALBUM_playModeIsALBUM)
+
+TEST_F(folderAlbum, ALBUM_idIs2)
 {
-    Mock_ArduinoDIcontainer arduDIcontainer;
-    Folder testFolder(2, Folder::ALBUM, 10);
-    testFolder.setup_dependencies(&arduDIcontainer);
-    ASSERT_EQ(Folder::ALBUM, testFolder.get_play_mode());
+    ASSERT_EQ(2, testFolder->get_folder_id());
 }
-TEST(folder, folder_ALBUM_trackCountIs10)
+
+TEST_F(folderAlbum, playModeIsALBUM)
 {
-    Mock_ArduinoDIcontainer arduDIcontainer;
-    Folder testFolder(2, Folder::ALBUM, 10);
-    testFolder.setup_dependencies(&arduDIcontainer);
-    ASSERT_EQ(10, testFolder.get_track_count());
+    ASSERT_EQ(Folder::ALBUM, testFolder->get_play_mode());
 }
-TEST(folder, folder_ALBUM_trackCount10_currentTrackIs1)
+TEST_F(folderAlbum, trackCountIs10)
 {
-    Mock_ArduinoDIcontainer arduDIcontainer;
-    Folder testFolder(2, Folder::ALBUM, 10);
-    testFolder.setup_dependencies(&arduDIcontainer);
-    ASSERT_EQ(1, testFolder.get_current_track());
+    ASSERT_EQ(10, testFolder->get_track_count());
 }
-TEST(folder, folder_ALBUM_trackCountIs10_nextTrackIs2)
+TEST_F(folderAlbum, currentTrackIs1)
 {
-    Mock_ArduinoDIcontainer arduDIcontainer;
-    Folder testFolder(2, Folder::ALBUM, 10);
-    testFolder.setup_dependencies(&arduDIcontainer);
-    EXPECT_EQ(1, testFolder.get_current_track());
-    EXPECT_EQ(2, testFolder.get_next_track());
-    EXPECT_EQ(2, testFolder.get_current_track());
+    ASSERT_EQ(1, testFolder->get_current_track());
 }
-TEST(folder, folder_ALBUM_trackCountIs10_prevTrackIs10)
+TEST_F(folderAlbum, nextTrackIs2)
 {
-    Mock_ArduinoDIcontainer arduDIcontainer;
-    Folder testFolder(2, Folder::ALBUM, 10);
-    testFolder.setup_dependencies(&arduDIcontainer);
+    ASSERT_EQ(2, testFolder->get_next_track());
+}
+TEST_F(folderAlbum, ChooseNextTrack_currentTrackIs2)
+{
+    testFolder->get_next_track();
+    ASSERT_EQ(2, testFolder->get_current_track());
+}
+TEST_F(folderAlbum, trackCount10_CallPrevTrack_returns10)
+{
     // Tests rollover track count
-    EXPECT_EQ(1, testFolder.get_current_track());
-    EXPECT_EQ(10, testFolder.get_prev_track());
-    EXPECT_EQ(10, testFolder.get_current_track());
+    ASSERT_EQ(10, testFolder->get_prev_track());
 }
-TEST(folder, folder_ALBUM_trackCountIs6_AllTracksAreInQueue)
+TEST_F(folderAlbum, trackCount10_CallPrevTrack_GetCurrentTrackReturns10)
 {
-    Mock_ArduinoDIcontainer arduDIcontainer;
-    Folder testFolder(1, Folder::ALBUM, 6);
-    testFolder.setup_dependencies(&arduDIcontainer);
-    uint8_t trackSum = testFolder.get_current_track();
-    for (int i = 2; i <= 6; ++i)
+    // Tests rollover track count
+    ASSERT_EQ(10, testFolder->get_current_track());
+}
+TEST_F(folderAlbum, trackCountIs10_AllTracksAreInQueue)
+{
+    uint8_t trackSum = testFolder->get_current_track();
+    for (int i = 2; i <= testFolder->get_track_count(); ++i)
     {
-        trackSum += testFolder.get_next_track();
+        trackSum += testFolder->get_next_track();
     }
     ASSERT_EQ(21, trackSum);
 }
-TEST(folder, folder_RANDOM_trackCountIs10_NextTracksNotConsecutiveOrNull)
+
+TEST_F(folderDependencies, RANDOM_trackCountIs10_trackQueueLoopComplete)
 {
-    Mock_ArduinoDIcontainer arduDIcontainer;
     Folder testFolder(1, Folder::RANDOM, 10);
-    testFolder.setup_dependencies(&arduDIcontainer);
-    uint8_t track1 = testFolder.get_current_track();
-    uint8_t track2 = testFolder.get_next_track();
-    uint8_t track3 = testFolder.get_next_track();
-    uint8_t track4 = testFolder.get_next_track();
-    bool tracksConsecutive = (bool)(((track4 - track3) == 1) && ((track3 - track2) == 1) && ((track2 - track1) == 1));
-    bool tracksNull = (track1 == 0 || track2 == 0 || track3 == 0 || track4 == 0);
-    EXPECT_FALSE(tracksConsecutive);
-    EXPECT_FALSE(tracksNull);
-}
-TEST(folder, folder_RANDOM_invalidSeed_NextTracksNull)
-{
-    Mock_ArduinoDIcontainer arduDIcontainer;
-    Folder testFolder(1, Folder::RANDOM, 10);
-    testFolder.setup_dependencies(&arduDIcontainer);
-    uint8_t track1 = testFolder.get_current_track();
-    uint8_t track2 = testFolder.get_next_track();
-    uint8_t track3 = testFolder.get_next_track();
-    uint8_t track4 = testFolder.get_next_track();
-    bool tracksConsecutive = (bool)(((track4 - track3) == 1) && ((track3 - track2) == 1) && ((track2 - track1) == 1));
-    bool tracksNull = (track1 == 0 || track2 == 0 || track3 == 0 || track4 == 0);
-    EXPECT_FALSE(tracksConsecutive);
-    EXPECT_TRUE(tracksNull); // Without a random seed, TrackQueue will not be setup. isValid = FALSE.
-}
-TEST(folder, folder_RANDOM_trackCountIs6_AllTracksAreInQueue)
-{
-    Mock_ArduinoDIcontainer arduDIcontainer;
-    Folder testFolder(1, Folder::RANDOM, 10);
-    testFolder.setup_dependencies(&arduDIcontainer);
-    uint8_t trackSum = testFolder.get_current_track();
-    for (int i = 2; i <= 10; ++i)
-    {
-        trackSum += testFolder.get_next_track();
-    }
-    ASSERT_EQ(55, trackSum);
-}
-TEST(folder, folder_SAVEPROGRESS_trackLoad_isWorking)
-{
-    Mock_ArduinoDIcontainer arduDIcontainer;
-    Mock_eeprom eeprom;
-    ON_CALL(arduDIcontainer, getEeprom()).WillByDefault(Return(&eeprom));
-    EXPECT_CALL(eeprom, read(254)).WillOnce(Return(13));
-    Folder testFolder(254, Folder::SAVEPROGRESS, 16);
-    testFolder.setup_dependencies(&arduDIcontainer);
-    EXPECT_EQ(13, testFolder.get_current_track());
-}
-TEST(folder, folder_SAVEPROGRESS_trackSave_isWorking)
-{
-    Mock_ArduinoDIcontainer arduDIcontainer;
-    Mock_eeprom eeprom;
-    ON_CALL(arduDIcontainer, getEeprom()).WillByDefault(Return(&eeprom));
-    EXPECT_CALL(eeprom, write(254, 14));
-    EXPECT_CALL(eeprom, read(254)).WillOnce(Return(13));
-    Folder testFolder(254, Folder::SAVEPROGRESS, 16);
-    testFolder.setup_dependencies(&arduDIcontainer);
-    EXPECT_EQ(14, testFolder.get_next_track());
-}
-TEST(folder, folder_SAVEPROGRESS_Eeprom0_DefaultsTo1)
-{
-    Mock_ArduinoDIcontainer arduDIcontainer;
-    Mock_eeprom eeprom;
-    ON_CALL(arduDIcontainer, getEeprom()).WillByDefault(Return(&eeprom));
-    EXPECT_CALL(eeprom, write(254,1));
-    EXPECT_CALL(eeprom, read(254)).WillOnce(Return(0));
-    Folder testFolder(254, Folder::SAVEPROGRESS, 16);
-    testFolder.setup_dependencies(&arduDIcontainer);
+    // fake response, so shouldn't lock up in while loop
+    EXPECT_CALL(*m_pRandom, random_generateUi8)
+        .WillOnce(Return(1))
+        .WillOnce(Return(10))
+        .WillOnce(Return(2))
+        .WillOnce(Return(9))
+        .WillOnce(Return(3))
+        .WillOnce(Return(8))
+        .WillOnce(Return(4))
+        .WillOnce(Return(7))
+        .WillOnce(Return(5))
+        .WillOnce(Return(6))
+    testFolder->setup_dependencies(m_pADIC);
+    // take sample that track queue is correctly setup
+    // ALSO CONFIRMS THAT TRACK LIST IS OK BECAUSE OF WILLONCE STRUCTURE
     EXPECT_EQ(1, testFolder.get_current_track());
+    EXPECT_EQ(10, testFolder.get_next_track());
 }
-TEST(folder, folder_SAVEPROGRESS_EepromLargerThanTrackCount_DefaultsTo1)
+
+TEST_F(folderDependencies, RANDOM_trackCountIs10_willNotAllowSameTrackMultipleTimesInQueue)
 {
-    Mock_ArduinoDIcontainer arduDIcontainer;
-    Mock_eeprom eeprom;
-    ON_CALL(arduDIcontainer, getEeprom()).WillByDefault(Return(&eeprom));
-    EXPECT_CALL(eeprom, write(14,1));
-    EXPECT_CALL(eeprom, read(14)).WillOnce(Return(17));
-    Folder testFolder(14, Folder::SAVEPROGRESS, 16);
-    testFolder.setup_dependencies(&arduDIcontainer);
-    EXPECT_EQ(1, testFolder.get_current_track());
+    Folder testFolder(1, Folder::RANDOM, 10);
+    // fake response, so shouldn't lock up in while loop
+    EXPECT_CALL(*m_pRandom, random_generateUi8)
+        .WillOnce(Return(1))
+        .WillOnce(Return(10))
+        .WillOnce(Return(10)) // Duplicate
+        .WillOnce(Return(2))
+        .WillOnce(Return(9))
+        .WillOnce(Return(3))
+        .WillOnce(Return(10)) // Duplicate
+        .WillOnce(Return(8))
+        .WillOnce(Return(4))
+        .WillOnce(Return(7))
+        .WillOnce(Return(5))
+        .WillOnce(Return(6))
+
+    testFolder->setup_dependencies(m_pADIC);
+    // take sample that track queue is correctly setup
+    testFolder.get_next_track();
+    ASSERT_EQ(2, testFolder.get_next_track());
+}
+
+
+TEST_F(folderDependencies, RANDOM_trackCountIs10_willNotAllowTrackNumber0)
+{
+    Folder testFolder(1, Folder::RANDOM, 10);
+    // fake response, so shouldn't lock up in while loop
+    EXPECT_CALL(*m_pRandom, random_generateUi8)
+        .WillOnce(Return(1))
+        .WillOnce(Return(0)) // Not allowed
+        .WillOnce(Return(10)) 
+        .WillOnce(Return(2))
+        .WillOnce(Return(9))
+        .WillOnce(Return(3))
+        .WillOnce(Return(0)) // Not allowed
+        .WillOnce(Return(8))
+        .WillOnce(Return(4))
+        .WillOnce(Return(7))
+        .WillOnce(Return(5))
+        .WillOnce(Return(6))
+
+    testFolder->setup_dependencies(m_pADIC);
+    // take sample that track queue is correctly setup
+    ASSERT_EQ(10, testFolder.get_next_track());
+}
+
+TEST_F(folderDependencies, RANDOM_trackCountIs10_willNotAllowTrackNumberOutOfRange)
+{
+    Folder testFolder(1, Folder::RANDOM, 10);
+    // fake response, so shouldn't lock up in while loop
+    EXPECT_CALL(*m_pRandom, random_generateUi8)
+        .WillOnce(Return(1))
+        .WillOnce(Return(28)) // Not allowed
+        .WillOnce(Return(10)) 
+        .WillOnce(Return(2))
+        .WillOnce(Return(9))
+        .WillOnce(Return(3))
+        .WillOnce(Return(28)) // Not allowed
+        .WillOnce(Return(8))
+        .WillOnce(Return(4))
+        .WillOnce(Return(7))
+        .WillOnce(Return(5))
+        .WillOnce(Return(6))
+
+    testFolder->setup_dependencies(m_pADIC);
+    // take sample that track queue is correctly setup
+    ASSERT_EQ(10, testFolder.get_next_track());
+}
+
+TEST_F(folderDependencies, SAVEPROGRESS_trackLoadIsWorking)
+{
+    Folder testFolder(99, Folder::SAVEPROGRESS, 16);
+
+    ON_CALL(*m_pEeprom, eeprom_read(_)).WillByDefault(Return(13));
+    testFolder->setup_dependencies(m_pADIC);
+
+    EXPECT_EQ(13, testFolder->get_current_track());
+}
+
+TEST_F(folderDependencies, SAVEPROGRESS_trackSaveIsWorking)
+{
+    Folder testFolder(99, Folder::SAVEPROGRESS, 16);
+    ON_CALL(*m_pEeprom, eeprom_read(_)).WillByDefault(Return(13));
+
+    EXPECT_CALL(*m_pEeprom, eeprom_write(254, 14));
+    testFolder->setup_dependencies(m_pADIC);
+    EXPECT_EQ(14, testFolder->get_next_track());
+}
+
+TEST_F(folderDependencies, SAVEPROGRESS_EepromRead0_currentTrackDefaultsTo1)
+{
+    Folder testFolder(99, Folder::SAVEPROGRESS, 16);
+    ON_CALL(*m_pEeprom, eeprom_read(_)).WilByDefault(Return(0));
+    
+    testFolder->setup_dependencies(m_pADIC);
+    EXPECT_EQ(1, testFolder->get_current_track());
+}
+TEST_F(folderDependencies, SAVEPROGRESS_EepromReadOutOfRange_currentTrackDefaultsTo1)
+{
+    Folder testFolder(99, Folder::SAVEPROGRESS, 16);
+    ON_CALL(*m_pEeprom, eeprom_read(_)).WilByDefault(Return(17));
+    
+    testFolder->setup_dependencies(m_pADIC);
+    EXPECT_EQ(1, testFolder->get_current_track());
 }

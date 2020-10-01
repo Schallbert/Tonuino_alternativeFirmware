@@ -123,7 +123,6 @@ uint8_t Folder::get_current_track()
 void Folder::setup_dependencies(Arduino_DIcontainer_interface *pArduinoHal)
 {
     m_pArduinoHal = pArduinoHal;
-    m_pArduinoHal->getRandom()->random_generateSeed(PINANALOG_RNDMGEN);
     is_valid(); // Call to setup play queue in case dependencies are correctly linked
 }
 
@@ -232,6 +231,7 @@ void Folder::shuffle_queue()
     uint8_t j = 1;
     uint8_t rnd = 0;
     Arduino_interface_random *pRnd = m_pArduinoHal->getRandom();
+    pRnd->random_generateSeed(PINANALOG_RNDMGEN);
     bool alreadyInQueue = false;
     // Fill queue with non-repeating, random contents.
     while (i <= m_ui8TrackCount)

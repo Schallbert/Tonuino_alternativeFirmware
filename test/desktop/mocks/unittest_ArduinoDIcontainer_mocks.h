@@ -5,24 +5,10 @@
 #include "../Arduino/Arduino_interface/Arduino_DIcontainer_interface.h"
 #include "../Arduino/Arduino_interface/Arduino_interface.h"
 
+#include "unittest_ArduinoIf_mocks.h"
+
 using ::testing::NiceMock;
-
-class Fake_ArduinoDIcontainer : public Arduino_DIcontainer_interface
-{
-public:
-    Arduino_interface_pins *getPins() override;
-    Arduino_interface_delay *getDelay() override;
-    Arduino_interface_com *getSerial() override;
-    Arduino_interface_random *getRandom() override;
-    Arduino_interface_eeprom *getEeprom() override;
-
-private:
-    NiceMock<Mock_pinCtrl> m_pins;
-    NiceMock<Mock_delay> m_delay;
-    NiceMock<Mock_com> m_serial;
-    NiceMock<Mock_random> m_random;
-    NiceMock<Mock_eeprom> m_eeprom;
-}
+using ::testing::Return;
 
 class Mock_ArduinoDIcontainer : public Arduino_DIcontainer_interface
 {
@@ -35,16 +21,37 @@ public:
 
     // "Tunnels" DIcontainer.
     // Returns a mock instance of any of the corresponding parent methods.
-    void DelegateToFake()
+    void DelegateToMockPins(Mock_pinCtrl &pins)
     {
-        ON_CALL(*this, getPins).WillByDefault({ return m_Fake.getPins(); });
-        ON_CALL(*this, getDelay).WillByDefault({ return m_Fake.getDelay(); });
-        ON_CALL(*this, getSerial).WillByDefault({ return m_Fake.getSerial(); });
-        ON_CALL(*this, getRandom).WillByDefault({ return m_Fake.getRandom(); });
-        ON_CALL(*this, geEeprom).WillByDefault({ return m_Fake.getEeprom(); });
-    }
+        m_pins = pins;
+        ON_CALL(*this, getPins).WillByDefault(Return(m_pins()));
+    };
+    void DelegateToMockDelay(Mock_delay &delay)
+    {
+        m_delay = delay;
+        ON_CALL(*this, getDelay).WillByDefault(Return(m_delay));
+    };
+    void DelegateToMockSerial(Mock_serial &serial)
+    {
+        m_serial = serial;
+        ON_CALL(*this, getSerial).WillByDefault(Return(m_serial));
+    };
+    void DelegateToMockRandom(Mock_random random)
+    {
+        m_random = random;
+        ON_CALL(*this, getRandom).WillByDefault(Return(m_random));
+    };
+    void DelegateToMockEeprom(Mock_eeprom eeprom)
+    {
+        m_eeprom = eeprom;
+        ON_CALL(*this, getEeprom).WillByDefault(Return(m_eeprom));
+    };
 
 private:
-    Fake_ArduinoDIcontainer m_fake{};
+    Mock_pinCtrl *m_pins{nullptr};
+    Mock_delay *m_delay{nullptr};
+    Mock_serial *m_serial{nullptr};
+    Mock_random *m_random{nullptr};
+    Mock_eeprom *m_eeprom{nullptr};
 };
 #endif // UNITTEST_ARDUINODICONTAINER_MOCKS_H
