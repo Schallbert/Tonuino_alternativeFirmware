@@ -12,7 +12,7 @@ using ::testing::NiceMock;
 using ::testing::Return;
 
 // Fixture
-class PlayerCtrl : public ::testing::Test
+class Mp3Ctrl : public ::testing::Test
 {
 protected:
     // Arrange
@@ -21,44 +21,52 @@ protected:
         m_pArduinoHal = new NiceMock<Mock_ArduinoDIcontainer>;
         m_pPinCtrl = new NiceMock<Mock_pinCtrl>;
         m_pSerial = new NiceMock<Mock_serial>;
+        m_pEeprom = new NiceMock<Mock_eeprom>;
+        // Delegation MUST have taken place before instantiation of using object (Mp3PlrCtrl)
+        m_pArduinoHal->DelegateToMockPins(m_pPinCtrl);
+        m_pArduinoHal->DelegateToMockSerial(m_pSerial);
+        m_pArduinoHal->DelegateToMockEeprom(m_pEeprom);
 
         m_pDfMini = new NiceMock<Mock_DfMiniMp3>;
         m_pLullabyeTimer = new SimpleTimer{};
         m_pDfMiniMsgTimeout = new SimpleTimer{};
-        m_pMp3PlrCtrl = new Mp3PlayerControl(m_pArduinoHal, m_pDfMini, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
 
-        m_pArduinoHal->DelegateToMockSerial(m_pSerial);
-        m_pArduinoHal->DelegateToMockPins(m_pPinCtrl);
+        m_pMp3PlrCtrl = new Mp3PlayerControl(m_pArduinoHal, m_pDfMini, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
     }
 
     virtual void TearDown()
     {
-        delete m_pSerial;
-        delete m_pPinCtrl;
-        delete m_pArduinoHal;
         delete m_pMp3PlrCtrl;
+
+        delete m_pArduinoHal;
+        delete m_pPinCtrl;
+        delete m_pSerial;
+        delete m_pEeprom;
+        
+
         delete m_pDfMini;
         delete m_pLullabyeTimer;
         delete m_pDfMiniMsgTimeout;
     }
 
 protected:
-    NiceMock<Mock_DfMiniMp3> *m_pDfMini;
-    NiceMock<Mock_pinCtrl> *m_pPinCtrl;
     NiceMock<Mock_ArduinoDIcontainer> *m_pArduinoHal;
+    NiceMock<Mock_pinCtrl> *m_pPinCtrl;
     NiceMock<Mock_serial> *m_pSerial;
+    NiceMock<Mock_eeprom> *m_pEeprom;
+    NiceMock<Mock_DfMiniMp3> *m_pDfMini;
     SimpleTimer *m_pLullabyeTimer{nullptr};
     SimpleTimer *m_pDfMiniMsgTimeout{nullptr};
 
     Mp3PlayerControl *m_pMp3PlrCtrl;
 };
 
-class DebugOutput : public PlayerCtrl
+class Mp3CtrlDebugOutput : public Mp3Ctrl
 {
 };
 
 #if DEBUGSERIAL
-TEST_F(DebugOutput, messageHeadersCorrect)
+TEST_F(Mp3CtrlDebugOutput, messageHeadersCorrect)
 {
     EXPECT_CALL(*m_pSerial, com_println(_)).Times(2); // message content
     EXPECT_CALL(*m_pSerial, com_println("PLAYER CONTROL DEBUG:"));
@@ -67,7 +75,7 @@ TEST_F(DebugOutput, messageHeadersCorrect)
     m_pMp3PlrCtrl->print_debug_message();
 }
 
-TEST_F(DebugOutput, noAction_printsNoMessage)
+TEST_F(Mp3CtrlDebugOutput, noAction_printsNoMessage)
 {
     EXPECT_CALL(*m_pSerial, com_println(_)).Times(3); // message content
     EXPECT_CALL(*m_pSerial, com_println("No Message"));
@@ -75,7 +83,7 @@ TEST_F(DebugOutput, noAction_printsNoMessage)
     m_pMp3PlrCtrl->print_debug_message();
 }
 
-TEST_F(DebugOutput, volumeUp_printsVolUp)
+TEST_F(Mp3CtrlDebugOutput, volumeUp_printsVolUp)
 {
     EXPECT_CALL(*m_pSerial, com_println(_)).Times(3); // message content
     EXPECT_CALL(*m_pSerial, com_println("volume up"));
@@ -84,7 +92,7 @@ TEST_F(DebugOutput, volumeUp_printsVolUp)
     m_pMp3PlrCtrl->print_debug_message();
 }
 
-TEST_F(DebugOutput, volumeDown_printsVolDown)
+TEST_F(Mp3CtrlDebugOutput, volumeDown_printsVolDown)
 {
     EXPECT_CALL(*m_pSerial, com_println(_)).Times(3); // message content
     EXPECT_CALL(*m_pSerial, com_println("volume down"));
@@ -93,7 +101,7 @@ TEST_F(DebugOutput, volumeDown_printsVolDown)
     m_pMp3PlrCtrl->print_debug_message();
 }
 
-TEST_F(DebugOutput, play_printsPlay)
+TEST_F(Mp3CtrlDebugOutput, play_printsPlay)
 {
     Folder testFolder(1, Folder::ALBUM, 8);
     EXPECT_CALL(*m_pSerial, com_println(_)).Times(3); // message content
@@ -104,7 +112,7 @@ TEST_F(DebugOutput, play_printsPlay)
 }
 #endif
 
-TEST_F(PlayerCtrl, ClassConstructorMethodsCalled)
+TEST_F(Mp3Ctrl, ClassConstructorMethodsCalled)
 {
     EXPECT_CALL(*m_pDfMini, begin());
     EXPECT_CALL(*m_pDfMini, setEq(DFMINI_EQ_SETTING));
@@ -112,49 +120,49 @@ TEST_F(PlayerCtrl, ClassConstructorMethodsCalled)
     Mp3PlayerControl myMp3(m_pArduinoHal, m_pDfMini, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
 }
 
-TEST_F(PlayerCtrl, AutoPlayCalledOnLoop)
+TEST_F(Mp3Ctrl, AutoPlayCalledOnLoop)
 {
     EXPECT_CALL(*m_pDfMini, loop());
     EXPECT_CALL(*m_pDfMini, checkTrackFinished()).WillOnce(Return(false));
     m_pMp3PlrCtrl->loop();
 }
 
-TEST_F(PlayerCtrl, volumeUp_belowMax_volumeIsIncreased)
+TEST_F(Mp3Ctrl, volumeUp_belowMax_volumeIsIncreased)
 {
     EXPECT_CALL(*m_pDfMini, getVolume()).WillRepeatedly(Return(VOLUME_MAX - 1));
     EXPECT_CALL(*m_pDfMini, increaseVolume()).Times(1);
     m_pMp3PlrCtrl->volume_up();
 }
 
-TEST_F(PlayerCtrl, volumeUp_Max_volumeNotIncreased)
+TEST_F(Mp3Ctrl, volumeUp_Max_volumeNotIncreased)
 {
     EXPECT_CALL(*m_pDfMini, getVolume()).WillRepeatedly(Return(VOLUME_MAX));
     EXPECT_CALL(*m_pDfMini, increaseVolume()).Times(0); // not allowed to increase volume here
     m_pMp3PlrCtrl->volume_up();
 }
 
-TEST_F(PlayerCtrl, volumeDown_aboveMin_volumeIsDecreased)
+TEST_F(Mp3Ctrl, volumeDown_aboveMin_volumeIsDecreased)
 {
     EXPECT_CALL(*m_pDfMini, getVolume()).WillRepeatedly(Return(VOLUME_MIN + 1));
     EXPECT_CALL(*m_pDfMini, decreaseVolume()).Times(1);
     m_pMp3PlrCtrl->volume_down();
 }
 
-TEST_F(PlayerCtrl, volumeDown_Min_volumeNotDecreased)
+TEST_F(Mp3Ctrl, volumeDown_Min_volumeNotDecreased)
 {
     EXPECT_CALL(*m_pDfMini, getVolume()).WillRepeatedly(Return(VOLUME_MIN));
     EXPECT_CALL(*m_pDfMini, decreaseVolume()).Times(0); // not allowed to increase volume here
     m_pMp3PlrCtrl->volume_down();
 }
 
-TEST_F(PlayerCtrl, playPause_playing_Pauses)
+TEST_F(Mp3Ctrl, playPause_playing_Pauses)
 {
     EXPECT_CALL(*m_pPinCtrl, digital_read(_)).WillOnce(Return(false));
     EXPECT_CALL(*m_pDfMini, pause()).Times(1);
     m_pMp3PlrCtrl->play_pause();
 }
 
-TEST_F(PlayerCtrl, playPause_paused_Plays)
+TEST_F(Mp3Ctrl, playPause_paused_Plays)
 {
     EXPECT_CALL(*m_pPinCtrl, digital_read(_)).WillOnce(Return(true));
     //EXPECT_CALL(*(m_pMp3PlrCtrl::m_currentFolder), is_valid()).WillOnce(Return(true));
@@ -162,7 +170,7 @@ TEST_F(PlayerCtrl, playPause_paused_Plays)
     m_pMp3PlrCtrl->play_pause();
 }
 
-TEST_F(PlayerCtrl, autoplay_trackPlaying_nop)
+TEST_F(Mp3Ctrl, autoplay_trackPlaying_nop)
 {
     EXPECT_CALL(*m_pDfMini, loop()).Times(1);
     EXPECT_CALL(*m_pDfMini, checkTrackFinished()).WillOnce(Return(false));
@@ -171,7 +179,7 @@ TEST_F(PlayerCtrl, autoplay_trackPlaying_nop)
     m_pMp3PlrCtrl->loop();
 }
 
-TEST_F(PlayerCtrl, autoplay_ALBUM_trackFinished_next)
+TEST_F(Mp3Ctrl, autoplay_ALBUM_trackFinished_next)
 {
     Folder testFolder(1, Folder::ALBUM, 8);
     testFolder.setup_dependencies(m_pArduinoHal);
@@ -182,7 +190,7 @@ TEST_F(PlayerCtrl, autoplay_ALBUM_trackFinished_next)
     m_pMp3PlrCtrl->loop();
 }
 
-TEST_F(PlayerCtrl, autoplay_ONELARGETRACK_trackFinished_stop)
+TEST_F(Mp3Ctrl, autoplay_ONELARGETRACK_trackFinished_stop)
 {
     Folder testFolder(1, Folder::ONELARGETRACK, 8);
     testFolder.setup_dependencies(m_pArduinoHal);
@@ -193,7 +201,7 @@ TEST_F(PlayerCtrl, autoplay_ONELARGETRACK_trackFinished_stop)
     m_pMp3PlrCtrl->loop();
 }
 
-TEST_F(PlayerCtrl, autoplay_LULLABYE_trackFinished_next)
+TEST_F(Mp3Ctrl, autoplay_LULLABYE_trackFinished_next)
 {
     Folder testFolder(1, Folder::LULLABYE, 8);
     testFolder.setup_dependencies(m_pArduinoHal);
@@ -205,7 +213,7 @@ TEST_F(PlayerCtrl, autoplay_LULLABYE_trackFinished_next)
     m_pMp3PlrCtrl->loop();
 }
 
-TEST_F(PlayerCtrl, autoplay_LULLABYE_trackFinished_borderline_next)
+TEST_F(Mp3Ctrl, autoplay_LULLABYE_trackFinished_borderline_next)
 {
     Folder testFolder(1, Folder::LULLABYE, 8);
     testFolder.setup_dependencies(m_pArduinoHal);
@@ -223,9 +231,9 @@ TEST_F(PlayerCtrl, autoplay_LULLABYE_trackFinished_borderline_next)
     m_pMp3PlrCtrl->loop();
 }
 
-TEST_F(PlayerCtrl, autoplay_LULLABYE_trackFinished_timeout_stop)
+TEST_F(Mp3Ctrl, autoplay_LULLABYE_trackFinished_timeout_stop)
 {
-    
+
     Folder testFolder(1, Folder::ONELARGETRACK, 8);
     testFolder.setup_dependencies(m_pArduinoHal);
     // make timeout expire
@@ -241,21 +249,21 @@ TEST_F(PlayerCtrl, autoplay_LULLABYE_trackFinished_timeout_stop)
     m_pMp3PlrCtrl->loop();
 }
 
-TEST_F(PlayerCtrl, dontSkip_notPlaying_Timeout)
+TEST_F(Mp3Ctrl, dontSkip_notPlaying_Timeout)
 {
     ON_CALL(*m_pPinCtrl, digital_read(_)).WillByDefault(Return(true));                                                                   // not playing
     EXPECT_CALL(*m_pDfMini, loop()).Times(WAIT_DFMINI_READY).WillOnce(InvokeWithoutArgs(m_pDfMiniMsgTimeout, &SimpleTimer::timer_tick)); //called twice before timeout
     m_pMp3PlrCtrl->dont_skip_current_track();
 }
 
-TEST_F(PlayerCtrl, dontSkip_notFinishing_Timeout)
+TEST_F(Mp3Ctrl, dontSkip_notFinishing_Timeout)
 {
     ON_CALL(*m_pPinCtrl, digital_read(_)).WillByDefault(Return(false));                                                                            // not playing
     EXPECT_CALL(*m_pDfMini, loop()).Times(TIMEOUT_PROMPT_PLAYED).WillRepeatedly(InvokeWithoutArgs(m_pDfMiniMsgTimeout, &SimpleTimer::timer_tick)); //called twice before timeout
     m_pMp3PlrCtrl->dont_skip_current_track();
 }
 
-TEST_F(PlayerCtrl, dontSkip_playing_noTimeout)
+TEST_F(Mp3Ctrl, dontSkip_playing_noTimeout)
 {
     // timeout not elapsing
     EXPECT_CALL(*m_pPinCtrl, digital_read(_)).Times(3).WillOnce(Return(false)).WillOnce(Return(false)).WillRepeatedly(Return(true)); // not playing
@@ -263,16 +271,16 @@ TEST_F(PlayerCtrl, dontSkip_playing_noTimeout)
     m_pMp3PlrCtrl->dont_skip_current_track();
 }
 
-TEST_F(PlayerCtrl, nextTrack_noFolder_noop)
+TEST_F(Mp3Ctrl, nextTrack_noFolder_noop)
 {
     // No folder defined!
     EXPECT_CALL(*m_pDfMini, playFolderTrack(_, _)).Times(0);
     m_pMp3PlrCtrl->next_track();
 }
 
-TEST_F(PlayerCtrl, nextTrack_FolderSAVEPROGRESS_dependencyNotSet_noop)
+TEST_F(Mp3Ctrl, nextTrack_FolderSAVEPROGRESS_dependencyNotSet_noop)
 {
-    
+
     Folder testFolder(1, Folder::SAVEPROGRESS, 8);
     // dependencies not set
     EXPECT_CALL(*m_pDfMini, playFolderTrack(_, _)).Times(0);
@@ -280,7 +288,7 @@ TEST_F(PlayerCtrl, nextTrack_FolderSAVEPROGRESS_dependencyNotSet_noop)
     m_pMp3PlrCtrl->next_track();
 }
 
-TEST_F(PlayerCtrl, nextTrack_FolderRANDOM_dependencyNotSet_noop)
+TEST_F(Mp3Ctrl, nextTrack_FolderRANDOM_dependencyNotSet_noop)
 {
     Folder testFolder(1, Folder::RANDOM, 8);
     // dependencies not set
@@ -289,7 +297,7 @@ TEST_F(PlayerCtrl, nextTrack_FolderRANDOM_dependencyNotSet_noop)
     m_pMp3PlrCtrl->next_track();
 }
 
-TEST_F(PlayerCtrl, nextTrack_FolderALBUM_dependencyNotSet_playsNext)
+TEST_F(Mp3Ctrl, nextTrack_FolderALBUM_dependencyNotSet_playsNext)
 {
     Folder testFolder(1, Folder::SAVEPROGRESS, 8);
     // dependencies not set
@@ -298,7 +306,7 @@ TEST_F(PlayerCtrl, nextTrack_FolderALBUM_dependencyNotSet_playsNext)
     m_pMp3PlrCtrl->next_track();
 }
 
-TEST_F(PlayerCtrl, nextTrack_FolderALBUM_dependencySet_playsNext)
+TEST_F(Mp3Ctrl, nextTrack_FolderALBUM_dependencySet_playsNext)
 {
     Folder testFolder(1, Folder::ALBUM, 8);
     testFolder.setup_dependencies(m_pArduinoHal);
@@ -307,7 +315,7 @@ TEST_F(PlayerCtrl, nextTrack_FolderALBUM_dependencySet_playsNext)
     m_pMp3PlrCtrl->next_track();
 }
 
-TEST_F(PlayerCtrl, nextTrack_FolderSAVEPROGRESS_dependencySet_playsNext)
+TEST_F(Mp3Ctrl, nextTrack_FolderSAVEPROGRESS_dependencySet_playsNext)
 {
     Folder testFolder(1, Folder::SAVEPROGRESS, 8);
     testFolder.setup_dependencies(m_pArduinoHal);
@@ -317,15 +325,15 @@ TEST_F(PlayerCtrl, nextTrack_FolderSAVEPROGRESS_dependencySet_playsNext)
     m_pMp3PlrCtrl->next_track();
 }
 
-TEST_F(PlayerCtrl, prevTrack_noFolder_noop)
+TEST_F(Mp3Ctrl, prevTrack_noFolder_noop)
 {
     // No folder defined!
     EXPECT_CALL(*m_pDfMini, playFolderTrack(_, _)).Times(0);
     m_pMp3PlrCtrl->prev_track();
 }
 
-TEST_F(PlayerCtrl, prevTrack_FolderALBUM_dependenciesNotSet_playsPrev)
-{ 
+TEST_F(Mp3Ctrl, prevTrack_FolderALBUM_dependenciesNotSet_playsPrev)
+{
     Folder testFolder(1, Folder::ALBUM, 8);
     // dependencies not set!
     EXPECT_CALL(*m_pDfMini, playFolderTrack(_, _)).Times(2);
@@ -333,7 +341,7 @@ TEST_F(PlayerCtrl, prevTrack_FolderALBUM_dependenciesNotSet_playsPrev)
     m_pMp3PlrCtrl->prev_track();
 }
 
-TEST_F(PlayerCtrl, prevTrack_FolderOk_playsPrev)
+TEST_F(Mp3Ctrl, prevTrack_FolderOk_playsPrev)
 {
     Folder testFolder(1, Folder::ALBUM, 8);
     testFolder.setup_dependencies(m_pArduinoHal);
@@ -342,13 +350,13 @@ TEST_F(PlayerCtrl, prevTrack_FolderOk_playsPrev)
     m_pMp3PlrCtrl->prev_track();
 }
 
-TEST_F(PlayerCtrl, get_trackCount_noFolder_Returns0)
+TEST_F(Mp3Ctrl, get_trackCount_noFolder_Returns0)
 {
     EXPECT_CALL(*m_pDfMini, getFolderTrackCount(1)).WillRepeatedly(Return(0));
     EXPECT_EQ(0, m_pMp3PlrCtrl->get_trackCount_of_folder(1));
 }
 
-TEST_F(PlayerCtrl, get_trackCount_Folder_ReturnsNumber)
+TEST_F(Mp3Ctrl, get_trackCount_Folder_ReturnsNumber)
 {
     Folder testFolder(1, Folder::ALBUM, 8);
     testFolder.setup_dependencies(m_pArduinoHal);
@@ -356,7 +364,7 @@ TEST_F(PlayerCtrl, get_trackCount_Folder_ReturnsNumber)
     EXPECT_EQ(8, m_pMp3PlrCtrl->get_trackCount_of_folder(1));
 }
 
-TEST_F(PlayerCtrl, get_trackCount_TrackNumberTooHigh_Returns0)
+TEST_F(Mp3Ctrl, get_trackCount_TrackNumberTooHigh_Returns0)
 {
     Folder testFolder(1, Folder::ALBUM, 8);
     testFolder.setup_dependencies(m_pArduinoHal);

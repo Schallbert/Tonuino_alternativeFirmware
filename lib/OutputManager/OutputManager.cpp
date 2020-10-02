@@ -45,7 +45,7 @@ void OutputManager::handleInputErrors()
     bool bError = false;
     // Check for index out of bounds
     if ((Nfc_interface::NO_TAG > m_eTagState) ||
-        (m_eTagState >= Nfc_interface::NUMBER_OF_TAG_STATES))
+        (m_eTagState > Nfc_interface::NUMBER_OF_TAG_STATES))
     {
         bError = true;
 #ifdef DEBUGSERIAL

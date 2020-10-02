@@ -150,36 +150,36 @@ TEST_F(NfcCtrlRead, Read_Successful_bufferSet_returnsCorrectFolderData)
     EXPECT_EQ(m_pTestFolder->get_track_count(), resultFolder.get_track_count());
 }
 
-TEST_F(NfcCtrlTagPresence, getTagPresence_noTag_returnsNoTag)
+TEST_F(NfcCtrlTagPresence, noTag_returnsNoTag)
 {
     Nfc_interface::eTagState nfcTagPresence = Nfc_interface::NO_TAG;
     ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(nfcTagPresence));
     EXPECT_EQ(nfcTagPresence, m_pNfcCtrl->get_tag_presence());
 }
 
-TEST_F(NfcCtrlTagPresence, getTagPresence_activeTag_returnsActiveTag)
+TEST_F(NfcCtrlTagPresence, activeTag_returnsActiveTag)
 {
     Nfc_interface::eTagState nfcTagPresence = Nfc_interface::ACTIVE_KNOWN_TAG;
     ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(nfcTagPresence));
     EXPECT_EQ(nfcTagPresence, m_pNfcCtrl->get_tag_presence());
 }
 
-TEST_F(NfcCtrlTagPresence, getTagPresence_newTag_simulateUnknown_returnsUnknownTag)
+TEST_F(NfcCtrlTagPresence, newTag_simulateUnknown_returnsUnknownTag)
 {
     Nfc_interface::eTagState nfcTagPresence = Nfc_interface::NEW_TAG;
     ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(nfcTagPresence));
     EXPECT_EQ(Nfc_interface::NEW_UNKNOWN_TAG, m_pNfcCtrl->get_tag_presence());
 }
 
-TEST_F(NfcCtrlTagPresence, getTagPresence_newTag_simulateKnown_returnsKnownTag)
+TEST_F(NfcCtrlTagPresence, newTag_simulateKnown_returnsKnownTag)
 {
     Nfc_interface::eTagState nfcTagPresence = Nfc_interface::NEW_TAG;
     ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(nfcTagPresence));
     m_pNfc->DelegateToFake(); // will return known card cookie
-    EXPECT_EQ(Nfc_interface::NEW_UNKNOWN_TAG, m_pNfcCtrl->get_tag_presence());
+    EXPECT_EQ(Nfc_interface::NEW_KNOWN_TAG, m_pNfcCtrl->get_tag_presence());
 }
 
-TEST_F(NfcCtrlTagPresence, getTagPresence_OutOfRange_returnsOutOfRange)
+TEST_F(NfcCtrlTagPresence, OutOfRange_returnsOutOfRange)
 {
     Nfc_interface::eTagState nfcTagPresence = static_cast<Nfc_interface::eTagState>(6);
     ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(nfcTagPresence));

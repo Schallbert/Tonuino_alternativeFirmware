@@ -78,15 +78,15 @@ class folderDependencies : public folderMethods
 protected:
     virtual void SetUp()
     {
-        folderInvalid::SetUp();
+        folderMethods::SetUp();
         m_pRandom = new NiceMock<Mock_random>;
-        folderInvalid::m_pADIC->DelegateToMockRandom(m_pRandom);
+        folderMethods::m_pADIC->DelegateToMockRandom(m_pRandom);
     }
 
     virtual void TearDown()
     {
         delete m_pRandom;
-        folderInvalid::TearDown();
+        folderMethods::TearDown();
     }
 
 protected:

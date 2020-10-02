@@ -26,8 +26,10 @@ protected:
     virtual void SetUp()
     {
         m_pArduinoHal = new NiceMock<Mock_ArduinoDIcontainer>;
-        m_pMp3 = new NiceMock<Mock_Mp3PlayerControl>;
+        m_pSerial = new NiceMock<Mock_serial>;
+        m_pArduinoHal->DelegateToMockSerial(m_pSerial);
 
+        m_pMp3 = new NiceMock<Mock_Mp3PlayerControl>;
         m_pSysPwr = new NiceMock<Mock_PowerManager>;
         m_pNfc = new NiceMock<Mock_Nfc>;
         m_pNfcCtrl = new NfcControl(m_pNfc, m_pArduinoHal->getSerial());
@@ -49,11 +51,13 @@ protected:
         delete m_pSysPwr;
         delete m_pNfcCtrl;
         delete m_pArduinoHal;
+        delete m_pSerial;
         delete m_pMenuTimer;
     }
 
 protected:
     NiceMock<Mock_ArduinoDIcontainer> *m_pArduinoHal;
+    NiceMock<Mock_serial> *m_pSerial;
     NiceMock<Mock_Mp3PlayerControl> *m_pMp3;
 
     NiceMock<Mock_PowerManager> *m_pSysPwr{nullptr};
@@ -156,7 +160,7 @@ TEST_F(OutputManagerTest, linkMenu_entry)
 TEST_F(OutputManagerTest, linkMenu_lockInLinkMenu)
 {
     m_pOutputManager->setInputStates(Nfc_interface::NEW_UNKNOWN_TAG, UserInput::NO_ACTION);
-    EXPECT_CALL(*m_pMp3, play_specific_file(1)); // Check if we are successfully locked in unknown card menu
+    EXPECT_CALL(*m_pMp3, play_specific_file(1));                                              // Check if we are successfully locked in unknown card menu
     m_pOutputManager->setInputStates(Nfc_interface::ACTIVE_KNOWN_TAG, UserInput::NEXT_TRACK); // although card state changes
     m_pOutputManager->runDispatcher();
 }
@@ -172,7 +176,7 @@ TEST_F(OutputManagerTest, linkMenu_nextSelected_nextOptionSelected)
 TEST_F(OutputManagerTest, linkMenu_folderSelectionWorking)
 {
     m_pOutputManager->setInputStates(Nfc_interface::NEW_UNKNOWN_TAG, UserInput::NO_ACTION);
-    EXPECT_CALL(*m_pMp3, play_specific_file(MAXFOLDERCOUNT)); 
+    EXPECT_CALL(*m_pMp3, play_specific_file(MAXFOLDERCOUNT));
     m_pOutputManager->setInputStates(Nfc_interface::NEW_UNKNOWN_TAG, UserInput::PREV_TRACK);
     m_pOutputManager->runDispatcher();
 }
@@ -189,7 +193,6 @@ TEST_F(OutputManagerTest, linkMenu_linkMenuFolderSelect_folderInvalidSelection0)
     EXPECT_CALL(*m_pMp3, play_specific_file(_));
     EXPECT_CALL(*m_pMp3, play_specific_file(MSG_ERROR_FOLDER));
     m_pOutputManager->runDispatcher();
-    
 }
 
 MATCHER_P(folderIdIs, value, "") { return (arg->get_folder_id() == value); }
@@ -208,7 +211,7 @@ TEST_F(OutputManagerTest, linkMenu_linkMenuPlayModeSelect_playModeSelectionWorki
     m_pOutputManager->setInputStates(Nfc_interface::NEW_UNKNOWN_TAG, UserInput::PLAY_PAUSE);
     m_pOutputManager->runDispatcher();
     m_pOutputManager->setInputStates(Nfc_interface::NEW_UNKNOWN_TAG, UserInput::PREV_TRACK);
-    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_SELECT_PLAYMODE+static_cast<uint8_t>(Folder::ONELARGETRACK)));
+    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_SELECT_PLAYMODE + static_cast<uint8_t>(Folder::ONELARGETRACK)));
     m_pOutputManager->runDispatcher();
 }
 
@@ -236,7 +239,7 @@ TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_configureSuccessful)
     m_pOutputManager->setInputStates(Nfc_interface::NEW_UNKNOWN_TAG, UserInput::NEXT_TRACK);
     m_pOutputManager->runDispatcher();
     m_pOutputManager->setInputStates(Nfc_interface::NEW_UNKNOWN_TAG, UserInput::PLAY_PAUSE);
-    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_TAGCONFSUCCESS)); 
+    EXPECT_CALL(*m_pMp3, play_specific_file(MSG_TAGCONFSUCCESS));
     m_pOutputManager->runDispatcher();
 }
 
@@ -253,20 +256,21 @@ TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_writesInfoToCard)
     m_pOutputManager->setInputStates(Nfc_interface::NEW_UNKNOWN_TAG, UserInput::NEXT_TRACK);
     m_pOutputManager->runDispatcher(); // should set link menu to playmode ALBUM
     m_pOutputManager->setInputStates(Nfc_interface::NEW_UNKNOWN_TAG, UserInput::PLAY_PAUSE);
-    EXPECT_CALL(*m_pNfc, writeTag(_, _));                        // Make sure card info is written
-    m_pOutputManager->runDispatcher(); // should log playmode and complete linkMenu
+    EXPECT_CALL(*m_pNfc, writeTag(_, _)); // Make sure card info is written
+    m_pOutputManager->runDispatcher();    // should log playmode and complete linkMenu
 }
 
-MATCHER_P3(folderOk, expFolderId, expPlayMode, expTrackCnt, ""){
+MATCHER_P3(folderOk, expFolderId, expPlayMode, expTrackCnt, "")
+{
     return ((arg->get_folder_id() == expFolderId) &&
-    (arg->get_play_mode() == expPlayMode) &&
-    (arg->get_track_count() == expTrackCnt));
+            (arg->get_play_mode() == expPlayMode) &&
+            (arg->get_track_count() == expTrackCnt));
 }
 
 TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_startsPlaybackWithCorrectSettings)
 {
     ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(8));
-    ON_CALL(*m_pNfc, writeTag(_, _)).WillByDefault(Return(true)); 
+    ON_CALL(*m_pNfc, writeTag(_, _)).WillByDefault(Return(true));
     ON_CALL(*m_pNfc, readTag(_, _)).WillByDefault(Return(true));
 
     // Simulate navigation through linkMenu with folder1, playMode Album, 8 tracks
@@ -305,14 +309,14 @@ TEST_F(OutputManagerTest, linkMenu_userAbort_resetsMenu)
 // DELETE MENU SPECIFIC TESTS --------------------------------------------
 TEST_F(OutputManagerTest, deleteCardMenu_entry_playsDeletePrompt)
 {
-    m_pOutputManager->setInputStates(Nfc_interface::ACTIVE_KNOWN_TAG, UserInput::PP_LONGPRESS); 
+    m_pOutputManager->setInputStates(Nfc_interface::ACTIVE_KNOWN_TAG, UserInput::PP_LONGPRESS);
     EXPECT_CALL(*m_pMp3, play_specific_file(MSG_DELETETAG));
     m_pOutputManager->runDispatcher(); // enter delete menu
 }
 
 TEST_F(OutputManagerTest, deleteCardMenu_deleteNotReady_confirmDeletion_replaysDeletePrompt)
 {
-    m_pOutputManager->setInputStates(Nfc_interface::ACTIVE_KNOWN_TAG, UserInput::PP_LONGPRESS); 
+    m_pOutputManager->setInputStates(Nfc_interface::ACTIVE_KNOWN_TAG, UserInput::PP_LONGPRESS);
     m_pOutputManager->runDispatcher(); // enter delete menu
     m_pOutputManager->setInputStates(Nfc_interface::ACTIVE_KNOWN_TAG, UserInput::PLAY_PAUSE);
     EXPECT_CALL(*m_pMp3, play_specific_file(MSG_DELETETAG));
@@ -322,9 +326,9 @@ TEST_F(OutputManagerTest, deleteCardMenu_deleteNotReady_confirmDeletion_replaysD
 TEST_F(OutputManagerTest, deleteCardMenu_deletionReady_confirmDeletion_playsDeleteConfirmPrompt)
 {
     ON_CALL(*m_pNfc, writeTag(_, _)).WillByDefault(Return(true));
-    m_pOutputManager->setInputStates(Nfc_interface::ACTIVE_KNOWN_TAG, UserInput::PP_LONGPRESS); 
-    m_pOutputManager->runDispatcher(); // enter delete menu
-    m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::NO_ACTION); // get delete menu ready
+    m_pOutputManager->setInputStates(Nfc_interface::ACTIVE_KNOWN_TAG, UserInput::PP_LONGPRESS);
+    m_pOutputManager->runDispatcher();                                                       // enter delete menu
+    m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::NO_ACTION);    // get delete menu ready
     m_pOutputManager->setInputStates(Nfc_interface::DELETE_TAG_MENU, UserInput::PLAY_PAUSE); // confirm deletion
     EXPECT_CALL(*m_pMp3, play_specific_file(MSG_CONFIRMED));
     m_pOutputManager->runDispatcher(); // complete delete menu
@@ -332,7 +336,7 @@ TEST_F(OutputManagerTest, deleteCardMenu_deletionReady_confirmDeletion_playsDele
 
 TEST_F(OutputManagerTest, deleteCardMenu_menuTimeout_resetsMenu)
 {
-    m_pOutputManager->setInputStates(Nfc_interface::ACTIVE_KNOWN_TAG, UserInput::PP_LONGPRESS); 
+    m_pOutputManager->setInputStates(Nfc_interface::ACTIVE_KNOWN_TAG, UserInput::PP_LONGPRESS);
     m_pOutputManager->runDispatcher(); // enter delete menu
     for (uint16_t i = 0; i <= MENU_TIMEOUT_SECS; ++i)
     {
@@ -355,91 +359,91 @@ TEST_F(OutputManagerTest, deleteMenu_userAbort_resetsMenu)
 
 TEST_F(OutputManagerTest, dispatcher_noCardPPlongPress_help_playsPrompt)
 {
-    m_pOutputManager->setInputStates(Nfc_interface::NO_TAG, UserInput::PP_LONGPRESS); 
+    m_pOutputManager->setInputStates(Nfc_interface::NO_TAG, UserInput::PP_LONGPRESS);
     EXPECT_CALL(*m_pMp3, play_specific_file(MSG_HELP));
     m_pOutputManager->runDispatcher();
 }
 
 TEST_F(OutputManagerTest, dispatcher_noCardNext_playsNextTrack)
 {
-    m_pOutputManager->setInputStates(Nfc_interface::NO_TAG, UserInput::NEXT_TRACK); 
+    m_pOutputManager->setInputStates(Nfc_interface::NO_TAG, UserInput::NEXT_TRACK);
     EXPECT_CALL(*m_pMp3, next_track());
     m_pOutputManager->runDispatcher();
 }
 
 TEST_F(OutputManagerTest, dispatcher_activeKnownCardNext_playsNextTrack)
 {
-    m_pOutputManager->setInputStates(Nfc_interface::ACTIVE_KNOWN_TAG, UserInput::NEXT_TRACK); 
+    m_pOutputManager->setInputStates(Nfc_interface::ACTIVE_KNOWN_TAG, UserInput::NEXT_TRACK);
     EXPECT_CALL(*m_pMp3, next_track());
     m_pOutputManager->runDispatcher();
 }
 
 TEST_F(OutputManagerTest, dispatcher_newKnownCardNext_readCalled)
 {
-    m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::NEXT_TRACK); 
+    m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::NEXT_TRACK);
     EXPECT_CALL(*m_pNfc, readTag(_, _));
     m_pOutputManager->runDispatcher();
 }
 
 TEST_F(OutputManagerTest, dispatcher_noCardPrev_playsPrevTrack)
 {
-    m_pOutputManager->setInputStates(Nfc_interface::NO_TAG, UserInput::PREV_TRACK); 
+    m_pOutputManager->setInputStates(Nfc_interface::NO_TAG, UserInput::PREV_TRACK);
     EXPECT_CALL(*m_pMp3, prev_track());
     m_pOutputManager->runDispatcher();
 }
 
 TEST_F(OutputManagerTest, dispatcher_activeKnownCardPrev_playsPrevTrack)
 {
-    m_pOutputManager->setInputStates(Nfc_interface::ACTIVE_KNOWN_TAG, UserInput::PREV_TRACK); 
+    m_pOutputManager->setInputStates(Nfc_interface::ACTIVE_KNOWN_TAG, UserInput::PREV_TRACK);
     EXPECT_CALL(*m_pMp3, prev_track());
     m_pOutputManager->runDispatcher();
 }
 
 TEST_F(OutputManagerTest, dispatcher_newKnownCardPrev_readCalled)
 {
-    m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::PREV_TRACK); 
+    m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::PREV_TRACK);
     EXPECT_CALL(*m_pNfc, readTag(_, _));
     m_pOutputManager->runDispatcher();
 }
 
 TEST_F(OutputManagerTest, dispatcher_noCardIncVol_increasesVolume)
 {
-    m_pOutputManager->setInputStates(Nfc_interface::NO_TAG, UserInput::INC_VOLUME); 
+    m_pOutputManager->setInputStates(Nfc_interface::NO_TAG, UserInput::INC_VOLUME);
     EXPECT_CALL(*m_pMp3, volume_up());
     m_pOutputManager->runDispatcher();
 }
 
 TEST_F(OutputManagerTest, dispatcher_activeKnownCardIncVol_increasesVolume)
 {
-    m_pOutputManager->setInputStates(Nfc_interface::ACTIVE_KNOWN_TAG, UserInput::INC_VOLUME); 
+    m_pOutputManager->setInputStates(Nfc_interface::ACTIVE_KNOWN_TAG, UserInput::INC_VOLUME);
     EXPECT_CALL(*m_pMp3, volume_up());
     m_pOutputManager->runDispatcher();
 }
 
 TEST_F(OutputManagerTest, dispatcher_newKnownCardIncVol_readCalled)
 {
-    m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::INC_VOLUME); 
+    m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::INC_VOLUME);
     EXPECT_CALL(*m_pNfc, readTag(_, _));
     m_pOutputManager->runDispatcher();
 }
 
 TEST_F(OutputManagerTest, dispatcher_noCardDecVol_decreasesVolume)
 {
-    m_pOutputManager->setInputStates(Nfc_interface::NO_TAG, UserInput::DEC_VOLUME); 
+    m_pOutputManager->setInputStates(Nfc_interface::NO_TAG, UserInput::DEC_VOLUME);
     EXPECT_CALL(*m_pMp3, volume_down());
     m_pOutputManager->runDispatcher();
 }
 
 TEST_F(OutputManagerTest, dispatcher_activeKnownCardVol_decreasesVolume)
 {
-    m_pOutputManager->setInputStates(Nfc_interface::ACTIVE_KNOWN_TAG, UserInput::DEC_VOLUME); 
+    m_pOutputManager->setInputStates(Nfc_interface::ACTIVE_KNOWN_TAG, UserInput::DEC_VOLUME);
     EXPECT_CALL(*m_pMp3, volume_down());
     m_pOutputManager->runDispatcher();
 }
 
 TEST_F(OutputManagerTest, dispatcher_newKnownCardVol_readCalled)
 {
-    m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::DEC_VOLUME); 
+    m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::DEC_VOLUME);
     EXPECT_CALL(*m_pNfc, readTag(_, _));
     m_pOutputManager->runDispatcher();
 }
@@ -449,9 +453,9 @@ TEST_F(OutputManagerTest, dispatcher_readSuccesful_noErrorGenerated)
     m_pNfc->DelegateToFake(); // Delegates readTag() call to fake object
     ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(fakeBufferData[6]));
 
-    m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::NO_ACTION); 
+    m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::NO_ACTION);
     EXPECT_CALL(*m_pMp3, play_specific_file(MSG_ERROR_CARDREAD)).Times(0);
-    m_pOutputManager->runDispatcher(); 
+    m_pOutputManager->runDispatcher();
 }
 
 TEST_F(OutputManagerTest, dispatcher_read_noUpdateOfFolderInfoNecessary_cardNotUpdated)
@@ -459,10 +463,10 @@ TEST_F(OutputManagerTest, dispatcher_read_noUpdateOfFolderInfoNecessary_cardNotU
     m_pNfc->DelegateToFake(); // Delegates readTag() call to fake object
     ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(fakeBufferData[6]));
 
-    m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::NO_ACTION); 
+    m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::NO_ACTION);
     EXPECT_CALL(*m_pNfc, writeTag(_, _)).Times(0); // no need to update card
     EXPECT_CALL(*m_pMp3, play_specific_file(MSG_ERROR_CARDREAD)).Times(0);
-    m_pOutputManager->runDispatcher(); 
+    m_pOutputManager->runDispatcher();
 }
 
 TEST_F(OutputManagerTest, dispatcher_read_updateOfFolderInfoNecessary_cardUpdated)
@@ -473,12 +477,12 @@ TEST_F(OutputManagerTest, dispatcher_read_updateOfFolderInfoNecessary_cardUpdate
     m_pNfc->DelegateToFake(); // Delegates readTag() call to fake object
     ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(9));
 
-    m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::NO_ACTION); 
+    m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::NO_ACTION);
     EXPECT_CALL(*m_pNfc, writeTag(_, arrayByteCompare(
-                                updatedExpectedBuffer,
-                                NFCTAG_MEMORY_TO_OCCUPY
-                                ))).Times(1);
-    m_pOutputManager->runDispatcher(); 
+                                         updatedExpectedBuffer,
+                                         NFCTAG_MEMORY_TO_OCCUPY)))
+        .Times(1);
+    m_pOutputManager->runDispatcher();
 }
 
 TEST_F(OutputManagerTest, dispatcher_read_folderDeletedOnCard_playsErrorPrompt)
@@ -486,7 +490,7 @@ TEST_F(OutputManagerTest, dispatcher_read_folderDeletedOnCard_playsErrorPrompt)
     m_pNfc->DelegateToFake(); // Delegates readTag() call to fake object
     ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(0));
 
-    m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::NO_ACTION); 
+    m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::NO_ACTION);
     EXPECT_CALL(*m_pMp3, play_specific_file(MSG_ERROR_FOLDER));
-    m_pOutputManager->runDispatcher(); 
+    m_pOutputManager->runDispatcher();
 }
