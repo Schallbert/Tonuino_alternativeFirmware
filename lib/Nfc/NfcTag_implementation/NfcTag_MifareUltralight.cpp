@@ -13,7 +13,7 @@ bool NfcTag_MifareUltralight::readTag(byte blockAddress, byte *readResult)
     {
         status &= m_pMfrc522->tagRead(blockAddress + 1, buffer, &ui8_bufSize);
         // copy 4byte block from buffer2 to buffer
-        memcpy(readResult + (i * MIFARE_UL_BLOCK_SIZE), buffer, MIFARE_UL_BLOCK_SIZE);
+        NfcTag_interface::copyArray(readResult + (i * MIFARE_UL_BLOCK_SIZE), buffer, MIFARE_UL_BLOCK_SIZE);
     }
     m_pMfrc522->tagHalt();
     return status;
@@ -23,7 +23,6 @@ bool NfcTag_MifareUltralight::writeTag(byte blockAddress, byte *dataToWrite)
 {
     bool status{true};
     byte buffer[NFCTAG_MEMORY_TO_OCCUPY] = {};
-    byte ui8_bufSize = NFCTAG_MEMORY_TO_OCCUPY;
     
     checkAndRectifyBlockAddress(blockAddress);
     // For MIFARE Ultralight, Authentication is not a must 
@@ -31,10 +30,9 @@ bool NfcTag_MifareUltralight::writeTag(byte blockAddress, byte *dataToWrite)
 
     for (uint8_t i = 0; i < MIFARE_UL_BLOCK_SIZE; ++i)
     {
-        memset(buffer, 0, NFCTAG_MEMORY_TO_OCCUPY);
         // copy 4byte block from data to buffer
-        memcpy(buffer, dataToWrite + (i * MIFARE_UL_BLOCK_SIZE), MIFARE_UL_BLOCK_SIZE);
-        status &= (MFRC522::StatusCode)m_pMfrc522->tagWrite(blockAddress + i, buffer, ui8_bufSize);
+        NfcTag_interface::copyArray(buffer, dataToWrite + (i * MIFARE_UL_BLOCK_SIZE), MIFARE_UL_BLOCK_SIZE);
+        status &= m_pMfrc522->tagWrite(blockAddress + i, buffer, NFCTAG_MEMORY_TO_OCCUPY);
         m_pMfrc522->tagHalt();
     }
     return status;

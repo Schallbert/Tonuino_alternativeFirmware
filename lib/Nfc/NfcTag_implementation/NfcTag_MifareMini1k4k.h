@@ -2,7 +2,7 @@
 #define NFCTAG_MIFAREMINI1K4K_H
 
 #include "../Nfc/NfcTag_interface/NfcTag_interface.h"
-#include "../MFRC522/MFRC522_implementation.h"
+#include "../Nfc/MFRC522/MFRC522_interface.h"
 
 class NfcTag_MifareMini1k4k : public NfcTag_interface
 {

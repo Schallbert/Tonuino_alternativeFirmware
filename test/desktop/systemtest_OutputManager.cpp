@@ -1,13 +1,14 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <SimpleTimer.h>
+#include "SimpleTimer.h"
 #include "../Nfc/NfcControl/NfcControl.h"
 #include "../Nfc/Nfc_interface/Nfc_interface.h"
 
 #include "mocks/unittest_Nfc_mocks.h"
 #include "mocks/unittest_DfMiniMp3_mocks.h"
-#include "mocks/unittest_ArduinoIf_mocks.h"
+#include "mocks/unittest_ArduinoDIcontainer_mocks.h"
+//#include "mocks/unittest_ArduinoIf_mocks.h"
 #include "mocks/unittest_PowerManager_mocks.h"
 #include "mocks/unittest_Mp3PlayerControl_mocks.h"
 
@@ -24,17 +25,17 @@ protected:
     // Arrange
     virtual void SetUp()
     {
-        m_pArduinoHal = new NiceMock<Mock_ArduinoDIcontainer;
+        m_pArduinoHal = new NiceMock<Mock_ArduinoDIcontainer>;
         m_pMp3 = new NiceMock<Mock_Mp3PlayerControl>;
 
         m_pSysPwr = new NiceMock<Mock_PowerManager>;
-        m_pMfrc = new NiceMock<Mock_MFRC522>;
-        m_pNfcTag = new NfcControl(m_pMfrc);
+        m_pNfc = new NiceMock<Mock_Nfc>;
+        m_pNfcCtrl = new NfcControl(m_pNfc, m_pArduinoHal->getSerial());
         m_pMenuTimer = new SimpleTimer{};
 
-        m_pOutputManager = new OutputManager(m_pArduinoDIcontainer,
+        m_pOutputManager = new OutputManager(m_pArduinoHal,
                                              m_pSysPwr,
-                                             m_pNfcTag,
+                                             m_pNfcCtrl,
                                              m_pMp3,
                                              m_pMenuTimer);
     }
@@ -43,10 +44,10 @@ protected:
     {
         delete m_pOutputManager;
         delete m_pMp3;
-        delete m_pMfrc;
+        delete m_pNfc;
 
         delete m_pSysPwr;
-        delete m_pNfcTag;
+        delete m_pNfcCtrl;
         delete m_pArduinoHal;
         delete m_pMenuTimer;
     }
@@ -56,8 +57,8 @@ protected:
     NiceMock<Mock_Mp3PlayerControl> *m_pMp3;
 
     NiceMock<Mock_PowerManager> *m_pSysPwr{nullptr};
-    NiceMock<Mock_MFRC522> *m_pMfrc{nullptr};
-    NfcControl *m_pNfcTag{nullptr};
+    NiceMock<Mock_Nfc> *m_pNfc{nullptr};
+    NfcControl *m_pNfcCtrl{nullptr};
 
     SimpleTimer *m_pMenuTimer{nullptr};
 
@@ -133,7 +134,7 @@ TEST_F(OutputManagerTest, dispatcher_activeKnownCardPlayPause_playCalled)
 TEST_F(OutputManagerTest, dispatcher_newKnownCard_readCalled)
 {
     m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::PLAY_PAUSE);
-    EXPECT_CALL(*m_pMfrc, readCard(_, _));
+    EXPECT_CALL(*m_pNfc, readTag(_, _));
     m_pOutputManager->runDispatcher();
 }
 
@@ -226,8 +227,8 @@ TEST_F(OutputManagerTest, linkMenu_linkMenuPlayModeSelect_playModeInvalidSelecti
 TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_configureSuccessful)
 {
     ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(8));
-    ON_CALL(*m_pMfrc, writeTag(_, _)).WillByDefault(Return(true));
-    ON_CALL(*m_pMfrc, readCard(_, _)).WillByDefault(Return(true));
+    ON_CALL(*m_pNfc, writeTag(_, _)).WillByDefault(Return(true));
+    ON_CALL(*m_pNfc, readTag(_, _)).WillByDefault(Return(true));
     m_pOutputManager->setInputStates(Nfc_interface::NEW_UNKNOWN_TAG, UserInput::NEXT_TRACK);
     m_pOutputManager->runDispatcher();
     m_pOutputManager->setInputStates(Nfc_interface::NEW_UNKNOWN_TAG, UserInput::PLAY_PAUSE);
@@ -242,7 +243,7 @@ TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_configureSuccessful)
 TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_writesInfoToCard)
 {
     ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(8));
-    ON_CALL(*m_pMfrc, readCard(_, _)).WillByDefault(Return(true));
+    ON_CALL(*m_pNfc, readTag(_, _)).WillByDefault(Return(true));
 
     // Simulate navigation through linkMenu with folder1, playMode Album, 8 tracks
     m_pOutputManager->setInputStates(Nfc_interface::NEW_UNKNOWN_TAG, UserInput::NEXT_TRACK);
@@ -252,7 +253,7 @@ TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_writesInfoToCard)
     m_pOutputManager->setInputStates(Nfc_interface::NEW_UNKNOWN_TAG, UserInput::NEXT_TRACK);
     m_pOutputManager->runDispatcher(); // should set link menu to playmode ALBUM
     m_pOutputManager->setInputStates(Nfc_interface::NEW_UNKNOWN_TAG, UserInput::PLAY_PAUSE);
-    EXPECT_CALL(*m_pMfrc, writeTag(_, _));                        // Make sure card info is written
+    EXPECT_CALL(*m_pNfc, writeTag(_, _));                        // Make sure card info is written
     m_pOutputManager->runDispatcher(); // should log playmode and complete linkMenu
 }
 
@@ -265,8 +266,8 @@ MATCHER_P3(folderOk, expFolderId, expPlayMode, expTrackCnt, ""){
 TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_startsPlaybackWithCorrectSettings)
 {
     ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(8));
-    ON_CALL(*m_pMfrc, writeTag(_, _)).WillByDefault(Return(true)); 
-    ON_CALL(*m_pMfrc, readCard(_, _)).WillByDefault(Return(true));
+    ON_CALL(*m_pNfc, writeTag(_, _)).WillByDefault(Return(true)); 
+    ON_CALL(*m_pNfc, readTag(_, _)).WillByDefault(Return(true));
 
     // Simulate navigation through linkMenu with folder1, playMode Album, 8 tracks
     m_pOutputManager->setInputStates(Nfc_interface::NEW_UNKNOWN_TAG, UserInput::NEXT_TRACK);
@@ -320,7 +321,7 @@ TEST_F(OutputManagerTest, deleteCardMenu_deleteNotReady_confirmDeletion_replaysD
 
 TEST_F(OutputManagerTest, deleteCardMenu_deletionReady_confirmDeletion_playsDeleteConfirmPrompt)
 {
-    ON_CALL(*m_pMfrc, writeTag(_, _)).WillByDefault(Return(true));
+    ON_CALL(*m_pNfc, writeTag(_, _)).WillByDefault(Return(true));
     m_pOutputManager->setInputStates(Nfc_interface::ACTIVE_KNOWN_TAG, UserInput::PP_LONGPRESS); 
     m_pOutputManager->runDispatcher(); // enter delete menu
     m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::NO_ACTION); // get delete menu ready
@@ -376,7 +377,7 @@ TEST_F(OutputManagerTest, dispatcher_activeKnownCardNext_playsNextTrack)
 TEST_F(OutputManagerTest, dispatcher_newKnownCardNext_readCalled)
 {
     m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::NEXT_TRACK); 
-    EXPECT_CALL(*m_pMfrc, readCard(_, _));
+    EXPECT_CALL(*m_pNfc, readTag(_, _));
     m_pOutputManager->runDispatcher();
 }
 
@@ -397,7 +398,7 @@ TEST_F(OutputManagerTest, dispatcher_activeKnownCardPrev_playsPrevTrack)
 TEST_F(OutputManagerTest, dispatcher_newKnownCardPrev_readCalled)
 {
     m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::PREV_TRACK); 
-    EXPECT_CALL(*m_pMfrc, readCard(_, _));
+    EXPECT_CALL(*m_pNfc, readTag(_, _));
     m_pOutputManager->runDispatcher();
 }
 
@@ -418,7 +419,7 @@ TEST_F(OutputManagerTest, dispatcher_activeKnownCardIncVol_increasesVolume)
 TEST_F(OutputManagerTest, dispatcher_newKnownCardIncVol_readCalled)
 {
     m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::INC_VOLUME); 
-    EXPECT_CALL(*m_pMfrc, readCard(_, _));
+    EXPECT_CALL(*m_pNfc, readTag(_, _));
     m_pOutputManager->runDispatcher();
 }
 
@@ -439,13 +440,13 @@ TEST_F(OutputManagerTest, dispatcher_activeKnownCardVol_decreasesVolume)
 TEST_F(OutputManagerTest, dispatcher_newKnownCardVol_readCalled)
 {
     m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::DEC_VOLUME); 
-    EXPECT_CALL(*m_pMfrc, readCard(_, _));
+    EXPECT_CALL(*m_pNfc, readTag(_, _));
     m_pOutputManager->runDispatcher();
 }
 
 TEST_F(OutputManagerTest, dispatcher_readSuccesful_noErrorGenerated)
 {
-    m_pMfrc->DelegateToFake(); // Delegates readCard() call to fake object
+    m_pNfc->DelegateToFake(); // Delegates readTag() call to fake object
     ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(fakeBufferData[6]));
 
     m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::NO_ACTION); 
@@ -455,11 +456,11 @@ TEST_F(OutputManagerTest, dispatcher_readSuccesful_noErrorGenerated)
 
 TEST_F(OutputManagerTest, dispatcher_read_noUpdateOfFolderInfoNecessary_cardNotUpdated)
 {
-    m_pMfrc->DelegateToFake(); // Delegates readCard() call to fake object
+    m_pNfc->DelegateToFake(); // Delegates readTag() call to fake object
     ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(fakeBufferData[6]));
 
     m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::NO_ACTION); 
-    EXPECT_CALL(*m_pMfrc, writeTag(_, _)).Times(0); // no need to update card
+    EXPECT_CALL(*m_pNfc, writeTag(_, _)).Times(0); // no need to update card
     EXPECT_CALL(*m_pMp3, play_specific_file(MSG_ERROR_CARDREAD)).Times(0);
     m_pOutputManager->runDispatcher(); 
 }
@@ -469,20 +470,20 @@ TEST_F(OutputManagerTest, dispatcher_read_updateOfFolderInfoNecessary_cardUpdate
     byte updatedExpectedBuffer[16] = {};
     memcpy(updatedExpectedBuffer, fakeBufferData, sizeof(byte) * 16);
     updatedExpectedBuffer[6] = 9;
-    m_pMfrc->DelegateToFake(); // Delegates readCard() call to fake object
+    m_pNfc->DelegateToFake(); // Delegates readTag() call to fake object
     ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(9));
 
     m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::NO_ACTION); 
-    EXPECT_CALL(*m_pMfrc, writeTag(_, arrayByteCompare(
+    EXPECT_CALL(*m_pNfc, writeTag(_, arrayByteCompare(
                                 updatedExpectedBuffer,
-                                Nfc_interface::NFCTAG_MEMORY_TO_OCCUPY
+                                NFCTAG_MEMORY_TO_OCCUPY
                                 ))).Times(1);
     m_pOutputManager->runDispatcher(); 
 }
 
 TEST_F(OutputManagerTest, dispatcher_read_folderDeletedOnCard_playsErrorPrompt)
 {
-    m_pMfrc->DelegateToFake(); // Delegates readCard() call to fake object
+    m_pNfc->DelegateToFake(); // Delegates readTag() call to fake object
     ON_CALL(*m_pMp3, get_trackCount_of_folder(_)).WillByDefault(Return(0));
 
     m_pOutputManager->setInputStates(Nfc_interface::NEW_KNOWN_TAG, UserInput::NO_ACTION); 
