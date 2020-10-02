@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include "Arduino_config.h"
 #include "mocks/unittest_ArduinoIf_mocks.h"
 #include "../Nfc/NfcControl/NfcControl.h"
 #include "mocks/unittest_Nfc_mocks.h"
@@ -34,7 +35,7 @@ protected:
 
 protected:
     Arduino_interface_com *m_pSerial{nullptr};
-    Nfc_interface* m_pNfc{nullptr};
+    NiceMock<Mock_Nfc>* m_pNfc{nullptr};
     NfcControl* m_pNfcCtrl{nullptr};
     Folder* m_pTestFolder{nullptr};
 };
@@ -47,7 +48,7 @@ TEST_F(NfcCtrlWrite, initNfc_IsCalledOnConstruction)
 {
     Mock_Nfc nfc;
     EXPECT_CALL(nfc, initNfc()).Times(1);
-    NfcControl m_pNfcCtrl(&nfc);
+    NfcControl m_pNfcCtrl(&nfc, m_pSerial);
 }
 
 TEST_F(NfcCtrlWrite, invalidFolder_ReturnsFalse)
@@ -72,7 +73,7 @@ TEST_F(NfcCtrlWrite, validFolder_IsCalledWithCorrectPayload)
 {
     EXPECT_CALL(*m_pNfc, writeTag(_, arrayByteCompare(
                                 fakeBufferData,
-                                Nfc_interface::NFCTAG_MEMORY_TO_OCCUPY
+                                NFCTAG_MEMORY_TO_OCCUPY
                                 ))).Times(1);
     m_pNfcCtrl->write_folder_to_card(*m_pTestFolder);
 }
@@ -86,10 +87,10 @@ TEST_F(NfcCtrlWrite, validFolder_writeSuccess)
 TEST_F(NfcCtrlWrite, EraseTag)
 {
     // Compare if input of writeTag buffer is really 0
-    byte emptyBuffer[Nfc_interface::NFCTAG_MEMORY_TO_OCCUPY] = {};
+    byte emptyBuffer[NFCTAG_MEMORY_TO_OCCUPY] = {};
     EXPECT_CALL(*m_pNfc, writeTag(_, arrayByteCompare(
                                   emptyBuffer,
-                                  Nfc_interface::NFCTAG_MEMORY_TO_OCCUPY
+                                  NFCTAG_MEMORY_TO_OCCUPY
                                   )));
     m_pNfcCtrl->erase_card();
 }
@@ -120,7 +121,7 @@ TEST_F(NfcCtrlRead, isCalledWithCorrectPayload)
     Folder resultFolder;
     EXPECT_CALL(*m_pNfc, readTag(_, arrayByteCompare(
                                   fakeBufferData,
-                                  Nfc_interface::NFCTAG_MEMORY_TO_OCCUPY
+                                  NFCTAG_MEMORY_TO_OCCUPY
                                   )));
     // sets buffer to a certain value
     m_pNfcCtrl->write_folder_to_card(*m_pTestFolder);
@@ -174,13 +175,13 @@ TEST_F(NfcCtrlTagPresence, getTagPresence_newTag_simulateKnown_returnsKnownTag)
 {
     Nfc_interface::eTagState nfcTagPresence = Nfc_interface::NEW_TAG;
     ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(nfcTagPresence));
-    m_pNfcCtrl->DelegateToFake(); // will return known card cookie
+    m_pNfc->DelegateToFake(); // will return known card cookie
     EXPECT_EQ(Nfc_interface::NEW_UNKNOWN_TAG, m_pNfcCtrl->get_tag_presence());
 }
 
 TEST_F(NfcCtrlTagPresence, getTagPresence_OutOfRange_returnsOutOfRange)
 {
-    Nfc_interface::eTagState nfcTagPresence = 6;
+    Nfc_interface::eTagState nfcTagPresence = static_cast<Nfc_interface::eTagState>(6);
     ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(nfcTagPresence));
     EXPECT_EQ(nfcTagPresence, m_pNfcCtrl->get_tag_presence());
 }
