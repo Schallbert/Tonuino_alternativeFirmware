@@ -57,31 +57,25 @@ void Nfc_implementation::initNfc()
     m_pMfrc522->init(); // Init MFRC522
 }
 
-bool Nfc_implementation::writeTag(byte blockAddr, byte *dataToWrite)
+bool Nfc_implementation::writeTag(byte blockAddress, byte *dataToWrite)
 {
     bool status{false};
-    NfcTag_interface *pNfcTag = NfcTag_factory::getInstance(m_tagType, m_pMfrc522);
-    if (!pNfcTag)
+    if(getTag())
     {
-        setNotification(false, noMessage, tagTypeNotImplementedError);
-        return status; // returned nullptr, tag type not implemented
+        status = m_pConcreteTag->writeTag(blockAddress, dataToWrite);
     }
-    status = pNfcTag->writeTag(blockAddr, dataToWrite);
     setTagOffline();
     setNotification(status, tagWriteSuccess, tagWriteError);
     return status;
 }
 
-bool Nfc_implementation::readTag(byte blockAddr, byte *readResult)
+bool Nfc_implementation::readTag(byte blockAddress, byte *readResult)
 {
     bool status{false};
-    NfcTag_interface *pNfcTag = NfcTag_factory::getInstance(m_tagType, m_pMfrc522);
-    if (!pNfcTag)
+    if(getTag())
     {
-        setNotification(false, noMessage, tagTypeNotImplementedError);
-        return status; // returned nullptr, tag type not implemented
+        status = m_pConcreteTag->readTag(blockAddress, readResult);
     }
-    status = pNfcTag->readTag(blockAddr, readResult);
     setTagOffline();
     setNotification(status, tagReadSuccess, tagReadError);
     return status;
@@ -111,19 +105,17 @@ bool Nfc_implementation::setTagOnline()
     bool status{false};
     // Try reading card
     status = m_pMfrc522->isCardPresent();
-    status &= getTagType();
+    status &= getTag();
     return status;
 }
 
-bool Nfc_implementation::getTagType()
+bool Nfc_implementation::getTag()
 {
-    bool status{true};
-    m_tagType = m_pMfrc522->getTagType();
-    if (m_tagType == MFRC522_interface::PICC_TYPE_UNKNOWN ||
-        m_tagType == MFRC522_interface::PICC_TYPE_NOT_COMPLETE)
+    m_pConcreteTag = NfcTag_factory::getInstance(m_pMfrc522);
+    if (!m_pConcreteTag)
     {
-        status = false;
+        setNotification(false, noMessage, tagTypeNotImplementedError);
+        return false; // returned nullptr, tag type not implemented
     }
-    setNotification(status, noMessage, tagTypeNotImplementedError);
-    return status;
+    return true;
 }

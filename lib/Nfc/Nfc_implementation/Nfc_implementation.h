@@ -30,8 +30,8 @@ public:
 public:
     void initNfc() override;
     Nfc_interface::eTagState getTagPresence(void) override;
-    bool writeTag(byte blockAddr, byte *dataToWrite) override;
-    bool readTag(byte blockAddr, byte *readResult) override;
+    bool writeTag(byte blockAddress, byte *dataToWrite) override;
+    bool readTag(byte blockAddress, byte *readResult) override;
     const char *getNfcNotification() override;
 
 private:
@@ -39,8 +39,8 @@ private:
     void setTagOffline();
     // Returns true if communications to a card is successfully established
     bool setTagOnline();
-    // Helper method, writes tag type to instance variable
-    bool getTagType();
+    // gets concrete, fitting tag instance from factory
+    bool getTag();
     // Helper method, for debugging. Sends message string to requesting entity
     static inline const char *stringFromNfcNotify(eNfcNotify value);
     // Helper method, for better readability: takes status of function and returns input Notification
@@ -48,7 +48,7 @@ private:
 
 private:
     MFRC522_interface *m_pMfrc522{nullptr};
-    MFRC522_interface::eTagType m_tagType{MFRC522_interface::PICC_TYPE_UNKNOWN};
+    NfcTag_interface *m_pConcreteTag{nullptr};
     eNfcNotify m_eNotification{noMessage};
 };
 #endif // NFC_IMPLEMENTATION_H

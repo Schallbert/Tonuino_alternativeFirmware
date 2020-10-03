@@ -30,6 +30,8 @@ protected:
     Nfc_implementation *m_pNfc{nullptr};
 };
 
+class Nfc_write : public Nfc_getTagPresence{};
+
 // TESTS
 TEST_F(Nfc_getTagPresence, noTag_returnsNO_TAG)
 {
@@ -61,6 +63,14 @@ TEST_F(Nfc_getTagPresence, cannotSetTagOnline_returnsERROR)
 }
 
 TEST_F(Nfc_getTagPresence, tagWriteFailed_returnsERROR) // hier weitermachen!
+{
+    ON_CALL(*m_pMfrc, isCardPresent()).WillByDefault(Return(true));
+    ON_CALL(*m_pMfrc, isNewCardPresent()).WillByDefault(Return(true));
+    ON_CALL(*m_pMfrc, tagWrite(_, _)).WillByDefault(Return(false));
+    EXPECT_EQ(Nfc_interface::ERROR, m_pNfc->getTagPresence());
+}
+
+TEST_F(Nfc_write, getFactoryInstance_Fails_writeFails) // hier weitermachen!
 {
     ON_CALL(*m_pMfrc, isCardPresent()).WillByDefault(Return(true));
     ON_CALL(*m_pMfrc, isNewCardPresent()).WillByDefault(Return(true));

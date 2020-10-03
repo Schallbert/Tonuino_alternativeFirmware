@@ -9,7 +9,7 @@ class NfcTag_factory
 {
 public:
     // Returns a de-facto singleton of correct tag-Type
-    static NfcTag_interface *getInstance(MFRC522_interface::eTagType tagType, MFRC522_interface *pMfrc522);
+    static NfcTag_interface *getInstance(MFRC522_interface *pMfrc522);
     static void removeInstance();
   
 private:
