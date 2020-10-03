@@ -178,6 +178,7 @@ TEST_F(NfcCtrlTagPresence, newTag_simulateKnown_returnsKnownTag)
     Nfc_interface::eTagState nfcTagPresence = Nfc_interface::NEW_UNKNOWN_TAG;
     m_pNfc->DelegateToFake(); // will return known card cookie
     ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(nfcTagPresence));
+    
     EXPECT_EQ(Nfc_interface::NEW_KNOWN_TAG, m_pNfcCtrl->get_tag_presence());
 }
 

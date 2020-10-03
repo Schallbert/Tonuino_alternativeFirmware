@@ -2,13 +2,6 @@
 
 Nfc_interface::eTagState Nfc_implementation::getTagPresence()
 {
-    if (m_eNotification == tagWriteError ||
-        m_eNotification == tagReadError ||
-        m_eNotification == tagTypeNotImplementedError ||
-        m_eNotification == tagSetOnlineFailed)
-    {
-        return ERROR;
-    }
     
     if (m_pMfrc522->isCardPresent())
     {
@@ -26,6 +19,15 @@ Nfc_interface::eTagState Nfc_implementation::getTagPresence()
             }
         }
     }
+
+    if (m_eNotification == tagWriteError ||
+        m_eNotification == tagReadError ||
+        m_eNotification == tagTypeNotImplementedError ||
+        m_eNotification == tagSetOnlineFailed)
+    {
+        return ERROR;
+    }
+
     return NO_TAG;
 }
 

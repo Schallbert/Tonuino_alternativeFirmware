@@ -62,11 +62,7 @@ class Mock_NfcTag : public NfcTag_interface
 {
 public:
     MOCK_METHOD(bool, readTag, (byte blockAddress, byte *readResult), (override));
-    // Write data to block for for implemented NFC types
     MOCK_METHOD(bool, writeTag, (byte blockAddress, byte *dataToWrite), (override));
-
-    //private:
-    //MOCK_METHOD(void, checkAndRectifyBlockAddress(byte &blockAddress));
 };
 
 // Mocks out actual library Hardware access
@@ -81,6 +77,9 @@ public:
     MOCK_METHOD(MFRC522_interface::eTagType, getTagType, (), (override));
     MOCK_METHOD(bool, isNewCardPresent, (), (override));
     MOCK_METHOD(bool, isCardPresent, (), (override));
+    MOCK_METHOD(bool, tagLogin, (byte blockAddress), (override));
+    MOCK_METHOD(bool, tagRead, (byte blockAddress, byte *buffer, byte *bufferSize), (override));
+    MOCK_METHOD(bool, tagWrite, (byte blockAddress, byte *buffer, byte bufferSize), (override));
 };
 
 // MATCHERS
