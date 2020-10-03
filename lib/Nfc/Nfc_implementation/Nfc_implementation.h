@@ -20,7 +20,7 @@ public:
         tagReadError,
         tagTypeNotImplementedError,
         tagSetOnlineFailed,
-        tagRequestOutOfRangeWwrning
+        tagRequestOutOfRangeWarning
     };
 
 public:

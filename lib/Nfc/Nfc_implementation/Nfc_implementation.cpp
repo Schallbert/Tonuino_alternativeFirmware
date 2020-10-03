@@ -2,6 +2,14 @@
 
 Nfc_interface::eTagState Nfc_implementation::getTagPresence()
 {
+    if (m_eNotification == tagWriteError ||
+        m_eNotification == tagReadError ||
+        m_eNotification == tagTypeNotImplementedError ||
+        m_eNotification == tagSetOnlineFailed)
+    {
+        return ERROR;
+    }
+    
     if (m_pMfrc522->isCardPresent())
     {
         // A card is present!
@@ -14,7 +22,7 @@ Nfc_interface::eTagState Nfc_implementation::getTagPresence()
             // New card detected: runs once as new card is automatically set to ActiveCard
             if (setTagOnline())
             {
-                return NEW_TAG;
+                return NEW_UNKNOWN_TAG; // assume tag is unknown
             }
         }
     }
@@ -55,7 +63,8 @@ bool Nfc_implementation::writeTag(byte blockAddr, byte *dataToWrite)
     NfcTag_interface *pNfcTag = NfcTag_factory::getInstance(m_tagType, m_pMfrc522);
     if (!pNfcTag)
     {
-        return status; // returned nullptr, not implemented
+        setNotification(false, noMessage, tagTypeNotImplementedError);
+        return status; // returned nullptr, tag type not implemented
     }
     status = pNfcTag->writeTag(blockAddr, dataToWrite);
     setTagOffline();
@@ -69,7 +78,8 @@ bool Nfc_implementation::readTag(byte blockAddr, byte *readResult)
     NfcTag_interface *pNfcTag = NfcTag_factory::getInstance(m_tagType, m_pMfrc522);
     if (!pNfcTag)
     {
-        return status; // returned nullptr, not implemented
+        setNotification(false, noMessage, tagTypeNotImplementedError);
+        return status; // returned nullptr, tag type not implemented
     }
     status = pNfcTag->readTag(blockAddr, readResult);
     setTagOffline();

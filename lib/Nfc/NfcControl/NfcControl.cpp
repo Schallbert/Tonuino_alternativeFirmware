@@ -2,7 +2,7 @@
 
 NfcControl::NfcControl(Nfc_interface *pNfc,
                        Arduino_interface_com *pUsb) : m_pNfc(pNfc),
-                                                            m_pSerial(pUsb)
+                                                      m_pSerial(pUsb)
 {
     m_pNfc->initNfc();
     m_pBuffer = new uint8_t[NFCTAG_MEMORY_TO_OCCUPY]();
@@ -14,27 +14,23 @@ NfcControl::~NfcControl()
 }
 
 void NfcControl::print_debug_message()
-    {
-        m_pSerial->com_println("NFC CONTROL DEBUG:");
-        m_pSerial->com_println(stringFromNfcTagNotify(get_tag_presence()));
-        m_pSerial->com_println("NFC DEBUG: MFRC522");
-        m_pSerial->com_println(m_pNfc->getNfcNotification());
-    };
+{
+    m_pSerial->com_println("NFC CONTROL DEBUG:");
+    m_pSerial->com_println(stringFromNfcTagNotify(get_tag_presence()));
+    m_pSerial->com_println("NFC DEBUG: MFRC522");
+    m_pSerial->com_println(m_pNfc->getNfcNotification());
+};
 
 Nfc_interface::eTagState NfcControl::get_tag_presence()
 {
     // Adds "known tag" information if a new tag has been placed.
     // Otherwise, just wrapper for layer down method.
     auto tagPresence = m_pNfc->getTagPresence();
-    if (tagPresence == Nfc_interface::NEW_TAG)
+    if (tagPresence == Nfc_interface::NEW_UNKNOWN_TAG)
     {
         if (is_known_card())
         {
-            return Nfc_interface::NEW_KNOWN_TAG;
-        }
-        else
-        {
-            return Nfc_interface::NEW_UNKNOWN_TAG;
+            tagPresence = Nfc_interface::NEW_KNOWN_TAG;
         }
     }
     return tagPresence;
@@ -78,14 +74,14 @@ bool NfcControl::read_folder_from_card(Folder &targetFolder)
 
 void NfcControl::folder_to_buffer()
 {
-    m_pBuffer[0] = (byte)(cui32MagicCookie >> 24);                       // 0
-    m_pBuffer[1] = (byte)((cui32MagicCookie >> 16) & 0xFF);              // 1
-    m_pBuffer[2] = (byte)((cui32MagicCookie >> 8) & 0xFF);               // 2
-    m_pBuffer[3] = (byte)(cui32MagicCookie & 0xFF);                      // 3: magic cookie to identify our nfc tags
-    m_pBuffer[4] = (byte)m_oFolder.get_folder_id();                      // 4: folder picked by the user
-    m_pBuffer[5] = (byte)m_oFolder.get_play_mode();                      // 5: playback mode picked by the user
-    m_pBuffer[6] = (byte)m_oFolder.get_track_count();                    // 6: track count of that m_oFolder
-    for (int i = 7; i < NFCTAG_MEMORY_TO_OCCUPY; ++i) // 7-15: Empty
+    m_pBuffer[0] = (byte)(cui32MagicCookie >> 24);          // 0
+    m_pBuffer[1] = (byte)((cui32MagicCookie >> 16) & 0xFF); // 1
+    m_pBuffer[2] = (byte)((cui32MagicCookie >> 8) & 0xFF);  // 2
+    m_pBuffer[3] = (byte)(cui32MagicCookie & 0xFF);         // 3: magic cookie to identify our nfc tags
+    m_pBuffer[4] = (byte)m_oFolder.get_folder_id();         // 4: folder picked by the user
+    m_pBuffer[5] = (byte)m_oFolder.get_play_mode();         // 5: playback mode picked by the user
+    m_pBuffer[6] = (byte)m_oFolder.get_track_count();       // 6: track count of that m_oFolder
+    for (int i = 7; i < NFCTAG_MEMORY_TO_OCCUPY; ++i)       // 7-15: Empty
     {
         m_pBuffer[i] = 0x00;
     }
@@ -109,25 +105,20 @@ bool NfcControl::is_known_card()
 {
     Folder dummy;
     read_folder_from_card(dummy); // gets magic cookie.
-    if (m_ui32CardCookie != cui32MagicCookie)
-    {
-        // Card has never been written with Magic Cookie:
-        // This card can be read but is unknown!
-        return false;
-    }
-    return true;
+    return (m_ui32CardCookie == cui32MagicCookie);
+    // if false Card has never been written with Magic Cookie, thus is unknown to the system
 }
 
 const char *NfcControl::stringFromNfcTagNotify(Nfc_interface::eTagState value)
 {
 #if DEBUGSERIAL
-    static const char *NOTIFY_STRING[] = {
+    static const char *NOTIFY_STRING[Nfc_interface::NUMBER_OF_TAG_STATES] = {
         "no tag detected",
         "Tag: active, known",
-        "",
         "Tag: new, known",
         "Tag: new, unknown",
-        ""};
+        "", // unused: reserved for DELETE_TAG
+        "Error"};
 
     return NOTIFY_STRING[value];
 #endif

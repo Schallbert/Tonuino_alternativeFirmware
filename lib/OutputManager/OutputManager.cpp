@@ -26,7 +26,8 @@ void OutputManager::runDispatcher()
     // dispatch table contains function pointers
     // cardStates = ROWS, userInput = COLUMNS
     typedef OutputManager OM;
-    static const dispatcher dispatchTable[Nfc_interface::NUMBER_OF_TAG_STATES]
+    // NUMBER_OF_REQUESTS -1 as state "error" is caught in above handleInputErrors
+    static const dispatcher dispatchTable[Nfc_interface::NUMBER_OF_TAG_STATES - 1]
                                          [UserInput::NUMBER_OF_REQUESTS - 1] =
                                              {
                                                  //NOAC,     PL_PS,     PP_LP,     NEXT_,     PREV_,     INC_V,     DEC_V,
@@ -36,35 +37,44 @@ void OutputManager::runDispatcher()
                                                  {&OM::none, &OM::linC, &OM::abrt, &OM::linN, &OM::linP, &OM::none, &OM::none}, // NEW_UNKNOWN_TAG,
                                                  {&OM::none, &OM::delC, &OM::abrt, &OM::none, &OM::none, &OM::none, &OM::none}, // DELETE_TAG_MENU,
                                              };
+
     dispatcher dispatchExecutor = dispatchTable[m_eTagState][m_eUserInput];
     (this->*dispatchExecutor)();
 }
 
 void OutputManager::handleInputErrors()
 {
-    bool bError = false;
+    bool bError{false};
     // Check for index out of bounds
-    if ((Nfc_interface::NO_TAG > m_eTagState) ||
-        (m_eTagState > Nfc_interface::NUMBER_OF_TAG_STATES))
+    if ((m_eTagState < Nfc_interface::NO_TAG) ||
+        (m_eTagState >= Nfc_interface::NUMBER_OF_TAG_STATES))
     {
         bError = true;
 #ifdef DEBUGSERIAL
-        m_pArduinoHal->getSerial()->com_println("runDispatcher(): cardState out of range!");
+        m_pArduinoHal->getSerial()->com_println("Dispatcher: cardState out of range!");
 #endif
     }
-    else if ((UserInput::NO_ACTION > m_eUserInput) ||
-             (m_eUserInput >= UserInput::NUMBER_OF_REQUESTS))
+    else if (m_eTagState == Nfc_interface::ERROR)
     {
         bError = true;
 #ifdef DEBUGSERIAL
-        m_pArduinoHal->getSerial()->com_println("runDispatcher(): userInput out of range!");
+        m_pArduinoHal->getSerial()->com_println("NfcReader internal error!");
+#endif
+    }
+
+    if ((m_eUserInput < UserInput::NO_ACTION) ||
+        (m_eUserInput >= UserInput::NUMBER_OF_REQUESTS))
+    {
+        bError = true;
+#ifdef DEBUGSERIAL
+        m_pArduinoHal->getSerial()->com_println("Dispatcher: userInput out of range!");
 #endif
     }
     else if (m_eUserInput == UserInput::ERROR)
     {
         bError = true;
 #ifdef DEBUGSERIAL
-        m_pArduinoHal->getSerial()->com_println("runDispatcher(): userInput internal error!");
+        m_pArduinoHal->getSerial()->com_println("userInput internal error!");
 #endif
     }
 

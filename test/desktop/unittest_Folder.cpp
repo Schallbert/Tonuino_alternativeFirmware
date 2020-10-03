@@ -168,7 +168,7 @@ TEST_F(folderMethods, copyConstructor_workingOK)
 TEST_F(folderMethods, copyConstructor_valuesOK)
 {
     EXPECT_CALL(*m_pEeprom, eeprom_read(254)).WillOnce(Return(13));
-    Folder testFolder(54, Folder::SAVEPROGRESS, 16);
+    Folder testFolder(254, Folder::SAVEPROGRESS, 16);
     testFolder.setup_dependencies(m_pADIC);
 
     Folder copyFolder(testFolder);
@@ -240,6 +240,7 @@ TEST_F(folderAlbum, trackCount10_CallPrevTrack_returns10)
 TEST_F(folderAlbum, trackCount10_CallPrevTrack_GetCurrentTrackReturns10)
 {
     // Tests rollover track count
+    testFolder->get_prev_track();
     ASSERT_EQ(10, testFolder->get_current_track());
 }
 TEST_F(folderAlbum, trackCountIs10_AllTracksAreInQueue)
@@ -249,7 +250,7 @@ TEST_F(folderAlbum, trackCountIs10_AllTracksAreInQueue)
     {
         trackSum += testFolder->get_next_track();
     }
-    ASSERT_EQ(21, trackSum);
+    ASSERT_EQ(55, trackSum);
 }
 
 TEST_F(folderDependencies, RANDOM_trackCountIs10_trackQueueLoopComplete)
@@ -360,7 +361,7 @@ TEST_F(folderDependencies, SAVEPROGRESS_trackSaveIsWorking)
     Folder testFolder(99, Folder::SAVEPROGRESS, 16);
     ON_CALL(*m_pEeprom, eeprom_read(_)).WillByDefault(Return(13));
 
-    EXPECT_CALL(*m_pEeprom, eeprom_write(254, 14));
+    EXPECT_CALL(*m_pEeprom, eeprom_write(99, 14));
     testFolder.setup_dependencies(m_pADIC);
     EXPECT_EQ(14, testFolder.get_next_track());
 }

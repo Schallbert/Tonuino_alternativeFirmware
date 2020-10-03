@@ -23,7 +23,7 @@ public:
         INC_VOLUME,
         DEC_VOLUME,
         ERROR,
-        NUMBER_OF_REQUESTS
+        NUMBER_OF_REQUESTS = 8
     };
 
 protected:
