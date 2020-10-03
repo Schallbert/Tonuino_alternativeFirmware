@@ -19,8 +19,8 @@ public:
         tagWriteError,
         tagReadError,
         tagTypeNotImplementedError,
-        tagSetOnlineFailed,
-        tagRequestOutOfRangeWarning
+        tagRequestOutOfRangeWarning,
+        number_of_notifications = 7
     };
 
 public:

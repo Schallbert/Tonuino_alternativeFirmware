@@ -22,8 +22,7 @@ Nfc_interface::eTagState Nfc_implementation::getTagPresence()
 
     if (m_eNotification == tagWriteError ||
         m_eNotification == tagReadError ||
-        m_eNotification == tagTypeNotImplementedError ||
-        m_eNotification == tagSetOnlineFailed)
+        m_eNotification == tagTypeNotImplementedError)
     {
         return ERROR;
     }
@@ -34,14 +33,13 @@ Nfc_interface::eTagState Nfc_implementation::getTagPresence()
 const char *Nfc_implementation::stringFromNfcNotify(eNfcNotify value)
 {
 #if DEBUGSERIAL
-    static const char *NOTIFY_STRING[] = {
+    static const char *NOTIFY_STRING[number_of_notifications] = {
         "no Message",
         "Tag Write Success",
         "Tag Read Success",
         "Tag write Error",
         "Tag read Error",
         "Tag type unknown/not implemented",
-        "Tag set online failed",
         "Warning: request out of Memory Range"};
 
     return NOTIFY_STRING[value];
@@ -121,8 +119,8 @@ bool Nfc_implementation::getTagType()
 {
     bool status{true};
     m_tagType = m_pMfrc522->getTagType();
-    if (m_tagType == (MFRC522_interface::PICC_TYPE_UNKNOWN ||
-                      MFRC522_interface::PICC_TYPE_NOT_COMPLETE))
+    if (m_tagType == MFRC522_interface::PICC_TYPE_UNKNOWN ||
+        m_tagType == MFRC522_interface::PICC_TYPE_NOT_COMPLETE)
     {
         status = false;
     }
