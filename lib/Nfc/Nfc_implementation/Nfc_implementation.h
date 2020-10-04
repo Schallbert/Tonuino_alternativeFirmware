@@ -25,7 +25,7 @@ public:
 
 public:
     Nfc_implementation(MFRC522_interface *pMfrc522) : m_pMfrc522(pMfrc522){};
-    ~Nfc_implementation() { NfcTag_factory::removeInstance(); };
+    ~Nfc_implementation(){};
 
 public:
     void initNfc() override;

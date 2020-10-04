@@ -101,7 +101,6 @@ void Nfc_implementation::setTagOffline()
 
 bool Nfc_implementation::setTagOnline()
 {
-    
     bool status{false};
     // Try reading card
     status = m_pMfrc522->isCardPresent();
@@ -111,11 +110,16 @@ bool Nfc_implementation::setTagOnline()
 
 bool Nfc_implementation::getTag()
 {
-    m_pConcreteTag = NfcTag_factory::getInstance(m_pMfrc522);
-    if (!m_pConcreteTag)
+    bool status{false};
+    if(m_pConcreteTag)
     {
-        setNotification(false, noMessage, tagTypeNotImplementedError);
-        return false; // returned nullptr, tag type not implemented
+        delete m_pConcreteTag; // make sure to delete earlier instances (mem leak)
+        m_pConcreteTag = NfcTag_factory::getInstance(m_pMfrc522);
     }
-    return true;
+    if (m_pConcreteTag)
+    {
+        status = true; // returned non-null ptr, tag type implemented
+    }
+    setNotification(status, noMessage, tagTypeNotImplementedError);
+    return status;
 }
