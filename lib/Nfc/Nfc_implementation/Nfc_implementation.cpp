@@ -2,7 +2,7 @@
 
 Nfc_interface::eTagState Nfc_implementation::getTagPresence()
 {
-    
+    m_eNotification = noMessage;
     if (m_pMfrc522->isCardPresent())
     {
         // A card is present!

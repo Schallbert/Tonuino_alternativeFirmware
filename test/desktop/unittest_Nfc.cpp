@@ -58,16 +58,10 @@ TEST_F(Nfc_getTagPresence, cannotSetTagOnline_returnsERROR)
 {
     ON_CALL(*m_pMfrc, isCardPresent()).WillByDefault(Return(true));
     ON_CALL(*m_pMfrc, isNewCardPresent()).WillByDefault(Return(true));
-    ON_CALL(*m_pMfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
+    ON_CALL(*m_pMfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_NOT_COMPLETE));
     EXPECT_EQ(Nfc_interface::ERROR, m_pNfc->getTagPresence());
 }
 
-TEST(bla, blu)
-{
-    EXPECT_EQ(1, 1);
-}
-
-/*
 TEST_F(Nfc_getTagPresence, tagWriteFailed_returnsERROR) // hier weitermachen!
 {
     ON_CALL(*m_pMfrc, isCardPresent()).WillByDefault(Return(true));
@@ -83,4 +77,3 @@ TEST_F(Nfc_write, getFactoryInstance_Fails_writeFails) // hier weitermachen!
     ON_CALL(*m_pMfrc, tagWrite(_, _, _)).WillByDefault(Return(false));
     EXPECT_EQ(Nfc_interface::ERROR, m_pNfc->getTagPresence());
 }
-*/

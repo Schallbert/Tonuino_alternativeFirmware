@@ -7,6 +7,10 @@ bool NfcTag_MifareUltralight::readTag(byte blockAddress, byte *readResult)
     byte buffer[ui8_bufSize];
 
     checkAndRectifyBlockAddress(blockAddress);
+    if (!m_pMfrc522->tagLogin(ULTRALIGHTSTARTPAGE))
+    {
+        return status;
+    }
     // For MIFARE Ultralight, Authentication is not a must
     // to keep it lightweight, we will not introduce it.
     for (uint8_t i = 0; i < MIFARE_UL_BLOCK_SIZE; ++i)

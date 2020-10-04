@@ -24,3 +24,11 @@ const char *Fake_Nfc::getNfcNotification()
 {
     return "no Message";
 }
+
+bool Fake_MFRC522::tagRead(byte blockAddress, byte *buffer, byte *bufferSize) 
+{
+    for (int i = 0; i < *bufferSize; ++i)
+    {
+        *(buffer + i) = fakeBufferData[i];
+    }
+}

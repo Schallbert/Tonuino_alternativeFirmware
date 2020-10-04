@@ -10,7 +10,7 @@
 
 // FAKES
 // Fake buffer data for NFC tag read
-static const byte fakeBufferData[16]{
+static const byte fakeBufferData[18]{
     (byte)(NfcControl::cui32MagicCookie >> 24),          // 0
     (byte)((NfcControl::cui32MagicCookie >> 16) & 0xFF), // 1
     (byte)((NfcControl::cui32MagicCookie >> 8) & 0xFF),  // 2
@@ -18,7 +18,7 @@ static const byte fakeBufferData[16]{
     (byte)1,                                             // 4 FolderId
     (byte)Folder::LULLABYE,                              // 5 ePlayMode
     (byte)5,                                             // 6 TrackCount
-    0, 0, 0, 0, 0, 0, 0, 0, 0};
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0x13, 0x37}; // last 2 bytes are fake "checksum"
 
 class Fake_Nfc : public Nfc_interface
 {
@@ -31,6 +31,22 @@ public:
     // copies fakeBufferData to "readResult", simulating read from NFC tag
     bool readTag(byte blockAddress, byte *readResult) override;
     const char *getNfcNotification() override;
+};
+
+class Fake_MFRC522 : public MFRC522_interface
+public:
+    void init() override { return; };
+    void softPowerDown() override { return; };
+	void softPowerUp() override { return; };
+    bool tagLogin(byte blockAddress) override 
+    { return false; };
+    void tagHalt() override { return; };
+    void tagLogoff() override {return; };
+    eTagType getTagType() override { return MFRC522_interface::PICC_TYPE_UNKNOWN; };
+    bool tagRead(byte blockAddress, byte *buffer, byte *bufferSize) override;
+    bool tagWrite(byte blockAddress, byte *buffer, byte bufferSize) override { return true; };
+    bool isNewCardPresent() override { return false; };
+	bool isCardPresent() override { return true; };
 };
 
 // MOCKS
@@ -80,7 +96,16 @@ public:
     MOCK_METHOD(bool, tagLogin, (byte blockAddress), (override));
     MOCK_METHOD(bool, tagRead, (byte blockAddress, byte *buffer, byte *bufferSize), (override));
     MOCK_METHOD(bool, tagWrite, (byte blockAddress, byte *buffer, byte bufferSize), (override));
+
+    void DelegateToFake()
+    {
+        ON_CALL(*this, tagRead).WillByDefault([this](byte blockAddress, byte *buffer, byte *bufferSize) {
+            return m_FakeRead.tagRead(blockAddress, buffer, bufferSize);
+        });
+    }
 };
+
+
 
 // MATCHERS
 MATCHER_P2(arrayByteCompare, bytes, size, "Compares array bites and throws errors for each byte that does not match.")
