@@ -16,11 +16,13 @@ public:
 private:
     void checkAndRectifyBlockAddress(byte &blockAddress) override;
 
-private:
-    MFRC522_interface *m_pMfrc522{nullptr};
+public:
     static const byte MIFARE_UL_BLOCK_SIZE{4};
     static const byte ULTRALIGHTSTARTPAGE{4};
     static const byte ULTRALIGHTSTOPPAGE{11};
+
+private:
+    MFRC522_interface *m_pMfrc522{nullptr};
 };
 
 #endif // NFCTAG_MIFAREULTRALIGHT_H

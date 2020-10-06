@@ -21,8 +21,8 @@ class MFRC522_implementation : public MFRC522_interface
     void tagLogoff() override { m_Mfrc522.PCD_StopCrypto1(); };
     eTagType getTagType() override { return static_cast<eTagType>(m_Mfrc522.PICC_GetType(m_Mfrc522.uid.sak)); }; // most likely cast needed
 
-    bool tagRead(byte blockAddress, byte *buffer, byte *bufferSize) override
-    { return (m_Mfrc522.MIFARE_Read(blockAddress, buffer, bufferSize) == MFRC522::STATUS_OK); };
+    bool tagRead(byte blockAddress, byte *buffer, byte bufferSize) override
+    { return (m_Mfrc522.MIFARE_Read(blockAddress, buffer, &bufferSize) == MFRC522::STATUS_OK); };
     bool tagWrite(byte blockAddress, byte *buffer, byte bufferSize) override
     { return (m_Mfrc522.MIFARE_Write(blockAddress, buffer, bufferSize) == MFRC522::STATUS_OK); };
 

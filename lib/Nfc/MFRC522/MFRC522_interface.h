@@ -50,7 +50,7 @@ public:
     // authenticate NfcTag to reader, blockAddress selects memory sector to authenticate
     virtual bool tagLogin(byte blockAddress) = 0;
     // reads data from tag's specific block Address into buffer
-    virtual bool tagRead(byte blockAddress, byte *buffer, byte *bufferSize) = 0;
+    virtual bool tagRead(byte blockAddress, byte *buffer, byte bufferSize) = 0;
     // writes data from buffer to specific block addres of tag
     virtual bool tagWrite(byte blockAddress, byte *buffer, byte bufferSize) = 0;
 };

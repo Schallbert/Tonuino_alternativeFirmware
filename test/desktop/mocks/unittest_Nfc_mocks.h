@@ -8,6 +8,8 @@
 #include "../Nfc/MFRC522/MFRC522_interface.h"
 #include "../Nfc/NfcControl/NfcControl.h"
 
+bool resultArrayByteCompare(const byte* compareSrc, byte* compareTgt, uint8_t size);
+
 // FAKES
 // Fake buffer data for NFC tag read
 static const byte fakeBufferData[18]{
@@ -18,7 +20,7 @@ static const byte fakeBufferData[18]{
     (byte)1,                                             // 4 FolderId
     (byte)Folder::LULLABYE,                              // 5 ePlayMode
     (byte)5,                                             // 6 TrackCount
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0x13, 0x37}; // last 2 bytes are fake "checksum"
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0x13, 0x37}; // last 2 bytes are fake "checksum ;)"
 
 class Fake_Nfc : public Nfc_interface
 {
@@ -33,7 +35,8 @@ public:
     const char *getNfcNotification() override;
 };
 
-class Fake_MFRC522 : public MFRC522_interface
+class Fake_MFRC522_MifareMini1k4k : public MFRC522_interface
+{
 public:
     void init() override { return; };
     void softPowerDown() override { return; };
@@ -43,7 +46,24 @@ public:
     void tagHalt() override { return; };
     void tagLogoff() override {return; };
     eTagType getTagType() override { return MFRC522_interface::PICC_TYPE_UNKNOWN; };
-    bool tagRead(byte blockAddress, byte *buffer, byte *bufferSize) override;
+    bool tagRead(byte blockAddress, byte *buffer, byte bufferSize) override;
+    bool tagWrite(byte blockAddress, byte *buffer, byte bufferSize) override { return true; };
+    bool isNewCardPresent() override { return false; };
+	bool isCardPresent() override { return true; };
+};
+
+class Fake_MFRC522_MifareUltralight : public MFRC522_interface
+{
+public:
+    void init() override { return; };
+    void softPowerDown() override { return; };
+	void softPowerUp() override { return; };
+    bool tagLogin(byte blockAddress) override 
+    { return false; };
+    void tagHalt() override { return; };
+    void tagLogoff() override {return; };
+    eTagType getTagType() override { return MFRC522_interface::PICC_TYPE_UNKNOWN; };
+    bool tagRead(byte blockAddress, byte *buffer, byte bufferSize) override;
     bool tagWrite(byte blockAddress, byte *buffer, byte bufferSize) override { return true; };
     bool isNewCardPresent() override { return false; };
 	bool isCardPresent() override { return true; };
@@ -94,15 +114,26 @@ public:
     MOCK_METHOD(bool, isNewCardPresent, (), (override));
     MOCK_METHOD(bool, isCardPresent, (), (override));
     MOCK_METHOD(bool, tagLogin, (byte blockAddress), (override));
-    MOCK_METHOD(bool, tagRead, (byte blockAddress, byte *buffer, byte *bufferSize), (override));
+    MOCK_METHOD(bool, tagRead, (byte blockAddress, byte *buffer, byte bufferSize), (override));
     MOCK_METHOD(bool, tagWrite, (byte blockAddress, byte *buffer, byte bufferSize), (override));
 
-    void DelegateToFake()
+    void DelegateToFakeMini1k4k()
     {
-        ON_CALL(*this, tagRead).WillByDefault([this](byte blockAddress, byte *buffer, byte *bufferSize) {
-            return m_FakeRead.tagRead(blockAddress, buffer, bufferSize);
+        ON_CALL(*this, tagRead).WillByDefault([this](byte blockAddress, byte *buffer, byte bufferSize) {
+            return m_FakeMini1k4k.tagRead(blockAddress, buffer, bufferSize);
         });
     }
+    
+    void DelegateToFakeUltralight()
+    {
+        ON_CALL(*this, tagRead).WillByDefault([this](byte blockAddress, byte *buffer, byte bufferSize) {
+            return m_FakeUltralight.tagRead(blockAddress, buffer, bufferSize);
+        });
+    }
+
+    private:
+     Fake_MFRC522_MifareMini1k4k m_FakeMini1k4k{};
+     Fake_MFRC522_MifareUltralight m_FakeUltralight{};
 };
 
 
