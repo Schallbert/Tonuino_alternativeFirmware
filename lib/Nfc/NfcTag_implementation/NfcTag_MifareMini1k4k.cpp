@@ -47,5 +47,5 @@ void NfcTag_MifareMini1k4k::checkAndRectifyBlockAddress(byte &blockAddress)
     m_ui8SectorMini1k4k = blockAddress / 4;
     // Block 3 of each sector is the trailer block containing keys
     // (init 0xFFFFFFFF), we won't touch those!
-    m_ui8TrailerBlockMini1k4k = m_ui8SectorMini1k4k * 4 + 3;
+    m_ui8TrailerBlockMini1k4k = blockAddress + 3;
 }

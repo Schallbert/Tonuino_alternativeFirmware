@@ -139,14 +139,14 @@ public:
 
 
 // MATCHERS
-MATCHER_P2(arrayByteCompare, bytes, size, "Compares array bites and throws errors for each byte that does not match.")
+MATCHER_P2(arrayByteCompare, target, size, "Compares array bites and throws errors for each byte that does not match.")
 {
     for (int i = 0; i < size; ++i)
     {
-        if (arg[i] != bytes[i])
+        if (arg[i] != target[i])
         {
             EXPECT_EQ("", "Error: " + std::to_string(i) + ". element not matching:");
-            EXPECT_EQ(arg[i], bytes[i]);
+            EXPECT_EQ(arg[i], target[i]);
         }
     }
     return true;
