@@ -399,11 +399,22 @@ TEST_F(NfcTag_writeTag, MifareUltralight_tagWriteCalled_withCorrectPayload)
     ON_CALL(*m_pMfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_UL));
     NfcTag_interface *nfcInstance = NfcTag_factory::getInstance(m_pMfrc);
     ON_CALL(*m_pMfrc, tagLogin(_)).WillByDefault(Return(true));
-    // writes 4 consecutive 4 byte blocks
-    EXPECT_CALL(*m_pMfrc, tagWrite(_, arrayByteCompare(fakeBufferData, 4), _));
-    EXPECT_CALL(*m_pMfrc, tagWrite(_, arrayByteCompare(fakeBufferData + 4, 4), _));
-    EXPECT_CALL(*m_pMfrc, tagWrite(_, arrayByteCompare(fakeBufferData + 8, 4), _));
-    EXPECT_CALL(*m_pMfrc, tagWrite(_, arrayByteCompare(fakeBufferData + 12, 4), _));
+    uint8_t tB0[4] = {};
+    uint8_t tB1[4] = {};
+    uint8_t tB2[4] = {};
+
+    tB0[0] = writeBuffer[0]; // Byte x of block
+    tB0[1] = writeBuffer[1]; // Byte x of block
+    tB0[2] = writeBuffer[2]; // Byte x of block
+    tB0[3] = writeBuffer[3]; // Byte x of block
+    tB1[0] = writeBuffer[4]; // Byte x of block
+    tB1[1] = writeBuffer[5]; // Byte x of block
+    tB1[2] = writeBuffer[6]; // Byte x of block
+    tB1[3] = writeBuffer[7]; // Byte x of block
+    EXPECT_CALL(*m_pMfrc, tagWrite(4, arrayByteCompare(tB0, 4), _));
+    EXPECT_CALL(*m_pMfrc, tagWrite(5, arrayByteCompare(tB1, 4), _));
+    EXPECT_CALL(*m_pMfrc, tagWrite(6, arrayByteCompare(tB2, 4), _));
+    EXPECT_CALL(*m_pMfrc, tagWrite(7, arrayByteCompare(tB2, 4), _));
     nfcInstance->writeTag(4, writeBuffer);
 }
 

@@ -114,8 +114,8 @@ bool Nfc_implementation::getTag()
     if(m_pConcreteTag)
     {
         delete m_pConcreteTag; // make sure to delete earlier instances (mem leak)
-        m_pConcreteTag = NfcTag_factory::getInstance(m_pMfrc522);
     }
+    m_pConcreteTag = NfcTag_factory::getInstance(m_pMfrc522);
     if (m_pConcreteTag)
     {
         status = true; // returned non-null ptr, tag type implemented
