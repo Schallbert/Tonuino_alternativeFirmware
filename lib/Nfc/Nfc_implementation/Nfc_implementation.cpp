@@ -60,7 +60,7 @@ void Nfc_implementation::initNfc()
 bool Nfc_implementation::writeTag(byte blockAddress, byte *dataToWrite)
 {
     bool status{false};
-    if(getTag())
+    if(setTagOnline())
     {
         status = m_pConcreteTag->writeTag(blockAddress, dataToWrite);
     }
@@ -72,7 +72,7 @@ bool Nfc_implementation::writeTag(byte blockAddress, byte *dataToWrite)
 bool Nfc_implementation::readTag(byte blockAddress, byte *readResult)
 {
     bool status{false};
-    if(getTag())
+    if(setTagOnline())
     {
         status = m_pConcreteTag->readTag(blockAddress, readResult);
     }

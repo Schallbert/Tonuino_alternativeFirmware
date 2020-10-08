@@ -105,7 +105,7 @@ TEST_F(NfcCtrlRead, Read_NotSuccessful_returnsFalse)
     EXPECT_FALSE(m_pNfcCtrl->read_folder_from_card(resultFolder));
 }
 
-TEST_F(NfcCtrlRead, Read_Successful_ReadFolderNotInitialized_returnsFalse)
+TEST_F(NfcCtrlRead, Read_Successful_NoDataToRead_returnsFalse)
 {
     Folder resultFolder;
     ON_CALL(*m_pNfc, readTag(_, _)).WillByDefault(Return(true));
@@ -154,37 +154,37 @@ TEST_F(NfcCtrlRead, Read_Successful_bufferSet_returnsCorrectFolderData)
 
 TEST_F(NfcCtrlTagPresence, noTag_returnsNoTag)
 {
-    Nfc_interface::eTagState nfcTagPresence = Nfc_interface::NO_TAG;
-    ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(nfcTagPresence));
-    EXPECT_EQ(nfcTagPresence, m_pNfcCtrl->get_tag_presence());
+    Nfc_interface::eTagState tagPresence = Nfc_interface::NO_TAG;
+    ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(tagPresence));
+    ASSERT_EQ(tagPresence, m_pNfcCtrl->get_tag_presence());
 }
 
 TEST_F(NfcCtrlTagPresence, activeTag_returnsActiveTag)
 {
-    Nfc_interface::eTagState nfcTagPresence = Nfc_interface::ACTIVE_KNOWN_TAG;
-    ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(nfcTagPresence));
-    EXPECT_EQ(nfcTagPresence, m_pNfcCtrl->get_tag_presence());
+    Nfc_interface::eTagState tagPresence = Nfc_interface::ACTIVE_KNOWN_TAG;
+    ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(tagPresence));
+    ASSERT_EQ(tagPresence, m_pNfcCtrl->get_tag_presence());
 }
 
 TEST_F(NfcCtrlTagPresence, newTag_simulateUnknown_returnsUnknownTag)
 {
-    Nfc_interface::eTagState nfcTagPresence = Nfc_interface::NEW_UNKNOWN_TAG;
-    ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(nfcTagPresence));
-    EXPECT_EQ(Nfc_interface::NEW_UNKNOWN_TAG, m_pNfcCtrl->get_tag_presence());
+    Nfc_interface::eTagState tagPresence = Nfc_interface::NEW_UNKNOWN_TAG;
+    ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(tagPresence));
+    ASSERT_EQ(tagPresence, m_pNfcCtrl->get_tag_presence());
 }
 
 TEST_F(NfcCtrlTagPresence, newTag_simulateKnown_returnsKnownTag)
 {
-    Nfc_interface::eTagState nfcTagPresence = Nfc_interface::NEW_UNKNOWN_TAG;
+    Nfc_interface::eTagState tagPresence = Nfc_interface::NEW_UNKNOWN_TAG;
+    ON_CALL(*m_pMfrc, tagLogin(_)).WillByDefault(Return(true));
+    ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(tagPresence));
     m_pNfc->DelegateToFake(); // will return known card cookie
-    ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(nfcTagPresence));
-    
-    EXPECT_EQ(Nfc_interface::NEW_KNOWN_TAG, m_pNfcCtrl->get_tag_presence());
+    ASSERT_EQ(Nfc_interface::NEW_KNOWN_TAG, m_pNfcCtrl->get_tag_presence());
 }
 
 TEST_F(NfcCtrlTagPresence, OutOfRange_returnsOutOfRange)
 {
-    Nfc_interface::eTagState nfcTagPresence = static_cast<Nfc_interface::eTagState>(static_cast<uint8_t>(Nfc_interface::NUMBER_OF_TAG_STATES) + 1);
-    ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(nfcTagPresence));
-    EXPECT_EQ(nfcTagPresence, m_pNfcCtrl->get_tag_presence());
+    Nfc_interface::eTagState tagPresence = static_cast<Nfc_interface::eTagState>(static_cast<uint8_t>(Nfc_interface::NUMBER_OF_TAG_STATES) + 1);
+    ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(tagPresence));
+    ASSERT_EQ(tagPresence, m_pNfcCtrl->get_tag_presence());
 }
