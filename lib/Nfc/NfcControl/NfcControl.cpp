@@ -60,16 +60,17 @@ bool NfcControl::erase_card()
 
 bool NfcControl::read_folder_from_card(Folder &targetFolder)
 {
+    bool status{false}; //unknown or corrupted card
     if (m_pNfc->readTag(blockAddressToReadWrite, m_pBuffer))
     {
         buffer_to_folder();
         if (m_oFolder.is_initiated())
         {
             targetFolder = m_oFolder; // Copy member object to target folder
-            return true;
+            status = true;
         }
     }
-    return false; //unknown or corrupted card
+    return status; 
 }
 
 void NfcControl::folder_to_buffer()
@@ -104,8 +105,14 @@ void NfcControl::buffer_to_folder()
 bool NfcControl::is_known_card()
 {
     Folder dummy;
-    read_folder_from_card(dummy); // gets magic cookie.
-    return (m_ui32CardCookie == cui32MagicCookie);
+    if (read_folder_from_card(dummy)) // gets magic cookie.
+    {
+        return (m_ui32CardCookie == cui32MagicCookie);
+    }
+    else
+    {
+       return false;
+    }
     // if false Card has never been written with Magic Cookie, thus is unknown to the system
 }
 
@@ -113,7 +120,7 @@ const char *NfcControl::stringFromNfcTagNotify(Nfc_interface::eTagState value)
 {
 #if DEBUGSERIAL
     static const char *NOTIFY_STRING[Nfc_interface::NUMBER_OF_TAG_STATES] = {
-        "no tag detected",
+        "no Tag",
         "Tag: active, known",
         "Tag: new, known",
         "Tag: new, unknown",

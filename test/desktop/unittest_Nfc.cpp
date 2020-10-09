@@ -32,6 +32,7 @@ protected:
 
 class Nfc_write : public Nfc_getTagPresence{};
 class Nfc_read : public Nfc_getTagPresence{};
+class Nfc_notify : public Nfc_getTagPresence{};
 
 // TESTS
 TEST_F(Nfc_getTagPresence, init_callsReadersInit)
@@ -126,3 +127,4 @@ TEST_F(Nfc_read, mfrcReadSucceeds_returnsTrue)
     uint8_t dataToRead[16] = {};
     ASSERT_EQ(true, m_pNfc->readTag(4, dataToRead));
 }
+

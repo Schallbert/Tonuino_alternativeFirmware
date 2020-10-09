@@ -28,8 +28,9 @@ public:
         case MFRC522_interface::PICC_TYPE_MIFARE_UL:
             return new NfcTag_MifareUltralight(pMfrc522);
             break;
+        default:
+            return nullptr;
         }
-        return nullptr;
     };
 };
 
