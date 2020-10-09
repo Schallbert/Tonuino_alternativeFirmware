@@ -28,10 +28,11 @@ void setup()
 // - Use class forward declaration for quicker compiles DONE
 // - Lib cleanup in solution (lib manager) DONE
 // - Solve build warnings (clickEncoder) DONE
-// - refactor MFRC522_implementation for testability. BIG TASK
+// - refactor MFRC522_implementation for testability. BIG TASK. DONE
 // - test with DEBUGSERIAL on DONE
+// - BIG TASK: Get all libs run via Arduino HAL! DONE
+
 // - implement power save (arduino, nfc, etc.)
-// - BIG TASK: Get all libs run via Arduino HAL!
 // - code smell: Delete menu in NfcTag enum?!
 // - Unit tests for UserInput (?), StatusLed (?), and MFRC522_implementation
 // - solve naming differences (underscores) of HAL with namespaces!

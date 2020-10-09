@@ -13,6 +13,7 @@ NfcControl::~NfcControl()
     delete[] m_pBuffer;
 }
 
+#if DEBUGSERIAL
 void NfcControl::print_debug_message()
 {
     m_pSerial->com_println("NFC CONTROL DEBUG:");
@@ -20,6 +21,7 @@ void NfcControl::print_debug_message()
     m_pSerial->com_println("NFC DEBUG: MFRC522");
     m_pSerial->com_println(m_pNfc->getNfcNotification());
 };
+#endif
 
 Nfc_interface::eTagState NfcControl::get_tag_presence()
 {
