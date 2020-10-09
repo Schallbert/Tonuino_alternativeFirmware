@@ -1,87 +1,89 @@
 #include "StatusLed.h"
-      
-StatusLed::StatusLed(uint8_t ledPin, uint16_t flashSlowMillis, uint16_t flashQuickMillis, bool active)
+
+StatusLed::StatusLed(uint8_t ledPinId,
+                     bool pinActiveState,
+                     uint16_t msFlashSlow,
+                     uint16_t msFlashQuick) : m_ui8LedPinId(ledPinId),
+                                              m_bPinAciveState(pinActiveState),
+                                              m_ui16MsFlashSlow(msFlashSlow),
+                                              m_ui16MsFlashQuick(msFlashQuick)
 {
-    this->ledPin = ledPin;
-    this->flashSlowMillis = flashSlowMillis;
-    this->flashQuickMillis = flashQuickMillis;
-    this->active = active;
-    pinMode(ledPin, OUTPUT);
+    pinMode(m_ui8LedPinId, OUTPUT);
     this->perform = &StatusLed::led_off; //Set default behavior of function pointer: LED off
-    this->msCount = 0;
-    digitalWrite(ledPin, !active); //init state is off
+    this->m_ui16MsCount = 0;
+    digitalWrite(m_ui8LedPinId, !m_bPinAciveState); //init state is off
 }
 
 void StatusLed::led_service()
 {
-    msCount++;
+    m_ui16MsCount++;
     (this->*perform)(); // Call function that pointer points to.
     // this-> is needed to bind to current instance's member function
 }
 
 void StatusLed::set_led_behavior(eLedState ledState)
 {
-    // Set function pointer. 
+    // Set function pointer.
     // This is to keep execution times in interrupt routine as low as possible
-    ledBehaviorSet = true;
+    m_bLedBehaviorSet = true;
     switch (ledState)
     {
-        case solid :
-            perform = &StatusLed::led_solid;
-            break;
-        case flash_slow :
-            perform = &StatusLed::led_flash_slow;
-            break;
-        case flash_quick :
-            perform = &StatusLed::led_flash_quick;
-            break;
-        case dim :
-            perform = &StatusLed::led_dim;
-        default:
-            perform = &StatusLed::led_off;
-            break;
+    case solid:
+        perform = &StatusLed::led_solid;
+        break;
+    case flash_slow:
+        perform = &StatusLed::led_flash_slow;
+        break;
+    case flash_quick:
+        perform = &StatusLed::led_flash_quick;
+        break;
+    case dim:
+        perform = &StatusLed::led_dim;
+    default:
+        perform = &StatusLed::led_off;
+        break;
     }
 }
 
 void StatusLed::led_off()
 {
-    digitalWrite(ledPin, !active);
+    digitalWrite(m_ui8LedPinId, !m_bPinAciveState);
 }
 
 void StatusLed::led_solid()
 {
-    digitalWrite(ledPin, active);
+    digitalWrite(m_ui8LedPinId, m_bPinAciveState);
 }
 
 void StatusLed::led_flash_slow()
 {
-    if (msCount >= flashSlowMillis)
+    if (m_ui16MsCount >= m_ui16MsFlashSlow)
     {
-        msCount = 0;
-        digitalWrite(ledPin, !digitalRead(ledPin));
+        m_ui16MsCount = 0;
+        digitalWrite(m_ui8LedPinId, !digitalRead(m_ui8LedPinId));
     }
 }
 
 void StatusLed::led_flash_quick()
 {
-    if (msCount >= flashQuickMillis)
+    if (m_ui16MsCount >= m_ui16MsFlashQuick)
     {
-        msCount = 0;
-        digitalWrite(ledPin, !digitalRead(ledPin));
+        m_ui16MsCount = 0;
+        digitalWrite(m_ui8LedPinId, !digitalRead(m_ui8LedPinId));
     }
 }
 
 void StatusLed::led_dim()
 {
     bool dim = false;
-    if(active)
+    if (m_bPinAciveState)
     {
-        dim = msCount & 0x08;
+        dim = m_ui16MsCount & 0x08;
     }
     else
     {
-        dim = !(msCount & 0x08);
+        dim = !(m_ui16MsCount & 0x08);
     }
-    
-    digitalWrite(ledPin, dim); // Sets LED to 12.5% brightness @ 125 Hz
+
+    digitalWrite(m_ui8LedPinId, dim); // Sets LED to 12.5% brightness @ 125 Hz
 }
