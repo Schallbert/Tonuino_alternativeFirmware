@@ -1,7 +1,7 @@
 #ifndef KEEPALIVE_H //include guard
 #define KEEPALIVE_H
 
-#include "Arduino.h"
+#include "../Arduino/Arduino_interface/Arduino_interface.h"
 
 class KeepAlive
 {
@@ -18,7 +18,7 @@ class KeepAlive
     */
 public:
     //Note: For usage of a bistable relay, active must be inverted!
-    KeepAlive(uint8_t ui8PinID, bool bActiveState);
+    KeepAlive(Arduino_interface_pins *pPinCtrl, uint8_t ui8PinID, bool bActiveState);
 
     // Physically keeps system powered (depending on external cirtuitry)
     void keep_alive();
@@ -30,6 +30,7 @@ public:
     void allow_shutdown();
 
 private:
+    Arduino_interface_pins *m_pPinCtrl{nullptr};
     uint8_t m_ui8PinID;
     bool m_bPinActiveState{true};
 

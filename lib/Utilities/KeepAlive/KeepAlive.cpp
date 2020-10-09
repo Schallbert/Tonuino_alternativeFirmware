@@ -1,19 +1,21 @@
 #include "KeepAlive.h"
 
 //Interface implementation for active low TTL/Relay logic
-KeepAlive::KeepAlive(uint8_t ui8PinID,
-                     bool bPinActiveState) : m_ui8PinID(ui8PinID),
+KeepAlive::KeepAlive(Arduino_interface_pins *pPinCtrl,
+                     uint8_t ui8PinID,
+                     bool bPinActiveState) : m_pPinCtrl(pPinCtrl),
+                                             m_ui8PinID(ui8PinID),
                                              m_bPinActiveState(bPinActiveState)
 {
     // Keep alive command right at constructor call
-    pinMode(m_ui8PinID, OUTPUT);
-    digitalWrite(m_ui8PinID, m_bPinActiveState);
+    m_pPinCtrl->pin_mode(m_ui8PinID, OUTPUT);
+    m_pPinCtrl->digital_write(m_ui8PinID, m_bPinActiveState);
 }
 
 void KeepAlive::keep_alive()
 {
     // Enables power supply circuit keep alive
-    digitalWrite(m_ui8PinID, m_bPinActiveState);
+    m_pPinCtrl->digital_write(m_ui8PinID, m_bPinActiveState);
 }
 
 void KeepAlive::request_shutdown()
@@ -31,6 +33,6 @@ void KeepAlive::allow_shutdown()
     // disables power supply circuit
     if (m_bShutDownRequested)
     {
-        digitalWrite(m_ui8PinID, !m_bPinActiveState); 
+        m_pPinCtrl->digital_write(m_ui8PinID, !m_bPinActiveState);
     }
 }
