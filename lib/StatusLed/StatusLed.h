@@ -1,7 +1,7 @@
 #ifndef STATUSLED_H
 #define STATUSLED_H
 
-#include "Arduino.h"
+#include "../Arduino/Arduino_interface/Arduino_interface.h"
 
 class StatusLed
 {
@@ -17,7 +17,8 @@ public:
 
 public:
     // Constructor
-    StatusLed(uint8_t ledPinId,
+    StatusLed(Arduino_interface_pins *pPins,
+        uint8_t ledPinId,
               bool pinActiveState = HIGH,
               uint16_t msFlashSlow = 500,
               uint16_t msFlashQuick = 100);
@@ -36,13 +37,14 @@ private:
     void led_dim();
 
 private:
-    uint8_t m_ui8LedPinId;
-    bool m_bPinAciveState;
-    uint16_t m_ui16MsFlashSlow;
-    uint16_t m_ui16MsFlashQuick;
+Arduino_interface_pins *m_pPinControl{nullptr};
+    uint8_t m_ui8LedPinId{0};
+    bool m_bPinAciveState{false};
+    uint16_t m_ui16MsFlashSlow{0};
+    uint16_t m_ui16MsFlashQuick{0};
 
     void (StatusLed::*perform)(); //class method pointer
-    bool m_bLedBehaviorSet;
-    volatile uint16_t m_ui16MsCount;
+    bool m_bLedBehaviorSet{false};
+    volatile uint16_t m_ui16TickInternal{0};
 };
 #endif // STATUSLED_H

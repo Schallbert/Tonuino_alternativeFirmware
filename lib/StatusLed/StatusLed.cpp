@@ -1,22 +1,24 @@
 #include "StatusLed.h"
 
-StatusLed::StatusLed(uint8_t ledPinId,
+StatusLed::StatusLed(Arduino_interface_pins *pPins,
+                     uint8_t ledPinId,
                      bool pinActiveState,
                      uint16_t msFlashSlow,
-                     uint16_t msFlashQuick) : m_ui8LedPinId(ledPinId),
+                     uint16_t msFlashQuick) : m_pPinControl(pPins),
+                                              m_ui8LedPinId(ledPinId),
                                               m_bPinAciveState(pinActiveState),
                                               m_ui16MsFlashSlow(msFlashSlow),
                                               m_ui16MsFlashQuick(msFlashQuick)
 {
-    pinMode(m_ui8LedPinId, OUTPUT);
+    m_pPinControl->pin_mode(m_ui8LedPinId, OUTPUT);
     this->perform = &StatusLed::led_off; //Set default behavior of function pointer: LED off
-    this->m_ui16MsCount = 0;
-    digitalWrite(m_ui8LedPinId, !m_bPinAciveState); //init state is off
+    this->m_ui16TickInternal = 0;
+    m_pPinControl->digital_write(m_ui8LedPinId, !m_bPinAciveState); //init state is off
 }
 
 void StatusLed::led_service()
 {
-    m_ui16MsCount++;
+    m_ui16TickInternal++;
     (this->*perform)(); // Call function that pointer points to.
     // this-> is needed to bind to current instance's member function
 }
@@ -47,29 +49,29 @@ void StatusLed::set_led_behavior(eLedState ledState)
 
 void StatusLed::led_off()
 {
-    digitalWrite(m_ui8LedPinId, !m_bPinAciveState);
+    m_pPinControl->digital_write(m_ui8LedPinId, !m_bPinAciveState);
 }
 
 void StatusLed::led_solid()
 {
-    digitalWrite(m_ui8LedPinId, m_bPinAciveState);
+    m_pPinControl->digital_write(m_ui8LedPinId, m_bPinAciveState);
 }
 
 void StatusLed::led_flash_slow()
 {
-    if (m_ui16MsCount >= m_ui16MsFlashSlow)
+    if (m_ui16TickInternal >= m_ui16MsFlashSlow)
     {
-        m_ui16MsCount = 0;
-        digitalWrite(m_ui8LedPinId, !digitalRead(m_ui8LedPinId));
+        m_ui16TickInternal = 0;
+        m_pPinControl->digital_write(m_ui8LedPinId, !m_pPinControl->digital_read(m_ui8LedPinId));
     }
 }
 
 void StatusLed::led_flash_quick()
 {
-    if (m_ui16MsCount >= m_ui16MsFlashQuick)
+    if (m_ui16TickInternal >= m_ui16MsFlashQuick)
     {
-        m_ui16MsCount = 0;
-        digitalWrite(m_ui8LedPinId, !digitalRead(m_ui8LedPinId));
+        m_ui16TickInternal = 0;
+        m_pPinControl->digital_write(m_ui8LedPinId, m_pPinControl->digital_read(m_ui8LedPinId));
     }
 }
 
@@ -78,12 +80,12 @@ void StatusLed::led_dim()
     bool dim = false;
     if (m_bPinAciveState)
     {
-        dim = m_ui16MsCount & 0x08;
+        dim = m_ui16TickInternal & 0x08;
     }
     else
     {
-        dim = !(m_ui16MsCount & 0x08);
+        dim = !(m_ui16TickInternal & 0x08);
     }
 
-    digitalWrite(m_ui8LedPinId, dim); // Sets LED to 12.5% brightness @ 125 Hz
+    m_pPinControl->digital_write(m_ui8LedPinId, dim); // Sets LED to 12.5% brightness @ 125 Hz
 }
