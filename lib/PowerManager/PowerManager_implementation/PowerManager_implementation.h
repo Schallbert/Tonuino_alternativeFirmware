@@ -13,7 +13,8 @@
 class PowerManager : public PowerManager_interface
 {
 public:
-    PowerManager(SimpleTimer *pIdleTimer);
+    PowerManager(Arduino_interface_pins *pPinCtrl, SimpleTimer *pIdleTimer);
+    ~PowerManager();
 
 public:
     // assumes that mp3 is playing on TRUE
@@ -35,8 +36,8 @@ private:
     // Dependency object
     SimpleTimer *m_pIdleTimer{nullptr};
     // Member objects
-    StatusLed m_led{StatusLed(LED_PIN, FLASHSLOWMS, FLASHQUICKMS, LED_ACTIVE_STATE)};
-    KeepAlive m_keep{KeepAlive(KEEPALIVE_PIN, KEEPALIVE_ACTIVE_STATE)};
+    StatusLed *m_pLed{nullptr};
+    KeepAlive *m_pKeepAlive{nullptr};
 };
 
 #endif // POWERMANAGER_IMPLEMENTATION_H
