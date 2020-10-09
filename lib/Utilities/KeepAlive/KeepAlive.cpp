@@ -1,4 +1,4 @@
-#include "interface_KeepAlive.h"
+#include "KeepAlive.h"
 
 //Interface implementation for active low TTL/Relay logic
 KeepAlive::KeepAlive(uint8_t ui8PinID,

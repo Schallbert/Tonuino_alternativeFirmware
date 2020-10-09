@@ -8,7 +8,7 @@ System::System()
     m_pArduinoHal = new Arduino_DIcontainer();
     // First, secure power supply
     m_pIdleTimer = new SimpleTimer();
-    m_pPwrCtrl = new PowerManager(m_pArduinoHal->getPins() ,m_pIdleTimer);
+    m_pPwrCtrl = new PowerManager(m_pArduinoHal->getPins(), m_pIdleTimer);
 
     // Timers
     m_pMenuTimer = new SimpleTimer();

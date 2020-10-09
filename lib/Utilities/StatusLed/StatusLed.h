@@ -18,7 +18,7 @@ public:
 public:
     // Constructor
     StatusLed(Arduino_interface_pins *pPins,
-        uint8_t ledPinId,
+              uint8_t ledPinId,
               bool pinActiveState = HIGH,
               uint16_t msFlashSlow = 500,
               uint16_t msFlashQuick = 100);
@@ -37,7 +37,7 @@ private:
     void led_dim();
 
 private:
-Arduino_interface_pins *m_pPinControl{nullptr};
+    Arduino_interface_pins *m_pPinControl{nullptr};
     uint8_t m_ui8LedPinId{0};
     bool m_bPinAciveState{false};
     uint16_t m_ui16MsFlashSlow{0};
