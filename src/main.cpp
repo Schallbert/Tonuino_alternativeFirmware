@@ -32,10 +32,17 @@ void setup()
 // - test with DEBUGSERIAL on DONE
 // - BIG TASK: Get all libs run via Arduino HAL! DONE
 
+// - refactor PowerManager
 // - implement power save (arduino, nfc, etc.)
+
+// OUTPUTMANAGER:
+// - Outsource menu handling to an own class
+// - Outsource error handling to an own class
 // - code smell: Delete menu in NfcTag enum?!
+
 // - Unit tests for UserInput (?), StatusLed (?), and MFRC522_implementation
 // - solve naming differences (underscores) of HAL with namespaces!
+
 // - Integration testing on device
 // - FEATURE: Card stays on system or can be removed while playing? Config?
 // - FEATURE: add combination of lullabye & saveprogress ^^ (Hörbuch)
