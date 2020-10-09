@@ -1,4 +1,4 @@
-#include "PowerManager.h"
+#include "PowerManager_implementation.h"
 
 PowerManager::PowerManager(SimpleTimer *pIdleTimer) : m_pIdleTimer(pIdleTimer)
 {

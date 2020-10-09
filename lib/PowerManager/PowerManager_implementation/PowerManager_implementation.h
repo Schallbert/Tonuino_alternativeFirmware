@@ -1,10 +1,10 @@
-#ifndef POWERMANAGER_H
-#define POWERMANAGER_H
+#ifndef POWERMANAGER_IMPLEMENTATION_H
+#define POWERMANAGER_IMPLEMENTATION_H
 
-#include "StatusLed.h"
+#include "../StatusLed/StatusLed.h"
 #include "interface_KeepAlive.h"
 
-#include "PowerManager_interface.h"
+#include "../PowerManager/PowerManager_interface/PowerManager_interface.h"
 #include "../Config/Arduino_config.h"
 #include "../Config/Tonuino_config.h"
 #include "../Utilities/SimpleTimer.h"
@@ -39,4 +39,4 @@ private:
     KeepAlive m_keep{KeepAlive(KEEPALIVE_PIN, KEEPALIVE_ACTIVE_STATE)};
 };
 
-#endif // POWERMANAGER_H
+#endif // POWERMANAGER_IMPLEMENTATION_H

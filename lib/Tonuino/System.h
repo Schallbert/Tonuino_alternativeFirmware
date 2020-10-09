@@ -14,7 +14,7 @@
 #include "../Mp3/Mp3PlayerControl_implementation/Mp3PlayerControl_implementation.h"
 // MISC
 #include "UserInput_implementation.h"
-#include "PowerManager.h"
+#include "../PowerManager/PowerManager_implementation/PowerManager_implementation.h"
 #include "OutputManager.h"
 #include "../Utilities/SimpleTimer.h"
 
