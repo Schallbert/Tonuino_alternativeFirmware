@@ -70,6 +70,26 @@ TEST_F(Nfc_getTagPresence, cannotSetTagOnline_returnsERROR)
     ASSERT_EQ(Nfc_interface::ERROR, m_pNfc->getTagPresence());
 }
 
+TEST_F(Nfc_getTagPresence, tagWriteError_returnsError)
+{
+    ON_CALL(*m_pMfrc, isCardPresent()).WillByDefault(Return(true));
+    ON_CALL(*m_pMfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
+    ON_CALL(*m_pMfrc, tagWrite(_, _, _)).WillByDefault(Return(false));
+    uint8_t dataToWrite[16] = {};
+    m_pNfc->writeTag(4, dataToWrite);
+    ASSERT_EQ(Nfc_interface::ERROR, m_pNfc->getTagPresence());
+}
+
+TEST_F(Nfc_getTagPresence, tagReadError_returnsError)
+{
+    ON_CALL(*m_pMfrc, isCardPresent()).WillByDefault(Return(true));
+    ON_CALL(*m_pMfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
+    ON_CALL(*m_pMfrc, tagRead(_, _, _)).WillByDefault(Return(false));
+    uint8_t dataToWrite[16] = {};
+    m_pNfc->readTag(4, dataToWrite);
+    ASSERT_EQ(Nfc_interface::ERROR, m_pNfc->getTagPresence());
+}
+
 TEST_F(Nfc_write, getTagFails_writeNotCalled)
 {
     ON_CALL(*m_pMfrc, isCardPresent()).WillByDefault(Return(true));

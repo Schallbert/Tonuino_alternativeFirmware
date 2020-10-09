@@ -2,20 +2,20 @@
 
 Nfc_interface::eTagState Nfc_implementation::getTagPresence()
 {
-    m_eNotification = noMessage;
+    Nfc_interface::eTagState returnValue{NO_TAG};
     if (m_pMfrc522->isCardPresent())
     {
         // A card is present!
         if (!m_pMfrc522->isNewCardPresent())
         {
-            return ACTIVE_KNOWN_TAG;
+            returnValue = ACTIVE_KNOWN_TAG;
         }
         else
         {
             // New card detected: runs once as new card is automatically set to ActiveCard
             if (setTagOnline())
             {
-                return NEW_UNKNOWN_TAG; // assume tag is unknown
+                returnValue = NEW_UNKNOWN_TAG; // assume tag is unknown
             }
         }
     }
@@ -24,10 +24,11 @@ Nfc_interface::eTagState Nfc_implementation::getTagPresence()
         m_eNotification == tagReadError ||
         m_eNotification == tagTypeNotImplementedError)
     {
-        return ERROR;
+        returnValue = ERROR;
     }
 
-    return NO_TAG;
+    m_eNotification = noMessage; // reset notification
+    return returnValue;
 }
 
 const char *Nfc_implementation::stringFromNfcNotify(eNfcNotify value)
