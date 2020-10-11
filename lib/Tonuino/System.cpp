@@ -17,7 +17,7 @@ System::System()
     // Periphery
     m_pMfrc522 = new MFRC522_implementation();
     m_pNfc = new Nfc_implementation(m_pMfrc522);
-    m_pNfcCtrl = new NfcControl(m_pNfc, m_pArduinoHal->getSerial()); // Constructor injection of concrete reader
+    m_pNfcCtrl = new NfcControl(m_pNfc, m_pArduinoHal->getSerial());
     m_pDfMini = new DfMini();
     m_pMp3Ctrl = new Mp3PlayerControl(m_pArduinoHal, m_pDfMini, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
 
@@ -60,7 +60,6 @@ System::~System()
     m_pUserInput = nullptr;
 
     // finally shut down system
-    m_pPwrCtrl->request_shutdown();
     m_pPwrCtrl->allow_shutdown();
     delete m_pPwrCtrl;
     delete m_pArduinoHal;

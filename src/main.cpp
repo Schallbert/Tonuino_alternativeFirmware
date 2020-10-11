@@ -31,8 +31,10 @@ void setup()
 // - refactor MFRC522_implementation for testability. BIG TASK. DONE
 // - test with DEBUGSERIAL on DONE
 // - BIG TASK: Get all libs run via Arduino HAL! DONE
+// - Unit tests for MFRC522_implementation DONE
+// - Unit tests for KeepAlive DONE
+// - refactor PowerManager DONE
 
-// - refactor PowerManager
 // - implement power save (arduino, nfc, etc.)
 
 // OUTPUTMANAGER:
@@ -40,10 +42,12 @@ void setup()
 // - Outsource error handling to an own class
 // - code smell: Delete menu in NfcTag enum?!
 
-// - Unit tests for UserInput (?), StatusLed (?), and MFRC522_implementation
+// - Unit tests for UserInput (?)
+// - Unit tests for StatusLed (?)
 // - solve naming differences (underscores) of HAL with namespaces!
 
 // - Integration testing on device
+
 // - FEATURE: Card stays on system or can be removed while playing? Config?
 // - FEATURE: add combination of lullabye & saveprogress ^^ (Hörbuch)
 
