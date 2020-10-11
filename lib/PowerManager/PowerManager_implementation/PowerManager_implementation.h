@@ -9,7 +9,12 @@
 #include "../Config/Tonuino_config.h"
 #include "../Utilities/SimpleTimer.h"
 
-// controls keepalive relay and status LED output.
+/*
+The PowerManager class controls both
+    - status Led behavior
+    - KeepAlive system (enabling the system to shut itself down)
+    - Power Save (disabling periphery and sleep)
+*/
 class PowerManager : public PowerManager_interface
 {
 public:
