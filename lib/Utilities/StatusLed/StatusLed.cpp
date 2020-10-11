@@ -12,22 +12,20 @@ StatusLed::StatusLed(Arduino_interface_pins *pPins,
 {
     m_pPinControl->pin_mode(m_ui8LedPinId, OUTPUT);
     this->perform = &StatusLed::led_off; //Set default behavior of function pointer: LED off
-    this->m_ui16TickInternal = 0;
-    m_pPinControl->digital_write(m_ui8LedPinId, !m_bPinAciveState); //init state is off
+    led_off();                           //init state is off
 }
 
 void StatusLed::led_service()
 {
-    m_ui16TickInternal++;
     (this->*perform)(); // Call function that pointer points to.
     // this-> is needed to bind to current instance's member function
+    ++m_ui16TickInternal;
 }
 
 void StatusLed::set_led_behavior(eLedState ledState)
 {
     // Set function pointer.
     // This is to keep execution times in interrupt routine as low as possible
-    m_bLedBehaviorSet = true;
     switch (ledState)
     {
     case solid:
@@ -59,33 +57,28 @@ void StatusLed::led_solid()
 
 void StatusLed::led_flash_slow()
 {
-    if (m_ui16TickInternal >= m_ui16MsFlashSlow)
-    {
-        m_ui16TickInternal = 0;
-        m_pPinControl->digital_write(m_ui8LedPinId, !m_pPinControl->digital_read(m_ui8LedPinId));
-    }
+    led_flash(m_ui16MsFlashSlow);
 }
 
 void StatusLed::led_flash_quick()
 {
-    if (m_ui16TickInternal >= m_ui16MsFlashQuick)
+    led_flash(m_ui16MsFlashQuick);
+}
+
+void StatusLed::led_flash(uint16_t msFlashInterval)
+{
+    if (m_ui16TickInternal >= msFlashInterval)
     {
         m_ui16TickInternal = 0;
-        m_pPinControl->digital_write(m_ui8LedPinId, m_pPinControl->digital_read(m_ui8LedPinId));
+        m_pPinControl->digital_write(m_ui8LedPinId, !(m_pPinControl->digital_read(m_ui8LedPinId)));
     }
 }
 
 void StatusLed::led_dim()
 {
-    bool dim = false;
-    if (m_bPinAciveState)
-    {
-        dim = m_ui16TickInternal & 0x08;
-    }
-    else
-    {
-        dim = !(m_ui16TickInternal & 0x08);
-    }
-
-    m_pPinControl->digital_write(m_ui8LedPinId, dim); // Sets LED to 12.5% brightness @ 125 Hz
+    // Sets LED to 12.5% brightness @ 125 Hz
+    // takes pinActiveState into account
+    bool dim = ((m_ui16TickInternal >> 3) & 0x01);
+    dim = dim ^ (!m_bPinAciveState);
+    m_pPinControl->digital_write(m_ui8LedPinId, dim); 
 }

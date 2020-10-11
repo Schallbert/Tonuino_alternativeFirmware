@@ -32,8 +32,9 @@ private:
     // Methods
     void led_off();
     void led_solid();
-    void led_flash_slow();
-    void led_flash_quick();
+    void led_flash_slow(); // wrapper method for led_flash()
+    void led_flash_quick(); // wrapper method for led_flash()
+    void led_flash(uint16_t msFlashInterval);
     void led_dim();
 
 private:
@@ -44,7 +45,6 @@ private:
     uint16_t m_ui16MsFlashQuick{0};
 
     void (StatusLed::*perform)(); //class method pointer
-    bool m_bLedBehaviorSet{false};
     volatile uint16_t m_ui16TickInternal{0};
 };
 #endif // STATUSLED_H
