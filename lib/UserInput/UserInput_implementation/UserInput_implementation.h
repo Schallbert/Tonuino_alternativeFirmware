@@ -1,7 +1,7 @@
 #ifndef USERINPUT_IMPLEMENTATION_H
 #define USERINPUT_IMPLEMENTATION_H
 
-#include "UserInput_interface.h"
+#include "../UserInput_interface/UserInput_interface.h"
 #include "Tonuino_config.h"
 #include "ClickEncoder.h"
 

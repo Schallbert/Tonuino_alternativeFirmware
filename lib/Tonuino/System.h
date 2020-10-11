@@ -13,7 +13,7 @@
 #include "../Mp3/DFMiniMp3_implementation/DFMiniMp3_implementation.h"
 #include "../Mp3/Mp3PlayerControl_implementation/Mp3PlayerControl_implementation.h"
 // MISC
-#include "UserInput_implementation.h"
+#include "../UserInput/UserInput_implementation/UserInput_implementation.h"
 #include "../PowerManager/PowerManager_implementation/PowerManager_implementation.h"
 #include "OutputManager.h"
 #include "../Utilities/SimpleTimer.h"

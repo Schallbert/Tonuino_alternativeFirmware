@@ -34,6 +34,7 @@ void setup()
 // - Unit tests for MFRC522_implementation DONE
 // - Unit tests for KeepAlive DONE
 // - refactor PowerManager DONE
+// - Unit tests for StatusLed
 
 // - implement power save (arduino, nfc, etc.)
 
@@ -43,7 +44,7 @@ void setup()
 // - code smell: Delete menu in NfcTag enum?!
 
 // - Unit tests for UserInput (?)
-// - Unit tests for StatusLed (?)
+
 // - solve naming differences (underscores) of HAL with namespaces!
 
 // - Integration testing on device
