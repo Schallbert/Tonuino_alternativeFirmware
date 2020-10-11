@@ -5,72 +5,72 @@
 #include "mocks/unittest_ArduinoIf_mocks.h"
 
 using ::testing::_;
-using ::testing::Sequence;
 using ::testing::NiceMock;
 using ::testing::Return;
+using ::testing::Sequence;
 
-TEST(keepAlive, Constructor_ActivatesSelfKeepingPowerSupply)
+class KeepAliveTest : public ::testing::Test
 {
-    uint8_t keepAlivePinId = 7;
-    bool pinActiveState = true;
-    NiceMock<Mock_pinCtrl> pinCtrl;
+protected:
+    virtual void SetUp()
+    {
+        kA = new KeepAlive(&pinCtrl, keepAlivePinId, pinActiveState);
+    }
+
+    virtual void TearDown()
+    {
+        delete kA;
+    }
+
+protected:
+    NiceMock<Mock_pinCtrl> pinCtrl{}; 
+    uint8_t keepAlivePinId{7};
+    bool pinActiveState{true};
+    KeepAlive *kA{nullptr};
+};
+
+TEST_F(KeepAliveTest, Constructor_ActivatesSelfKeepingPowerSupply)
+{
     Sequence seq;
     EXPECT_CALL(pinCtrl, pin_mode(keepAlivePinId, OUTPUT));
     EXPECT_CALL(pinCtrl, digital_write(keepAlivePinId, pinActiveState));
-    KeepAlive ka(&pinCtrl, keepAlivePinId, pinActiveState);
+    KeepAlive testSpecificKa(&pinCtrl, keepAlivePinId, pinActiveState);
 }
 
-TEST(keepAlive, keepAlive_writesActiveState_False_Correctly)
+TEST_F(KeepAliveTest, keepAlive_writesActiveState_False_Correctly)
 {
-    NiceMock<Mock_pinCtrl> pinCtrl;
-    bool pinActiveState = false;
-    KeepAlive ka(&pinCtrl, 1, pinActiveState);
-    EXPECT_CALL(pinCtrl, digital_write(1, pinActiveState));
-    ka.keep_alive();
+    EXPECT_CALL(pinCtrl, digital_write(keepAlivePinId, pinActiveState));
+    kA->keep_alive();
 }
 
-TEST(keepAlive, keepAlive_writesActiveState_True_Correctly)
+TEST_F(KeepAliveTest, keepAlive_writesActiveState_True_Correctly)
 {
-    NiceMock<Mock_pinCtrl> pinCtrl;
-    bool pinActiveState = true;
-    KeepAlive ka(&pinCtrl, 1, pinActiveState);
-    EXPECT_CALL(pinCtrl, digital_write(1, pinActiveState));
-    ka.keep_alive();
+    bool testSpecificPinActiveState = true;
+    KeepAlive testSpecificKa(&pinCtrl, keepAlivePinId, testSpecificPinActiveState);
+    EXPECT_CALL(pinCtrl, digital_write(keepAlivePinId, testSpecificPinActiveState));
+    testSpecificKa.keep_alive();
 }
 
-TEST(keepAlive, getShutdownRequest_returnsFalseByDefault)
+TEST_F(KeepAliveTest, getShutdownRequest_returnsFalseByDefault)
 {
-    NiceMock<Mock_pinCtrl> pinCtrl;
-    bool pinActiveState = true;
-    KeepAlive ka(&pinCtrl, 1, pinActiveState);
-    EXPECT_FALSE(ka.get_shutdown_request());
+    EXPECT_FALSE(kA->get_shutdown_request());
 }
 
-TEST(keepAlive, getShutdownRequest_returnsTrueWhenRequested)
+TEST_F(KeepAliveTest, getShutdownRequest_returnsTrueWhenRequested)
 {
-    NiceMock<Mock_pinCtrl> pinCtrl;
-    bool pinActiveState = true;
-    KeepAlive ka(&pinCtrl, 1, pinActiveState);
-    ka.request_shutdown();
-    EXPECT_TRUE(ka.get_shutdown_request());
+    kA->request_shutdown();
+    EXPECT_TRUE(kA->get_shutdown_request());
 }
 
-TEST(keepAlive, allowShutdown_notRequested_willNotShutdown)
+TEST_F(KeepAliveTest, allowShutdown_notRequested_willNotShutdown)
 {
-    NiceMock<Mock_pinCtrl> pinCtrl;
-    bool pinActiveState = true;
-    KeepAlive ka(&pinCtrl, 1, pinActiveState);
-    EXPECT_CALL(pinCtrl, digital_write(1, !pinActiveState)).Times(0);
-    ka.allow_shutdown();
+    EXPECT_CALL(pinCtrl, digital_write(keepAlivePinId, !pinActiveState)).Times(0);
+    kA->allow_shutdown();
 }
 
-TEST(keepAlive, allowShutdown_Requested_willShutdown)
+TEST_F(KeepAliveTest, allowShutdown_Requested_willShutdown)
 {
-    NiceMock<Mock_pinCtrl> pinCtrl;
-    bool pinActiveState = true;
-    KeepAlive ka(&pinCtrl, 1, pinActiveState);
-    ka.request_shutdown();
-    EXPECT_CALL(pinCtrl, digital_write(1, !pinActiveState));
-    ka.allow_shutdown();
+    kA->request_shutdown();
+    EXPECT_CALL(pinCtrl, digital_write(keepAlivePinId, !pinActiveState));
+    kA->allow_shutdown();
 }
-
