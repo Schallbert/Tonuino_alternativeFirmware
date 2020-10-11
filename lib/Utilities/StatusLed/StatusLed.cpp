@@ -78,7 +78,7 @@ void StatusLed::led_dim()
 {
     // Sets LED to 12.5% brightness @ 125 Hz
     // takes pinActiveState into account
-    bool dim = ((m_ui16TickInternal >> 3) & 0x01); // only true on every 8th increment of TickInterval
-    dim = dim ^ (!m_bPinAciveState); // Will invert value according to PinActiveState
+    bool dim = (m_ui16TickInternal >> 3) & 0x01; // only true on every 8th increment of TickInterval
+    dim ^= (!m_bPinAciveState); // Will invert value according to PinActiveState
     m_pPinControl->digital_write(m_ui8LedPinId, dim); 
 }
