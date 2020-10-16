@@ -1,0 +1,36 @@
+#ifndef CLICKENCODER_INTERFACE_H
+#define CLICKENCODER_INTERFACE_H
+
+#include "../Arduino/Arduino_interface/Arduino_types.h"
+
+class ClickEncoder_interface
+{
+public:
+    enum eButtonState
+    {
+        Open = 0,
+        Closed,
+        Pressed,
+        Held,
+        Released,
+        Clicked,
+        DoubleClicked,
+    };
+
+public:
+    virtual ~ClickEncoder_interface(){};
+
+public:
+    // Routine to internally poll encoder/button status
+    virtual void service() = 0;
+    // retrieve encoder value from hardware
+    virtual int16_t get_value() = 0;
+    // retrieve button status from hardware
+    virtual eButtonState get_button() = 0;
+    // acceleration feature of encoder: Quick turn will over-proportionally bump values
+    virtual void setAccelerationEnabled(const bool &enabled) = 0;
+    // doubleclick feature of encoder button.
+    virtual void setDoubleclickEnabled(const bool &enabled) = 0;
+};
+
+#endif //CLICKENCODER_INTERFACE_H

@@ -29,10 +29,10 @@ System::System()
 #endif
 
     // Initialize objects if needed ------------------------
-    m_pUserInput = UserInput_Factory::getInstance(UserInput_Factory::ThreeButtons);
+    //m_pUserInput = UserInput_Factory::getInstance(UserInput_Factory::THREE_BUTTONS);
     //init UserInput
-    m_pUserInput->set_input_pins(PINPLPS, PINPREV, PINNEXT);
-    m_pUserInput->init();
+    //m_pUserInput->set_input_pins(PINPLPS, PINPREV, PINNEXT);
+    //m_pUserInput->init();
 
 #if DEBUGSERIAL
     pSerial->com_println("Complete.");

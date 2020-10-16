@@ -2,8 +2,9 @@
 #define USERINPUT_IMPLEMENTATION_H
 
 #include "../UserInput_interface/UserInput_interface.h"
+#include "../ClickEncoder_interface/ClickEncoder_interface.h"
+#include "../UserInput/ClickEncoder_implementation/ClickEncoder_supportsLongPress.h"
 #include "Tonuino_config.h"
-#include "ClickEncoder.h"
 
 class UserInput_ClickEncoder : public UserInput
 {
@@ -17,42 +18,32 @@ class UserInput_ClickEncoder : public UserInput
     //  ToggleLockInput = Doubleclick
     //  ERROR
 
-    // Name friend classes so constructors can be called
-    friend class UserInput_Factory;
+public:
+    // pinA, pinB, pinButton are the pins of the encoder that are connected to the uC.
+    UserInput_ClickEncoder(ClickEncoder_interface *pEncoder) : m_pEncoder(pEncoder)
+    {
+        m_pEncoder->setAccelerationEnabled(true);
+        m_pEncoder->setAccelerationEnabled(true);
+    };
+
+    ~UserInput_ClickEncoder()
+    {
+        delete m_pEncoder;
+    };
 
 public:
-    UserInput_ClickEncoder();
-    ~UserInput_ClickEncoder();
-
-public:
-    // pinA, pinB, pinSwitch are the pins of the encoder that are connected to the uC.
-    void set_input_pins(uint8_t pinA, uint8_t pinB, uint8_t pinSwitch);
-    void init();
-    void userinput_service_isr();
-    UserRequest_e get_user_request();
-#ifdef UNIT_TEST
-    void set_fake_user_request(UserRequest_e); // For unit testing: Injects fake requests
-#endif
+    void userinput_service_isr() override;
+    UserRequest_e get_user_request() override;
 
 private:
-    void userinput_refresh();
+    void userinput_refresh() override;
 
 private:
-    //OBJECTS
-    // have to use pointer as object would have to be initialized
-    // using its constructor while not all constructor's init variables are defined yet
-    ClickEncoder *encoder;
-    // INPUT PINS
-    uint8_t pinA{0};
-    uint8_t pinB{0};
-    uint8_t pinSwitch{0};
-    // PARAMETERS
-    InterfaceState_e state{uninitialized};
-    // Business logic variables
+    ClickEncoder_interface *m_pEncoder;
+
     volatile int16_t encoderPosition{0};
     volatile int16_t encoderDiff{0};
-    ClickEncoder::Button buttonState{ClickEncoder::Open};
-
+    ClickEncoder_interface::eButtonState buttonState{ClickEncoder_interface::Open};
 }; // UserInput_ClickEncoder
 
 class UserInput_3Buttons : public UserInput
@@ -67,99 +58,95 @@ class UserInput_3Buttons : public UserInput
     //  ToggleLockInput = plpsButton Doubleclick
     //  ERROR
 
-    // Name friend classes so constructors can be called
-    friend class UserInput_Factory;
-
 private:
     struct ButtonStates
     {
-        ClickEncoder::Button plpsButton{ClickEncoder::Open};
-        ClickEncoder::Button nextButton{ClickEncoder::Open};
-        ClickEncoder::Button prevButton{ClickEncoder::Open};
+        Encoder_longPressRepeat::eButtonState plpsButton{Encoder_longPressRepeat::Open};
+        Encoder_longPressRepeat::eButtonState nextButton{Encoder_longPressRepeat::Open};
+        Encoder_longPressRepeat::eButtonState prevButton{Encoder_longPressRepeat::Open};
     };
-
-    // Wrapper for Button (is a ClickEncoder instance, too)
-    class DigitalButton : public ClickEncoder
-    {
-    public:
-        explicit DigitalButton(int8_t BTN, bool active = false) : ClickEncoder(-1, -1, BTN, 1, active){}; // Constructor for using a button (not the encoder)
-    };
-
-    class DigitalButton_SupportsLongPress : public DigitalButton
-    {
-    public:
-        //DigitalButton_SupportsLongPress(int8_t pinId, bool active, uint16_t longPressTime, uint16_t longPressRepeatInterval);
-        DigitalButton_SupportsLongPress(int8_t pinId, bool active); //params to be set via set_parameters of parent class or uses default
-        ~DigitalButton_SupportsLongPress();
-
-    public:
-        void service(void);
-        void set_long_press_active(bool longPressActive);
-        bool handle_repeat_long_pressed(void);
-
-    private:
-        uint16_t longPressTime{0};           //mSec
-        uint16_t longPressRepeatInterval{0}; //mSec
-        volatile uint16_t longPressCount{0};
-        bool longPressActive{false};
-        ClickEncoder::Button buttonState{Button::Open}; //enum to hold buttonState
-    };                                    //  DigitalButton_SupportsLongPress
 
 public:
-    /*
-        First call set_input_pins to get arduino pins attached to the encoder
-        Then call init to finally instantiate the encoder.
-    */
+    UserInput_3Buttons(ClickEncoder_interface *pPlPsButton,
+                       ClickEncoder_interface *pNextButton,
+                       ClickEncoder_interface *pPrevButton,
+                       const uint16_t &longPressDetectLevel)
+    {
+        m_pPlpsButton = new Encoder_longPressRepeat(pPlPsButton, ENC_LONGPRESSREPEATINTERVAL);
+        m_pPlpsButton->setAccelerationEnabled(true);
+        m_pPlpsButton->setDoubleClickEnabled(true);
+        m_pNextButton = new Encoder_longPressRepeat(pNextButton, ENC_LONGPRESSREPEATINTERVAL);
+        m_pNextButton->setAccelerationEnabled(true);
+        m_pNextButton->setDoubleClickEnabled(true);
+        m_pPrevButton = new Encoder_longPressRepeat(pPrevButton, ENC_LONGPRESSREPEATINTERVAL);
+        m_pPrevButton->setAccelerationEnabled(true);
+        m_pPrevButton->setDoubleClickEnabled(true);
+    };
+    ~UserInput_3Buttons() = default;
 
-    // pinPrev, pinePlayPause, pinNext are the pins of the buttons that are connected to the uC.
-    void set_input_pins(uint8_t pinPlayPauseAbort, uint8_t pinPrev, uint8_t pinNext);
-    void init();
-    // Service routine to update button status (use 1ms task)
-    void userinput_service_isr(void);
-    UserRequest_e get_user_request();
-#ifdef UNIT_TEST
-    void set_fake_user_request(UserRequest_e); // For unit testing: Injects fake requests
-#endif
+public:
+    void userinput_service_isr(void) override;
+    UserRequest_e get_user_request() override;
 
 private:
-    void userinput_refresh();
+    void userinput_refresh() override;
 
 private:
     //OBJECTS
-    DigitalButton_SupportsLongPress *prevButton;
-    DigitalButton_SupportsLongPress *plpsButton;
-    DigitalButton_SupportsLongPress *nextButton;
+    Encoder_longPressRepeat *m_pPrevButton;
+    Encoder_longPressRepeat *m_pPlpsButton;
+    Encoder_longPressRepeat *m_pNextButton;
     ButtonStates buttonStates;
-    // INPUT PINS
-    uint8_t pinPrev = 0;
-    uint8_t pinPlayPauseAbort = 0;
-    uint8_t pinNext = 0;
-    // PARAMETERS
-    InterfaceState_e state = uninitialized;
-    bool switchActiveState;
-    uint16_t doubleClickTime;         //mSec
-    uint16_t longPressTime;           //mSec
-    uint16_t longPressRepeatInterval; //mSec
-};                                    // UserInput_3Buttons
+}; // UserInput_3Buttons
 
+
+/*
 class UserInput_Factory
 {
-    /*  This is the factory class, designed to create the right UserInput
+    /*  
+        This is the factory class, designed to create the right UserInput
         object based on input parameter, handing a pointer to therequested object back
         to the caller. 
-        */
-
+    */
+/*
 public:
+    /*  -------------------------------------------------------------------
+    Depending on UserInput config, behavior will be as follows:
+    -------------------------------------------------------------------
+number 1,2,3... = Button/Encoder number
+short press = SP
+long press = LP
+turn right = TR
+turn left = TL
+turn left pressed = PTL
+turn right pressed = PTR
+long press both buttons = LPB
+place or remove Nfc Tag = TAG
+     -------------------------------------------------------------------
+userinput action  ENCODER_1  ENCODER_2  BUTTONS_2  BUTTONS_3  BUTTONS_4  BUTTONS_5   
+PLAY_PAUSE,       SP            SP1         TAG     SP2         TAG         SP3
+PP_LONGPRESS,     LP            SP1         LPB     LP2         LPB         LP3
+NEXT_TRACK,       TR            TR1         SP2     SP3         SP4         SP5
+PREV_TRACK,       TL            TL1         SP1     SP1         SP1         SP1
+INC_VOLUME,       PTR           TR2         LP2     LP3         SP3         SP4
+DEC_VOLUME,       PTL           TL2         LP1     LP1         SP2         SP2
+    -------------------------------------------------------------------
+*/
+/*
     enum UserInputType_e
     {
-        Undefined = 0,
-        Encoder,
-        ThreeButtons
+        UNDEFINED = 0,
+        ENCODER_1, // next
+        TWO_ENCODERS,
+        TWO_BUTTONS,
+        THREE_BUTTONS,
+        FOUR_BUTTONS,
+        FIVE_BUTTONS
     };
 
 public:
     static UserInput *getInstance(UserInputType_e typeKey);
 
 }; // UserInput_Factory
-
+*/
 #endif // USERINPUT_IMPLEMENTATION_H
