@@ -31,7 +31,7 @@ public:
     void service(void)
     {
         m_pEncoder->service();
-        if (m_pEncoder->get_button() == ClickEncoder_interface::Held)
+        if (m_pEncoder->getButton() == ClickEncoder_interface::Held)
         {
             ++m_ui16ButtonHeldTicks;
         }
@@ -44,7 +44,7 @@ public:
     eButtonState getButton()
     {
         eButtonState buttonState = Open;
-        buttonState = static_cast<eButtonState>(m_pEncoder->get_button());
+        buttonState = static_cast<eButtonState>(m_pEncoder->getButton());
         if (buttonState == Held &&
             m_ui16longPressRepeatInterval > 0)
         {
@@ -59,7 +59,7 @@ public:
 
     int16_t getValue()
     {
-        return m_pEncoder->get_value();
+        return m_pEncoder->getValue();
     }
 
     void setAccelerationEnabled(const bool &enabled)

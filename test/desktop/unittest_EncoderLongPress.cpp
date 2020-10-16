@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include "mocks/unittest_ClickEncoder_mocks.h"
+
 #include "../UserInput/ClickEncoder_implementation/ClickEncoder_supportsLongPress.h"
 
 using ::testing::NiceMock;
@@ -12,7 +14,7 @@ class EncoderLongPressRepeatTest : public ::testing::Test
 protected:
     virtual void SetUp()
     {
-        m_pEnc = new Encoder_longPressRepeat(&enc, EncoderLongPressRepeatTest);
+        m_pEnc = new Encoder_longPressRepeat(&enc, longPressRepeatTicks);
     }
 
     virtual void TearDown()
@@ -33,9 +35,12 @@ TEST_F(EncoderLongPressRepeatTest, encoderServiceCalled)
     m_pEnc->service();
 }
 
-TEST_F(EncoderLongPressRepeatTest, encoderServiceCalled)
+TEST_F(EncoderLongPressRepeatTest, getButton_Open_willNeverReturnLongPressRepeat)
 {
-    EXPECT_CALL(enc, service());
-
-    m_pEnc->service();
+    ON_CALL(enc, getButton()).WillByDefault(Return(ClickEncoder_interface::Open));
+    for (uint8_t i = 0; i < longPressRepeatTicks + 1; ++i)
+    {
+        m_pEnc->service();
+    }
+    ASSERT_EQ(m_pEnc->getButton(), ClickEncoder_interface::Open);
 }

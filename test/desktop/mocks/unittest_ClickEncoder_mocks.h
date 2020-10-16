@@ -7,9 +7,10 @@
 
 class Mock_ClickEncoder : public ClickEncoder_interface
 {
-    MOCK_METHOD(void, service, () , (override));
-    MOCK_METHOD(int16_t, get_value, (), (override));
-    MOCK_METHOD(ClickEncoder_interface::eButtonState, get_button, (), (override));
+public:
+    MOCK_METHOD(void, service, (), (override));
+    MOCK_METHOD(int16_t, getValue, (), (override));
+    MOCK_METHOD(ClickEncoder_interface::eButtonState, getButton, (), (override));
 
     MOCK_METHOD(void, setAccelerationEnabled, (const bool &enabled), (override));
     MOCK_METHOD(void, setDoubleclickEnabled, (const bool &enabled), (override));

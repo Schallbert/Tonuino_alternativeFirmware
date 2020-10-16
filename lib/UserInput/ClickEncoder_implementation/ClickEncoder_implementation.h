@@ -22,12 +22,12 @@ public:
         m_pEncoder->service();
     }
 
-    int16_t get_value() override
+    int16_t getValue() override
     {
         return m_pEncoder->getValue();
     }
    
-    eButtonState get_button() override
+    eButtonState getButton() override
     {
         return static_cast<eButtonState>(m_pEncoder->getButton());
     }
