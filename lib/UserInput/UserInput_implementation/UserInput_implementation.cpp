@@ -1,6 +1,5 @@
 #include "UserInput_implementation.h"
 
-/*
 void UserInput_ClickEncoder::userinput_service_isr()
 {
     m_pEncoder->service();
@@ -16,7 +15,7 @@ UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request()
     //Poll for current encoder position and button state
     userinput_refresh();
 
-    if (buttonState == Encoder_longPressRepeat::Clicked)
+    if (buttonState == ClickEncoder_interface::Clicked)
     {
         return PLAY_PAUSE;
     }
@@ -24,8 +23,8 @@ UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request()
     if (encoderDiff > 0)
     {
         //encoder turned right
-        if (buttonState == Encoder_longPressRepeat::Pressed || 
-            buttonState == Encoder_longPressRepeat::Held)
+        if (buttonState == ClickEncoder_interface::Pressed ||
+            buttonState == ClickEncoder_interface::Held)
         {
             return INC_VOLUME; //while button was pressed/held: volume up
         }
@@ -38,7 +37,8 @@ UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request()
     if (encoderDiff < 0)
     {
         //encoder turned left
-        if (buttonState == Encoder_longPressRepeat::Pressed || buttonState == Encoder_longPressRepeat::Held)
+        if (buttonState == ClickEncoder_interface::Pressed ||
+            buttonState == ClickEncoder_interface::Held)
         {
             return DEC_VOLUME; //while button was pressed/held: volume up
         }
@@ -48,13 +48,13 @@ UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request()
         }
     }
 
-    if (buttonState == Encoder_longPressRepeat::Held)
+    if (buttonState == ClickEncoder_interface::Held)
     {
         // Button held but not turned
         return PP_LONGPRESS;
     }
 
-    if (buttonState == Encoder_longPressRepeat::DoubleClicked)
+    if (buttonState == ClickEncoder_interface::DoubleClicked)
     {
         UserInput::userInputLocked = !UserInput::userInputLocked; // Doubleclick: lock buttons
     }
@@ -95,12 +95,12 @@ void UserInput_3Buttons::userinput_service_isr()
 
 UserInput::UserRequest_e UserInput_3Buttons::get_user_request()
 {
-   if (UserInput::userInputLocked)
+    if (UserInput::userInputLocked)
     {
         return NO_ACTION;
     }
 
-//Get current button's states
+    //Get current button's states
     userinput_refresh();
 
     // --- PlayPauAbort button handler -----------------------------
@@ -108,7 +108,8 @@ UserInput::UserRequest_e UserInput_3Buttons::get_user_request()
     {
         return PLAY_PAUSE;
     }
-    else if (buttonStates.plpsButton == Encoder_longPressRepeat::Held)
+    else if (buttonStates.plpsButton == Encoder_longPressRepeat::Held ||
+             buttonStates.nextButton == Encoder_longPressRepeat::LongPressRepeat)
     {
         // Button held
         return PP_LONGPRESS;
@@ -123,35 +124,20 @@ UserInput::UserRequest_e UserInput_3Buttons::get_user_request()
         return NEXT_TRACK;
     }
 
-    if (buttonStates.nextButton == Encoder_longPressRepeat::Held)
+    if (buttonStates.nextButton == Encoder_longPressRepeat::LongPressRepeat)
     {
-        m_pNextButton->set_long_press_active(true);
-        if (m_pNextButton->handle_repeat_long_pressed())
-        {
-            return INC_VOLUME;
-        }
+        return INC_VOLUME;
     }
-    else
-    {
-        m_pNextButton->set_long_press_active(false);
-    }
+
     // --- Previous button handler ----------------------------------
-    if (buttonStates.prevButton == ClickEncoder::Clicked)
+    if (buttonStates.prevButton == Encoder_longPressRepeat::Clicked)
     {
         return PREV_TRACK;
     }
 
-    if (buttonStates.prevButton == ClickEncoder::Held)
+    if (buttonStates.prevButton == Encoder_longPressRepeat::LongPressRepeat)
     {
-        m_pPrevButton->set_long_press_active(true);
-        if (m_pPrevButton->handle_repeat_long_pressed())
-        {
-            return DEC_VOLUME;
-        }
-    }
-    else
-    {
-        m_pPrevButton->set_long_press_active(false);
+        return DEC_VOLUME;
     }
 
     return NO_ACTION;
@@ -166,6 +152,7 @@ void UserInput_3Buttons::userinput_refresh()
 
 // USERINPUT___3BUTTONS     ---------------------------------------------------------------
 
+/*
 // USERINPUT___FACTORY      ---------------------------------------------------------------
 
 UserInput *UserInput_Factory::getInstance(UserInputType_e typeKey)
@@ -184,7 +171,5 @@ UserInput *UserInput_Factory::getInstance(UserInputType_e typeKey)
         pObject = new UserInput_3Buttons;
     }
     return pObject;
-}
+} */
 // USERINPUT___FACTORY      ---------------------------------------------------------------
-
-*/
