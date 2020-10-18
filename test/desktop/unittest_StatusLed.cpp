@@ -88,12 +88,12 @@ TEST_F(StatusLedTest, setLed_dim_workingCorrectly)
     EXPECT_CALL(pinCtrl, digital_write(_, !pinActiveState))
         .Times(8)
         .InSequence(seq);
-    for (uint8_t i = 0; i < 8; ++i)
-    {
-        pLed->led_service();
-    }
     EXPECT_CALL(pinCtrl, digital_write(_, pinActiveState))
         .Times(1)
         .InSequence(seq);
-    pLed->led_service();
+    
+        for (uint8_t i = 0; i < 9; ++i)
+    {
+        pLed->led_service();
+    }
 }

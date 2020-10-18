@@ -7,13 +7,18 @@ void UserInput_ClickEncoder::userinput_service_isr()
 
 UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request()
 {
+     //Poll for current encoder position and button state
+    userinput_refresh();
+
+    if (buttonState == ClickEncoder_interface::DoubleClicked)
+    {
+        UserInput::userInputLocked = !UserInput::userInputLocked; // Doubleclick: lock buttons
+    }
+
     if (UserInput::userInputLocked)
     {
         return NO_ACTION;
     }
-
-    //Poll for current encoder position and button state
-    userinput_refresh();
 
     if (buttonState == ClickEncoder_interface::Clicked)
     {
@@ -54,10 +59,7 @@ UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request()
         return PP_LONGPRESS;
     }
 
-    if (buttonState == ClickEncoder_interface::DoubleClicked)
-    {
-        UserInput::userInputLocked = !UserInput::userInputLocked; // Doubleclick: lock buttons
-    }
+    
 
     return NO_ACTION;
 }
@@ -88,43 +90,42 @@ void UserInput_ClickEncoder::userinput_refresh()
 
 void UserInput_3Buttons::userinput_service_isr()
 {
-    m_pPrevButton->service();
     m_pPlpsButton->service();
     m_pNextButton->service();
+    m_pPrevButton->service();
 }
 
 UserInput::UserRequest_e UserInput_3Buttons::get_user_request()
 {
+    //Get current button's states
+    userinput_refresh();
+
+    if (buttonStates.plpsButton == Encoder_longPressRepeat::DoubleClicked)
+    {
+        UserInput::userInputLocked = !UserInput::userInputLocked;
+    }
+
     if (UserInput::userInputLocked)
     {
         return NO_ACTION;
     }
 
-    //Get current button's states
-    userinput_refresh();
-
-    // --- PlayPauAbort button handler -----------------------------
     if (buttonStates.plpsButton == Encoder_longPressRepeat::Clicked)
     {
         return PLAY_PAUSE;
     }
     else if (buttonStates.plpsButton == Encoder_longPressRepeat::Held ||
-             buttonStates.nextButton == Encoder_longPressRepeat::LongPressRepeat)
+             buttonStates.plpsButton == Encoder_longPressRepeat::LongPressRepeat)
     {
-        // Button held
         return PP_LONGPRESS;
     }
-    else if (buttonStates.plpsButton == Encoder_longPressRepeat::DoubleClicked)
-    {
-        UserInput::userInputLocked = !UserInput::userInputLocked;
-    }
+
     // --- Next button handler --------------------------------------
     if (buttonStates.nextButton == Encoder_longPressRepeat::Clicked)
     {
         return NEXT_TRACK;
     }
-
-    if (buttonStates.nextButton == Encoder_longPressRepeat::LongPressRepeat)
+    else if (buttonStates.nextButton == Encoder_longPressRepeat::LongPressRepeat)
     {
         return INC_VOLUME;
     }
@@ -134,8 +135,7 @@ UserInput::UserRequest_e UserInput_3Buttons::get_user_request()
     {
         return PREV_TRACK;
     }
-
-    if (buttonStates.prevButton == Encoder_longPressRepeat::LongPressRepeat)
+    else if (buttonStates.prevButton == Encoder_longPressRepeat::LongPressRepeat)
     {
         return DEC_VOLUME;
     }

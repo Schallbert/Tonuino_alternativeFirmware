@@ -70,13 +70,13 @@ public:
                        ClickEncoder_interface *pPrevButton,
                        const uint16_t &longPressDetectLevel)
     {
-        m_pPlpsButton = new Encoder_longPressRepeat(pPlPsButton, ENC_LONGPRESSREPEATINTERVAL);
+        m_pPlpsButton = new Encoder_longPressRepeat(pPlPsButton, longPressDetectLevel);
         m_pPlpsButton->setAccelerationEnabled(true);
         m_pPlpsButton->setDoubleClickEnabled(true);
-        m_pNextButton = new Encoder_longPressRepeat(pNextButton, ENC_LONGPRESSREPEATINTERVAL);
+        m_pNextButton = new Encoder_longPressRepeat(pNextButton, longPressDetectLevel);
         m_pNextButton->setAccelerationEnabled(true);
         m_pNextButton->setDoubleClickEnabled(true);
-        m_pPrevButton = new Encoder_longPressRepeat(pPrevButton, ENC_LONGPRESSREPEATINTERVAL);
+        m_pPrevButton = new Encoder_longPressRepeat(pPrevButton, longPressDetectLevel);
         m_pPrevButton->setAccelerationEnabled(true);
         m_pPrevButton->setDoubleClickEnabled(true);
     };
