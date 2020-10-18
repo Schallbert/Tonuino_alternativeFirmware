@@ -21,14 +21,11 @@ public:
     // pinA, pinB, pinButton are the pins of the encoder that are connected to the uC.
     UserInput_ClickEncoder(ClickEncoder_interface *pEncoder) : m_pEncoder(pEncoder)
     {
-        m_pEncoder->setAccelerationEnabled(true);
-        m_pEncoder->setAccelerationEnabled(true);
+        m_pEncoder->setAccelerationEnabled(false);
+        m_pEncoder->setDoubleclickEnabled(true);
     };
 
-    ~UserInput_ClickEncoder()
-    {
-        delete m_pEncoder;
-    };
+    ~UserInput_ClickEncoder() = default;
 
 public:
     void userinput_service_isr() override;
@@ -71,16 +68,21 @@ public:
                        const uint16_t &longPressDetectLevel)
     {
         m_pPlpsButton = new Encoder_longPressRepeat(pPlPsButton, longPressDetectLevel);
-        m_pPlpsButton->setAccelerationEnabled(true);
+        m_pPlpsButton->setAccelerationEnabled(false);
         m_pPlpsButton->setDoubleClickEnabled(true);
         m_pNextButton = new Encoder_longPressRepeat(pNextButton, longPressDetectLevel);
-        m_pNextButton->setAccelerationEnabled(true);
+        m_pNextButton->setAccelerationEnabled(false);
         m_pNextButton->setDoubleClickEnabled(true);
         m_pPrevButton = new Encoder_longPressRepeat(pPrevButton, longPressDetectLevel);
-        m_pPrevButton->setAccelerationEnabled(true);
+        m_pPrevButton->setAccelerationEnabled(false);
         m_pPrevButton->setDoubleClickEnabled(true);
     };
-    ~UserInput_3Buttons() = default;
+    ~UserInput_3Buttons()
+    {
+        delete m_pPlpsButton;
+        delete m_pNextButton;
+        delete m_pPrevButton;
+    };
 
 public:
     void userinput_service_isr(void) override;

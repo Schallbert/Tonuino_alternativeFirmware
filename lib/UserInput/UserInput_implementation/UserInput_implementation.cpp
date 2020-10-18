@@ -7,7 +7,7 @@ void UserInput_ClickEncoder::userinput_service_isr()
 
 UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request()
 {
-     //Poll for current encoder position and button state
+    //Poll for current encoder position and button state
     userinput_refresh();
 
     if (buttonState == ClickEncoder_interface::DoubleClicked)
@@ -25,7 +25,7 @@ UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request()
         return PLAY_PAUSE;
     }
 
-    if (encoderDiff > 0)
+    if (encoderDiff > 0) // TODO: Check in INTEGRATION TEST if this really is a good idea. Alternative: take position.
     {
         //encoder turned right
         if (buttonState == ClickEncoder_interface::Pressed ||
@@ -59,28 +59,16 @@ UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request()
         return PP_LONGPRESS;
     }
 
-    
-
     return NO_ACTION;
 }
 
 void UserInput_ClickEncoder::userinput_refresh()
 {
-    static int16_t oldEncPos = 0;
 
     //Get values from encoder
-    encoderPosition += m_pEncoder->getValue();
+    encoderDiff = m_pEncoder->getValue(); // diff to last "getValue" call
+    encoderPosition += encoderDiff;
     buttonState = m_pEncoder->getButton();
-
-    if (encoderPosition != oldEncPos)
-    {
-        encoderDiff = encoderPosition - oldEncPos;
-        oldEncPos = encoderPosition;
-    }
-    else
-    {
-        encoderDiff = 0;
-    }
 }
 
 // USERINPUT___CLICKENCODER ---------------------------------------------------------------
