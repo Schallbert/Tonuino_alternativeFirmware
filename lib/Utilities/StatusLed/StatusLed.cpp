@@ -39,6 +39,7 @@ void StatusLed::set_led_behavior(eLedState ledState)
         break;
     case dim:
         perform = &StatusLed::led_dim;
+        break;
     default:
         perform = &StatusLed::led_off;
         break;
