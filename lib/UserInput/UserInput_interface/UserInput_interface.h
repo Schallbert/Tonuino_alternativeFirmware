@@ -22,12 +22,11 @@ public:
         PREV_TRACK,
         INC_VOLUME,
         DEC_VOLUME,
-        ERROR,
-        NUMBER_OF_REQUESTS = 8
+        NUMBER_OF_REQUESTS = 7
     };
 
 protected:
-    bool userInputLocked = false;
+    bool userInputLocked{false};
 
 public:
     virtual UserRequest_e get_user_request(void) = 0;           // returns user's request to main program

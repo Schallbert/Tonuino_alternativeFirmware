@@ -39,3 +39,12 @@ TEST_F(UserInput_3ButtonsTest, ServiceCalled)
 
     m_pUserInput->userinput_service_isr();
 }
+
+TEST_F(UserInput_3ButtonsTest, NoActionOnAnyButton_willReturnNoAction)
+{
+    ON_CALL(plPs, getButton()).WillByDefault(Return(ClickEncoder_interface::Open));
+    ON_CALL(next, getButton()).WillByDefault(Return(ClickEncoder_interface::Open));
+    ON_CALL(prev, getButton()).WillByDefault(Return(ClickEncoder_interface::Open));
+
+    EXPECT_EQ(m_pUserInput->get_user_request(), UserInput::NO_ACTION);
+}

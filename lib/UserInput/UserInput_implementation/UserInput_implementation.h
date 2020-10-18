@@ -16,7 +16,6 @@ class UserInput_ClickEncoder : public UserInput
     //  INC_VOLUME = Pressed/Held Turn Right
     //  DEC_VOLUME = Pressed/Held Turn Left
     //  ToggleLockInput = Doubleclick
-    //  ERROR
 
 public:
     // pinA, pinB, pinButton are the pins of the encoder that are connected to the uC.
@@ -56,7 +55,6 @@ class UserInput_3Buttons : public UserInput
     //  INC_VOLUME = nextButton Held
     //  DEC_VOLUME = prevButton Held
     //  ToggleLockInput = plpsButton Doubleclick
-    //  ERROR
 
 private:
     struct ButtonStates

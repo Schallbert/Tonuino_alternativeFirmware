@@ -28,7 +28,7 @@ void OutputManager::runDispatcher()
     typedef OutputManager OM;
     // NUMBER_OF_REQUESTS -1 as state "error" is caught in above handleInputErrors
     static const dispatcher dispatchTable[Nfc_interface::NUMBER_OF_TAG_STATES - 1]
-                                         [UserInput::NUMBER_OF_REQUESTS - 1] =
+                                         [UserInput::NUMBER_OF_REQUESTS] =
                                              {
                                                  //NOAC,     PL_PS,     PP_LP,     NEXT_,     PREV_,     INC_V,     DEC_V,
                                                  {&OM::none, &OM::plPs, &OM::help, &OM::next, &OM::prev, &OM::incV, &OM::decV}, // NO_TAG
@@ -68,13 +68,6 @@ void OutputManager::handleInputErrors()
         bError = true;
 #ifdef DEBUGSERIAL
         m_pArduinoHal->getSerial()->com_println("Dispatcher: userInput out of range!");
-#endif
-    }
-    else if (m_eUserInput == UserInput::ERROR)
-    {
-        bError = true;
-#ifdef DEBUGSERIAL
-        m_pArduinoHal->getSerial()->com_println("userInput internal error!");
 #endif
     }
 

@@ -125,14 +125,6 @@ TEST_F(OutputManagerTest, dispatcher_noCard_errorHandler_userActionOutOfRange)
     m_pOutputManager->runDispatcher();
 }
 
-TEST_F(OutputManagerTest, dispatcher_noCard_errorHandler_userActionError)
-{
-    m_pOutputManager->setInputStates(Nfc_interface::NO_TAG, UserInput::ERROR);
-    // Assert
-    EXPECT_CALL(*m_pMp3Ctrl, play_specific_file(MSG_ERROR)).Times(1); // Error Message sent
-    m_pOutputManager->runDispatcher();
-}
-
 TEST_F(OutputManagerTest, dispatcher_noCardPlayPause_playCalled)
 {
     m_pOutputManager->setInputStates(Nfc_interface::NO_TAG, UserInput::PLAY_PAUSE);
