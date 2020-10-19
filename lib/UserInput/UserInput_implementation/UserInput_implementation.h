@@ -5,6 +5,7 @@
 #include "../ClickEncoder_interface/ClickEncoder_interface.h"
 #include "../UserInput/ClickEncoder_implementation/ClickEncoder_supportsLongPress.h"
 #include "Tonuino_config.h"
+#include "Arduino_config.h"
 
 class UserInput_ClickEncoder : public UserInput
 {
@@ -22,7 +23,7 @@ public:
     UserInput_ClickEncoder(ClickEncoder_interface *pEncoder) : m_pEncoder(pEncoder)
     {
         m_pEncoder->setAccelerationEnabled(false);
-        m_pEncoder->setDoubleclickEnabled(true);
+        m_pEncoder->setDoubleClickEnabled(true);
     };
 
     ~UserInput_ClickEncoder() = default;
@@ -65,15 +66,15 @@ public:
     UserInput_3Buttons(ClickEncoder_interface *pPlPsButton,
                        ClickEncoder_interface *pNextButton,
                        ClickEncoder_interface *pPrevButton,
-                       const uint16_t &longPressDetectLevel)
+                       const uint16_t &longPressRepeatInterval)
     {
-        m_pPlpsButton = new Encoder_longPressRepeat(pPlPsButton, longPressDetectLevel);
+        m_pPlpsButton = new Encoder_longPressRepeat(pPlPsButton, longPressRepeatInterval);
         m_pPlpsButton->setAccelerationEnabled(false);
         m_pPlpsButton->setDoubleClickEnabled(true);
-        m_pNextButton = new Encoder_longPressRepeat(pNextButton, longPressDetectLevel);
+        m_pNextButton = new Encoder_longPressRepeat(pNextButton, longPressRepeatInterval);
         m_pNextButton->setAccelerationEnabled(false);
         m_pNextButton->setDoubleClickEnabled(true);
-        m_pPrevButton = new Encoder_longPressRepeat(pPrevButton, longPressDetectLevel);
+        m_pPrevButton = new Encoder_longPressRepeat(pPrevButton, longPressRepeatInterval);
         m_pPrevButton->setAccelerationEnabled(false);
         m_pPrevButton->setDoubleClickEnabled(true);
     };
@@ -99,54 +100,30 @@ private:
     ButtonStates buttonStates;
 }; // UserInput_3Buttons
 
+    //    This is the factory class, designed to create the right UserInput
+    //    object based on input parameter, handing a pointer to the requested object back
+    //    to the caller.
 
-/*
-class UserInput_Factory
-{
-    /*  
-        This is the factory class, designed to create the right UserInput
-        object based on input parameter, handing a pointer to therequested object back
-        to the caller. 
-    */
-/*
-public:
-    /*  -------------------------------------------------------------------
-    Depending on UserInput config, behavior will be as follows:
-    -------------------------------------------------------------------
-number 1,2,3... = Button/Encoder number
-short press = SP
-long press = LP
-turn right = TR
-turn left = TL
-turn left pressed = PTL
-turn right pressed = PTR
-long press both buttons = LPB
-place or remove Nfc Tag = TAG
-     -------------------------------------------------------------------
-userinput action  ENCODER_1  ENCODER_2  BUTTONS_2  BUTTONS_3  BUTTONS_4  BUTTONS_5   
-PLAY_PAUSE,       SP            SP1         TAG     SP2         TAG         SP3
-PP_LONGPRESS,     LP            SP1         LPB     LP2         LPB         LP3
-NEXT_TRACK,       TR            TR1         SP2     SP3         SP4         SP5
-PREV_TRACK,       TL            TL1         SP1     SP1         SP1         SP1
-INC_VOLUME,       PTR           TR2         LP2     LP3         SP3         SP4
-DEC_VOLUME,       PTL           TL2         LP1     LP1         SP2         SP2
-    -------------------------------------------------------------------
-*/
-/*
-    enum UserInputType_e
-    {
-        UNDEFINED = 0,
-        ENCODER_1, // next
-        TWO_ENCODERS,
-        TWO_BUTTONS,
-        THREE_BUTTONS,
-        FOUR_BUTTONS,
-        FIVE_BUTTONS
-    };
+    // -------------------------------------------------------------------
+    // Depending on UserInput config, behavior will be as follows:
+    // -------------------------------------------------------------------
+    // number 1,2,3... = Button/Encoder number
+    // short press = SP
+    // long press = LP
+    // turn right = TR
+    // turn left = TL
+    // turn left pressed = PTL
+    // turn right pressed = PTR
+    // long press both buttons = LPB
+    // place or remove Nfc Tag = TAG
+    // -------------------------------------------------------------------
+    // userinput action  ONE_ENCODER  ENCODER_2  BUTTONS_2  BUTTONS_3  BUTTONS_4  BUTTONS_5
+    // PLAY_PAUSE,       SP            SP1         TAG     SP2         TAG         SP3
+    // PP_LONGPRESS,     LP            SP1         LPB     LP2         LPB         LP3
+    // NEXT_TRACK,       TR            TR1         SP2     SP3         SP4         SP5
+    // PREV_TRACK,       TL            TL1         SP1     SP1         SP1         SP1
+    // INC_VOLUME,       PTR           TR2         LP2     LP3         SP3         SP4
+    // DEC_VOLUME,       PTL           TL2         LP1     LP1         SP2         SP2
+    // -------------------------------------------------------------------
 
-public:
-    static UserInput *getInstance(UserInputType_e typeKey);
-
-}; // UserInput_Factory
-*/
 #endif // USERINPUT_IMPLEMENTATION_H

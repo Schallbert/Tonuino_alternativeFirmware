@@ -30,7 +30,7 @@ public:
     // acceleration feature of encoder: Quick turn will over-proportionally bump values
     virtual void setAccelerationEnabled(const bool &enabled) = 0;
     // doubleclick feature of encoder button.
-    virtual void setDoubleclickEnabled(const bool &enabled) = 0;
+    virtual void setDoubleClickEnabled(const bool &enabled) = 0;
 };
 
 #endif //CLICKENCODER_INTERFACE_H

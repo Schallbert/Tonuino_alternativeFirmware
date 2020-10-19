@@ -139,25 +139,3 @@ void UserInput_3Buttons::userinput_refresh()
 }
 
 // USERINPUT___3BUTTONS     ---------------------------------------------------------------
-
-/*
-// USERINPUT___FACTORY      ---------------------------------------------------------------
-
-UserInput *UserInput_Factory::getInstance(UserInputType_e typeKey)
-{
-    UserInput *pObject = NULL;
-
-    switch (typeKey)
-    {
-    case ENCODER_1:
-        pObject = new UserInput_ClickEncoder;
-        break;
-    case THREE_BUTTONS:
-        pObject = new UserInput_3Buttons;
-        break;
-    default:
-        pObject = new UserInput_3Buttons;
-    }
-    return pObject;
-} */
-// USERINPUT___FACTORY      ---------------------------------------------------------------

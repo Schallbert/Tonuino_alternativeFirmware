@@ -69,7 +69,7 @@ public:
 
     void setDoubleClickEnabled(const bool &enabled)
     {
-        m_pEncoder->setDoubleclickEnabled(enabled);
+        m_pEncoder->setDoubleClickEnabled(enabled);
     }
 
 private:

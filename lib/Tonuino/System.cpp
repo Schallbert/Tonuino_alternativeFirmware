@@ -21,6 +21,8 @@ System::System()
     m_pDfMini = new DfMini();
     m_pMp3Ctrl = new Mp3PlayerControl(m_pArduinoHal, m_pDfMini, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
 
+
+
     // Notify System up
 #if DEBUGSERIAL
     Arduino_interface_com *pSerial = m_pArduinoHal->getSerial();
@@ -57,8 +59,6 @@ System::~System()
     delete m_pIdleTimer;
     delete m_pDfMiniMsgTimeout;
 
-    m_pUserInput = nullptr;
-
     // finally shut down system
     m_pPwrCtrl->allow_shutdown();
     delete m_pPwrCtrl;
@@ -67,7 +67,7 @@ System::~System()
 
 bool System::loop()
 {
-    m_outputManager.setInputStates(m_pNfcCtrl->get_tag_presence(), m_pUserInput->get_user_request());
+    m_outputManager.setInputStates(m_pNfcCtrl->get_tag_presence(), m_UserInput.get_user_request());
     m_outputManager.runDispatcher();
 #if DEBUGSERIAL
     m_pMp3Ctrl->print_debug_message();
@@ -82,7 +82,7 @@ void System::timer1_task_1ms()
 {
     static volatile uint16_t ui16Ticks = 0;
 
-    m_pUserInput->userinput_service_isr(); // userInput service 1ms task
+    m_UserInput.userinput_service_isr(); // userInput service 1ms task
 
     ++ui16Ticks;
     if (ui16Ticks >= 1000) // 1ms --> 1s

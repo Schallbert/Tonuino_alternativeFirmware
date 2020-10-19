@@ -12,8 +12,10 @@
 // MP3
 #include "../Mp3/DFMiniMp3_implementation/DFMiniMp3_implementation.h"
 #include "../Mp3/Mp3PlayerControl_implementation/Mp3PlayerControl_implementation.h"
-// MISC
+// USER INPUT
 #include "../UserInput/UserInput_implementation/UserInput_implementation.h"
+#include "../UserInput/ClickEncoder_implementation/ClickEncoder_implementation.h"
+// MISC
 #include "../PowerManager/PowerManager_implementation/PowerManager_implementation.h"
 #include "OutputManager.h"
 #include "../Utilities/SimpleTimer.h"
@@ -58,8 +60,24 @@ private:
     // DFPlayer Mini setup
     DfMini *m_pDfMini{nullptr};
     Mp3PlayerControl *m_pMp3Ctrl{nullptr};
-    // User Input
-    UserInput *m_pUserInput{nullptr};
+// User Input
+#if USERINPUT_VARIANT == THREE_BUTTONS
+        ClickEncoder_implementation m_pinPlPs{ClickEncoder_implementation(PINPLPS, USERINPUTACTIVE_STATE)};
+        ClickEncoder_implementation m_pinNext{ClickEncoder_implementation(PINPREV, USERINPUTACTIVE_STATE)};
+        ClickEncoder_implementation m_pinPrev{ClickEncoder_implementation(PINNEXT, USERINPUTACTIVE_STATE)};
+    UserInput_3Buttons m_UserInput{
+        &m_pinPlPs,
+        &m_pinNext,
+        &m_pinPrev,
+        ENC_LONGPRESSREPEATINTERVAL};
+#elif USERINPUT_VARIANT == ONE_ENCODER
+    UserInput_ClickEncoder m_UserINput{
+        ClickEncoder_implementation(PINA,
+                                    PINB,
+                                    ENCSW,
+                                    ENC_STEPSPERNOTCH,
+                                    USERINPUTACTIVE_STATE)};
+#endif
 
     // Work member objects -----------------------
     OutputManager m_outputManager{OutputManager(m_pArduinoHal,

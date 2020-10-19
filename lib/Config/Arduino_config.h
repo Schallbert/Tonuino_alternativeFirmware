@@ -17,12 +17,32 @@
 // RX 0  PD0 2
 // TX 1  PD1 3
 //HMI inputs
-//   #define ENCA 18 // PC5 27
-//   #define ENCB 17 // PC4 26
-//   #define ENCSW 19 // PC6 28
+
+//User Input variants
+#define THREE_BUTTONS 0
+#define ONE_ENCODER 1
+#define FIVE_BUTTONS 2
+
+// This is the selector of input variants.
+// Change it to your preferred variant
+// and make sure the pin selection below is
+// according to your wishes.
+#define USERINPUT_VARIANT THREE_BUTTONS
+// USERINPUT VARIANT : CLICK_ENCODER
+  #define ENCA 18 // PC5 27
+  #define ENCB 17 // PC4 26
+  #define ENCSW 19 // PC6 28
+// USERINPUT VARIANT : THREE_BUTTONS
 #define PINPLPS 18 // PC5 27
 #define PINPREV 17 // PC4 26
 #define PINNEXT 19 // PC6 28
+// USERINPUT VARIANT : FIVE BUTTONS
+ #define PINDECVOL 16
+ #define PINPLPS 18 // PC5 27
+ #define PINPREV 17 // PC4 26
+ #define PINNEXT 19 // PC6 28
+ #define PININCVOL 20
+
 //KeepAlive
 #define KEEPALIVE_PIN 16 //PB6 9 A0
 #define KEEPALIVE_ACTIVE_STATE LOW

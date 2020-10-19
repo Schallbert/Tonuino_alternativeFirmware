@@ -7,13 +7,19 @@
 class ClickEncoder_implementation : public ClickEncoder_interface
 {
 public:
+    // button only
+    ClickEncoder_implementation(uint8_t pinButton, bool buttonActiveState)
+    {
+        m_pEncoder = new ClickEncoder(-1, -1, pinButton, 4, buttonActiveState);
+    }
+    // full ClickEncoder
     ClickEncoder_implementation(uint8_t pinA, uint8_t pinB, uint8_t pinButton, uint8_t stepsPerNotch, bool buttonActiveState)
     {
         m_pEncoder = new ClickEncoder(pinA, pinB, pinButton, stepsPerNotch, buttonActiveState);
     };
     ~ClickEncoder_implementation()
     {
-        delete m_pEncoder();
+        delete m_pEncoder;
     };
 
 public:
@@ -37,14 +43,14 @@ public:
         m_pEncoder->setAccelerationEnabled(enabled);
     }
 
-    void void setDoubleclickEnabled(const bool &enabled) override
+    void setDoubleClickEnabled(const bool &enabled) override
     {
-        m_pEncoder->setDoubleclickEnabled(enabled);
+        m_pEncoder->setDoubleClickEnabled(enabled);
     }
 
 
 private:
     ClickEncoder *m_pEncoder{nullptr};
-}
+};
 
 #endif // CLICKENCODER_IMPLEMENTATION_H
