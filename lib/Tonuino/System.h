@@ -62,9 +62,9 @@ private:
     Mp3PlayerControl *m_pMp3Ctrl{nullptr};
 // User Input
 #if USERINPUT_VARIANT == THREE_BUTTONS
-        ClickEncoder_implementation m_pinPlPs{ClickEncoder_implementation(PINPLPS, USERINPUTACTIVE_STATE)};
-        ClickEncoder_implementation m_pinNext{ClickEncoder_implementation(PINPREV, USERINPUTACTIVE_STATE)};
-        ClickEncoder_implementation m_pinPrev{ClickEncoder_implementation(PINNEXT, USERINPUTACTIVE_STATE)};
+    ClickEncoder_implementation m_pinPlPs{ClickEncoder_implementation(PINPLPS, USERINPUTACTIVE_STATE)};
+    ClickEncoder_implementation m_pinNext{ClickEncoder_implementation(PINPREV, USERINPUTACTIVE_STATE)};
+    ClickEncoder_implementation m_pinPrev{ClickEncoder_implementation(PINNEXT, USERINPUTACTIVE_STATE)};
     UserInput_3Buttons m_UserInput{
         &m_pinPlPs,
         &m_pinNext,
@@ -77,6 +77,8 @@ private:
                                     ENCSW,
                                     ENC_STEPSPERNOTCH,
                                     USERINPUTACTIVE_STATE)};
+// #elif USERINPUT_VARIANT == FIVE_BUTTONS
+
 #endif
 
     // Work member objects -----------------------

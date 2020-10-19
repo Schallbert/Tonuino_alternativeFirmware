@@ -36,12 +36,12 @@
 #define PINPLPS 18 // PC5 27
 #define PINPREV 17 // PC4 26
 #define PINNEXT 19 // PC6 28
-// USERINPUT VARIANT : FIVE BUTTONS
- #define PINDECVOL 16
- #define PINPLPS 18 // PC5 27
- #define PINPREV 17 // PC4 26
- #define PINNEXT 19 // PC6 28
- #define PININCVOL 20
+// USERINPUT VARIANT : FIVE BUTTONS     NOT IMPLEMENTED ! ! !
+ //#define PINDECVOL 16
+ //#define PINPLPS 18 // PC5 27
+ //#define PINPREV 17 // PC4 26
+ //#define PINNEXT 19 // PC6 28
+ //#define PININCVOL 20
 
 //KeepAlive
 #define KEEPALIVE_PIN 16 //PB6 9 A0
