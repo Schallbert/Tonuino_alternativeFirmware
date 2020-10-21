@@ -7,7 +7,7 @@
 #include <TimerOne.h>
 #include <System.h>
 
-void timer1_task_1ms();
+void timer1Task_1ms();
 
 System* pSys{nullptr};
 TimerOne* pTimer1{nullptr};
@@ -18,7 +18,7 @@ void setup()
     pTimer1 = new TimerOne();
     //Init Timer1 for timer tasks
     pTimer1->initialize(TIMERONE_TASK_INTERVAL_USEC);
-    pTimer1->attachInterrupt(timer1_task_1ms); // only allowed for "free" functions, NO METHODS :/
+    pTimer1->attachInterrupt(timer1Task_1ms); // only allowed for "free" functions, NO METHODS :/
     pTimer1->start();
 }
 
@@ -28,13 +28,14 @@ void setup()
 // - Use class forward declaration for quicker compiles DONE
 // - Lib cleanup in solution (lib manager) DONE
 // - Solve build warnings (clickEncoder) DONE
-// - refactor MFRC522_implementation for testability. BIG TASK. DONE
+// - BIG TASK: refactor MFRC522_implementation for testability. DONE
 // - test with DEBUGSERIAL on DONE
 // - BIG TASK: Get all libs run via Arduino HAL! DONE
 // - Unit tests for MFRC522_implementation DONE
 // - Unit tests for KeepAlive DONE
 // - refactor PowerManager DONE
-// - Unit tests for StatusLed
+// - Unit tests for StatusLed DONE
+// - Unit tests for UserInput DONE
 
 // - implement power save (arduino, nfc, etc.)
 
@@ -42,8 +43,6 @@ void setup()
 // - Outsource menu handling to an own class
 // - Outsource error handling to an own class
 // - code smell: Delete menu in NfcTag enum?!
-
-// - Unit tests for UserInput (?)
 
 // - solve naming differences (underscores) of HAL with namespaces!
 
@@ -65,8 +64,8 @@ void loop()
     }
 }
 
-void timer1_task_1ms()
+void timer1Task_1ms()
 {
-    pSys->timer1_task_1ms();
+    pSys->timer1Task_1ms();
 }
 #endif //UNIT_TEST

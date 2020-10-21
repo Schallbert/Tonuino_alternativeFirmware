@@ -38,9 +38,9 @@ public:
     // main loop. Read inputs, react and set outputs. Returns true while not requested to shut down.
     bool loop();
     // Timer1 routine called by 1ms interrupt.
-    void timer1_task_1ms();
-    // Routine called every 1sec by timer1_task_1ms.
-    void timer1_task_1s();
+    void timer1Task_1ms();
+    // Routine called every 1sec by timer1Task_1ms.
+    void timer1Task_1sec();
 
 private:
     // Dependency objects -------------------------------------

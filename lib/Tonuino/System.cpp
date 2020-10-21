@@ -78,7 +78,7 @@ bool System::loop()
     return (!m_pPwrCtrl->get_shutdown_request());
 }
 
-void System::timer1_task_1ms()
+void System::timer1Task_1ms()
 {
     static volatile uint16_t ui16Ticks = 0;
 
@@ -88,11 +88,11 @@ void System::timer1_task_1ms()
     if (ui16Ticks >= 1000) // 1ms --> 1s
     {
         ui16Ticks = 0;
-        timer1_task_1s();
+        timer1Task_1sec();
     }
 }
 
-void System::timer1_task_1s()
+void System::timer1Task_1sec()
 {
     m_pPwrCtrl->notify_timer_tick(); // idle timer and LED behavior
     m_pLullabyeTimer->timer_tick();
