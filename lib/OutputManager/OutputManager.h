@@ -14,23 +14,30 @@
 class OutputManager
 {
 public:
-    OutputManager(Arduino_DIcontainer_interface * pArduinoHal,
+    OutputManager(Arduino_DIcontainer_interface *pArduinoHal,
                   PowerManager_interface *pPwrCtrl,
                   NfcControl *pNfcCtrl,
                   Mp3PlayerControl_interface *pMp3Ctrl,
                   SimpleTimer *pMenuTimer) : m_pArduinoHal(pArduinoHal),
-                                       m_pSysPwr(pPwrCtrl),
-                                       m_pNfcCtrl(pNfcCtrl),
-                                       m_pMp3Ctrl(pMp3Ctrl),
-                                       m_pMenuTimer(pMenuTimer){};
+                                             m_pSysPwr(pPwrCtrl),
+                                             m_pNfcCtrl(pNfcCtrl),
+                                             m_pMp3Ctrl(pMp3Ctrl),
+                                             m_pMenuTimer(pMenuTimer){};
 
 public:
-    // Sets input states from card and buttons, and determines internal state.
-    void setInputStates(Nfc_interface::eTagState tagState, UserInput::UserRequest_e userInput);
-    // Runs desicion table that calls functions depending on user input
-    void runDispatcher();
+    // Sets input states from card and buttons saving to member variables.
+    void setTagState(Nfc_interface::eTagState tagState);
+    void setUserInput(UserInput::UserRequest_e userInput);
+    // executes all actions based on input states.
+    void loop();
 
 private:
+    // Runs desicion table that calls functions depending on user input
+    void handleMenuState();
+    // sets power state according to player
+    void syncronizePowerStateWithIsPlaying();
+    // Dispatches cardState and userInput commands, calling downstream methods.
+    void runDispatcher();
     // handles errors from cardReader or UserInput interfaces
     void handleInputErrors();
     // Checks link menu state and plays according voice prompts
@@ -60,7 +67,7 @@ private:
     void delt(); // delete menu entry
     void delC(); // confirm deletion
     // link NFC card to SD card folder
-    void linC(); // confirm link
+    void linC();                                             // confirm link
     void linN() { changeOption(m_linkMenu.select_next()); }; // link next command
     void linP() { changeOption(m_linkMenu.select_prev()); }; // link prev command
     // read and Play card's linked folder

@@ -67,8 +67,9 @@ System::~System()
 
 bool System::loop()
 {
-    m_outputManager.setInputStates(m_pNfcCtrl->get_tag_presence(), m_UserInput.get_user_request());
-    m_outputManager.runDispatcher();
+    m_outputManager.setTagState(m_pNfcCtrl->get_tag_presence());
+    m_outputManager.setUserInput(m_UserInput.get_user_request());
+    m_outputManager.loop();
 #if DEBUGSERIAL
     m_pMp3Ctrl->print_debug_message();
     m_pNfcCtrl->print_debug_message();

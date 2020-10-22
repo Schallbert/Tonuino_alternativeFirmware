@@ -1,27 +1,42 @@
 #include "OutputManager.h"
 
-void OutputManager::setInputStates(Nfc_interface::eTagState tagState, UserInput::UserRequest_e userInput)
+void OutputManager::setTagState(Nfc_interface::eTagState tagState)
 {
-    // set_state to input values, modify if currently in menu
     m_eTagState = tagState;
+}
+
+void OutputManager::setUserInput(UserInput::UserRequest_e userInput)
+{
     m_eUserInput = userInput;
+}
 
-    m_pSysPwr->set_playback(m_pMp3Ctrl->is_playing());
+void OutputManager::loop() //TODO: Strictly speaking, last 2 methods are ONLY based on input state, the top 2 are not!
+{
+    handleMenuState();
+    syncronizePowerStateWithIsPlaying();
+    handleInputErrors(); // This should go with setInputStates?!
+    runDispatcher();
+}
 
+void OutputManager::handleMenuState()
+{
     handleDeleteMenu();
     handleLinkMenu();
-
+    
     if (m_pMenuTimer->is_elapsed())
     {
         abrt(); // Timer elapsed, reset menu state.
     }
 }
 
+void OutputManager::syncronizePowerStateWithIsPlaying()
+{
+    bool isPlaying = m_pMp3Ctrl->is_playing();
+    m_pSysPwr->set_playback(isPlaying);
+}
+
 void OutputManager::runDispatcher()
 {
-    // to not clutter dispatcher
-    handleInputErrors();
-
     // initialize 2D-array of function pointers to address state-event transitions
     // dispatch table contains function pointers
     // cardStates = ROWS, userInput = COLUMNS
@@ -37,11 +52,11 @@ void OutputManager::runDispatcher()
                                                  {&OM::none, &OM::linC, &OM::abrt, &OM::linN, &OM::linP, &OM::none, &OM::none}, // NEW_UNKNOWN_TAG,
                                                  {&OM::none, &OM::delC, &OM::abrt, &OM::none, &OM::none, &OM::none, &OM::none}, // DELETE_TAG_MENU,
                                              };
-
     dispatcher dispatchExecutor = dispatchTable[m_eTagState][m_eUserInput];
     (this->*dispatchExecutor)();
 }
 
+// TODO: split strings and audio message & send upstream to SYSTEM level?
 void OutputManager::handleInputErrors()
 {
     bool bError{false};
@@ -80,6 +95,7 @@ void OutputManager::handleInputErrors()
     }
 }
 
+// TODO: Simplify: Move IF to downstream class?
 void OutputManager::handleDeleteMenu()
 {
     // order of these two condition statements is CRITICAL!
@@ -97,6 +113,7 @@ void OutputManager::handleDeleteMenu()
     }
 }
 
+// Simplify: Move IF to downstream class?
 void OutputManager::handleLinkMenu()
 {
     if (m_eTagState == Nfc_interface::NEW_UNKNOWN_TAG)
@@ -169,6 +186,7 @@ void OutputManager::abrt()
     m_pMp3Ctrl->play_specific_file(MSG_ABORTED);
 }
 
+// THIS IS FAR TOO BIG!
 void OutputManager::linC()
 {
     switch (m_linkMenu.get_state())
