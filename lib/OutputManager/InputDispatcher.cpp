@@ -3,13 +3,13 @@
 void InputDispatcher::setTagState(Nfc_interface::eTagState tagState)
 {
     m_eTagState = tagState;
-    checkForCardStateError();
+    m_errorHandler.checkAndCorrectCardStateError(m_eTagState);
 }
 
 void InputDispatcher::setUserInput(UserInput::UserRequest_e userInput)
 {
     m_eUserInput = userInput;
-    checkForUserInputError();
+    m_errorHandler.checkAndCorrectUserInputError(m_eUserInput);
 }
 
 void InputDispatcher::loop()
@@ -56,54 +56,14 @@ void InputDispatcher::runDispatcher()
     (this->*dispatchExecutor)();
 }
 
-
-// TODO: Outsource to an extra class?
- #if DEBUGSERIAL
+//#if DEBUGSERIAL
 void InputDispatcher::printDebugMessage()
 {
-   
     Arduino_interface_com *m_pSerial = m_pArduinoHal->getSerial();
     m_pSerial->com_println("OUTPUT MANAGER DEBUG:");
-    m_pSerial->com_println(stringFromDebugMessage(m_eDebugMessage));
-   
+    m_pSerial->com_println(m_errorHandler.stringFromDebugMessage());
 }
- #endif
-
- #if DEBUGSERIAL
-const char *InputDispatcher::stringFromOutputManagerNotify(eDebugMessage value)
-{
-    static const char *NOTIFY_STRING[] = {
-        "No Message",
-        "cardState out of range",
-        "userInput out of range",
-    };
-
-    return NOTIFY_STRING[value];
-};
-#endif
-
-void InputDispatcher::checkForCardStateError()
-{
-    m_eDebugMessage = noMessage;
-    if ((m_eTagState < Nfc_interface::NO_TAG) ||
-        (m_eTagState >= Nfc_interface::NUMBER_OF_TAG_STATES))
-    {
-        m_eDebugMessage = cardStateOutOfRange;
-        m_eTagState = Nfc_interface::NO_TAG;
-    }
-}
-
-void InputDispatcher::checkForUserInputError()
-{
-    m_eDebugMessage = noMessage;
-    if ((m_eUserInput < UserInput::NO_ACTION) ||
-        (m_eUserInput >= UserInput::NUMBER_OF_REQUESTS))
-    {
-        m_eDebugMessage = cardStateOutOfRange;
-        m_eUserInput = UserInput::NO_ACTION;
-    }
-}
-// ENDO OF MOVE TO EXTRA CLASS
+//#endif
 
 // TODO: Simplify: Move IF to downstream class?
 void InputDispatcher::handleDeleteMenu()
