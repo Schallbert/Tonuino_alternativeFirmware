@@ -73,6 +73,7 @@ bool System::loop()
 #if DEBUGSERIAL
     m_pMp3Ctrl->print_debug_message();
     m_pNfcCtrl->print_debug_message();
+    m_outputManager.printDebugMessage();
     //systemCtrl->print_debug_message(); // TODO: IMPLEMENT
 #endif
 

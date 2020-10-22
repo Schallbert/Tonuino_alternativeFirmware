@@ -20,13 +20,6 @@ Nfc_interface::eTagState Nfc_implementation::getTagPresence()
         }
     }
 
-    if (m_eNotification == tagWriteError ||
-        m_eNotification == tagReadError ||
-        m_eNotification == tagTypeNotImplementedError)
-    {
-        returnValue = ERROR;
-    }
-
     m_eNotification = noMessage; // reset notification
     return returnValue;
 }

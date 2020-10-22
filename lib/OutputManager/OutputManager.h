@@ -13,6 +13,14 @@
 
 class OutputManager
 {
+private:
+    enum eDebugMessage
+    {
+        noMessage = 0,
+        cardStateOutOfRange,
+        userInputOutOfRange
+    };
+
 public:
     OutputManager(Arduino_DIcontainer_interface *pArduinoHal,
                   PowerManager_interface *pPwrCtrl,
@@ -28,6 +36,9 @@ public:
     // Sets input states from card and buttons saving to member variables.
     void setTagState(Nfc_interface::eTagState tagState);
     void setUserInput(UserInput::UserRequest_e userInput);
+#if DEBUGSERIAL
+    void printDebugMessage();
+#endif
     // executes all actions based on input states.
     void loop();
 
@@ -39,7 +50,8 @@ private:
     // Dispatches cardState and userInput commands, calling downstream methods.
     void runDispatcher();
     // handles errors from cardReader or UserInput interfaces
-    void handleInputErrors();
+    void checkForCardStateError();
+    void checkForUserInputError();
     // Checks link menu state and plays according voice prompts
     void handleLinkMenu();
     // Checks delete menu state and plays according voice prompts
@@ -48,6 +60,10 @@ private:
     void changeOption(uint16_t option);
     // Updates folder information on NFC card if necessary based on MP3 player read
     void updateFolderInformation();
+#if DEBUGSERIAL
+    const char *stringFromDebugMessage(eDebugMessage message);
+#endif
+
     // ----- Wrapper methods to call target object's methods -----
     // No action performed
     void none(){};
@@ -90,6 +106,7 @@ private:
     DeleteMenu m_deleteMenu{};
     Nfc_interface::eTagState m_eTagState{Nfc_interface::NO_TAG};
     UserInput::UserRequest_e m_eUserInput{UserInput::NO_ACTION};
+    eDebugMessage m_eDebugMessage{noMessage};
 };
 
 #endif // OUTPUTMANAGER_H

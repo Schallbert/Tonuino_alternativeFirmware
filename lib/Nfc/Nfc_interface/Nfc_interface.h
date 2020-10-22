@@ -14,8 +14,7 @@ public:
         NEW_KNOWN_TAG,    // 2 read card, get folder, full playback
         NEW_UNKNOWN_TAG,  // 3 play voice menu, link folder to card
         DELETE_TAG_MENU,  // 4 delete card menu
-        ERROR,            // 5
-        NUMBER_OF_TAG_STATES = 6
+        NUMBER_OF_TAG_STATES = 5
     };
 
 public:

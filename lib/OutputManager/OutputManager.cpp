@@ -3,18 +3,19 @@
 void OutputManager::setTagState(Nfc_interface::eTagState tagState)
 {
     m_eTagState = tagState;
+    checkForCardStateError();
 }
 
 void OutputManager::setUserInput(UserInput::UserRequest_e userInput)
 {
     m_eUserInput = userInput;
+    checkForUserInputError();
 }
 
-void OutputManager::loop() //TODO: Strictly speaking, last 2 methods are ONLY based on input state, the top 2 are not!
+void OutputManager::loop()
 {
     handleMenuState();
     syncronizePowerStateWithIsPlaying();
-    handleInputErrors(); // This should go with setInputStates?!
     runDispatcher();
 }
 
@@ -22,7 +23,7 @@ void OutputManager::handleMenuState()
 {
     handleDeleteMenu();
     handleLinkMenu();
-    
+
     if (m_pMenuTimer->is_elapsed())
     {
         abrt(); // Timer elapsed, reset menu state.
@@ -41,8 +42,7 @@ void OutputManager::runDispatcher()
     // dispatch table contains function pointers
     // cardStates = ROWS, userInput = COLUMNS
     typedef OutputManager OM;
-    // NUMBER_OF_REQUESTS -1 as state "error" is caught in above handleInputErrors
-    static const dispatcher dispatchTable[Nfc_interface::NUMBER_OF_TAG_STATES - 1]
+    static const dispatcher dispatchTable[Nfc_interface::NUMBER_OF_TAG_STATES]
                                          [UserInput::NUMBER_OF_REQUESTS] =
                                              {
                                                  //NOAC,     PL_PS,     PP_LP,     NEXT_,     PREV_,     INC_V,     DEC_V,
@@ -56,44 +56,54 @@ void OutputManager::runDispatcher()
     (this->*dispatchExecutor)();
 }
 
-// TODO: split strings and audio message & send upstream to SYSTEM level?
-void OutputManager::handleInputErrors()
+
+// TODO: Outsource to an extra class?
+ #if DEBUGSERIAL
+void OutputManager::printDebugMessage()
 {
-    bool bError{false};
-    // Check for index out of bounds
+   
+    Arduino_interface_com *m_pSerial = m_pArduinoHal->getSerial();
+    m_pSerial->com_println("OUTPUT MANAGER DEBUG:");
+    m_pSerial->com_println(stringFromDebugMessage(m_eDebugMessage));
+   
+}
+ #endif
+
+ #if DEBUGSERIAL
+const char *OutputManager::stringFromOutputManagerNotify(eDebugMessage value)
+{
+    static const char *NOTIFY_STRING[] = {
+        "No Message",
+        "cardState out of range",
+        "userInput out of range",
+    };
+
+    return NOTIFY_STRING[value];
+};
+#endif
+
+void OutputManager::checkForCardStateError()
+{
+    m_eDebugMessage = noMessage;
     if ((m_eTagState < Nfc_interface::NO_TAG) ||
         (m_eTagState >= Nfc_interface::NUMBER_OF_TAG_STATES))
     {
-        bError = true;
-#ifdef DEBUGSERIAL
-        m_pArduinoHal->getSerial()->com_println("Dispatcher: cardState out of range!");
-#endif
-    }
-    else if (m_eTagState == Nfc_interface::ERROR)
-    {
-        bError = true;
-#ifdef DEBUGSERIAL
-        m_pArduinoHal->getSerial()->com_println("NfcReader internal error!");
-#endif
-    }
-
-    if ((m_eUserInput < UserInput::NO_ACTION) ||
-        (m_eUserInput >= UserInput::NUMBER_OF_REQUESTS))
-    {
-        bError = true;
-#ifdef DEBUGSERIAL
-        m_pArduinoHal->getSerial()->com_println("Dispatcher: userInput out of range!");
-#endif
-    }
-
-    if (bError)
-    {
-        m_pMp3Ctrl->play_specific_file(MSG_ERROR);
-        m_pMp3Ctrl->dont_skip_current_track();
-        m_eUserInput = UserInput::NO_ACTION;
+        m_eDebugMessage = cardStateOutOfRange;
         m_eTagState = Nfc_interface::NO_TAG;
     }
 }
+
+void OutputManager::checkForUserInputError()
+{
+    m_eDebugMessage = noMessage;
+    if ((m_eUserInput < UserInput::NO_ACTION) ||
+        (m_eUserInput >= UserInput::NUMBER_OF_REQUESTS))
+    {
+        m_eDebugMessage = cardStateOutOfRange;
+        m_eUserInput = UserInput::NO_ACTION;
+    }
+}
+// ENDO OF MOVE TO EXTRA CLASS
 
 // TODO: Simplify: Move IF to downstream class?
 void OutputManager::handleDeleteMenu()
@@ -130,6 +140,8 @@ void OutputManager::handleLinkMenu()
     }
 }
 
+
+// All the actual exectutions should not be here. Put downstream. but how?
 void OutputManager::read()
 {
     if (m_pNfcCtrl->read_folder_from_card(m_currentFolder))
