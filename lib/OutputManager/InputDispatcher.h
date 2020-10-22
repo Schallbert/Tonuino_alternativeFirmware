@@ -11,7 +11,7 @@
 #include "../Utilities/DeleteMenu.h"
 #include "../Utilities/SimpleTimer.h"
 
-class OutputManager
+class InputDispatcher
 {
 private:
     enum eDebugMessage
@@ -22,7 +22,7 @@ private:
     };
 
 public:
-    OutputManager(Arduino_DIcontainer_interface *pArduinoHal,
+    InputDispatcher(Arduino_DIcontainer_interface *pArduinoHal,
                   PowerManager_interface *pPwrCtrl,
                   NfcControl *pNfcCtrl,
                   Mp3PlayerControl_interface *pMp3Ctrl,
@@ -92,7 +92,7 @@ private:
     void abrt();
 
 private:
-    typedef void (OutputManager::*dispatcher)(); // table of function pointers
+    typedef void (InputDispatcher::*dispatcher)(); // table of function pointers
     // members by dependency injection
     Arduino_DIcontainer_interface *m_pArduinoHal{nullptr};
     PowerManager_interface *m_pSysPwr{nullptr};

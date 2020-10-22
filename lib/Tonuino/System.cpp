@@ -67,13 +67,13 @@ System::~System()
 
 bool System::loop()
 {
-    m_outputManager.setTagState(m_pNfcCtrl->get_tag_presence());
-    m_outputManager.setUserInput(m_UserInput.get_user_request());
-    m_outputManager.loop();
+    m_inputDispatcher.setTagState(m_pNfcCtrl->get_tag_presence());
+    m_inputDispatcher.setUserInput(m_UserInput.get_user_request());
+    m_inputDispatcher.loop();
 #if DEBUGSERIAL
     m_pMp3Ctrl->print_debug_message();
     m_pNfcCtrl->print_debug_message();
-    m_outputManager.printDebugMessage();
+    m_inputDispatcher.printDebugMessage();
     //systemCtrl->print_debug_message(); // TODO: IMPLEMENT
 #endif
 

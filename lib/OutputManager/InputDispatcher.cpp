@@ -1,25 +1,25 @@
-#include "OutputManager.h"
+#include "InputDispatcher.h"
 
-void OutputManager::setTagState(Nfc_interface::eTagState tagState)
+void InputDispatcher::setTagState(Nfc_interface::eTagState tagState)
 {
     m_eTagState = tagState;
     checkForCardStateError();
 }
 
-void OutputManager::setUserInput(UserInput::UserRequest_e userInput)
+void InputDispatcher::setUserInput(UserInput::UserRequest_e userInput)
 {
     m_eUserInput = userInput;
     checkForUserInputError();
 }
 
-void OutputManager::loop()
+void InputDispatcher::loop()
 {
     handleMenuState();
     syncronizePowerStateWithIsPlaying();
     runDispatcher();
 }
 
-void OutputManager::handleMenuState()
+void InputDispatcher::handleMenuState()
 {
     handleDeleteMenu();
     handleLinkMenu();
@@ -30,18 +30,18 @@ void OutputManager::handleMenuState()
     }
 }
 
-void OutputManager::syncronizePowerStateWithIsPlaying()
+void InputDispatcher::syncronizePowerStateWithIsPlaying()
 {
     bool isPlaying = m_pMp3Ctrl->is_playing();
     m_pSysPwr->set_playback(isPlaying);
 }
 
-void OutputManager::runDispatcher()
+void InputDispatcher::runDispatcher()
 {
     // initialize 2D-array of function pointers to address state-event transitions
     // dispatch table contains function pointers
     // cardStates = ROWS, userInput = COLUMNS
-    typedef OutputManager OM;
+    typedef InputDispatcher OM;
     static const dispatcher dispatchTable[Nfc_interface::NUMBER_OF_TAG_STATES]
                                          [UserInput::NUMBER_OF_REQUESTS] =
                                              {
@@ -59,7 +59,7 @@ void OutputManager::runDispatcher()
 
 // TODO: Outsource to an extra class?
  #if DEBUGSERIAL
-void OutputManager::printDebugMessage()
+void InputDispatcher::printDebugMessage()
 {
    
     Arduino_interface_com *m_pSerial = m_pArduinoHal->getSerial();
@@ -70,7 +70,7 @@ void OutputManager::printDebugMessage()
  #endif
 
  #if DEBUGSERIAL
-const char *OutputManager::stringFromOutputManagerNotify(eDebugMessage value)
+const char *InputDispatcher::stringFromOutputManagerNotify(eDebugMessage value)
 {
     static const char *NOTIFY_STRING[] = {
         "No Message",
@@ -82,7 +82,7 @@ const char *OutputManager::stringFromOutputManagerNotify(eDebugMessage value)
 };
 #endif
 
-void OutputManager::checkForCardStateError()
+void InputDispatcher::checkForCardStateError()
 {
     m_eDebugMessage = noMessage;
     if ((m_eTagState < Nfc_interface::NO_TAG) ||
@@ -93,7 +93,7 @@ void OutputManager::checkForCardStateError()
     }
 }
 
-void OutputManager::checkForUserInputError()
+void InputDispatcher::checkForUserInputError()
 {
     m_eDebugMessage = noMessage;
     if ((m_eUserInput < UserInput::NO_ACTION) ||
@@ -106,7 +106,7 @@ void OutputManager::checkForUserInputError()
 // ENDO OF MOVE TO EXTRA CLASS
 
 // TODO: Simplify: Move IF to downstream class?
-void OutputManager::handleDeleteMenu()
+void InputDispatcher::handleDeleteMenu()
 {
     // order of these two condition statements is CRITICAL!
     if ((m_deleteMenu.is_state(DeleteMenu::DELETE_MENU)) &&
@@ -124,7 +124,7 @@ void OutputManager::handleDeleteMenu()
 }
 
 // Simplify: Move IF to downstream class?
-void OutputManager::handleLinkMenu()
+void InputDispatcher::handleLinkMenu()
 {
     if (m_eTagState == Nfc_interface::NEW_UNKNOWN_TAG)
     {
@@ -142,7 +142,7 @@ void OutputManager::handleLinkMenu()
 
 
 // All the actual exectutions should not be here. Put downstream. but how?
-void OutputManager::read()
+void InputDispatcher::read()
 {
     if (m_pNfcCtrl->read_folder_from_card(m_currentFolder))
     {
@@ -159,7 +159,7 @@ void OutputManager::read()
     }
 }
 
-void OutputManager::delt()
+void InputDispatcher::delt()
 {
     m_pMp3Ctrl->play_specific_file(MSG_DELETETAG);
     m_pMp3Ctrl->dont_skip_current_track();
@@ -167,7 +167,7 @@ void OutputManager::delt()
     m_deleteMenu.init(); // keep in delete menu
 }
 
-void OutputManager::delC()
+void InputDispatcher::delC()
 {
     if (m_deleteMenu.is_state(DeleteMenu::DELETE_READY))
     { // Do delete the card.
@@ -190,7 +190,7 @@ void OutputManager::delC()
     }
 }
 
-void OutputManager::abrt()
+void InputDispatcher::abrt()
 {
     m_pMenuTimer->stop();
     m_deleteMenu.leave();
@@ -199,7 +199,7 @@ void OutputManager::abrt()
 }
 
 // THIS IS FAR TOO BIG!
-void OutputManager::linC()
+void InputDispatcher::linC()
 {
     switch (m_linkMenu.get_state())
     {
@@ -255,7 +255,7 @@ void OutputManager::linC()
     m_pMenuTimer->start(MENU_TIMEOUT_SECS);
 }
 
-void OutputManager::changeOption(uint16_t option)
+void InputDispatcher::changeOption(uint16_t option)
 {
     // play folderId of current choice, e.g. "one".
     m_pMp3Ctrl->play_specific_file(option);
@@ -268,7 +268,7 @@ void OutputManager::changeOption(uint16_t option)
     }
 }
 
-void OutputManager::updateFolderInformation()
+void InputDispatcher::updateFolderInformation()
 {
     // update trackCount (might change when folders on SD card are modified content-wise)
     uint8_t ui8SavedTrackCnt = m_currentFolder.get_track_count();

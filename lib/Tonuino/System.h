@@ -17,7 +17,7 @@
 #include "../UserInput/ClickEncoder_implementation/ClickEncoder_implementation.h"
 // MISC
 #include "../PowerManager/PowerManager_implementation/PowerManager_implementation.h"
-#include "OutputManager.h"
+#include "InputDispatcher.h"
 #include "../Utilities/SimpleTimer.h"
 
 class Folder;
@@ -82,7 +82,7 @@ private:
 #endif
 
     // Work member objects -----------------------
-    OutputManager m_outputManager{OutputManager(m_pArduinoHal,
+    InputDispatcher m_inputDispatcher{InputDispatcher(m_pArduinoHal,
                                                 m_pPwrCtrl,
                                                 m_pNfcCtrl,
                                                 m_pMp3Ctrl,
