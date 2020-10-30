@@ -1,371 +1,312 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <Folder.h>
-#include <LinkMenu.h>
+#include "../Utilities/Menu_interface.h"
+#include "../Utilities/LinkMenu.h"
+#include "../Utilities/Menu_implementation.h"
+
+class LinkMenuTest : public ::testing::Test
+{
+protected:
+    virtual void SetUp()
+    {
+        linkMenu = Menu_factory::getInstance(Menu_factory::LINK_MENU);
+    }
+
+    virtual void TearDown()
+    {
+        delete linkMenu;
+    }
+
+protected:
+    Menu_interface *linkMenu{nullptr};
+};
 
 // INIT() ------------------------------------------------------
-TEST(linkMenu, noInit_StateIsNO_MENU)
+
+TEST_F(LinkMenuTest, noInit_noPromptSet)
 {
-    LinkMenu menu;
-    ASSERT_TRUE(menu.get_state() == LinkMenu::NO_MENU);
+    ASSERT_EQ((linkMenu->getPrompt()).promptId, 0);
 }
 
-TEST(linkMenu, noInit_FolderIdIs0)
+TEST_F(LinkMenuTest, selectFolderId_noSelection_getPrompt_FolderIdAndAllowSkip)
 {
-    LinkMenu menu;
-    ASSERT_EQ(menu.get_folderId(), 0);
+    linkMenu->confirm();
+    Menu_interface::VoicePrompt result = linkMenu->getPrompt();
+    EXPECT_EQ(result.promptId, MSG_SELECT_FOLDERID);
+    EXPECT_EQ(result.allowSkip, true);
 }
 
-TEST(linkMenu, noInit_PlayModeIsUndefined)
+TEST_F(LinkMenuTest, selectPlayMode_noSelection_getPrompt_PlayModeAndAllowSkip)
 {
-    LinkMenu menu;
-    ASSERT_EQ(menu.get_playMode(), Folder::UNDEFINED);
+    linkMenu->confirm();
+    linkMenu->confirm();
+    Menu_interface::VoicePrompt result = linkMenu->getPrompt();
+    EXPECT_EQ(result.promptId, MSG_SELECT_PLAYMODE);
+    EXPECT_EQ(result.allowSkip, true);
 }
 
-TEST(linkMenu, init_StateTransitionsToFOLDER_SELECT)
+TEST_F(LinkMenuTest, menuComplete_noSelection_getPrompt_TagConfigSuccess)
 {
-    LinkMenu menu;
-    menu.init();
-    ASSERT_TRUE(menu.get_state() == LinkMenu::FOLDER_SELECT);
+    linkMenu->confirm();
+    linkMenu->confirm();
+    linkMenu->confirm();
+    Menu_interface::VoicePrompt result = linkMenu->getPrompt();
+    EXPECT_EQ(result.promptId, MSG_TAGCONFSUCCESS);
+    EXPECT_EQ(result.allowSkip, true);
 }
 
-TEST(linkMenu, init_FolderIdIs0)
+TEST_F(LinkMenuTest, menuComplete_noSelection_confirmAgainAndGetPrompt_TagConfigSuccess)
 {
-    LinkMenu menu;
-    menu.init();
-    ASSERT_EQ(menu.get_folderId(), 0);
+    linkMenu->confirm();
+    linkMenu->confirm();
+    linkMenu->confirm();
+    linkMenu->confirm();
+    Menu_interface::VoicePrompt result = linkMenu->getPrompt();
+    EXPECT_EQ(result.promptId, MSG_TAGCONFSUCCESS);
+    EXPECT_EQ(result.allowSkip, true);
 }
 
-TEST(linkMenu, init_PlayModeIsUndefined)
+TEST_F(LinkMenuTest, selectFolderId1_getPrompt_returns1)
 {
-    LinkMenu menu;
-    menu.init();
-    ASSERT_EQ(menu.get_playMode(), Folder::UNDEFINED);
+    linkMenu->confirm();
+    linkMenu->selectNext();
+
+    Menu_interface::VoicePrompt result = linkMenu->getPrompt();
+    EXPECT_EQ(result.promptId, 1);
+    EXPECT_EQ(result.allowSkip, false);
 }
 
-TEST(linkMenu, noInit_selectConfirm_StateIsNOMENU)
+TEST_F(LinkMenuTest, selectFolderIdMAX_getPrompt_returnsMAX)
 {
-    LinkMenu menu;
-    menu.select_confirm();
-    ASSERT_TRUE(menu.get_state() == LinkMenu::NO_MENU);
+    linkMenu->confirm();
+    linkMenu->selectPrev();
+
+    Menu_interface::VoicePrompt result = linkMenu->getPrompt();
+    EXPECT_EQ(result.promptId, MAXFOLDERCOUNT);
+    EXPECT_EQ(result.allowSkip, false);
 }
 
-TEST(linkMenu, noInit_selectNext_FolderIdStays0)
+TEST_F(LinkMenuTest, selectPlayMode1_getPrompt_returnsLULLABYE)
 {
-    LinkMenu menu;
-    menu.select_next();
-    ASSERT_EQ(menu.get_folderId(), 0);
+    linkMenu->confirm();
+    linkMenu->confirm();
+    linkMenu->selectNext();
+
+    Menu_interface::VoicePrompt result = linkMenu->getPrompt();
+    EXPECT_EQ(result.promptId, MSG_SELECT_PLAYMODE + static_cast<uint16_t>(Folder::LULLABYE));
+    EXPECT_EQ(result.allowSkip, false);
 }
 
-TEST(linkMenu, noInit_selectPrev_FolderIdStays0)
+TEST_F(LinkMenuTest, selectPlayModeMAX_getPrompt_returnsONELARGETRACK)
 {
-    LinkMenu menu;
-    menu.select_prev();
-    ASSERT_EQ(menu.get_folderId(), 0);
+    linkMenu->confirm();
+    linkMenu->confirm();
+    linkMenu->selectPrev();
+
+    Menu_interface::VoicePrompt result = linkMenu->getPrompt();
+    EXPECT_EQ(result.promptId, MSG_SELECT_PLAYMODE + static_cast<uint16_t>(Folder::ONELARGETRACK));
+    EXPECT_EQ(result.allowSkip, false);
 }
 
-// SELECT_CONFIRM() ------------------------------------------------------
-TEST(linkMenu, selectConfirm_StateTransitionsToPLAYMODE_SELECT)
+TEST_F(LinkMenuTest, selectPlayMode_testRollover_getPrompt_returnsONELARGETRACK)
 {
-    LinkMenu menu;
-    menu.init();
-    menu.select_confirm();
-    ASSERT_TRUE(menu.get_state() == LinkMenu::PLAYMODE_SELECT);
+    linkMenu->confirm();
+    linkMenu->confirm();
+    linkMenu->selectPrev();
+    linkMenu->selectPrev();
+
+    Menu_interface::VoicePrompt result = linkMenu->getPrompt();
+    EXPECT_EQ(result.promptId, MSG_SELECT_PLAYMODE + static_cast<uint16_t>(Folder::SAVEPROGRESS));
+    EXPECT_EQ(result.allowSkip, false);
 }
 
-TEST(linkMenu, selectConfirm_folderIdIs0)
+TEST_F(LinkMenuTest, noInit_getFolderInformation_returnsInvalidFolder)
 {
-    LinkMenu menu;
-    menu.init();
-    menu.select_confirm();
-    ASSERT_EQ(menu.get_folderId(), 0);
+    Folder testFolder = linkMenu->getFolderInformation();
+
+    ASSERT_FALSE(testFolder.is_valid());
 }
 
-TEST(linkMenu, selectNext1_returnValueIs1)
+TEST_F(LinkMenuTest, selectFolderId_noSelection_getFolderInformation_returnsInvalidFolder)
 {
-    LinkMenu menu;
-    menu.init();
-    ASSERT_EQ(menu.select_next(), 1);
+    linkMenu->confirm();
+
+    Folder testFolder = linkMenu->getFolderInformation();
+
+    ASSERT_FALSE(testFolder.is_valid());
 }
 
-TEST(linkMenu, confirm2_MenuComplete_StatusStaysAtPLAYMODE_SELECT)
+TEST_F(LinkMenuTest, selectPlayMode_noSelection_getFolderInformation_returnsInvalidFolder)
 {
-    LinkMenu menu;
-    menu.init();
-    menu.select_confirm();
-    menu.select_confirm();
-    ASSERT_TRUE(menu.get_state() == LinkMenu::PLAYMODE_SELECT);
+    linkMenu->confirm();
+    linkMenu->confirm();
+
+    Folder testFolder = linkMenu->getFolderInformation();
+
+    ASSERT_FALSE(testFolder.is_valid());
 }
 
-TEST(linkMenu, confirm2_PlayModeIsUNDEFINED)
+TEST_F(LinkMenuTest, confirm3x_getFolderInformation_returnsInvalidFolder)
 {
-    LinkMenu menu;
-    menu.init();
-    menu.select_confirm();
-    menu.select_confirm();
-    ASSERT_EQ(menu.get_playMode(), Folder::UNDEFINED);
+    linkMenu->confirm();
+    linkMenu->confirm();
+    linkMenu->confirm();
+
+    Folder testFolder = linkMenu->getFolderInformation();
+
+    ASSERT_FALSE(testFolder.is_valid());
 }
 
-// SELECT_NEXT() ------------------------------------------------------
-TEST(linkMenu, init_selectNext1_noConfirm_FolderIdStays0)
+TEST_F(LinkMenuTest, selectFolderId1_getFolderInformation_returnsPreviewFolder1)
 {
-    LinkMenu menu;
-    menu.init();
-    menu.select_next();
-    ASSERT_EQ(menu.get_folderId(), 0);
+    linkMenu->confirm();
+    linkMenu->selectNext();
+
+    Folder testFolder = linkMenu->getFolderInformation();
+
+    ASSERT_EQ(testFolder.get_folder_id(), 1);
+    ASSERT_EQ(testFolder.get_play_mode(), Folder::ONELARGETRACK);
+    ASSERT_EQ(testFolder.get_track_count(), 1);
 }
 
-TEST(linkMenu, selectNext1_confirm_FolderIdIs1)
+TEST_F(LinkMenuTest, selectFolderIdMAX_getFolderInformation_returnsPreviewFolderMAX)
 {
-    LinkMenu menu;
-    menu.init();
-    menu.select_next();
-    menu.select_confirm();
-    ASSERT_EQ(menu.get_folderId(), 1);
+    linkMenu->confirm();
+    linkMenu->selectPrev();
+
+    Folder testFolder = linkMenu->getFolderInformation();
+
+    ASSERT_EQ(testFolder.get_folder_id(), MAXFOLDERCOUNT);
+    ASSERT_EQ(testFolder.get_play_mode(), Folder::ONELARGETRACK);
+    ASSERT_EQ(testFolder.get_track_count(), 1);
 }
 
-TEST(linkMenu, selectNextMAX_confirm_FolderIdIsMAXFOLDERCOUNT)
+TEST_F(LinkMenuTest, selectFolderId1_confirm_getFolderInformation_returnsUndefinedPlaymode)
 {
-    LinkMenu menu;
-    menu.init();
-    for (int i = 0; i < (MAXFOLDERCOUNT); ++i)
-    {
-        menu.select_next();
-    }
-    menu.select_confirm();
-    ASSERT_EQ(menu.get_folderId(), MAXFOLDERCOUNT);
+    // enter, select folderId1, saveFolderId
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+
+    Folder testFolder = linkMenu->getFolderInformation();
+
+    ASSERT_EQ(testFolder.get_folder_id(), 1);
+    ASSERT_EQ(testFolder.get_play_mode(), Folder::UNDEFINED);
+    ASSERT_EQ(testFolder.get_track_count(), 1);
 }
 
-TEST(linkMenu, selectNextRollOver_confirm_FolderIdIs1)
+TEST_F(LinkMenuTest, selectFolderIdAndPlayMode_getFolderInformation_returnsInvalidFolder)
 {
-    LinkMenu menu;
-    menu.init();
-    for (int i = 0; i < (MAXFOLDERCOUNT + 1); ++i)
-    {
-        menu.select_next();
-    }
-    menu.select_confirm();
-    ASSERT_EQ(menu.get_folderId(), 1);
+    // enter, select folderId1, saveFolderId
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+    linkMenu->selectNext();
+
+    Folder testFolder = linkMenu->getFolderInformation();
+
+    ASSERT_FALSE(testFolder.is_valid());
 }
 
-TEST(linkMenu, selectNext_confirm_PlayModeIsUndefined)
+TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_isComplete_returnTrue)
 {
-    LinkMenu menu;
-    menu.init();
-    menu.select_next();
-    menu.select_confirm();
-    ASSERT_EQ(menu.get_playMode(), Folder::UNDEFINED);
+    // enter, select folderId1, saveFolderId
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+
+    ASSERT_TRUE(linkMenu->isComplete());
 }
 
-TEST(linkMenu, playModeSelect_selectNext_returnValueIsOFFSETplus1)
+TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_getFolderInformation_returnsValidFolder)
 {
-    LinkMenu menu;
-    menu.init();
-    menu.select_confirm();
-    ASSERT_EQ(menu.select_next(), MSG_SELECT_PLAYMODE+1);
+    // enter, select folderId1, saveFolderId
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+
+    Folder testFolder = linkMenu->getFolderInformation();
+
+    ASSERT_TRUE(testFolder.is_valid());
 }
 
-TEST(linkMenu, playModeSelect_selectNext_confirm_getPlaymodeReturnsALBUM)
+TEST_F(LinkMenuTest, noInit_abort_noPromptSet)
 {
-    LinkMenu menu;
-    menu.init();
-    menu.select_confirm();
-    menu.select_next();
-    menu.select_confirm();
-    ASSERT_EQ(menu.get_playMode(), Folder::LULLABYE);
+     linkMenu->abort();
+
+    ASSERT_EQ((linkMenu->getPrompt()).promptId, MSG_ABORTED);
 }
 
-TEST(linkMenu, playModeSelect_selectNext_confirm_getPlaymodeReturnsFirstValidEnum)
+TEST_F(LinkMenuTest, folderId1Selected_abort_promptsAborted)
 {
-    LinkMenu menu;
-    menu.init();
-    menu.select_confirm();
-    menu.select_next();
-    menu.select_confirm();
-    ASSERT_EQ(menu.get_playMode(), Folder::LULLABYE);
+    linkMenu->confirm();
+    linkMenu->selectNext();
+
+    linkMenu->abort();
+
+    ASSERT_EQ((linkMenu->getPrompt()).promptId, MSG_ABORTED);
 }
 
-TEST(linkMenu, playModeSelect_selectNextMAX_confirm_getPlaymodeReturnsLastValidEnum)
+TEST_F(LinkMenuTest, folderIdAndPlayModeSelected_abort_promptsAborted)
 {
-    LinkMenu menu;
-    menu.init();
-    menu.select_confirm();
-    for( int i = 0; i < Folder::ENUM_COUNT; ++i)
-    {
-        menu.select_next();
-    }
-    menu.select_confirm();
-    ASSERT_EQ(menu.get_playMode(), Folder::ONELARGETRACK);
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+    linkMenu->selectNext();
+
+    linkMenu->abort();
+
+    ASSERT_EQ((linkMenu->getPrompt()).promptId, MSG_ABORTED);
 }
 
-TEST(linkMenu, playModeSelect_selectNextRollover_confirm_getPlaymodeReturnsFirstValidEnum)
+TEST_F(LinkMenuTest, menuCompleted_abort_promptsAborted)
 {
-    LinkMenu menu;
-    menu.init();
-    menu.select_confirm();
-    for( int i = 0; i < (Folder::ENUM_COUNT + 1); ++i)
-    {
-        menu.select_next();
-    }
-    menu.select_confirm();
-    ASSERT_EQ(menu.get_playMode(), Folder::LULLABYE);
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+
+    linkMenu->abort();
+
+    ASSERT_EQ((linkMenu->getPrompt()).promptId, MSG_ABORTED);
 }
 
-TEST(linkMenu, selectPrev1_returnValueIsMAXFOLDERCNT)
+TEST_F(LinkMenuTest, noInit_abort_getFolderInformation_returnsInvalidFolder)
 {
-    LinkMenu menu;
-    menu.init();
-    ASSERT_EQ(menu.select_prev(), MAXFOLDERCOUNT);
+     linkMenu->abort();
+
+    Folder testFolder = linkMenu->getFolderInformation();
+    ASSERT_FALSE(testFolder.is_valid());
 }
 
-TEST(linkMenu, selectPrev1_NoConfirm_FolderIdStays0)
+TEST_F(LinkMenuTest, folderIdSet_abort_getFolderInformation_returnsInvalidFolder)
 {
-    LinkMenu menu;
-    menu.init();
-    menu.select_prev();
-    ASSERT_EQ(menu.get_folderId(), 0);
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+
+     linkMenu->abort();
+
+    Folder testFolder = linkMenu->getFolderInformation();
+    ASSERT_FALSE(testFolder.is_valid());
 }
 
-TEST(linkMenu, selectPrev1_confirm_FolderIdIsMAXFOLDERCNT)
+TEST_F(LinkMenuTest, menuComplete_abort_getFolderInformation_returnsInvalidFolder)
 {
-    LinkMenu menu;
-    menu.init();
-    menu.select_prev();
-    menu.select_confirm();
-    ASSERT_EQ(menu.get_folderId(), MAXFOLDERCOUNT);
-}
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
 
-TEST(linkMenu, selectPrevMAX_confirm_FolderIdIs1)
-{
-    LinkMenu menu;
-    menu.init();
-    for (int i = 0; i < (MAXFOLDERCOUNT); ++i)
-    {
-        menu.select_prev();
-    }
-    menu.select_confirm();
-    ASSERT_EQ(menu.get_folderId(), 1);
-}
+     linkMenu->abort();
 
-// SELECT_PREV() ------------------------------------------------------
-TEST(linkMenu, selectPrevRollOver_confirm_FolderIdIsMAXFOLDERCNT)
-{
-    LinkMenu menu;
-    menu.init();
-    for (int i = 0; i < (MAXFOLDERCOUNT + 1); ++i)
-    {
-        menu.select_prev();
-    }
-    menu.select_confirm();
-    ASSERT_EQ(menu.get_folderId(), MAXFOLDERCOUNT);
-}
-
-TEST(linkMenu, playModeSelect_selectPrev_confirm_getPlaymodeReturnsLastValidEnum)
-{
-    LinkMenu menu;
-    menu.init();
-    menu.select_confirm();
-    menu.select_prev();
-    menu.select_confirm();
-    ASSERT_EQ(menu.get_playMode(), Folder::ONELARGETRACK);
-}
-
-TEST(linkMenu, playModeSelect_selectPrevMIN_confirm_getPlaymodeReturnsFirstValidEnum)
-{
-    LinkMenu menu;
-    menu.init();
-    menu.select_confirm();
-    for( int i = 0; i < Folder::ENUM_COUNT; ++i)
-    {
-        menu.select_prev();
-    }
-    menu.select_confirm();
-    ASSERT_EQ(menu.get_playMode(), Folder::LULLABYE);
-}
-
-TEST(linkMenu, playModeSelect_selectPrevRollover_confirm_getPlaymodeReturnsLastValidEnum)
-{
-    LinkMenu menu;
-    menu.init();
-    menu.select_confirm();
-    for( int i = 0; i < (Folder::ENUM_COUNT + 1); ++i)
-    {
-        menu.select_prev();
-    }
-    menu.select_confirm();
-    ASSERT_EQ(menu.get_playMode(), Folder::ONELARGETRACK);
-}
-
-// SELECT_ABORT() ------------------------------------------------------
-TEST(linkMenu, selectAbort_menuStateIsReset)
-{
-    LinkMenu menu;
-    menu.init();
-    menu.select_confirm();
-    menu.select_abort();
-    ASSERT_TRUE(menu.get_state() == LinkMenu::NO_MENU);
-}
-
-TEST(linkMenu, selectAbort_folderIdIsReset)
-{
-    LinkMenu menu;
-    menu.init();
-    menu.select_prev();
-    menu.select_confirm();
-    menu.select_abort();
-    ASSERT_EQ(menu.get_folderId(), 0);
-}
-
-TEST(linkMenu, selectAbort_playModeIsReset)
-{
-    LinkMenu menu;
-    menu.init();
-    menu.select_confirm();
-    menu.select_prev();
-    menu.select_confirm();
-    menu.select_abort();
-    ASSERT_EQ(menu.get_playMode(), Folder::UNDEFINED);
-}
-
-TEST(linkMenu, selectAbort_selectPrevReturns0)
-{
-    LinkMenu menu;
-    menu.init();
-    menu.select_prev();
-    menu.select_confirm();
-    menu.select_abort();
-    ASSERT_EQ(menu.select_prev(), 0);
-}
-
-TEST(linkMenu, selectAbort_reInit_selectPrevReturnsMAX)
-{
-    LinkMenu menu;
-    menu.init();
-    menu.select_prev();
-    menu.select_confirm();
-    menu.select_abort();
-    menu.init();
-    ASSERT_EQ(menu.select_prev(), MAXFOLDERCOUNT);
-}
-
-TEST(linkMenu, selectAbort_selectNextReturns0)
-{
-    LinkMenu menu;
-    menu.init();
-    menu.select_next();
-    menu.select_confirm();
-    menu.select_abort();
-    ASSERT_EQ(menu.select_next(), 0);
-}
-
-TEST(linkMenu, selectAbort_reInit_selectNextReturns1)
-{
-    LinkMenu menu;
-    menu.init();
-    menu.select_next();
-    menu.select_confirm();
-    menu.select_abort();
-    menu.init();
-    ASSERT_EQ(menu.select_next(), 1);
+    Folder testFolder = linkMenu->getFolderInformation();
+    ASSERT_FALSE(testFolder.is_valid());
 }
