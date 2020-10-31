@@ -32,7 +32,7 @@ Nfc_interface::eTagState NfcControl::get_tag_presence()
     {
         if (is_known_card())
         {
-            tagPresence = Nfc_interface::NEW_KNOWN_TAG;
+            tagPresence = Nfc_interface::NEW_REGISTERED_TAG;
         }
     }
     return tagPresence;
