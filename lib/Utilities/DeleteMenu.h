@@ -1,26 +1,39 @@
 #ifndef DELETEMENU_H
 #define DELETEMENU_H
 
-/* POD container for delete menu status. */
-class DeleteMenu
+#include "../Config/Tonuino_config.h"
+#include "../Utilities/Menu_interface.h"
+
+#include "../Utilities/DeleteMenu_StateManager.h"
+
+/* 
+Once user choses to delete a tag, this menu will guide through tag deletion process
+*/
+class DeleteMenu : public Menu_interface
 {
-public:
-    enum eDelMenuState
-    {
-        NO_MENU = 0,
-        DELETE_MENU,
-        DELETE_READY
-    };
 
 public:
-// initializes and controls delete process and plays voice prompt
-    void init() { m_eMenuState = DELETE_MENU; }
-    void set_ready() { m_eMenuState = DELETE_READY; }
-    void leave() {m_eMenuState = NO_MENU; }
-    bool is_state(eDelMenuState state) { return (m_eMenuState == state); };
+    DeleteMenu(){};
+
+public:
+    void confirm() override;
+    void abort() override;
+    void selectNext() override { return; };
+    void selectPrev() override { return; };
+
+    void getLockedResponse(Nfc_interface::eTagState &tagState) override;
+    bool isComplete() override;
+
+    VoicePrompt getPrompt() override { return m_prompt; };
+    Folder getFolderInformation() override { return Folder(); };
 
 private:
-    eDelMenuState m_eMenuState{NO_MENU};
+    void updatePrompt(uint16_t promptId);
+
+private:
+    DeleteMenu_StateManager m_menuState{};
+    Nfc_interface::eTagState m_tagState{Nfc_interface::NO_TAG};
+    VoicePrompt m_prompt{};
 };
 
 #endif // DELETEMENU_H 

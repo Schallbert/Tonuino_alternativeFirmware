@@ -34,7 +34,8 @@ void LinkMenu::selectPrev()
 
 void LinkMenu::getLockedResponse(Nfc_interface::eTagState &tagState)
 {
-    if (m_menuState.getMenuStateMessage())
+    // Menu entered but not completed yet
+    if (m_menuState.getMenuStateMessage() && !isComplete())
     {
         tagState = Nfc_interface::NEW_UNKNOWN_TAG;
     }

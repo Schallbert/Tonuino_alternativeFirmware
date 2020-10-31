@@ -6,7 +6,8 @@
 #define DEBUGSERIAL_BAUDRATE 9600
 
 //Tonuino mp3 prompt IDs -----------------------
-#define MSG_DELETETAG 800
+#define MSG_DELETETAG 700
+#define MSG_CONFIRM_DELETION 710
 #define MSG_ABORTED 802
 #define MSG_ERROR 401
 #define MSG_ERROR_CARDREAD 402
