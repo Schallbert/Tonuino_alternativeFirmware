@@ -23,7 +23,7 @@ void DeleteMenu_StateManager::abort()
 
 void DeleteMenu_StateManager::setTagToDeleteDetected()
 {
-        menuState = CONFIRM_DELETE;
+    menuState = CONFIRM_DELETE;
 }
 
 uint16_t DeleteMenu_StateManager::getMenuStateMessage()
@@ -31,12 +31,13 @@ uint16_t DeleteMenu_StateManager::getMenuStateMessage()
     return static_cast<uint16_t>(menuState);
 }
 
+
 void DeleteMenu_StateManager::initMenu()
 {
     menuState = PLACE_TAG_TO_DELETE;
 }
 
-
 void DeleteMenu_StateManager::handleDeletionConfirmed()
 {
+    menuState = COMPLETE;
 }

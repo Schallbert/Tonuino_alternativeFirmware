@@ -20,7 +20,8 @@ public:
     void selectNext() override;
     void selectPrev() override;
 
-    void getLockedResponse(Nfc_interface::eTagState &tagState) override;
+    void setTagState(Nfc_interface::eTagState &tagState) override;
+    Nfc_interface::eTagState getLockState() override;
     bool isComplete() override;
 
     VoicePrompt getPrompt() override { return m_prompt; };
@@ -28,6 +29,7 @@ public:
 
 private:
     LinkMenu_StateManager m_menuState{};
+    Nfc_interface::eTagState m_tagState{Nfc_interface::NO_TAG};
     VoicePrompt m_prompt{};
 };
 

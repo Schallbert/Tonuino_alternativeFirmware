@@ -315,7 +315,8 @@ TEST_F(LinkMenuTest, noInit_lockInLinkMenu_notLocked)
 {
     Nfc_interface::eTagState tagState = Nfc_interface::NO_TAG;
         
-    linkMenu->getLockedResponse(tagState);
+    linkMenu->setTagState(tagState);
+    linkMenu->getLockState();
 
     ASSERT_EQ(tagState, Nfc_interface::NO_TAG);
 }
@@ -325,7 +326,8 @@ TEST_F(LinkMenuTest, entered_lockInLinkMenu_locked)
     Nfc_interface::eTagState tagState = Nfc_interface::NO_TAG;
         
     linkMenu->confirm();
-    linkMenu->getLockedResponse(tagState);
+    linkMenu->setTagState(tagState);
+    tagState = linkMenu->getLockState();
 
     ASSERT_EQ(tagState, Nfc_interface::NEW_UNKNOWN_TAG);
 }
@@ -338,7 +340,8 @@ TEST_F(LinkMenuTest, menuComplete_lockInLinkMenu_unLocked)
     linkMenu->confirm(); // folderId selected
     linkMenu->confirm(); // playMode selected: complete
     
-    linkMenu->getLockedResponse(tagState);
+    linkMenu->setTagState(tagState);
+    tagState = linkMenu->getLockState();
 
     ASSERT_EQ(tagState, Nfc_interface::NO_TAG);
 }
@@ -351,7 +354,8 @@ TEST_F(LinkMenuTest, menuAbort_lockInLinkMenu_unLocked)
     linkMenu->confirm(); // folderId selected
     linkMenu->abort();
     
-    linkMenu->getLockedResponse(tagState);
+    linkMenu->setTagState(tagState);
+    tagState = linkMenu->getLockState();
 
     ASSERT_EQ(tagState, Nfc_interface::NO_TAG);
 }

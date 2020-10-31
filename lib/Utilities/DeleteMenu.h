@@ -21,7 +21,8 @@ public:
     void selectNext() override { return; };
     void selectPrev() override { return; };
 
-    void getLockedResponse(Nfc_interface::eTagState &tagState) override;
+    void setTagState(Nfc_interface::eTagState &tagState) override;
+    Nfc_interface::eTagState getLockState() override;
     bool isComplete() override;
 
     VoicePrompt getPrompt() override { return m_prompt; };
@@ -29,6 +30,7 @@ public:
 
 private:
     void updatePrompt(uint16_t promptId);
+    void handleTagStateChanges();
 
 private:
     DeleteMenu_StateManager m_menuState{};

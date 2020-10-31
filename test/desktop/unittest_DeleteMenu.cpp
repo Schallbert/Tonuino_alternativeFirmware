@@ -55,21 +55,71 @@ TEST_F(DeleteMenuTest, placedTagToDelete_getPrompt_promptsWaitForConfirm)
     Nfc_interface::eTagState tagState = Nfc_interface::NEW_UNKNOWN_TAG;
 
     deleteMenu->confirm();
-    deleteMenu->getLockedResponse(tagState);
+    deleteMenu->setTagState(tagState);
 
     Menu_interface::VoicePrompt result = deleteMenu->getPrompt();
 
     ASSERT_EQ(result.promptId, MSG_CONFIRM_DELETION);
     ASSERT_EQ(result.allowSkip, true);
-
 }
 
-TEST_F(DeleteMenuTest, deleteMenuEntered_lockedInDeleteMenu)
+TEST_F(DeleteMenuTest, placedTagToDelete_confirmDeletion_promptsTagConfigurationComplete)
 {
     Nfc_interface::eTagState tagState = Nfc_interface::NEW_UNKNOWN_TAG;
 
     deleteMenu->confirm();
-    deleteMenu->getLockedResponse(tagState);
+    deleteMenu->setTagState(tagState);
+    deleteMenu->confirm();
+
+    Menu_interface::VoicePrompt result = deleteMenu->getPrompt();
+
+    ASSERT_EQ(result.promptId, MSG_TAGCONFSUCCESS);
+    ASSERT_EQ(result.allowSkip, true);
+}
+
+TEST_F(DeleteMenuTest, placedTagToDelete_confirmDeletion_menuComplete)
+{
+    Nfc_interface::eTagState tagState = Nfc_interface::NEW_UNKNOWN_TAG;
+
+    deleteMenu->confirm();
+    deleteMenu->setTagState(tagState);
+    deleteMenu->confirm();
+
+    ASSERT_TRUE(deleteMenu->isComplete());
+}
+
+TEST_F(DeleteMenuTest, noInit_NotlockedInDeleteMenu)
+{
+    Nfc_interface::eTagState tagState = Nfc_interface::NO_TAG;
+
+    deleteMenu->setTagState(tagState);
+    tagState = deleteMenu->getLockState();
+
+    ASSERT_EQ(tagState, Nfc_interface::NO_TAG);
+}
+
+TEST_F(DeleteMenuTest, entered_lockInDeleteMenu_locked)
+{
+    Nfc_interface::eTagState tagState = Nfc_interface::NEW_UNKNOWN_TAG;
+
+    deleteMenu->confirm();
+    deleteMenu->setTagState(tagState);
+    tagState = deleteMenu->getLockState();
 
     ASSERT_EQ(tagState, Nfc_interface::DELETE_TAG_MENU);
+}
+
+TEST_F(DeleteMenuTest, menuComplete_notLockedInDeleteMenu)
+{
+    Nfc_interface::eTagState tagState = Nfc_interface::NEW_UNKNOWN_TAG;
+
+    deleteMenu->confirm();
+    deleteMenu->setTagState(tagState); //requests lock state, should lock
+    deleteMenu->confirm(); // completes Menu
+
+    tagState = Nfc_interface::NO_TAG;
+    deleteMenu->setTagState(tagState); //re-requests lock state, should not lock
+    tagState = deleteMenu->getLockState();
+
+    ASSERT_EQ(tagState, Nfc_interface::NO_TAG);
 }

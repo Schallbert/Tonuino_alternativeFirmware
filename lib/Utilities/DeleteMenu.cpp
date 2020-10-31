@@ -14,22 +14,31 @@ void DeleteMenu::abort()
     updatePrompt(MSG_ABORTED);
 }
 
-void DeleteMenu::getLockedResponse(Nfc_interface::eTagState &tagState)
+void DeleteMenu::setTagState(Nfc_interface::eTagState &tagState)
+{
+    m_tagState = tagState;
+    handleTagStateChanges();
+}
+
+Nfc_interface::eTagState DeleteMenu::getLockState()
 {
     if (m_menuState.getMenuStateMessage() && !isComplete())
     {
-        if (tagState == Nfc_interface::NEW_UNKNOWN_TAG)
-        {
-            m_menuState.setTagToDeleteDetected();
-            updatePrompt(m_menuState.getMenuStateMessage());
-        }
-        
-        tagState = Nfc_interface::DELETE_TAG_MENU;
+        return Nfc_interface::DELETE_TAG_MENU;
+    }
+}
+
+void DeleteMenu::handleTagStateChanges()
+{
+    if (m_tagState == Nfc_interface::NEW_UNKNOWN_TAG)
+    {
+        m_menuState.setTagToDeleteDetected();
+        updatePrompt(m_menuState.getMenuStateMessage());
     }
 }
 
 void DeleteMenu::updatePrompt(uint16_t id)
-{ 
+{
     m_prompt.promptId = id;
     m_prompt.allowSkip = true;
 }
