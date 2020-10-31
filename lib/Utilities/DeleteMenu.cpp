@@ -26,11 +26,14 @@ Nfc_interface::eTagState DeleteMenu::getLockState()
     {
         return Nfc_interface::DELETE_TAG_MENU;
     }
+
+    return m_tagState;
 }
 
 void DeleteMenu::handleTagStateChanges()
 {
-    if (m_tagState == Nfc_interface::NEW_UNKNOWN_TAG)
+    // tag to delete detected
+    if (m_tagState == Nfc_interface::NEW_REGISTERED_TAG)
     {
         m_menuState.setTagToDeleteDetected();
         updatePrompt(m_menuState.getMenuStateMessage());

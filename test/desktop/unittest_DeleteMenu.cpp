@@ -52,7 +52,7 @@ TEST_F(DeleteMenuTest, init2x_getPrompt_promptsDeleteTag)
 
 TEST_F(DeleteMenuTest, placedTagToDelete_getPrompt_promptsWaitForConfirm)
 {
-    Nfc_interface::eTagState tagState = Nfc_interface::NEW_UNKNOWN_TAG;
+    Nfc_interface::eTagState tagState = Nfc_interface::NEW_REGISTERED_TAG;
 
     deleteMenu->confirm();
     deleteMenu->setTagState(tagState);
@@ -65,7 +65,7 @@ TEST_F(DeleteMenuTest, placedTagToDelete_getPrompt_promptsWaitForConfirm)
 
 TEST_F(DeleteMenuTest, placedTagToDelete_confirmDeletion_promptsTagConfigurationComplete)
 {
-    Nfc_interface::eTagState tagState = Nfc_interface::NEW_UNKNOWN_TAG;
+    Nfc_interface::eTagState tagState = Nfc_interface::NEW_REGISTERED_TAG;
 
     deleteMenu->confirm();
     deleteMenu->setTagState(tagState);
@@ -79,7 +79,7 @@ TEST_F(DeleteMenuTest, placedTagToDelete_confirmDeletion_promptsTagConfiguration
 
 TEST_F(DeleteMenuTest, placedTagToDelete_confirmDeletion_menuComplete)
 {
-    Nfc_interface::eTagState tagState = Nfc_interface::NEW_UNKNOWN_TAG;
+    Nfc_interface::eTagState tagState = Nfc_interface::NEW_REGISTERED_TAG;
 
     deleteMenu->confirm();
     deleteMenu->setTagState(tagState);
@@ -100,7 +100,7 @@ TEST_F(DeleteMenuTest, noInit_NotlockedInDeleteMenu)
 
 TEST_F(DeleteMenuTest, entered_lockInDeleteMenu_locked)
 {
-    Nfc_interface::eTagState tagState = Nfc_interface::NEW_UNKNOWN_TAG;
+    Nfc_interface::eTagState tagState = Nfc_interface::NEW_REGISTERED_TAG;
 
     deleteMenu->confirm();
     deleteMenu->setTagState(tagState);
@@ -111,7 +111,7 @@ TEST_F(DeleteMenuTest, entered_lockInDeleteMenu_locked)
 
 TEST_F(DeleteMenuTest, menuComplete_notLockedInDeleteMenu)
 {
-    Nfc_interface::eTagState tagState = Nfc_interface::NEW_UNKNOWN_TAG;
+    Nfc_interface::eTagState tagState = Nfc_interface::NEW_REGISTERED_TAG;
 
     deleteMenu->confirm();
     deleteMenu->setTagState(tagState); //requests lock state, should lock
@@ -122,4 +122,72 @@ TEST_F(DeleteMenuTest, menuComplete_notLockedInDeleteMenu)
     tagState = deleteMenu->getLockState();
 
     ASSERT_EQ(tagState, Nfc_interface::NO_TAG);
+}
+
+TEST_F(DeleteMenuTest, noInit_abort_noPromptSet)
+{
+    deleteMenu->abort();
+
+    ASSERT_EQ((deleteMenu->getPrompt()).promptId, MSG_ABORTED);
+}
+
+TEST_F(DeleteMenuTest, entered_abort_noPromptSet)
+{
+    deleteMenu->confirm();
+    deleteMenu->abort();
+
+    ASSERT_EQ((deleteMenu->getPrompt()).promptId, MSG_ABORTED);
+}
+
+TEST_F(DeleteMenuTest, tagToDeleteDetected_abort_noPromptSet)
+{
+    Nfc_interface::eTagState tagState = Nfc_interface::NEW_REGISTERED_TAG;
+
+    deleteMenu->confirm();
+    deleteMenu->setTagState(tagState);
+    deleteMenu->abort();
+
+    ASSERT_EQ((deleteMenu->getPrompt()).promptId, MSG_ABORTED);
+}
+
+TEST_F(DeleteMenuTest, tagToDeleteDetected_abort_lockDisengaged)
+{
+    Nfc_interface::eTagState tagState = Nfc_interface::NEW_REGISTERED_TAG;
+
+    deleteMenu->confirm();
+    deleteMenu->setTagState(tagState);
+    deleteMenu->abort();
+    tagState = deleteMenu->getLockState();
+
+    ASSERT_EQ(tagState, Nfc_interface::NEW_REGISTERED_TAG);
+}
+
+TEST_F(DeleteMenuTest, menuComplete_abort_reentry_lockEngaged)
+{
+    Nfc_interface::eTagState tagState = Nfc_interface::NEW_REGISTERED_TAG;
+
+    deleteMenu->confirm();
+    deleteMenu->setTagState(tagState);
+    deleteMenu->confirm();
+    deleteMenu->abort();
+
+    deleteMenu->confirm();
+
+    tagState = deleteMenu->getLockState();
+
+    ASSERT_EQ(tagState, Nfc_interface::DELETE_TAG_MENU);
+}
+
+TEST_F(DeleteMenuTest, menuComplete_abort_reentry_promptsDeleteTag)
+{
+    Nfc_interface::eTagState tagState = Nfc_interface::NEW_REGISTERED_TAG;
+
+    deleteMenu->confirm();
+    deleteMenu->setTagState(tagState);
+    deleteMenu->confirm();
+    deleteMenu->abort();
+
+    deleteMenu->confirm();
+
+    ASSERT_EQ((deleteMenu->getPrompt()).promptId, MSG_DELETETAG);
 }

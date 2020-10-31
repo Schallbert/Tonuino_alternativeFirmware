@@ -21,8 +21,10 @@ public:
     void selectNext() override { return; };
     void selectPrev() override { return; };
 
+// MAYBE Pull into 1 PUBLIC METHOD?
     void setTagState(Nfc_interface::eTagState &tagState) override;
     Nfc_interface::eTagState getLockState() override;
+// END
     bool isComplete() override;
 
     VoicePrompt getPrompt() override { return m_prompt; };
