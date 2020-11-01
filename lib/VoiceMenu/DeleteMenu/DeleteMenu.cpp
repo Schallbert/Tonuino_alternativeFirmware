@@ -54,6 +54,11 @@ void DeleteMenu::updatePrompt(uint16_t id)
     m_prompt.allowSkip = true;
 }
 
+bool DeleteMenu::isActive()
+{
+    return (m_menuState.getMenuStateMessage() != 0);
+}
+
 bool DeleteMenu::isComplete()
 {
     return (m_menuState.getMenuStateMessage() == MSG_TAGCONFSUCCESS);

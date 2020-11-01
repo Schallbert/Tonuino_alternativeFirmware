@@ -53,6 +53,11 @@ Nfc_interface::eTagState LinkMenu::getLockState()
     return m_tagState;
 }
 
+bool LinkMenu::isActive()
+{
+    return (m_menuState.getMenuStateMessage() != 0);
+}
+
 bool LinkMenu::isComplete()
 {
     return (m_menuState.getMenuStateMessage() == MSG_TAGCONFSUCCESS);

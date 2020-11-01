@@ -27,6 +27,11 @@ TEST_F(LinkMenuTest, noInit_noPromptSet)
     ASSERT_EQ((linkMenu->getPrompt()).promptId, 0);
 }
 
+TEST_F(LinkMenuTest, noInit_isActive_returnsFalse)
+{
+    ASSERT_FALSE(linkMenu->isActive());
+}
+
 TEST_F(LinkMenuTest, selectFolderId_noSelection_getPrompt_FolderIdAndAllowSkip)
 {
     linkMenu->confirm();
@@ -207,7 +212,7 @@ TEST_F(LinkMenuTest, selectFolderIdAndPlayMode_getFolderInformation_returnsInval
     ASSERT_FALSE(testFolder.is_valid());
 }
 
-TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_isComplete_returnTrue)
+TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_isComplete_returnsTrue)
 {
     // enter, select folderId1, saveFolderId
     linkMenu->confirm();
