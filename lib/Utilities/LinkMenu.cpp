@@ -32,6 +32,12 @@ void LinkMenu::selectPrev()
     m_prompt.allowSkip = false; // as preview will be played right afterwards
 }
 
+void LinkMenu::updateTagState(Nfc_interface::eTagState &tagState)
+{
+    setTagState(tagState);
+    tagState = getLockState();
+}
+
 void LinkMenu::setTagState(Nfc_interface::eTagState &tagState)
 {
     m_tagState = tagState;
@@ -39,7 +45,6 @@ void LinkMenu::setTagState(Nfc_interface::eTagState &tagState)
 
 Nfc_interface::eTagState LinkMenu::getLockState()
 {
-    // Menu entered but not completed yet
     if (m_menuState.getMenuStateMessage() && !isComplete())
     {
         return Nfc_interface::NEW_UNKNOWN_TAG;

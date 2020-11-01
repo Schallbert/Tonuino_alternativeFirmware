@@ -19,8 +19,7 @@ public:
     virtual void selectNext() = 0;
     virtual void selectPrev() = 0;
 
-    virtual void setTagState(Nfc_interface::eTagState &tagState) = 0;
-    virtual Nfc_interface::eTagState getLockState() = 0;
+    virtual void updateTagState(Nfc_interface::eTagState &tagState) = 0;
     virtual bool isComplete() = 0;
 
     virtual VoicePrompt getPrompt() = 0;

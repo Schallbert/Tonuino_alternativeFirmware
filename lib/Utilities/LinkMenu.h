@@ -20,12 +20,15 @@ public:
     void selectNext() override;
     void selectPrev() override;
 
-    void setTagState(Nfc_interface::eTagState &tagState) override;
-    Nfc_interface::eTagState getLockState() override;
+    void updateTagState(Nfc_interface::eTagState &tagState) override;
     bool isComplete() override;
 
     VoicePrompt getPrompt() override { return m_prompt; };
     Folder getFolderInformation() override;
+
+private:
+    void setTagState(Nfc_interface::eTagState &tagState);
+    Nfc_interface::eTagState getLockState();
 
 private:
     LinkMenu_StateManager m_menuState{};

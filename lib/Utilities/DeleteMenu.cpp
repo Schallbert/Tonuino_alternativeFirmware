@@ -14,21 +14,29 @@ void DeleteMenu::abort()
     updatePrompt(MSG_ABORTED);
 }
 
+void DeleteMenu::updateTagState(Nfc_interface::eTagState &tagState)
+{
+    setTagState(tagState);
+    tagState = getLockState();
+}
+
 void DeleteMenu::setTagState(Nfc_interface::eTagState &tagState)
 {
     m_tagState = tagState;
-    handleTagStateChanges();
 }
 
 Nfc_interface::eTagState DeleteMenu::getLockState()
 {
     if (m_menuState.getMenuStateMessage() && !isComplete())
     {
+        handleTagStateChanges();
         return Nfc_interface::DELETE_TAG_MENU;
     }
 
     return m_tagState;
 }
+
+
 
 void DeleteMenu::handleTagStateChanges()
 {
