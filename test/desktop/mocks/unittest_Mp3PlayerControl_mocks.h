@@ -14,8 +14,7 @@ public:
     MOCK_METHOD(void, play_pause, (), (override));
     MOCK_METHOD(bool, is_playing, (), (override));
     MOCK_METHOD(void, play_folder, (Folder * m_pCurrentFolder), (override));
-    MOCK_METHOD(void, play_specific_file, (uint16_t fileId), (override));
-    MOCK_METHOD(void, dont_skip_current_track, (), (override));
+    MOCK_METHOD(void, play_prompt, (VoicePrompt prompt), (override));
     MOCK_METHOD(uint8_t, get_trackCount_of_folder, (uint8_t folderId), (override));
 };
 

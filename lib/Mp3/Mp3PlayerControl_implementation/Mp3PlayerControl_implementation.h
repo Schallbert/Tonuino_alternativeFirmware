@@ -23,28 +23,21 @@ public:
                      SimpleTimer *pDfMiniMsgTimeout);
 
 public:
-    // Listen for DFminiMp3 replies, call autoplay routine
-    void loop();
-    // Increases volume (<= VOLUME_MAX)
-    void volume_up();
-    // Decreases volume (>= VOLUME_MIN)
-    void volume_down();
-    // Gets next track from queue and starts playback
-    void next_track();
-    // Gets previous track from queue and starts playback
-    void prev_track();
-    // If playing, pauses track and vice versa
-    void play_pause();
-    // Returns true if DFminiMp3 is currently playing
-    bool is_playing();
-    // Starts playback of specified folder (handles queueing and folder specific playmodes)
-    void play_folder(Folder *m_pCurrentFolder);
-    // Plays specific file sd:/advert/####fileId
-    void play_specific_file(uint16_t fileId);
-    // Tells controller to not allow skipping the track that is currently played (e.g. for advertisements)
-    void dont_skip_current_track();
-    // Starts inquiry to player to return number of tracks in selected folder.
-    uint8_t get_trackCount_of_folder(uint8_t folderId);
+    void loop() override;
+
+    void play_pause() override;
+    void next_track() override;
+    void prev_track() override;
+
+    void volume_up() override;
+    void volume_down() override;
+
+    bool is_playing() override;
+    uint8_t get_trackCount_of_folder(uint8_t folderId) override;
+
+    void play_folder(Folder *m_pCurrentFolder) override;
+    void play_prompt(VoicePrompt prompt) override;
+
 #if DEBUGSERIAL
     // Prints message from player periphery or player controller to Serial.
     void print_debug_message()
@@ -58,14 +51,11 @@ public:
 #endif
 
 private:
-    // Waits for DfMiniMp3 player's serial connection to be ready for new commands
-    void wait_player_ready();
-    // Routine to check playmode and select next track
+    void waitForPlayerReady();
     void autoplay();
-    // Routine to check if lullabye time has reached to enable KeepAlive to switch system off after timeout.
-    bool check_lullabye_timeout();
-    // Checks if the folder we're working with is correctly defined
-    bool check_folder();
+    void dontSkipCurrentTrack();
+
+    bool isFolderValid();
 
 private:
     enum eDebugMessage
@@ -109,7 +99,7 @@ private:
     // Solution for constructor error found here: https://stackoverflow.com/questions/35762196/expected-a-type-specifier-error-when-creating-an-object-of-a-class-inside-anot
     //SoftwareSerial m_Mp3SwSerial{SoftwareSerial(DFMINI_RX, DFMINI_TX)}; // Does not work with m_Mp3SwSerial(DFMINI_RX, DFMINI_TX) because compiler interprets this as a class method call
     //DFMiniMp3<SoftwareSerial, Mp3Notify> m_dfMiniMp3{DFMiniMp3<SoftwareSerial, Mp3Notify>(m_Mp3SwSerial)};
-    Arduino_DIcontainer_interface * m_pArduinoHal{nullptr};
+    Arduino_DIcontainer_interface *m_pArduinoHal{nullptr};
     DfMiniMp3_interface *m_pDfMiniMp3{nullptr};
     SimpleTimer *m_pLullabyeTimer{nullptr};
     SimpleTimer *m_pDfMiniMsgTimeout{nullptr};

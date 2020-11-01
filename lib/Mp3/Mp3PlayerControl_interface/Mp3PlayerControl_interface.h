@@ -3,6 +3,12 @@
 
 #include "Folder.h" 
 
+struct VoicePrompt
+    {
+        uint16_t promptId{0};
+        bool allowSkip{true};
+    };
+
 // API to control the MP3 player hardware
 class Mp3PlayerControl_interface
 {
@@ -26,10 +32,8 @@ public:
     virtual bool is_playing() = 0;
     // Starts playback of specified folder (handles queueing and folder specific playmodes)
     virtual void play_folder(Folder *m_pCurrentFolder) = 0;
-    // Plays specific file sd:/advert/####fileId
-    virtual void play_specific_file(uint16_t fileId) = 0;
-    // Tells controller to not allow skipping the track that is currently played (e.g. for advertisements)
-    virtual void dont_skip_current_track() = 0;
+    // Plays specific file on sd:/advert/####fileId
+    virtual void play_prompt(VoicePrompt prompt) = 0;
     // Starts inquiry to player to return number of tracks in selected folder.
     virtual uint8_t get_trackCount_of_folder(uint8_t folderId) = 0;
 };

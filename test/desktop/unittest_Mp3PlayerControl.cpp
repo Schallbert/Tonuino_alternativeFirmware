@@ -249,26 +249,40 @@ TEST_F(Mp3Ctrl, autoplay_LULLABYE_trackFinished_timeout_stop)
     m_pMp3PlrCtrl->loop();
 }
 
-TEST_F(Mp3Ctrl, dontSkip_notPlaying_Timeout)
+TEST_F(Mp3Ctrl, playPrompt_noSkip_notPlaying_Timeout)
 {
-    ON_CALL(*m_pPinCtrl, digital_read(_)).WillByDefault(Return(true));                                                                   // not playing
-    EXPECT_CALL(*m_pDfMini, loop()).Times(WAIT_DFMINI_READY).WillOnce(InvokeWithoutArgs(m_pDfMiniMsgTimeout, &SimpleTimer::timer_tick)); //called twice before timeout
-    m_pMp3PlrCtrl->dont_skip_current_track();
+    VoicePrompt prompt;
+    prompt.allowSkip = false;
+    prompt.promptId = MSG_CONFIRMED;
+
+    ON_CALL(*m_pPinCtrl, digital_read(_)).WillByDefault(Return(true)); // not playing                                                               // not playing
+    ON_CALL(*m_pDfMini, loop()).WillByDefault(InvokeWithoutArgs(m_pDfMiniMsgTimeout, &SimpleTimer::timer_tick)); //called twice before timeout
+    
+    m_pMp3PlrCtrl->play_prompt(prompt);
 }
 
-TEST_F(Mp3Ctrl, dontSkip_notFinishing_Timeout)
+TEST_F(Mp3Ctrl, playPrompt_noSkip_notFinishing_Timeout)
 {
-    ON_CALL(*m_pPinCtrl, digital_read(_)).WillByDefault(Return(false));                                                                            // not playing
-    EXPECT_CALL(*m_pDfMini, loop()).Times(TIMEOUT_PROMPT_PLAYED).WillRepeatedly(InvokeWithoutArgs(m_pDfMiniMsgTimeout, &SimpleTimer::timer_tick)); //called twice before timeout
-    m_pMp3PlrCtrl->dont_skip_current_track();
+    VoicePrompt prompt;
+    prompt.allowSkip = false;
+    prompt.promptId = MSG_CONFIRMED;
+
+    ON_CALL(*m_pPinCtrl, digital_read(_)).WillByDefault(Return(false)); // playing                                                                           // not playing
+    ON_CALL(*m_pDfMini, loop()).WillByDefault(InvokeWithoutArgs(m_pDfMiniMsgTimeout, &SimpleTimer::timer_tick)); //called twice before timeout
+    
+    m_pMp3PlrCtrl->play_prompt(prompt);
 }
 
-TEST_F(Mp3Ctrl, dontSkip_playing_noTimeout)
+TEST_F(Mp3Ctrl, playPrompt_noSkip_playing_noTimeout)
 {
+    VoicePrompt prompt;
+    prompt.allowSkip = false;
+    prompt.promptId = MSG_CONFIRMED;
     // timeout not elapsing
     EXPECT_CALL(*m_pPinCtrl, digital_read(_)).Times(3).WillOnce(Return(false)).WillOnce(Return(false)).WillRepeatedly(Return(true)); // not playing
     EXPECT_CALL(*m_pDfMini, loop()).Times(1);                                                                                        //called once before isplaying returns true
-    m_pMp3PlrCtrl->dont_skip_current_track();
+    
+    m_pMp3PlrCtrl->play_prompt(prompt);
 }
 
 TEST_F(Mp3Ctrl, nextTrack_noFolder_noop)
