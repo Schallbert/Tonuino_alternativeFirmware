@@ -22,6 +22,26 @@ protected:
 
 // INIT() ------------------------------------------------------
 
+TEST_F(DeleteMenuTest, noInit_isActive_returnsFalse)
+{
+    ASSERT_FALSE((m_deleteMenu->isActive()));
+}
+
+TEST_F(DeleteMenuTest, entered_isActive_returnsTrue)
+{
+    m_deleteMenu->confirm();
+
+    ASSERT_TRUE((m_deleteMenu->isActive()));
+}
+
+TEST_F(DeleteMenuTest, entered_abort_isActive_returnsTrue)
+{
+    m_deleteMenu->confirm();
+    m_deleteMenu->abort();
+
+    ASSERT_FALSE((m_deleteMenu->isActive()));
+}
+
 TEST_F(DeleteMenuTest, noInit_noPromptSet)
 {
     ASSERT_EQ((m_deleteMenu->getPrompt()).promptId, 0);
@@ -208,4 +228,15 @@ TEST_F(DeleteMenuTest, placedTagToDelete_confirmDeletion_menuComplete)
     m_deleteMenu->confirm();
 
     ASSERT_TRUE(m_deleteMenu->isComplete());
+}
+
+TEST_F(DeleteMenuTest, deletionConfirmed_isActive_returnsTrue)
+{
+    Nfc_interface::eTagState tagState = Nfc_interface::NEW_REGISTERED_TAG;
+
+    m_deleteMenu->confirm();
+    m_deleteMenu->updateTagState(tagState);
+    m_deleteMenu->confirm();
+
+    ASSERT_TRUE(m_deleteMenu->isActive());
 }

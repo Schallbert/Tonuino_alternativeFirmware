@@ -21,15 +21,33 @@ protected:
 };
 
 // INIT() ------------------------------------------------------
+TEST_F(LinkMenuTest, noInit_isActive_returnsFalse)
+{
+    ASSERT_FALSE(linkMenu->isActive());
+}
+
+TEST_F(LinkMenuTest, entered_isActive_returnsTrue)
+{
+    linkMenu->confirm();
+
+    ASSERT_TRUE(linkMenu->isActive());
+}
+
+TEST_F(LinkMenuTest, entered_abort_isActive_returnsFalse)
+{
+    linkMenu->confirm();
+    linkMenu->abort();
+
+    ASSERT_FALSE(linkMenu->isActive());
+}
+
+
+
+
 
 TEST_F(LinkMenuTest, noInit_noPromptSet)
 {
     ASSERT_EQ((linkMenu->getPrompt()).promptId, 0);
-}
-
-TEST_F(LinkMenuTest, noInit_isActive_returnsFalse)
-{
-    ASSERT_FALSE(linkMenu->isActive());
 }
 
 TEST_F(LinkMenuTest, selectFolderId_noSelection_getPrompt_FolderIdAndAllowSkip)
@@ -222,6 +240,18 @@ TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_isComplete_returnsTrue)
     linkMenu->confirm();
 
     ASSERT_TRUE(linkMenu->isComplete());
+}
+
+TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_isActive_returnsTrue)
+{
+    // enter, select folderId1, saveFolderId
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+
+    ASSERT_TRUE(linkMenu->isActive());
 }
 
 TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_getFolderInformation_returnsValidFolder)
