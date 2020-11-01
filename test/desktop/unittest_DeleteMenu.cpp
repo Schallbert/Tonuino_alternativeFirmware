@@ -31,7 +31,7 @@ TEST_F(DeleteMenuTest, init_getPrompt_promptsDeleteTag)
 {
     m_deleteMenu->confirm();
 
-    Menu_interface::VoicePrompt result = m_deleteMenu->getPrompt();
+    VoicePrompt result = m_deleteMenu->getPrompt();
 
     ASSERT_EQ(result.promptId, MSG_DELETETAG);
     ASSERT_EQ(result.allowSkip, true);
@@ -42,7 +42,7 @@ TEST_F(DeleteMenuTest, init2x_getPrompt_promptsDeleteTag)
     m_deleteMenu->confirm();
     m_deleteMenu->confirm();
 
-    Menu_interface::VoicePrompt result = m_deleteMenu->getPrompt();
+    VoicePrompt result = m_deleteMenu->getPrompt();
 
     ASSERT_EQ(result.promptId, MSG_DELETETAG);
     ASSERT_EQ(result.allowSkip, true);
@@ -55,7 +55,7 @@ TEST_F(DeleteMenuTest, placedTagToDelete_getPrompt_promptsWaitForConfirm)
     m_deleteMenu->confirm();
     m_deleteMenu->updateTagState(tagState);
 
-    Menu_interface::VoicePrompt result = m_deleteMenu->getPrompt();
+    VoicePrompt result = m_deleteMenu->getPrompt();
 
     ASSERT_EQ(result.promptId, MSG_CONFIRM_DELETION);
     ASSERT_EQ(result.allowSkip, true);
@@ -69,7 +69,7 @@ TEST_F(DeleteMenuTest, placedTagToDelete_confirmDeletion_promptsTagConfiguration
     m_deleteMenu->updateTagState(tagState);
     m_deleteMenu->confirm();
 
-    Menu_interface::VoicePrompt result = m_deleteMenu->getPrompt();
+    VoicePrompt result = m_deleteMenu->getPrompt();
 
     ASSERT_EQ(result.promptId, MSG_TAGCONFSUCCESS);
     ASSERT_EQ(result.allowSkip, true);

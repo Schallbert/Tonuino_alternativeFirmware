@@ -30,7 +30,7 @@ TEST_F(LinkMenuTest, noInit_noPromptSet)
 TEST_F(LinkMenuTest, selectFolderId_noSelection_getPrompt_FolderIdAndAllowSkip)
 {
     linkMenu->confirm();
-    Menu_interface::VoicePrompt result = linkMenu->getPrompt();
+    VoicePrompt result = linkMenu->getPrompt();
     EXPECT_EQ(result.promptId, MSG_SELECT_FOLDERID);
     EXPECT_EQ(result.allowSkip, true);
 }
@@ -39,7 +39,7 @@ TEST_F(LinkMenuTest, selectPlayMode_noSelection_getPrompt_PlayModeAndAllowSkip)
 {
     linkMenu->confirm();
     linkMenu->confirm();
-    Menu_interface::VoicePrompt result = linkMenu->getPrompt();
+    VoicePrompt result = linkMenu->getPrompt();
     EXPECT_EQ(result.promptId, MSG_SELECT_PLAYMODE);
     EXPECT_EQ(result.allowSkip, true);
 }
@@ -49,7 +49,7 @@ TEST_F(LinkMenuTest, menuComplete_noSelection_getPrompt_TagConfigSuccess)
     linkMenu->confirm();
     linkMenu->confirm();
     linkMenu->confirm();
-    Menu_interface::VoicePrompt result = linkMenu->getPrompt();
+    VoicePrompt result = linkMenu->getPrompt();
     EXPECT_EQ(result.promptId, MSG_TAGCONFSUCCESS);
     EXPECT_EQ(result.allowSkip, true);
 }
@@ -60,7 +60,7 @@ TEST_F(LinkMenuTest, menuComplete_noSelection_confirmAgainAndGetPrompt_TagConfig
     linkMenu->confirm();
     linkMenu->confirm();
     linkMenu->confirm();
-    Menu_interface::VoicePrompt result = linkMenu->getPrompt();
+    VoicePrompt result = linkMenu->getPrompt();
     EXPECT_EQ(result.promptId, MSG_TAGCONFSUCCESS);
     EXPECT_EQ(result.allowSkip, true);
 }
@@ -70,7 +70,7 @@ TEST_F(LinkMenuTest, selectFolderId1_getPrompt_returns1)
     linkMenu->confirm();
     linkMenu->selectNext();
 
-    Menu_interface::VoicePrompt result = linkMenu->getPrompt();
+    VoicePrompt result = linkMenu->getPrompt();
     EXPECT_EQ(result.promptId, 1);
     EXPECT_EQ(result.allowSkip, false);
 }
@@ -80,7 +80,7 @@ TEST_F(LinkMenuTest, selectFolderIdMAX_getPrompt_returnsMAX)
     linkMenu->confirm();
     linkMenu->selectPrev();
 
-    Menu_interface::VoicePrompt result = linkMenu->getPrompt();
+    VoicePrompt result = linkMenu->getPrompt();
     EXPECT_EQ(result.promptId, MAXFOLDERCOUNT);
     EXPECT_EQ(result.allowSkip, false);
 }
@@ -91,7 +91,7 @@ TEST_F(LinkMenuTest, selectPlayMode1_getPrompt_returnsLULLABYE)
     linkMenu->confirm();
     linkMenu->selectNext();
 
-    Menu_interface::VoicePrompt result = linkMenu->getPrompt();
+    VoicePrompt result = linkMenu->getPrompt();
     EXPECT_EQ(result.promptId, MSG_SELECT_PLAYMODE + static_cast<uint16_t>(Folder::LULLABYE));
     EXPECT_EQ(result.allowSkip, false);
 }
@@ -102,7 +102,7 @@ TEST_F(LinkMenuTest, selectPlayModeMAX_getPrompt_returnsONELARGETRACK)
     linkMenu->confirm();
     linkMenu->selectPrev();
 
-    Menu_interface::VoicePrompt result = linkMenu->getPrompt();
+    VoicePrompt result = linkMenu->getPrompt();
     EXPECT_EQ(result.promptId, MSG_SELECT_PLAYMODE + static_cast<uint16_t>(Folder::ONELARGETRACK));
     EXPECT_EQ(result.allowSkip, false);
 }
@@ -114,7 +114,7 @@ TEST_F(LinkMenuTest, selectPlayMode_testRollover_getPrompt_returnsONELARGETRACK)
     linkMenu->selectPrev();
     linkMenu->selectPrev();
 
-    Menu_interface::VoicePrompt result = linkMenu->getPrompt();
+    VoicePrompt result = linkMenu->getPrompt();
     EXPECT_EQ(result.promptId, MSG_SELECT_PLAYMODE + static_cast<uint16_t>(Folder::SAVEPROGRESS));
     EXPECT_EQ(result.allowSkip, false);
 }
