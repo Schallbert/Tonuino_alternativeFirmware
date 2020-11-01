@@ -1,9 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "../Utilities/Menu_interface.h"
-#include "../Utilities/DeleteMenu.h"
-#include "../Utilities/Menu_implementation.h"
+#include "Menu_implementation.h"
 
 class DeleteMenuTest : public ::testing::Test
 {

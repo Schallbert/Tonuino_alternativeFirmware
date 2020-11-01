@@ -2,9 +2,9 @@
 #define VOICEMENU_H
 
 #include "../Config/Tonuino_config.h"
-#include "../Utilities/Menu_interface.h"
+#include "Menu_interface.h"
 
-#include "../Utilities/LinkMenu_StateManager.h"
+#include "LinkMenu_StateManager.h"
 /* 
 Once a new card is detected, It has to be linked to an existing folder on the SD card.
 */

@@ -2,8 +2,8 @@
 #define MENU_IMPLEMENTATION_H
 
 #include "Menu_interface.h"
-#include "LinkMenu.h"
-#include "DeleteMenu.h"
+#include "LinkMenu/LinkMenu.h"
+#include "DeleteMenu/DeleteMenu.h"
 
 class Menu_factory
 {

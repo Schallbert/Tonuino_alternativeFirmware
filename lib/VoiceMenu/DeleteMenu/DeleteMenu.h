@@ -2,9 +2,9 @@
 #define DELETEMENU_H
 
 #include "../Config/Tonuino_config.h"
-#include "../Utilities/Menu_interface.h"
+#include "Menu_interface.h"
 
-#include "../Utilities/DeleteMenu_StateManager.h"
+#include "DeleteMenu_StateManager.h"
 
 /* 
 Once user choses to delete a tag, this menu will guide through tag deletion process
