@@ -68,12 +68,10 @@ TEST_F(VoiceMenuTest, noInit_isActive_returnsFalse)
 
 TEST_F(VoiceMenuTest, initLinkMenu_isActive_returnsTrue)
 {
-    UserInput::eUserRequest userInput{UserInput::NO_ACTION};
-    Nfc_interface::eTagState tagState{Nfc_interface::NEW_UNKNOWN_TAG};
+    InputState input{}; 
+    input.tagState = Nfc_interface::NEW_UNKNOWN_TAG;
 
-    m_pVoiceMenu->setUserInput(userInput);
-    m_pVoiceMenu->setTagState(tagState);
-
+    m_pVoiceMenu->setInputState(input);
     m_pVoiceMenu->loop();
 
     ASSERT_TRUE(m_pVoiceMenu->isActive());
