@@ -13,7 +13,7 @@ class UserInput
         the physical implementation of the user input.
     */
 public:
-    enum UserRequest_e
+    enum eUserRequest
     {
         NO_ACTION = 0,
         PLAY_PAUSE,
@@ -29,7 +29,7 @@ protected:
     bool userInputLocked{false};
 
 public:
-    virtual UserRequest_e get_user_request(void) = 0;           // returns user's request to main program
+    virtual eUserRequest get_user_request(void) = 0;           // returns user's request to main program
     virtual void userinput_service_isr(void) = 0;               // recurring task to poll UserInput's connected hardware
 
 private:

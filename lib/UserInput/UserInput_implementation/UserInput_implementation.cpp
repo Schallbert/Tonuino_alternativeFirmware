@@ -5,7 +5,7 @@ void UserInput_ClickEncoder::userinput_service_isr()
     m_pEncoder->service();
 }
 
-UserInput::UserRequest_e UserInput_ClickEncoder::get_user_request()
+UserInput::eUserRequest UserInput_ClickEncoder::get_user_request()
 {
     //Poll for current encoder position and button state
     userinput_refresh();
@@ -83,7 +83,7 @@ void UserInput_3Buttons::userinput_service_isr()
     m_pPrevButton->service();
 }
 
-UserInput::UserRequest_e UserInput_3Buttons::get_user_request()
+UserInput::eUserRequest UserInput_3Buttons::get_user_request()
 {
     //Get current button's states
     userinput_refresh();

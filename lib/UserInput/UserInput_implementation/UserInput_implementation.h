@@ -30,7 +30,7 @@ public:
 
 public:
     void userinput_service_isr() override;
-    UserRequest_e get_user_request() override;
+    eUserRequest get_user_request() override;
 
 private:
     void userinput_refresh() override;
@@ -87,7 +87,7 @@ public:
 
 public:
     void userinput_service_isr(void) override;
-    UserRequest_e get_user_request() override;
+    eUserRequest get_user_request() override;
 
 private:
     void userinput_refresh() override;
