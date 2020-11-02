@@ -25,17 +25,17 @@ bool VoiceMenu::isActive()
 
 void VoiceMenu::loop()
 {
-    handleEnterMenu();
-    handleDispatcher();
+    checkEnterLinkMenu();
+    checkEnterDeleteMenu();
+
+    if (isActive())
+    {
+        dispatchInputs();
+        checkPlayPrompt();
+    }
 }
 
-void VoiceMenu::handleEnterMenu()
-{
-    enterLinkMenuIfApplicable();
-    enterDeleteMenuIfApplicable();
-}
-
-void VoiceMenu::enterLinkMenuIfApplicable()
+void VoiceMenu::checkEnterLinkMenu()
 {
     if (m_inputState.tagState == Nfc_interface::NEW_UNKNOWN_TAG)
     {
@@ -44,7 +44,7 @@ void VoiceMenu::enterLinkMenuIfApplicable()
     }
 }
 
-void VoiceMenu::enterDeleteMenuIfApplicable()
+void VoiceMenu::checkEnterDeleteMenu()
 {
     if (m_inputState.tagState == Nfc_interface::ACTIVE_KNOWN_TAG &&
         m_inputState.btnState == UserInput::PP_LONGPRESS)
@@ -63,17 +63,11 @@ void VoiceMenu::setMenuInstance(Menu_factory::eMenuType menu)
     m_pMenuInstance = Menu_factory::getInstance(menu);
 }
 
-void VoiceMenu::handleDispatcher()
+void VoiceMenu::checkPlayPrompt()
 {
-    if (isMenuStateRelevantForDispatcher())
-    {
-        dispatchInputs();
-    }
-}
+    VoicePrompt prompt = m_pMenuInstance->getPrompt();
 
-bool VoiceMenu::isMenuStateRelevantForDispatcher()
-{
-    return (m_pMenuInstance->isActive());
+    m_pPromptPlayer->checkPlayPrompt(prompt);
 }
 
 void VoiceMenu::dispatchInputs()
@@ -89,7 +83,7 @@ void VoiceMenu::dispatchInputs()
 
 /*
 
-void VoiceMenu::playPrompt()
+void VoiceMenu::checkPlayPrompt()
 {
     Menu_interface::VoicePrompt prompt = m_pMenuInstance.getPrompt();
     m_Mp3Ctrl.playSpecificFile(prompt.promptId);
