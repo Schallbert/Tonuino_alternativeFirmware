@@ -63,3 +63,9 @@ bool DeleteMenu::isComplete()
 {
     return (m_menuState.getMenuStateMessage() == MSG_TAGCONFSUCCESS);
 }
+
+bool DeleteMenu::isPreviewAvailable()
+{
+    // preview only when card to be deleted is placed
+    return (m_menuState.getMenuStateMessage() == MSG_CONFIRM_DELETION);
+}

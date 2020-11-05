@@ -41,10 +41,6 @@ TEST_F(LinkMenuTest, entered_abort_isActive_returnsFalse)
     ASSERT_FALSE(linkMenu->isActive());
 }
 
-
-
-
-
 TEST_F(LinkMenuTest, noInit_noPromptSet)
 {
     ASSERT_EQ((linkMenu->getPrompt()).promptId, 0);
@@ -84,7 +80,7 @@ TEST_F(LinkMenuTest, menuComplete_noSelection_confirmAgainAndGetPrompt_TagConfig
     linkMenu->confirm();
     linkMenu->confirm();
     VoicePrompt result = linkMenu->getPrompt();
-    EXPECT_EQ(result.promptId, MSG_TAGCONFSUCCESS);
+    EXPECT_EQ(result.promptId, 0);
     EXPECT_EQ(result.allowSkip, true);
 }
 
@@ -344,10 +340,43 @@ TEST_F(LinkMenuTest, menuComplete_abort_getFolderInformation_returnsInvalidFolde
     ASSERT_FALSE(testFolder.is_valid());
 }
 
+TEST_F(LinkMenuTest, noInit_isPeviewAvailable_returnsFalse)
+{
+    ASSERT_FALSE(linkMenu->isPreviewAvailable());
+}
+
+TEST_F(LinkMenuTest, folderIdSelect_isPeviewAvailable_returnsTrue)
+{
+    linkMenu->confirm();
+    linkMenu->selectNext();
+
+    ASSERT_TRUE(linkMenu->isPreviewAvailable());
+}
+
+TEST_F(LinkMenuTest, playModeSelect_isPeviewAvailable_returnsFalse)
+{
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+
+    ASSERT_FALSE(linkMenu->isPreviewAvailable());
+}
+
+TEST_F(LinkMenuTest, menuComplete_isPeviewAvailable_returnsFalse)
+{
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+
+    ASSERT_FALSE(linkMenu->isPreviewAvailable());
+}
+
 TEST_F(LinkMenuTest, noInit_lockInLinkMenu_notLocked)
 {
     Nfc_interface::eTagState tagState = Nfc_interface::NO_TAG;
-        
+
     linkMenu->updateTagState(tagState);
 
     ASSERT_EQ(tagState, Nfc_interface::NO_TAG);
@@ -356,7 +385,7 @@ TEST_F(LinkMenuTest, noInit_lockInLinkMenu_notLocked)
 TEST_F(LinkMenuTest, entered_lockInLinkMenu_locked)
 {
     Nfc_interface::eTagState tagState = Nfc_interface::NO_TAG;
-        
+
     linkMenu->confirm();
     linkMenu->updateTagState(tagState);
 
@@ -366,11 +395,11 @@ TEST_F(LinkMenuTest, entered_lockInLinkMenu_locked)
 TEST_F(LinkMenuTest, menuComplete_lockInLinkMenu_unLocked)
 {
     Nfc_interface::eTagState tagState = Nfc_interface::NO_TAG;
-        
+
     linkMenu->confirm(); // enter
     linkMenu->confirm(); // folderId selected
     linkMenu->confirm(); // playMode selected: complete
-    
+
     linkMenu->updateTagState(tagState);
 
     ASSERT_EQ(tagState, Nfc_interface::NO_TAG);
@@ -379,13 +408,12 @@ TEST_F(LinkMenuTest, menuComplete_lockInLinkMenu_unLocked)
 TEST_F(LinkMenuTest, menuAbort_lockInLinkMenu_unLocked)
 {
     Nfc_interface::eTagState tagState = Nfc_interface::NO_TAG;
-        
+
     linkMenu->confirm(); // enter
     linkMenu->confirm(); // folderId selected
     linkMenu->abort();
-    
+
     linkMenu->updateTagState(tagState);
 
     ASSERT_EQ(tagState, Nfc_interface::NO_TAG);
 }
-

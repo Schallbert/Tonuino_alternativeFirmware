@@ -6,8 +6,8 @@
 class PromptPlayer_interface
 {
 public:
-    virtual void checkPlayPrompt(VoicePrompt prompt) = 0;
-    virtual void checkPlayFolderPreview(Folder previewFolder) = 0;
+    virtual void checkPlayPrompt(VoicePrompt &prompt) = 0;
+    virtual void playFolderPreview(Folder previewFolder) = 0;
 };
 
 #endif // PROMPTPLAYER_H

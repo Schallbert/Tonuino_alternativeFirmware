@@ -56,7 +56,8 @@ void LinkMenu_StateManager::confirm()
     case PLAYMODE_SELECT:
         savePlayModeSelection();
         break;
-    default:
+    default: // menu complete or invalid key
+        abort();
         break;
     }
 }

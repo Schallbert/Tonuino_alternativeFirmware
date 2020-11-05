@@ -16,22 +16,37 @@ void VoiceMenu::setInputState(InputState inputState)
 bool VoiceMenu::isActive()
 {
     bool result{false};
-    if (m_pMenuInstance)
+    if (m_pMenuInstance != nullptr)
     {
         result = m_pMenuInstance->isActive();
     }
     return result;
 }
 
+bool VoiceMenu::isComplete()
+{
+    bool result{false};
+    if (m_pMenuInstance != nullptr)
+    {
+        result = m_pMenuInstance->isComplete();
+    }
+    return result;
+}
+
 void VoiceMenu::loop()
 {
-    checkEnterLinkMenu();
-    checkEnterDeleteMenu();
+    if (!isActive())
+    {
+        checkEnterLinkMenu();
+        checkEnterDeleteMenu();
+    }
 
     if (isActive())
     {
         dispatchInputs();
         checkPlayPrompt();
+        checkPlayFolderPreview();
+        //checkLeaveMenu();
     }
 }
 
@@ -39,7 +54,7 @@ void VoiceMenu::checkEnterLinkMenu()
 {
     if (m_inputState.tagState == Nfc_interface::NEW_UNKNOWN_TAG)
     {
-        setMenuInstance(Menu_factory::LINK_MENU);
+        m_pMenuInstance = Menu_factory::getInstance(Menu_factory::LINK_MENU);
         m_pMenuInstance->confirm();
     }
 }
@@ -49,25 +64,33 @@ void VoiceMenu::checkEnterDeleteMenu()
     if (m_inputState.tagState == Nfc_interface::ACTIVE_KNOWN_TAG &&
         m_inputState.btnState == UserInput::PP_LONGPRESS)
     {
-        setMenuInstance(Menu_factory::DELETE_MENU);
+        m_pMenuInstance = Menu_factory::getInstance(Menu_factory::DELETE_MENU);
         m_pMenuInstance->confirm();
     }
 }
 
-void VoiceMenu::setMenuInstance(Menu_factory::eMenuType menu)
+void VoiceMenu::checkLeaveMenu()
 {
-    if (m_pMenuInstance)
+    if (isComplete())
     {
         delete m_pMenuInstance;
+        // TODO: make Nfc save folder info to Tag
     }
-    m_pMenuInstance = Menu_factory::getInstance(menu);
 }
 
 void VoiceMenu::checkPlayPrompt()
 {
     VoicePrompt prompt = m_pMenuInstance->getPrompt();
-
     m_pPromptPlayer->checkPlayPrompt(prompt);
+}
+
+void VoiceMenu::checkPlayFolderPreview()
+{
+    if (m_pMenuInstance->isPreviewAvailable())
+    {
+        Folder previewFolder = m_pMenuInstance->getFolderInformation();
+        m_pPromptPlayer->playFolderPreview(previewFolder);
+    }
 }
 
 void VoiceMenu::dispatchInputs()

@@ -67,3 +67,9 @@ Folder LinkMenu::getFolderInformation()
 {
     return m_menuState.getSavedSelection();
 }
+
+bool LinkMenu::isPreviewAvailable()
+{
+    // preview only availalbe in folderSelect mode
+    return (m_menuState.getMenuStateMessage() == MSG_SELECT_FOLDERID);
+}

@@ -26,21 +26,19 @@ public:
 
 public:
     void setInputState(InputState inputState);
-    
     bool isActive();
-
     void loop();
 
 private:
-    void setMenuInstance(Menu_factory::eMenuType);
+    bool isComplete();
     void checkEnterLinkMenu();
     void checkEnterDeleteMenu();
+    void checkLeaveMenu();
     void checkPlayPrompt();
+    void checkPlayFolderPreview();
 
     void dispatchInputs();
     
-
-    //bool isComplete();
     //void playPrompt();
     //void playPreview(Folder &previewFolder);
 
@@ -60,7 +58,6 @@ private:
     typedef void (VoiceMenu::*dispatcher)(); // table of function pointers
 
     InputState m_inputState{};
-    Folder m_previewFolder{};
     Menu_interface *m_pMenuInstance{nullptr};
     
 };

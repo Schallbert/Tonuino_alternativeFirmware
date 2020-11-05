@@ -23,6 +23,7 @@ public:
     void updateTagState(Nfc_interface::eTagState &tagState) override;
     bool isActive() override;
     bool isComplete() override;
+    bool isPreviewAvailable() override;
 
     VoicePrompt getPrompt() override { return m_prompt; };
     Folder getFolderInformation() override;

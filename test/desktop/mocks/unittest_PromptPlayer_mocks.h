@@ -8,8 +8,8 @@
 class Mock_PromptPlayer : public PromptPlayer_interface
 {
     public:
-    MOCK_METHOD(void, checkPlayPrompt, (VoicePrompt prompt), (override));
-    MOCK_METHOD(void, checkPlayFolderPreview, (Folder previewFolder), (override));
+    MOCK_METHOD(void, checkPlayPrompt, (VoicePrompt &prompt), (override));
+    MOCK_METHOD(void, playFolderPreview, (Folder previewFolder), (override));
 };
 
 #endif // PROMPTPLAYER_MOCKS_H

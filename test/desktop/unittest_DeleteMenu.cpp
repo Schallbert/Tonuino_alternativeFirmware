@@ -95,6 +95,39 @@ TEST_F(DeleteMenuTest, placedTagToDelete_confirmDeletion_promptsTagConfiguration
     ASSERT_EQ(result.allowSkip, true);
 }
 
+TEST_F(DeleteMenuTest, noInit_isPeviewAvailable_returnsFalse)
+{
+    ASSERT_FALSE(m_deleteMenu->isPreviewAvailable());
+}
+
+TEST_F(DeleteMenuTest, waitsForTag_isPeviewAvailable_returnsFalse)
+{
+    m_deleteMenu->confirm();
+
+    ASSERT_FALSE(m_deleteMenu->isPreviewAvailable());
+}
+
+TEST_F(DeleteMenuTest, placedTagToDelete_isPeviewAvailable_returnsTrue)
+{
+    Nfc_interface::eTagState tagState = Nfc_interface::NEW_REGISTERED_TAG;
+
+    m_deleteMenu->confirm();
+    m_deleteMenu->updateTagState(tagState);
+
+    ASSERT_TRUE(m_deleteMenu->isPreviewAvailable());
+}
+
+TEST_F(DeleteMenuTest, menuComplete_isPeviewAvailable_returnsFalse)
+{
+    Nfc_interface::eTagState tagState = Nfc_interface::NEW_REGISTERED_TAG;
+
+    m_deleteMenu->confirm();
+    m_deleteMenu->updateTagState(tagState);
+    m_deleteMenu->confirm();
+
+    ASSERT_FALSE(m_deleteMenu->isPreviewAvailable());
+}
+
 TEST_F(DeleteMenuTest, noInit_NotlockedInDeleteMenu)
 {
     Nfc_interface::eTagState tagState = Nfc_interface::NO_TAG;

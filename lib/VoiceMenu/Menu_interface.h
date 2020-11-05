@@ -17,6 +17,7 @@ public:
     virtual void updateTagState(Nfc_interface::eTagState &tagState) = 0;
     virtual bool isActive() = 0;
     virtual bool isComplete() = 0;
+    virtual bool isPreviewAvailable() = 0;
 
     virtual VoicePrompt getPrompt() = 0;
     virtual Folder getFolderInformation() = 0;
