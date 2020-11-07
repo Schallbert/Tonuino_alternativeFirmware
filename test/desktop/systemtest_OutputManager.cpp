@@ -1,3 +1,4 @@
+/*
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
@@ -490,3 +491,5 @@ TEST_F(OutputManagerTest, dispatcher_read_folderDeletedOnCard_playsErrorPrompt)
     EXPECT_CALL(*m_pMp3Ctrl, play_specific_file(MSG_ERROR_FOLDER));
     m_pOutputManager->runDispatcher();
 }
+
+*/

@@ -13,7 +13,7 @@ void InputDispatcher_ErrorHandler::checkAndCorrectCardStateError(Nfc_interface::
     }
 }
 
-void InputDispatcher_ErrorHandler::checkAndCorrectUserInputError(UserInput::UserRequest_e &userRequest)
+void InputDispatcher_ErrorHandler::checkAndCorrectUserInputError(UserInput::eUserRequest &userRequest)
 {
     m_eDebugMessage = noMessage;
     if ((userRequest < UserInput::NO_ACTION) ||

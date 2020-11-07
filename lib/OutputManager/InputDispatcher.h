@@ -1,6 +1,6 @@
 #ifndef OUTPUTMANAGER_H
 #define OUTPUTMANAGER_H
-
+#if 0
 #include "../Arduino/Arduino_interface/Arduino_DIcontainer_interface.h"
 #include "../PowerManager/PowerManager_interface/PowerManager_interface.h"
 #include "../Nfc/NfcControl/NfcControl.h"
@@ -28,7 +28,7 @@ public:
 public:
     // Sets input states from card and buttons saving to member variables.
     void setTagState(Nfc_interface::eTagState tagState);
-    void setUserInput(UserInput::UserRequest_e userInput);
+    void setUserInput(UserInput::eUserRequest userInput);
 //#if DEBUGSERIAL
     void printDebugMessage();
 //#endif
@@ -65,7 +65,7 @@ private:
     // decrease volume
     void decV() { m_pMp3Ctrl->volume_down(); };
     // play help prompt
-    void help() { m_pMp3Ctrl->play_specific_file(MSG_HELP); };
+    void help() { m_pMp3Ctrl->playSpecificFile(MSG_HELP); };
     // delete and unlink NFC card
     void delt(); // delete menu entry
     void delC(); // confirm deletion
@@ -92,8 +92,9 @@ private:
     LinkMenu m_linkMenu{};
     DeleteMenu m_deleteMenu{};
     Nfc_interface::eTagState m_eTagState{Nfc_interface::NO_TAG};
-    UserInput::UserRequest_e m_eUserInput{UserInput::NO_ACTION};
+    UserInput::eUserRequest m_eUserInput{UserInput::NO_ACTION};
     InputDispatcher_ErrorHandler m_errorHandler{};
 };
 
 #endif // OUTPUTMANAGER_H
+#endif

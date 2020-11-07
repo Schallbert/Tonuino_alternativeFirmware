@@ -20,7 +20,7 @@ public:
 
 public:
     void checkAndCorrectCardStateError(Nfc_interface::eTagState &tagState);
-    void checkAndCorrectUserInputError(UserInput::UserRequest_e &userRequest);
+    void checkAndCorrectUserInputError(UserInput::eUserRequest &userRequest);
 
     const char *stringFromDebugMessage();
 
