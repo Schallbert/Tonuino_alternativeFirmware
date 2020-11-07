@@ -36,8 +36,6 @@ Nfc_interface::eTagState DeleteMenu::getLockState()
     return m_tagState;
 }
 
-
-
 void DeleteMenu::handleTagStateChanges()
 {
     // tag to delete detected

@@ -1,14 +1,20 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include "mocks/unittest_NfcControl_mocks.h"
+
 #include "Menu_implementation.h"
+
+using ::testing::NiceMock;
+using ::testing::_;
+using ::testing::Return;
 
 class DeleteMenuTest : public ::testing::Test
 {
 protected:
     virtual void SetUp()
     {
-        m_deleteMenu = Menu_factory::getInstance(Menu_factory::DELETE_MENU);
+        m_deleteMenu = Menu_factory::getInstance(Menu_factory::DELETE_MENU, &m_nfcControlMock);
     }
 
     virtual void TearDown()
@@ -17,6 +23,7 @@ protected:
     }
 
 protected:
+    NiceMock<Mock_NfcControl> m_nfcControlMock{};
     Menu_interface *m_deleteMenu{nullptr};
 };
 

@@ -1,9 +1,9 @@
 #ifndef MENU_INTERFACE_H
 #define MENU_INTERFACE_H
 
-#include "Folder.h"
+#include "../Config/Tonuino_config.h"
 #include "../Mp3/Mp3PlayerControl_interface/Mp3PlayerControl_interface.h"
-#include "../Nfc/Nfc_interface/Nfc_interface.h"
+#include "../Nfc/NfcControl/NfcControl_interface.h"
 
 class Menu_interface
 {

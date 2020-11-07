@@ -1,7 +1,6 @@
 #ifndef DELETEMENU_H
 #define DELETEMENU_H
 
-#include "../Config/Tonuino_config.h"
 #include "Menu_interface.h"
 
 #include "DeleteMenu_StateManager.h"
@@ -13,7 +12,7 @@ class DeleteMenu : public Menu_interface
 {
 
 public:
-    DeleteMenu(){};
+    DeleteMenu(NfcControl_interface *nfcCtrl) : m_pNfcControl(nfcCtrl){};
 
 public:
     void confirm() override;
@@ -30,12 +29,13 @@ public:
     Folder getFolderInformation() override { return Folder(); };
 
 private:
-    void setTagState(Nfc_interface::eTagState &tagState) ;
+    void setTagState(Nfc_interface::eTagState &tagState);
     Nfc_interface::eTagState getLockState();
     void updatePrompt(uint16_t promptId);
     void handleTagStateChanges();
 
 private:
+    NfcControl_interface *m_pNfcControl{nullptr};
     DeleteMenu_StateManager m_menuState{};
     Nfc_interface::eTagState m_tagState{Nfc_interface::NO_TAG};
     VoicePrompt m_prompt{};
@@ -43,4 +43,4 @@ private:
     bool m_tagToDeleteDetected{false};
 };
 
-#endif // DELETEMENU_H 
+#endif // DELETEMENU_H

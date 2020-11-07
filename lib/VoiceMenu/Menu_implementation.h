@@ -15,7 +15,7 @@ public:
     };
 
 public:
-    static Menu_interface *getInstance(eMenuType menuType);
+    static Menu_interface *getInstance(eMenuType menuType, NfcControl_interface *pNfcCtrl);
 };
 
 #endif // MENU_IMPLEMENTATION_H

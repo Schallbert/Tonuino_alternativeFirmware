@@ -20,7 +20,9 @@ class VoiceMenu
     
 public:
     VoiceMenu(PromptPlayer_interface *promptPlayer,
+              NfcControl_interface *nfcCtrl,
               SimpleTimer *menuTimer) : m_pPromptPlayer(promptPlayer),
+                                        m_pNfcControl(nfcCtrl),
                                         m_pMenuTimer(menuTimer){};
     ~VoiceMenu();
 
@@ -52,14 +54,14 @@ private:
 
 
 private:
+    NfcControl_interface *m_pNfcControl{nullptr};
     PromptPlayer_interface *m_pPromptPlayer{nullptr};
     SimpleTimer *m_pMenuTimer{nullptr};
 
     typedef void (VoiceMenu::*dispatcher)(); // table of function pointers
 
     InputState m_inputState{};
-    Menu_interface *m_pMenuInstance{nullptr};
-    
+    Menu_interface *m_pMenuInstance{nullptr};    
 };
 
 #endif // VOICEMENU_H

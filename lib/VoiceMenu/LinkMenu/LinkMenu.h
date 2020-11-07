@@ -1,7 +1,6 @@
 #ifndef VOICEMENU_H
 #define VOICEMENU_H
 
-#include "../Config/Tonuino_config.h"
 #include "Menu_interface.h"
 
 #include "LinkMenu_StateManager.h"
@@ -12,7 +11,7 @@ class LinkMenu : public Menu_interface
 {
 
 public:
-    LinkMenu(){};
+    LinkMenu(NfcControl_interface *nfcCtrl) : m_pNfcControl(nfcCtrl){};
 
 public:
     void confirm() override;
@@ -33,6 +32,7 @@ private:
     Nfc_interface::eTagState getLockState();
 
 private:
+    NfcControl_interface *m_pNfcControl{nullptr};
     LinkMenu_StateManager m_menuState{};
     Nfc_interface::eTagState m_tagState{Nfc_interface::NO_TAG};
     VoicePrompt m_prompt{};

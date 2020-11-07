@@ -1,13 +1,12 @@
 #ifndef NFCCONTROL_H
 #define NFCCONTROL_H
 
+#include "NfcControl_interface.h"
 #include "Tonuino_config.h"
-#include "../Nfc_interface/Nfc_interface.h"
 #include "../Arduino/Arduino_interface/Arduino_interface.h"
-#include "Folder.h"
 
 // this object stores nfc tag data
-class NfcControl
+class NfcControl : public NfcControl_interface
 {
 public:
     // Create NfcControl object with dependency-injected NfcReader object

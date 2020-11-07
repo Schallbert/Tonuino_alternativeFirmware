@@ -46,7 +46,7 @@ void VoiceMenu::loop()
         dispatchInputs();
         checkPlayPrompt();
         checkPlayFolderPreview();
-        //checkLeaveMenu();
+        checkLeaveMenu();
     }
 }
 
@@ -54,7 +54,7 @@ void VoiceMenu::checkEnterLinkMenu()
 {
     if (m_inputState.tagState == Nfc_interface::NEW_UNKNOWN_TAG)
     {
-        m_pMenuInstance = Menu_factory::getInstance(Menu_factory::LINK_MENU);
+        m_pMenuInstance = Menu_factory::getInstance(Menu_factory::LINK_MENU, m_pNfcControl);
         m_pMenuInstance->confirm();
     }
 }
@@ -64,7 +64,7 @@ void VoiceMenu::checkEnterDeleteMenu()
     if (m_inputState.tagState == Nfc_interface::ACTIVE_KNOWN_TAG &&
         m_inputState.btnState == UserInput::PP_LONGPRESS)
     {
-        m_pMenuInstance = Menu_factory::getInstance(Menu_factory::DELETE_MENU);
+        m_pMenuInstance = Menu_factory::getInstance(Menu_factory::DELETE_MENU, m_pNfcControl);
         m_pMenuInstance->confirm();
     }
 }
@@ -74,6 +74,7 @@ void VoiceMenu::checkLeaveMenu()
     if (isComplete())
     {
         delete m_pMenuInstance;
+        m_pMenuInstance = nullptr;
         // TODO: make Nfc save folder info to Tag
     }
 }

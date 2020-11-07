@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include "mocks/unittest_NfcControl_mocks.h"
+
 #include "Menu_implementation.h"
 
 class LinkMenuTest : public ::testing::Test
@@ -8,7 +10,7 @@ class LinkMenuTest : public ::testing::Test
 protected:
     virtual void SetUp()
     {
-        linkMenu = Menu_factory::getInstance(Menu_factory::LINK_MENU);
+        linkMenu = Menu_factory::getInstance(Menu_factory::LINK_MENU, &m_nfcControlMock);
     }
 
     virtual void TearDown()
@@ -18,6 +20,7 @@ protected:
 
 protected:
     Menu_interface *linkMenu{nullptr};
+    NiceMock<Mock_NfcControl> m_nfcControlMock{};
 };
 
 // INIT() ------------------------------------------------------
