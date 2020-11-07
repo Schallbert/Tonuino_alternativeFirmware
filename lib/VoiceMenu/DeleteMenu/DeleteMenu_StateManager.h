@@ -26,7 +26,8 @@ private:
         NO_MENU = 0,
         PLACE_TAG_TO_DELETE = MSG_DELETETAG,
         CONFIRM_DELETE = MSG_CONFIRM_DELETION,
-        COMPLETE = MSG_TAGCONFSUCCESS
+        COMPLETE = MSG_TAGCONFSUCCESS,
+        ABORTED = MSG_ABORTED
     };
 
     eMenuState menuState{NO_MENU};

@@ -192,6 +192,7 @@ TEST_F(NfcCtrlTagPresence, OutOfRange_returnsOutOfRange)
     ASSERT_EQ(tagPresence, m_pNfcCtrl->get_tag_presence());
 }
 
+// TODO: REACTIVATE TESTS!
 
 /*
 TEST_F(NfcCtrlDebugOutput, messageHeadersCorrect)

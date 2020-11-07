@@ -100,13 +100,11 @@ void LinkMenu_StateManager::savePlayModeSelection()
 void LinkMenu_StateManager::incrementSelection()
 {
     options.incrementSelection();
-    createFolderPreview();
 }
 
 void LinkMenu_StateManager::decrementSelection()
 {
     options.decrementSelection();
-    createFolderPreview();
 }
 
 uint16_t LinkMenu_StateManager::getCurrentSelection()
@@ -114,21 +112,25 @@ uint16_t LinkMenu_StateManager::getCurrentSelection()
     return options.getSelection();
 }
 
-Folder LinkMenu_StateManager::getSavedSelection()
-{
-    return Folder(result.folderId, result.playMode, 1);
-}
-
 uint16_t LinkMenu_StateManager::getMenuStateMessage()
 {
     return static_cast<uint16_t>(menuState);
 }
 
-void LinkMenu_StateManager::createFolderPreview()
+Folder LinkMenu_StateManager::getResult()
 {
+    return Folder(result.folderId, result.playMode, 1);
+}
+
+Folder LinkMenu_StateManager::getPreview()
+{
+    // returns invalid folder if no preview is available
+    Folder preview;
      if(menuState == FOLDERID_SELECT)
     {
-        result.folderId = static_cast<uint8_t>(options.getSelection() & 0xFF);
-        result.playMode = Folder::ONELARGETRACK;
-    }
+        uint8_t folderId = static_cast<uint8_t>(options.getSelection() & 0xFF);
+        Folder::ePlayMode playMode = Folder::ONELARGETRACK;
+        preview = Folder(folderId, playMode, 1);
+    }   
+    return preview;
 }

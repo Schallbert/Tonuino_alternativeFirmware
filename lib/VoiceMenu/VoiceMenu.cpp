@@ -8,9 +8,9 @@ VoiceMenu::~VoiceMenu()
     }
 }
 
-void VoiceMenu::setInputState(InputState inputState)
+void VoiceMenu::setUserInput(UserInput::eUserRequest input)
 {
-    m_inputState = inputState;
+    m_userInput = input;
 }
 
 bool VoiceMenu::isActive()
@@ -23,18 +23,10 @@ bool VoiceMenu::isActive()
     return result;
 }
 
-bool VoiceMenu::isComplete()
-{
-    bool result{false};
-    if (m_pMenuInstance != nullptr)
-    {
-        result = m_pMenuInstance->isComplete();
-    }
-    return result;
-}
-
 void VoiceMenu::loop()
 {
+    getTagState();
+
     if (!isActive())
     {
         checkEnterLinkMenu();
@@ -44,27 +36,35 @@ void VoiceMenu::loop()
     if (isActive())
     {
         dispatchInputs();
-        checkPlayPrompt();
-        checkPlayFolderPreview();
+        m_pMenuInstance->run();
         checkLeaveMenu();
     }
 }
 
+void VoiceMenu::getTagState()
+{
+    m_tagState = m_pNfcControl->get_tag_presence();
+}
+
 void VoiceMenu::checkEnterLinkMenu()
 {
-    if (m_inputState.tagState == Nfc_interface::NEW_UNKNOWN_TAG)
+    if (m_tagState == Nfc_interface::NEW_UNKNOWN_TAG)
     {
-        m_pMenuInstance = Menu_factory::getInstance(Menu_factory::LINK_MENU, m_pNfcControl);
+        m_pMenuInstance = Menu_factory::getInstance(Menu_factory::LINK_MENU,
+                                                    m_pNfcControl,
+                                                    m_pPromptPlayer);
         m_pMenuInstance->confirm();
     }
 }
 
 void VoiceMenu::checkEnterDeleteMenu()
 {
-    if (m_inputState.tagState == Nfc_interface::ACTIVE_KNOWN_TAG &&
-        m_inputState.btnState == UserInput::PP_LONGPRESS)
+    if (m_tagState == Nfc_interface::ACTIVE_KNOWN_TAG &&
+        m_userInput == UserInput::PP_LONGPRESS)
     {
-        m_pMenuInstance = Menu_factory::getInstance(Menu_factory::DELETE_MENU, m_pNfcControl);
+        m_pMenuInstance = Menu_factory::getInstance(Menu_factory::DELETE_MENU,
+                                                    m_pNfcControl,
+                                                    m_pPromptPlayer);
         m_pMenuInstance->confirm();
     }
 }
@@ -75,22 +75,6 @@ void VoiceMenu::checkLeaveMenu()
     {
         delete m_pMenuInstance;
         m_pMenuInstance = nullptr;
-        // TODO: make Nfc save folder info to Tag
-    }
-}
-
-void VoiceMenu::checkPlayPrompt()
-{
-    VoicePrompt prompt = m_pMenuInstance->getPrompt();
-    m_pPromptPlayer->checkPlayPrompt(prompt);
-}
-
-void VoiceMenu::checkPlayFolderPreview()
-{
-    if (m_pMenuInstance->isPreviewAvailable())
-    {
-        Folder previewFolder = m_pMenuInstance->getFolderInformation();
-        m_pPromptPlayer->playFolderPreview(previewFolder);
     }
 }
 
@@ -101,19 +85,16 @@ void VoiceMenu::dispatchInputs()
         {
             //NOAC,     PL_PS,     PP_LP,     NEXT_,     PREV_,     INC_V,     DEC_V,
             &VM::none, &VM::conf, &VM::abrt, &VM::next, &VM::prev, &VM::none, &VM::none};
-    dispatcher dispatchExecutor = dispatchTable[m_inputState.btnState];
+    dispatcher dispatchExecutor = dispatchTable[m_userInput];
     (this->*dispatchExecutor)();
 }
 
-/*
-
-void VoiceMenu::checkPlayPrompt()
+bool VoiceMenu::isComplete()
 {
-    Menu_interface::VoicePrompt prompt = m_pMenuInstance.getPrompt();
-    m_Mp3Ctrl.playSpecificFile(prompt.promptId);
-    if (!prompt.allowSkip)
+    bool result{false};
+    if (m_pMenuInstance != nullptr)
     {
-        m_Mp3Ctrl.dontSkipCurrentTrack();
+        result = m_pMenuInstance->isComplete();
     }
+    return result;
 }
-*/

@@ -3,55 +3,40 @@
 void DeleteMenu::confirm()
 {
     m_menuState.confirm();
-
-    updatePrompt(m_menuState.getMenuStateMessage());
 }
 
 void DeleteMenu::abort()
 {
     m_menuState.abort();
-
-    updatePrompt(MSG_ABORTED);
 }
 
-void DeleteMenu::updateTagState(Nfc_interface::eTagState &tagState)
+void DeleteMenu::selectNext()
 {
-    setTagState(tagState);
-    tagState = getLockState();
+    return;
 }
 
-void DeleteMenu::setTagState(Nfc_interface::eTagState &tagState)
+void DeleteMenu::selectPrev()
 {
-    m_tagState = tagState;
+    return;
 }
 
-Nfc_interface::eTagState DeleteMenu::getLockState()
+void DeleteMenu::run()
 {
-    if (m_menuState.getMenuStateMessage() && !isComplete())
-    {
-        handleTagStateChanges();
-        return Nfc_interface::DELETE_TAG_MENU;
-    }
-
-    return m_tagState;
+    handleTagStateChanges();
+    playPrompt();
+    playPreview();
 }
 
 void DeleteMenu::handleTagStateChanges()
 {
     // tag to delete detected
-    if (m_tagState == Nfc_interface::NEW_REGISTERED_TAG)
+    if (m_pNfcControl->get_tag_presence() == Nfc_interface::NEW_REGISTERED_TAG)
     {
         m_menuState.setTagToDeleteDetected();
-        updatePrompt(m_menuState.getMenuStateMessage());
     }
 }
 
-void DeleteMenu::updatePrompt(uint16_t id)
-{
-    m_prompt.promptId = id;
-    m_prompt.allowSkip = true;
-}
-
+// TODO: SOLVE ON LOWER LEVEL
 bool DeleteMenu::isActive()
 {
     return (m_menuState.getMenuStateMessage() != 0);
@@ -59,11 +44,25 @@ bool DeleteMenu::isActive()
 
 bool DeleteMenu::isComplete()
 {
-    return (m_menuState.getMenuStateMessage() == MSG_TAGCONFSUCCESS);
+    return(m_menuState.getMenuStateMessage() == MSG_TAGCONFSUCCESS);
 }
 
-bool DeleteMenu::isPreviewAvailable()
+void DeleteMenu::playPrompt()
 {
-    // preview only when card to be deleted is placed
-    return (m_menuState.getMenuStateMessage() == MSG_CONFIRM_DELETION);
+    m_prompt.promptId = m_menuState.getMenuStateMessage();
+    m_prompt.allowSkip = true;
+    m_pPromptPlayer->checkPlayPrompt(m_prompt);
+}
+
+
+void DeleteMenu::playPreview()
+{
+    if (m_menuState.getMenuStateMessage() == MSG_CONFIRM_DELETION)
+    {
+        Folder preview;
+        if (m_pNfcControl->read_folder_from_card(preview))
+        {
+            m_pPromptPlayer->playFolderPreview(preview);
+        }
+    }
 }

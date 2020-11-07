@@ -1,23 +1,22 @@
 #ifndef VOICEMENU_H
 #define VOICEMENU_H
 
+
+
 #include "../UserInput/UserInput_interface/UserInput_interface.h"
 #include "../Nfc/Nfc_interface/Nfc_interface.h"
-
-#include "PromptPlayer/PromptPlayer_interface.h"
 #include "../Utilities/SimpleTimer.h"
 
 #include "Menu_implementation.h"
 
-struct InputState
-{
-    UserInput::eUserRequest btnState{UserInput::NO_ACTION};
-    Nfc_interface::eTagState tagState{Nfc_interface::NO_TAG};
-};
+class NfcControl_interface;
+class PromptPlayer_interface;
 
+// Owns the concrete voice menu instance using a factory.
+// Handles creation, their instatiation and destruction.
+// Dispatches input commands to the menu instance.
 class VoiceMenu
 {
-    
 public:
     VoiceMenu(PromptPlayer_interface *promptPlayer,
               NfcControl_interface *nfcCtrl,
@@ -27,31 +26,25 @@ public:
     ~VoiceMenu();
 
 public:
-    void setInputState(InputState inputState);
+    void setUserInput(UserInput::eUserRequest input);
     bool isActive();
     void loop();
 
 private:
-    bool isComplete();
+    void getTagState();
     void checkEnterLinkMenu();
     void checkEnterDeleteMenu();
     void checkLeaveMenu();
-    void checkPlayPrompt();
-    void checkPlayFolderPreview();
 
+    bool isComplete();
     void dispatchInputs();
-    
-    //void playPrompt();
-    //void playPreview(Folder &previewFolder);
 
-
-// dispatch specific methods
+    // dispatch specific methods
     void none() { return; };
     void conf() { m_pMenuInstance->confirm(); };
     void abrt() { m_pMenuInstance->abort(); };
     void next() { m_pMenuInstance->selectNext(); };
     void prev() { m_pMenuInstance->selectPrev(); };
-
 
 private:
     NfcControl_interface *m_pNfcControl{nullptr};
@@ -60,8 +53,10 @@ private:
 
     typedef void (VoiceMenu::*dispatcher)(); // table of function pointers
 
-    InputState m_inputState{};
-    Menu_interface *m_pMenuInstance{nullptr};    
+    UserInput::eUserRequest m_userInput{UserInput::NO_ACTION};
+    Nfc_interface::eTagState m_tagState{Nfc_interface::NO_TAG};
+    
+    Menu_interface *m_pMenuInstance{nullptr};
 };
 
 #endif // VOICEMENU_H

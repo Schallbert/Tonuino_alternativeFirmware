@@ -16,15 +16,14 @@ public:
 
     uint16_t getMenuStateMessage();
     uint16_t getCurrentSelection();
-    Folder getSavedSelection();
+    Folder getResult();
+    Folder getPreview();
 
 private:
     void initFolderIdSelection();
     void saveFolderIdSelection();
     void initPlayModeSelection();
     void savePlayModeSelection();
-
-    void createFolderPreview();
 
 private:
     static const uint16_t START_OPTION_FOLDERID = 0;

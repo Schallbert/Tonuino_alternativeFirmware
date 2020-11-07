@@ -32,25 +32,10 @@ void LinkMenu::selectPrev()
     m_prompt.allowSkip = false; // as preview will be played right afterwards
 }
 
-void LinkMenu::updateTagState(Nfc_interface::eTagState &tagState)
+void LinkMenu::run()
 {
-    setTagState(tagState);
-    tagState = getLockState();
-}
-
-void LinkMenu::setTagState(Nfc_interface::eTagState &tagState)
-{
-    m_tagState = tagState;
-}
-
-Nfc_interface::eTagState LinkMenu::getLockState()
-{
-    if (m_menuState.getMenuStateMessage() && !isComplete())
-    {
-        return Nfc_interface::NEW_UNKNOWN_TAG;
-    }
-
-    return m_tagState;
+    playPrompt();
+    playPreview();
 }
 
 bool LinkMenu::isActive()
@@ -63,13 +48,13 @@ bool LinkMenu::isComplete()
     return (m_menuState.getMenuStateMessage() == MSG_TAGCONFSUCCESS);
 }
 
-Folder LinkMenu::getFolderInformation()
+void LinkMenu::playPrompt()
 {
-    return m_menuState.getSavedSelection();
+    m_pPromptPlayer->checkPlayPrompt(m_prompt);
 }
 
-bool LinkMenu::isPreviewAvailable()
+void LinkMenu::playPreview()
 {
-    // preview only availalbe in folderSelect mode
-    return (m_menuState.getMenuStateMessage() == MSG_SELECT_FOLDERID);
+        Folder preview = m_menuState.getPreview();
+        m_pPromptPlayer->playFolderPreview(preview);
 }
