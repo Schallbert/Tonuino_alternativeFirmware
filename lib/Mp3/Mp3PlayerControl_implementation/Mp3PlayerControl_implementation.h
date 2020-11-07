@@ -5,6 +5,7 @@
 
 #include "../Mp3PlayerControl_interface/Mp3PlayerControl_interface.h"
 #include "../Mp3/DFMiniMp3_interface/DFMiniMp3_interface.h"
+#include "../Folder/Folder.h"
 
 #include "../Config/Tonuino_config.h"
 #include "../Config/Arduino_config.h"

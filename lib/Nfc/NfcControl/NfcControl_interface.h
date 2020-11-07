@@ -2,7 +2,8 @@
 #define NFCCONTROL_INTERFACE_H
 
 #include "../Nfc_interface/Nfc_interface.h"
-#include "Folder.h"
+
+class Folder;
 
 // this object stores nfc tag data
 class NfcControl_interface

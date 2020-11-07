@@ -3,7 +3,7 @@
 
 #include <gmock/gmock.h>
 
-#include "../VoiceMenu/PromptPlayer/PromptPlayer_interface.h"
+#include "../Mp3/PromptPlayer/PromptPlayer_interface.h"
 
 class Mock_PromptPlayer : public PromptPlayer_interface
 {

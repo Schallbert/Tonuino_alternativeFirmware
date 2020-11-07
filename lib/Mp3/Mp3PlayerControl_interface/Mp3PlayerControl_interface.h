@@ -1,7 +1,9 @@
 #ifndef MP3PLAYERCONTROL_INTERFACE_H
 #define MP3PLAYERCONTROL_INTERFACE_H
 
-#include "Folder.h" 
+#include "../Arduino/Arduino_interface/Arduino_types.h"
+
+class Folder;
 
 struct VoicePrompt
     {
