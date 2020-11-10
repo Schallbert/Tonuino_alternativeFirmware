@@ -18,7 +18,7 @@ void DeleteMenu_StateManager::confirm()
 void DeleteMenu_StateManager::abort()
 {
     tagToDeleteDetected = false;
-    menuState = ABORTED;
+    menuState = NO_MENU;
 }
 
 void DeleteMenu_StateManager::setTagToDeleteDetected()

@@ -8,6 +8,7 @@ void DeleteMenu::confirm()
 void DeleteMenu::abort()
 {
     m_menuState.abort();
+    m_prompt.promptId = MSG_ABORTED;
 }
 
 void DeleteMenu::selectNext()
@@ -36,7 +37,6 @@ void DeleteMenu::handleTagStateChanges()
     }
 }
 
-// TODO: SOLVE ON LOWER LEVEL
 bool DeleteMenu::isActive()
 {
     return (m_menuState.getMenuStateMessage() != 0);
