@@ -1,8 +1,8 @@
-#if 0
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 #include "mocks/unittest_NfcControl_mocks.h"
+#include "mocks/unittest_PromptPlayer_mocks.h"
 
 #include "Menu_implementation.h"
 
@@ -11,7 +11,9 @@ class LinkMenuTest : public ::testing::Test
 protected:
     virtual void SetUp()
     {
-        linkMenu = Menu_factory::getInstance(Menu_factory::LINK_MENU, &m_nfcControlMock);
+        linkMenu = Menu_factory::getInstance(Menu_factory::LINK_MENU,
+                                             &m_nfcControlMock,
+                                             &m_promptPlayerMock);
     }
 
     virtual void TearDown()
@@ -22,6 +24,7 @@ protected:
 protected:
     Menu_interface *linkMenu{nullptr};
     NiceMock<Mock_NfcControl> m_nfcControlMock{};
+    NiceMock<Mock_PromptPlayer> m_promptPlayerMock{};
 };
 
 // INIT() ------------------------------------------------------
@@ -44,6 +47,33 @@ TEST_F(LinkMenuTest, entered_abort_isActive_returnsFalse)
 
     ASSERT_FALSE(linkMenu->isActive());
 }
+
+TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_isComplete_returnsTrue)
+{
+    // enter, select folderId1, saveFolderId
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+
+    ASSERT_TRUE(linkMenu->isComplete());
+}
+
+TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_isActive_returnsTrue)
+{
+    // enter, select folderId1, saveFolderId
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+
+    ASSERT_TRUE(linkMenu->isActive());
+}
+
+/*
+
 
 TEST_F(LinkMenuTest, noInit_noPromptSet)
 {
@@ -230,30 +260,6 @@ TEST_F(LinkMenuTest, selectFolderIdAndPlayMode_getPreview_returnsInvalidFolder)
     ASSERT_FALSE(testFolder.is_valid());
 }
 
-TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_isComplete_returnsTrue)
-{
-    // enter, select folderId1, saveFolderId
-    linkMenu->confirm();
-    linkMenu->selectNext();
-    linkMenu->confirm();
-    linkMenu->selectNext();
-    linkMenu->confirm();
-
-    ASSERT_TRUE(linkMenu->isComplete());
-}
-
-TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_isActive_returnsTrue)
-{
-    // enter, select folderId1, saveFolderId
-    linkMenu->confirm();
-    linkMenu->selectNext();
-    linkMenu->confirm();
-    linkMenu->selectNext();
-    linkMenu->confirm();
-
-    ASSERT_TRUE(linkMenu->isActive());
-}
-
 TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_getPreview_returnsValidFolder)
 {
     // enter, select folderId1, saveFolderId
@@ -376,49 +382,4 @@ TEST_F(LinkMenuTest, menuComplete_isPeviewAvailable_returnsFalse)
 
     ASSERT_FALSE(linkMenu->isPreviewAvailable());
 }
-
-TEST_F(LinkMenuTest, noInit_lockInLinkMenu_notLocked)
-{
-    Nfc_interface::eTagState tagState = Nfc_interface::NO_TAG;
-
-    linkMenu->updateTagState(tagState);
-
-    ASSERT_EQ(tagState, Nfc_interface::NO_TAG);
-}
-
-TEST_F(LinkMenuTest, entered_lockInLinkMenu_locked)
-{
-    Nfc_interface::eTagState tagState = Nfc_interface::NO_TAG;
-
-    linkMenu->confirm();
-    linkMenu->updateTagState(tagState);
-
-    ASSERT_EQ(tagState, Nfc_interface::NEW_UNKNOWN_TAG);
-}
-
-TEST_F(LinkMenuTest, menuComplete_lockInLinkMenu_unLocked)
-{
-    Nfc_interface::eTagState tagState = Nfc_interface::NO_TAG;
-
-    linkMenu->confirm(); // enter
-    linkMenu->confirm(); // folderId selected
-    linkMenu->confirm(); // playMode selected: complete
-
-    linkMenu->updateTagState(tagState);
-
-    ASSERT_EQ(tagState, Nfc_interface::NO_TAG);
-}
-
-TEST_F(LinkMenuTest, menuAbort_lockInLinkMenu_unLocked)
-{
-    Nfc_interface::eTagState tagState = Nfc_interface::NO_TAG;
-
-    linkMenu->confirm(); // enter
-    linkMenu->confirm(); // folderId selected
-    linkMenu->abort();
-
-    linkMenu->updateTagState(tagState);
-
-    ASSERT_EQ(tagState, Nfc_interface::NO_TAG);
-}
-#endif
+*/
