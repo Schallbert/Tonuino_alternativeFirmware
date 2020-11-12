@@ -80,7 +80,7 @@ bool Folder::is_valid()
     }
     return false;
 }
-bool Folder::is_initiated()
+bool Folder::is_initiated() const
 {
     return (m_ui8FolderId && m_ui8TrackCount && m_ePlayMode != Folder::UNDEFINED);
 }
@@ -103,7 +103,7 @@ bool Folder::is_trackQueue_set()
     return (m_pTrackQueue != nullptr);
 }
 
-uint8_t Folder::get_folder_id()
+uint8_t Folder::get_folder_id() const
 {
     return m_ui8FolderId;
 }
@@ -169,11 +169,11 @@ uint8_t Folder::get_prev_track()
     return m_pTrackQueue[m_ui8CurrentQueueEntry];
 }
 
-Folder::ePlayMode Folder::get_play_mode()
+Folder::ePlayMode Folder::get_play_mode() const 
 {
     return m_ePlayMode;
 }
-uint8_t Folder::get_track_count()
+uint8_t Folder::get_track_count() const
 {
     return m_ui8TrackCount;
 }
