@@ -32,7 +32,7 @@ void LinkMenu::selectPrev()
     m_prompt.allowSkip = false; // as preview will be played right afterwards
 }
 
-void LinkMenu::run()
+void LinkMenu::handlePlayback()
 {
     playPrompt();
     playPreview();

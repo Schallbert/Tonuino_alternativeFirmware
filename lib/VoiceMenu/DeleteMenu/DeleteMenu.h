@@ -20,7 +20,7 @@ public:
                                                         m_pPromptPlayer(pPromptPlayer){};
 
 public:
-    void run() override;
+    void handlePlayback() override;
 
     void confirm() override;
     void abort() override;

@@ -21,7 +21,7 @@ void DeleteMenu::selectPrev()
     return;
 }
 
-void DeleteMenu::run()
+void DeleteMenu::handlePlayback()
 {
     handleTagStateChanges();
     playPrompt();

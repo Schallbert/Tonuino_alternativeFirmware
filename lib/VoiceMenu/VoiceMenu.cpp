@@ -36,7 +36,7 @@ void VoiceMenu::loop()
     if (isActive())
     {
         dispatchInputs();
-        m_pMenuInstance->run();
+        m_pMenuInstance->handlePlayback();
         checkLeaveMenu();
     }
 }

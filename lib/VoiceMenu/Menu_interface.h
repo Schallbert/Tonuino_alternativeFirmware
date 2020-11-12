@@ -6,7 +6,7 @@ class Menu_interface
 
 public:
     // Handler
-    virtual void run() = 0;
+    virtual void handlePlayback() = 0;
 
     // Events
     virtual void confirm() = 0;
