@@ -9,7 +9,7 @@
 class Mock_PromptPlayer : public PromptPlayer_interface
 {
     public:
-    MOCK_METHOD(void, checkPlayPrompt, (VoicePrompt &prompt), (override));
+    MOCK_METHOD(void, playPrompt, (VoicePrompt &prompt), (override));
     MOCK_METHOD(void, playFolderPreview, (Folder previewFolder), (override));
 };
 

@@ -140,8 +140,8 @@ TEST_F(VoiceMenuTest, initLinkMenu_loop_invokesPlayPrompt)
 
     m_pVoiceMenu->setUserInput(input);
 
-    //EXPECT_CALL(m_promptPlayerMock, checkPlayPrompt(PromptIdsAreEqual(selFolderId)));
-    EXPECT_CALL(m_promptPlayerMock, checkPlayPrompt(_));
+    //EXPECT_CALL(m_promptPlayerMock, playPrompt(PromptIdsAreEqual(selFolderId)));
+    EXPECT_CALL(m_promptPlayerMock, playPrompt(_));
 
     m_pVoiceMenu->loop();
 }
@@ -170,7 +170,7 @@ TEST_F(VoiceMenuTest, initDeleteMenu_loop_invokesplayPrompt)
 
     m_pVoiceMenu->setUserInput(input);
 
-    EXPECT_CALL(m_promptPlayerMock, checkPlayPrompt(_));
+    EXPECT_CALL(m_promptPlayerMock, playPrompt(_));
 
     m_pVoiceMenu->loop();
 }

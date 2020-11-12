@@ -51,7 +51,7 @@ void DeleteMenu::playPrompt()
 {
     m_prompt.promptId = m_menuState.getMenuStateMessage();
     m_prompt.allowSkip = true;
-    m_pPromptPlayer->checkPlayPrompt(m_prompt);
+    m_pPromptPlayer->playPrompt(m_prompt);
 }
 
 

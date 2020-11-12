@@ -50,7 +50,7 @@ bool LinkMenu::isComplete()
 
 void LinkMenu::playPrompt()
 {
-    m_pPromptPlayer->checkPlayPrompt(m_prompt);
+    m_pPromptPlayer->playPrompt(m_prompt);
 }
 
 void LinkMenu::playPreview()
