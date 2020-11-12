@@ -27,6 +27,30 @@ protected:
     NiceMock<Mock_PromptPlayer> m_promptPlayerMock{};
 };
 
+MATCHER(invalidPrompt, "")
+{
+    return (arg.promptId == 0);
+}
+
+MATCHER_P(identicalPrompt, comp, "")
+{
+    return (
+        (arg.promptId == comp.promptId) &&
+        (arg.allowSkip == comp.allowSkip));
+}
+
+MATCHER(invalidFolder, "")
+{
+    return (!arg.is_initiated());
+}
+
+MATCHER_P(identicalFolder, comp, "")
+{
+    return ((arg.get_folder_id() == comp.get_folder_id()) &&
+            (arg.get_play_mode() == comp.get_play_mode()) &&
+            (arg.get_track_count() == comp.get_track_count()));
+}
+
 // INIT() ------------------------------------------------------
 TEST_F(LinkMenuTest, noInit_isActive_returnsFalse)
 {
@@ -72,120 +96,143 @@ TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_isActive_returnsTrue)
     ASSERT_TRUE(linkMenu->isActive());
 }
 
-/*
-
-
 TEST_F(LinkMenuTest, noInit_noPromptSet)
 {
-    ASSERT_EQ((linkMenu->getPrompt()).promptId, 0);
+    EXPECT_CALL(m_promptPlayerMock, playPrompt(invalidPrompt()));
+    linkMenu->handlePlayback();
 }
 
 TEST_F(LinkMenuTest, selectFolderId_noSelection_getPrompt_FolderIdAndAllowSkip)
 {
+    VoicePrompt expect{};
+    expect.promptId = MSG_SELECT_FOLDERID;
+    expect.allowSkip = true;
+
     linkMenu->confirm();
-    VoicePrompt result = linkMenu->getPrompt();
-    EXPECT_EQ(result.promptId, MSG_SELECT_FOLDERID);
-    EXPECT_EQ(result.allowSkip, true);
+
+    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    linkMenu->handlePlayback();
 }
 
 TEST_F(LinkMenuTest, selectPlayMode_noSelection_getPrompt_PlayModeAndAllowSkip)
 {
+    VoicePrompt expect{};
+    expect.promptId = MSG_SELECT_PLAYMODE;
+    expect.allowSkip = true;
+
     linkMenu->confirm();
     linkMenu->confirm();
-    VoicePrompt result = linkMenu->getPrompt();
-    EXPECT_EQ(result.promptId, MSG_SELECT_PLAYMODE);
-    EXPECT_EQ(result.allowSkip, true);
+
+    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    linkMenu->handlePlayback();
 }
 
 TEST_F(LinkMenuTest, menuComplete_noSelection_getPrompt_TagConfigSuccess)
 {
+    VoicePrompt expect{};
+    expect.promptId = MSG_TAGCONFSUCCESS;
+    expect.allowSkip = true;
+
     linkMenu->confirm();
     linkMenu->confirm();
     linkMenu->confirm();
-    VoicePrompt result = linkMenu->getPrompt();
-    EXPECT_EQ(result.promptId, MSG_TAGCONFSUCCESS);
-    EXPECT_EQ(result.allowSkip, true);
+
+    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    linkMenu->handlePlayback();
 }
 
-TEST_F(LinkMenuTest, menuComplete_noSelection_confirmAgainAndGetPrompt_TagConfigSuccess)
+TEST_F(LinkMenuTest, menuComplete_noSelection_confirmAgainAndGetPrompt_noPromptSet)
 {
     linkMenu->confirm();
     linkMenu->confirm();
     linkMenu->confirm();
     linkMenu->confirm();
-    VoicePrompt result = linkMenu->getPrompt();
-    EXPECT_EQ(result.promptId, 0);
-    EXPECT_EQ(result.allowSkip, true);
+
+    EXPECT_CALL(m_promptPlayerMock, playPrompt(invalidPrompt()));
+    linkMenu->handlePlayback();
 }
 
 TEST_F(LinkMenuTest, selectFolderId1_getPrompt_returns1)
 {
+    VoicePrompt expect{};
+    expect.promptId = 1;
+    expect.allowSkip = false;
+
     linkMenu->confirm();
     linkMenu->selectNext();
 
-    VoicePrompt result = linkMenu->getPrompt();
-    EXPECT_EQ(result.promptId, 1);
-    EXPECT_EQ(result.allowSkip, false);
+    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    linkMenu->handlePlayback();
 }
 
 TEST_F(LinkMenuTest, selectFolderIdMAX_getPrompt_returnsMAX)
 {
+    VoicePrompt expect{};
+    expect.promptId = MAXFOLDERCOUNT;
+    expect.allowSkip = false;
+
     linkMenu->confirm();
     linkMenu->selectPrev();
 
-    VoicePrompt result = linkMenu->getPrompt();
-    EXPECT_EQ(result.promptId, MAXFOLDERCOUNT);
-    EXPECT_EQ(result.allowSkip, false);
+    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    linkMenu->handlePlayback();
 }
 
 TEST_F(LinkMenuTest, selectPlayMode1_getPrompt_returnsLULLABYE)
 {
+    VoicePrompt expect{};
+    expect.promptId = MSG_SELECT_PLAYMODE + static_cast<uint16_t>(Folder::LULLABYE);
+    expect.allowSkip = false;
+
     linkMenu->confirm();
     linkMenu->confirm();
     linkMenu->selectNext();
 
-    VoicePrompt result = linkMenu->getPrompt();
-    EXPECT_EQ(result.promptId, MSG_SELECT_PLAYMODE + static_cast<uint16_t>(Folder::LULLABYE));
-    EXPECT_EQ(result.allowSkip, false);
+    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    linkMenu->handlePlayback();
 }
 
 TEST_F(LinkMenuTest, selectPlayModeMAX_getPrompt_returnsONELARGETRACK)
 {
+    VoicePrompt expect{};
+    expect.promptId = MSG_SELECT_PLAYMODE + static_cast<uint16_t>(Folder::ONELARGETRACK);
+    expect.allowSkip = false;
+
     linkMenu->confirm();
     linkMenu->confirm();
     linkMenu->selectPrev();
 
-    VoicePrompt result = linkMenu->getPrompt();
-    EXPECT_EQ(result.promptId, MSG_SELECT_PLAYMODE + static_cast<uint16_t>(Folder::ONELARGETRACK));
-    EXPECT_EQ(result.allowSkip, false);
+    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    linkMenu->handlePlayback();
 }
 
-TEST_F(LinkMenuTest, selectPlayMode_testRollover_getPrompt_returnsONELARGETRACK)
+TEST_F(LinkMenuTest, selectPlayMode_testRollover_getPrompt_returnsSAVEPROGRESS)
 {
+    VoicePrompt expect{};
+    expect.promptId = MSG_SELECT_PLAYMODE + static_cast<uint16_t>(Folder::SAVEPROGRESS);
+    expect.allowSkip = false;
+
     linkMenu->confirm();
     linkMenu->confirm();
     linkMenu->selectPrev();
     linkMenu->selectPrev();
 
-    VoicePrompt result = linkMenu->getPrompt();
-    EXPECT_EQ(result.promptId, MSG_SELECT_PLAYMODE + static_cast<uint16_t>(Folder::SAVEPROGRESS));
-    EXPECT_EQ(result.allowSkip, false);
+    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    linkMenu->handlePlayback();
 }
 
 TEST_F(LinkMenuTest, noInit_getPreview_returnsInvalidFolder)
 {
-    Folder testFolder = linkMenu->getPreview();
-
-    ASSERT_FALSE(testFolder.is_valid());
+    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(invalidFolder()));
+    linkMenu->handlePlayback();
 }
 
 TEST_F(LinkMenuTest, selectFolderId_noSelection_getPreview_returnsInvalidFolder)
 {
     linkMenu->confirm();
 
-    Folder testFolder = linkMenu->getPreview();
-
-    ASSERT_FALSE(testFolder.is_valid());
+    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(invalidFolder()));
+    linkMenu->handlePlayback();
 }
 
 TEST_F(LinkMenuTest, selectPlayMode_noSelection_getPreview_returnsInvalidFolder)
@@ -193,9 +240,8 @@ TEST_F(LinkMenuTest, selectPlayMode_noSelection_getPreview_returnsInvalidFolder)
     linkMenu->confirm();
     linkMenu->confirm();
 
-    Folder testFolder = linkMenu->getPreview();
-
-    ASSERT_FALSE(testFolder.is_valid());
+    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(invalidFolder()));
+    linkMenu->handlePlayback();
 }
 
 TEST_F(LinkMenuTest, confirm3x_getPreview_returnsInvalidFolder)
@@ -204,23 +250,22 @@ TEST_F(LinkMenuTest, confirm3x_getPreview_returnsInvalidFolder)
     linkMenu->confirm();
     linkMenu->confirm();
 
-    Folder testFolder = linkMenu->getPreview();
-
-    ASSERT_FALSE(testFolder.is_valid());
+    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(invalidFolder()));
+    linkMenu->handlePlayback();
 }
 
 TEST_F(LinkMenuTest, selectFolderId1_getPreview_returnsPreviewFolder1)
 {
+    Folder expect{Folder(1, Folder::ONELARGETRACK, 1)};
+
     linkMenu->confirm();
     linkMenu->selectNext();
 
-    Folder testFolder = linkMenu->getPreview();
-
-    ASSERT_EQ(testFolder.get_folder_id(), 1);
-    ASSERT_EQ(testFolder.get_play_mode(), Folder::ONELARGETRACK);
-    ASSERT_EQ(testFolder.get_track_count(), 1);
+    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(identicalFolder(expect)));
+    linkMenu->handlePlayback();
 }
 
+#if 0
 TEST_F(LinkMenuTest, selectFolderIdMAX_getPreview_returnsPreviewFolderMAX)
 {
     linkMenu->confirm();
@@ -382,4 +427,4 @@ TEST_F(LinkMenuTest, menuComplete_isPeviewAvailable_returnsFalse)
 
     ASSERT_FALSE(linkMenu->isPreviewAvailable());
 }
-*/
+#endif

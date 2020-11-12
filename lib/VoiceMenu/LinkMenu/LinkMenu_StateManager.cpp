@@ -34,13 +34,11 @@ void LinkMenu_StateManager::MenuOptions::decrementSelection()
     }
 }
 
-
 void LinkMenu_StateManager::MenuSelection::reset()
 {
     folderId = 0;
     playMode = Folder::UNDEFINED;
 }
-
 
 void LinkMenu_StateManager::confirm()
 {
@@ -126,11 +124,11 @@ Folder LinkMenu_StateManager::getPreview()
 {
     // returns invalid folder if no preview is available
     Folder preview;
-     if(menuState == FOLDERID_SELECT)
+    if (menuState == FOLDERID_SELECT)
     {
         uint8_t folderId = static_cast<uint8_t>(options.getSelection() & 0xFF);
         Folder::ePlayMode playMode = Folder::ONELARGETRACK;
         preview = Folder(folderId, playMode, 1);
-    }   
+    }
     return preview;
 }
