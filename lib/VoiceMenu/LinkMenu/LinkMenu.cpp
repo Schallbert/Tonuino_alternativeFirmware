@@ -56,5 +56,8 @@ void LinkMenu::playPrompt()
 void LinkMenu::playPreview()
 {
         Folder preview = m_menuState.getPreview();
-        m_pPromptPlayer->playFolderPreview(preview);
+        if(preview.is_initiated())
+        {
+             m_pPromptPlayer->playFolderPreview(preview);
+        }
 }

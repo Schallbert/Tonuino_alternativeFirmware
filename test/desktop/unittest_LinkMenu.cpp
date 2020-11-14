@@ -289,40 +289,6 @@ TEST_F(LinkMenuTest, menuCompleted_abort_promptsAborted)
 }
 
 // Folder Preview Tests
-
-TEST_F(LinkMenuTest, noInit_getPreview_returnsInvalidFolder)
-{
-    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(invalidFolder()));
-    linkMenu->handlePlayback();
-}
-
-TEST_F(LinkMenuTest, selectFolderId_noSelection_getPreview_returnsInvalidFolder)
-{
-    linkMenu->confirm();
-
-    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(invalidFolder()));
-    linkMenu->handlePlayback();
-}
-
-TEST_F(LinkMenuTest, selectPlayMode_noSelection_getPreview_returnsInvalidFolder)
-{
-    linkMenu->confirm();
-    linkMenu->confirm();
-
-    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(invalidFolder()));
-    linkMenu->handlePlayback();
-}
-
-TEST_F(LinkMenuTest, confirm3x_getPreview_returnsInvalidFolder)
-{
-    linkMenu->confirm();
-    linkMenu->confirm();
-    linkMenu->confirm();
-
-    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(invalidFolder()));
-    linkMenu->handlePlayback();
-}
-
 TEST_F(LinkMenuTest, selectFolderId1_getPreview_returnsPreviewFolder1)
 {
     Folder expect{Folder(1, Folder::ONELARGETRACK, 1)};
@@ -342,75 +308,5 @@ TEST_F(LinkMenuTest, selectFolderIdMAX_getPreview_returnsPreviewFolderMAX)
     linkMenu->selectPrev();
 
     EXPECT_CALL(m_promptPlayerMock, playFolderPreview(identicalFolder(expect)));
-    linkMenu->handlePlayback();
-}
-
-TEST_F(LinkMenuTest, selectFolderId1_confirm_getPreview_returnsInvalidFolder)
-{
-    // enter, select folderId1, saveFolderId
-    linkMenu->confirm();
-    linkMenu->selectNext();
-    linkMenu->confirm();
-
-    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(invalidFolder()));
-    linkMenu->handlePlayback();
-}
-
-TEST_F(LinkMenuTest, selectFolderIdAndPlayMode_getPreview_returnsInvalidFolder)
-{
-    // enter, select folderId1, saveFolderId
-    linkMenu->confirm();
-    linkMenu->selectNext();
-    linkMenu->confirm();
-    linkMenu->selectNext();
-
-    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(invalidFolder()));
-    linkMenu->handlePlayback();
-}
-
-TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_getPreview_returnsInvalidFolder)
-{
-    // enter, select folderId1, saveFolderId
-    linkMenu->confirm();
-    linkMenu->selectNext();
-    linkMenu->confirm();
-    linkMenu->selectNext();
-    linkMenu->confirm();
-
-    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(invalidFolder()));
-    linkMenu->handlePlayback();
-}
-
-TEST_F(LinkMenuTest, noInit_abort_getPreview_returnsInvalidFolder)
-{
-    linkMenu->abort();
-
-    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(invalidFolder()));
-    linkMenu->handlePlayback();
-}
-
-TEST_F(LinkMenuTest, folderIdSet_abort_getPreview_returnsInvalidFolder)
-{
-    linkMenu->confirm();
-    linkMenu->selectNext();
-    linkMenu->confirm();
-
-    linkMenu->abort();
-
-    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(invalidFolder()));
-    linkMenu->handlePlayback();
-}
-
-TEST_F(LinkMenuTest, menuComplete_abort_getPreview_returnsInvalidFolder)
-{
-    linkMenu->confirm();
-    linkMenu->selectNext();
-    linkMenu->confirm();
-    linkMenu->selectNext();
-    linkMenu->confirm();
-
-    linkMenu->abort();
-
-   EXPECT_CALL(m_promptPlayerMock, playFolderPreview(invalidFolder()));
     linkMenu->handlePlayback();
 }
