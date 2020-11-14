@@ -381,14 +381,12 @@ TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_getPreview_returnsInvalidFolder)
     linkMenu->handlePlayback();
 }
 
-//////////////////////////////////////
-#if 0
 TEST_F(LinkMenuTest, noInit_abort_getPreview_returnsInvalidFolder)
 {
     linkMenu->abort();
 
-    Folder testFolder = linkMenu->getPreview();
-    ASSERT_FALSE(testFolder.is_valid());
+    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(invalidFolder()));
+    linkMenu->handlePlayback();
 }
 
 TEST_F(LinkMenuTest, folderIdSet_abort_getPreview_returnsInvalidFolder)
@@ -399,8 +397,8 @@ TEST_F(LinkMenuTest, folderIdSet_abort_getPreview_returnsInvalidFolder)
 
     linkMenu->abort();
 
-    Folder testFolder = linkMenu->getPreview();
-    ASSERT_FALSE(testFolder.is_valid());
+    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(invalidFolder()));
+    linkMenu->handlePlayback();
 }
 
 TEST_F(LinkMenuTest, menuComplete_abort_getPreview_returnsInvalidFolder)
@@ -413,40 +411,6 @@ TEST_F(LinkMenuTest, menuComplete_abort_getPreview_returnsInvalidFolder)
 
     linkMenu->abort();
 
-    Folder testFolder = linkMenu->getPreview();
-    ASSERT_FALSE(testFolder.is_valid());
+   EXPECT_CALL(m_promptPlayerMock, playFolderPreview(invalidFolder()));
+    linkMenu->handlePlayback();
 }
-
-TEST_F(LinkMenuTest, noInit_isPeviewAvailable_returnsFalse)
-{
-    ASSERT_FALSE(linkMenu->isPreviewAvailable());
-}
-
-TEST_F(LinkMenuTest, folderIdSelect_isPeviewAvailable_returnsTrue)
-{
-    linkMenu->confirm();
-    linkMenu->selectNext();
-
-    ASSERT_TRUE(linkMenu->isPreviewAvailable());
-}
-
-TEST_F(LinkMenuTest, playModeSelect_isPeviewAvailable_returnsFalse)
-{
-    linkMenu->confirm();
-    linkMenu->selectNext();
-    linkMenu->confirm();
-
-    ASSERT_FALSE(linkMenu->isPreviewAvailable());
-}
-
-TEST_F(LinkMenuTest, menuComplete_isPeviewAvailable_returnsFalse)
-{
-    linkMenu->confirm();
-    linkMenu->selectNext();
-    linkMenu->confirm();
-    linkMenu->selectNext();
-    linkMenu->confirm();
-
-    ASSERT_FALSE(linkMenu->isPreviewAvailable());
-}
-#endif
