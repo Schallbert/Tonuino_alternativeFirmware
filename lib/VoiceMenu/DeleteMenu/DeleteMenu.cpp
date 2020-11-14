@@ -8,7 +8,6 @@ void DeleteMenu::confirm()
 void DeleteMenu::abort()
 {
     m_menuState.abort();
-    m_prompt.promptId = MSG_ABORTED;
 }
 
 void DeleteMenu::selectNext()
@@ -34,17 +33,17 @@ void DeleteMenu::handleTagStateChanges()
     if (m_pNfcControl->get_tag_presence() == Nfc_interface::NEW_REGISTERED_TAG)
     {
         m_menuState.setTagToDeleteDetected();
-    }
+    }  
 }
 
 bool DeleteMenu::isActive()
 {
-    return (m_menuState.getMenuStateMessage() != 0);
+    return m_menuState.isActive();
 }
 
 bool DeleteMenu::isComplete()
 {
-    return(m_menuState.getMenuStateMessage() == MSG_TAGCONFSUCCESS);
+    return m_menuState.isComplete();
 }
 
 void DeleteMenu::playPrompt()
@@ -54,10 +53,9 @@ void DeleteMenu::playPrompt()
     m_pPromptPlayer->playPrompt(m_prompt);
 }
 
-
 void DeleteMenu::playPreview()
 {
-    if (m_menuState.getMenuStateMessage() == MSG_CONFIRM_DELETION)
+    if (m_menuState.isDeletionConfirmed())
     {
         Folder preview;
         if (m_pNfcControl->read_folder_from_card(preview))

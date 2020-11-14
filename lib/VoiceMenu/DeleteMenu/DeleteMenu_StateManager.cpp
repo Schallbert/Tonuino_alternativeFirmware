@@ -2,28 +2,28 @@
 
 void DeleteMenu_StateManager::confirm()
 {
-    switch (menuState)
+    if (menuState == CONFIRM_DELETE)
     {
-    case NO_MENU:
-        initMenu();
-        break;
-    case CONFIRM_DELETE:
         handleDeletionConfirmed();
-        break;
-    default:
-        break;
+    }
+    else
+    {
+        initMenu();
     }
 }
 
 void DeleteMenu_StateManager::abort()
 {
     tagToDeleteDetected = false;
-    menuState = NO_MENU;
+    menuState = ABORTED;
 }
 
 void DeleteMenu_StateManager::setTagToDeleteDetected()
 {
-    menuState = CONFIRM_DELETE;
+    if (menuState == PLACE_TAG_TO_DELETE)
+    {
+        menuState = CONFIRM_DELETE;
+    }
 }
 
 uint16_t DeleteMenu_StateManager::getMenuStateMessage()
@@ -40,4 +40,20 @@ void DeleteMenu_StateManager::initMenu()
 void DeleteMenu_StateManager::handleDeletionConfirmed()
 {
     menuState = COMPLETE;
+}
+
+bool DeleteMenu_StateManager::isActive()
+{
+    return ((menuState != NO_MENU &&
+             menuState != ABORTED));
+}
+
+bool DeleteMenu_StateManager::isComplete()
+{
+    return (menuState == COMPLETE);
+}
+
+bool DeleteMenu_StateManager::isDeletionConfirmed()
+{
+    return (menuState == CONFIRM_DELETE);
 }
