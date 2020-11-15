@@ -17,7 +17,7 @@ System::System()
     // Periphery
     m_pMfrc522 = new MFRC522_implementation();
     m_pNfc = new Nfc_implementation(m_pMfrc522);
-    m_pNfcCtrl = new NfcControl(m_pNfc, m_pArduinoHal->getSerial());
+    m_pNfcControl = new NfcControl(m_pNfc, m_pArduinoHal->getSerial());
     m_pDfMini = new DfMini();
     m_pMp3Ctrl = new Mp3PlayerControl(m_pArduinoHal, m_pDfMini, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
 
@@ -51,7 +51,7 @@ System::~System()
     // delete dependency objects
     delete m_pMfrc522;
     delete m_pNfc;
-    delete m_pNfcCtrl;
+    delete m_pNfcControl;
     delete m_pDfMini;
     delete m_pMp3Ctrl;
     delete m_pMenuTimer;
@@ -67,12 +67,12 @@ System::~System()
 
 bool System::loop()
 {
-    m_inputDispatcher.setTagState(m_pNfcCtrl->get_tag_presence());
+    m_inputDispatcher.setTagState(m_pNfcControl->get_tag_presence());
     m_inputDispatcher.setUserInput(m_UserInput.get_user_request());
     m_inputDispatcher.loop();
 #if DEBUGSERIAL
     m_pMp3Ctrl->print_debug_message();
-    m_pNfcCtrl->print_debug_message();
+    m_pNfcControl->print_debug_message();
     m_inputDispatcher.printDebugMessage();
     //systemCtrl->print_debug_message(); // TODO: IMPLEMENT
 #endif

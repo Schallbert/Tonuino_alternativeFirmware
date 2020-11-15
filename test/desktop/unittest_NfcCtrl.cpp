@@ -18,7 +18,7 @@ protected:
     {
         m_pNfc = new NiceMock<Mock_Nfc>;
         m_pSerial = new NiceMock<Mock_serial>;
-        m_pNfcCtrl = new NfcControl(m_pNfc, m_pSerial);
+        m_pNfcControl = new NfcControl(m_pNfc, m_pSerial);
         m_pTestFolder = new Folder(fakeBufferData[4],
                                    (Folder::ePlayMode)fakeBufferData[5],
                                    fakeBufferData[6]);
@@ -27,7 +27,7 @@ protected:
     virtual void TearDown()
     {
 
-        delete m_pNfcCtrl;
+        delete m_pNfcControl;
         delete m_pNfc;
         delete m_pSerial;
         delete m_pTestFolder;
@@ -36,7 +36,7 @@ protected:
 protected:
     NiceMock<Mock_serial> *m_pSerial{nullptr};
     NiceMock<Mock_Nfc> *m_pNfc{nullptr};
-    NfcControl *m_pNfcCtrl{nullptr};
+    NfcControl *m_pNfcControl{nullptr};
     Folder *m_pTestFolder{nullptr};
 };
 
@@ -55,25 +55,25 @@ TEST_F(NfcCtrlWrite, initNfc_IsCalledOnConstruction)
 {
     Mock_Nfc nfc;
     EXPECT_CALL(nfc, initNfc()).Times(1);
-    NfcControl m_pNfcCtrl(&nfc, m_pSerial);
+    NfcControl m_pNfcControl(&nfc, m_pSerial);
 }
 
 TEST_F(NfcCtrlWrite, invalidFolder_ReturnsFalse)
 {
     Folder incompleteFolder;
-    EXPECT_FALSE(m_pNfcCtrl->write_folder_to_card(incompleteFolder));
+    EXPECT_FALSE(m_pNfcControl->write_folder_to_card(incompleteFolder));
 }
 
 TEST_F(NfcCtrlWrite, validFolder_IsCalled)
 {
     EXPECT_CALL(*m_pNfc, writeTag(_, _)).Times(1);
-    m_pNfcCtrl->write_folder_to_card(*m_pTestFolder);
+    m_pNfcControl->write_folder_to_card(*m_pTestFolder);
 }
 
 TEST_F(NfcCtrlWrite, validFolder_IsCalledWithCorrectBlockAddr)
 {
     EXPECT_CALL(*m_pNfc, writeTag(4, _)).Times(1);
-    m_pNfcCtrl->write_folder_to_card(*m_pTestFolder);
+    m_pNfcControl->write_folder_to_card(*m_pTestFolder);
 }
 
 TEST_F(NfcCtrlWrite, validFolder_IsCalledWithCorrectPayload)
@@ -82,13 +82,13 @@ TEST_F(NfcCtrlWrite, validFolder_IsCalledWithCorrectPayload)
                                          fakeBufferData,
                                          NFCTAG_MEMORY_TO_OCCUPY)))
         .Times(1);
-    m_pNfcCtrl->write_folder_to_card(*m_pTestFolder);
+    m_pNfcControl->write_folder_to_card(*m_pTestFolder);
 }
 
 TEST_F(NfcCtrlWrite, validFolder_writeSuccess)
 {
     ON_CALL(*m_pNfc, writeTag(_, _)).WillByDefault(Return(true));
-    EXPECT_TRUE(m_pNfcCtrl->write_folder_to_card(*m_pTestFolder));
+    EXPECT_TRUE(m_pNfcControl->write_folder_to_card(*m_pTestFolder));
 }
 
 TEST_F(NfcCtrlWrite, EraseTag)
@@ -98,28 +98,28 @@ TEST_F(NfcCtrlWrite, EraseTag)
     EXPECT_CALL(*m_pNfc, writeTag(_, arrayByteCompare(
                                          emptyBuffer,
                                          NFCTAG_MEMORY_TO_OCCUPY)));
-    m_pNfcCtrl->erase_card();
+    m_pNfcControl->erase_card();
 }
 
 TEST_F(NfcCtrlRead, Read_NotSuccessful_returnsFalse)
 {
     Folder resultFolder;
     ON_CALL(*m_pNfc, readTag(_, _)).WillByDefault(Return(false));
-    EXPECT_FALSE(m_pNfcCtrl->read_folder_from_card(resultFolder));
+    EXPECT_FALSE(m_pNfcControl->read_folder_from_card(resultFolder));
 }
 
 TEST_F(NfcCtrlRead, Read_Successful_NoDataToRead_returnsFalse)
 {
     Folder resultFolder;
     ON_CALL(*m_pNfc, readTag(_, _)).WillByDefault(Return(true));
-    EXPECT_FALSE(m_pNfcCtrl->read_folder_from_card(resultFolder));
+    EXPECT_FALSE(m_pNfcControl->read_folder_from_card(resultFolder));
 }
 
 TEST_F(NfcCtrlRead, isCalledWithCorrectBlockAddr)
 {
     Folder resultFolder;
     ON_CALL(*m_pNfc, readTag(4, _)).WillByDefault(Return(true));
-    m_pNfcCtrl->read_folder_from_card(resultFolder);
+    m_pNfcControl->read_folder_from_card(resultFolder);
 }
 
 TEST_F(NfcCtrlRead, isCalledWithCorrectPayload)
@@ -129,16 +129,16 @@ TEST_F(NfcCtrlRead, isCalledWithCorrectPayload)
                                         fakeBufferData,
                                         NFCTAG_MEMORY_TO_OCCUPY)));
     // sets buffer to a certain value
-    m_pNfcCtrl->write_folder_to_card(*m_pTestFolder);
+    m_pNfcControl->write_folder_to_card(*m_pTestFolder);
     // read with this buffer sets correct argument at readTag
-    m_pNfcCtrl->read_folder_from_card(resultFolder);
+    m_pNfcControl->read_folder_from_card(resultFolder);
 }
 
 TEST_F(NfcCtrlRead, Read_Successful_bufferEmpty_NoOverwriteOfSourceFolder)
 {
     Folder resultFolder(27, Folder::LULLABYE, 5);
     ON_CALL(*m_pNfc, readTag(_, _)).WillByDefault(Return(true));
-    EXPECT_FALSE(m_pNfcCtrl->read_folder_from_card(resultFolder));
+    EXPECT_FALSE(m_pNfcControl->read_folder_from_card(resultFolder));
     EXPECT_EQ(27, resultFolder.get_folder_id());
     EXPECT_EQ(Folder::LULLABYE, resultFolder.get_play_mode());
     EXPECT_EQ(5, resultFolder.get_track_count());
@@ -148,7 +148,7 @@ TEST_F(NfcCtrlRead, Read_Successful_bufferSet_returnsCorrectFolderData)
 {
     Folder resultFolder;
     m_pNfc->DelegateToFake(); // Delegates readTag() call to fake object
-    EXPECT_TRUE(m_pNfcCtrl->read_folder_from_card(resultFolder));
+    EXPECT_TRUE(m_pNfcControl->read_folder_from_card(resultFolder));
 
     EXPECT_EQ(m_pTestFolder->get_folder_id(), resultFolder.get_folder_id());
     EXPECT_EQ(m_pTestFolder->get_play_mode(), resultFolder.get_play_mode());
@@ -159,21 +159,21 @@ TEST_F(NfcCtrlTagPresence, noTag_returnsNoTag)
 {
     Nfc_interface::eTagState tagPresence = Nfc_interface::NO_TAG;
     ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(tagPresence));
-    ASSERT_EQ(tagPresence, m_pNfcCtrl->get_tag_presence());
+    ASSERT_EQ(tagPresence, m_pNfcControl->get_tag_presence());
 }
 
 TEST_F(NfcCtrlTagPresence, activeTag_returnsActiveTag)
 {
     Nfc_interface::eTagState tagPresence = Nfc_interface::ACTIVE_KNOWN_TAG;
     ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(tagPresence));
-    ASSERT_EQ(tagPresence, m_pNfcCtrl->get_tag_presence());
+    ASSERT_EQ(tagPresence, m_pNfcControl->get_tag_presence());
 }
 
 TEST_F(NfcCtrlTagPresence, newTag_simulateUnknown_returnsUnknownTag)
 {
     Nfc_interface::eTagState tagPresence = Nfc_interface::NEW_UNKNOWN_TAG;
     ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(tagPresence));
-    ASSERT_EQ(tagPresence, m_pNfcCtrl->get_tag_presence());
+    ASSERT_EQ(tagPresence, m_pNfcControl->get_tag_presence());
 }
 
 TEST_F(NfcCtrlTagPresence, newTag_simulateKnown_returnsKnownTag)
@@ -189,7 +189,7 @@ TEST_F(NfcCtrlTagPresence, OutOfRange_returnsOutOfRange)
 {
     Nfc_interface::eTagState tagPresence = static_cast<Nfc_interface::eTagState>(static_cast<uint8_t>(Nfc_interface::NUMBER_OF_TAG_STATES) + 1);
     ON_CALL(*m_pNfc, getTagPresence()).WillByDefault(Return(tagPresence));
-    ASSERT_EQ(tagPresence, m_pNfcCtrl->get_tag_presence());
+    ASSERT_EQ(tagPresence, m_pNfcControl->get_tag_presence());
 }
 
 // TODO: REACTIVATE TESTS!
@@ -201,7 +201,7 @@ TEST_F(NfcCtrlDebugOutput, messageHeadersCorrect)
     EXPECT_CALL(*m_pSerial, com_println("NFC CONTROL DEBUG:"));
     EXPECT_CALL(*m_pSerial, com_println("NFC DEBUG: MFRC522"));
 
-    m_pNfcCtrl->print_debug_message();
+    m_pNfcControl->print_debug_message();
 }
 
 TEST_F(NfcCtrlDebugOutput, noTagPresent_printsNoTag)
@@ -210,7 +210,7 @@ TEST_F(NfcCtrlDebugOutput, noTagPresent_printsNoTag)
     EXPECT_CALL(*m_pSerial, com_println("no Tag")).Times(1);
     //EXPECT_CALL(*m_pSerial, com_println("no Tag"));
 
-    m_pNfcCtrl->print_debug_message();
+    m_pNfcControl->print_debug_message();
 }
 
 TEST_F(NfcCtrlDebugOutput, knownTagPresent_printsKnownTag)
@@ -219,7 +219,7 @@ TEST_F(NfcCtrlDebugOutput, knownTagPresent_printsKnownTag)
     EXPECT_CALL(*m_pSerial, com_println(_)).Times(3); // message content
     EXPECT_CALL(*m_pSerial, com_println("Tag: active, known"));
 
-    m_pNfcCtrl->print_debug_message();
+    m_pNfcControl->print_debug_message();
 }
 
 TEST_F(NfcCtrlDebugOutput, unknownTagPresent_printsUnknownTag)
@@ -229,7 +229,7 @@ TEST_F(NfcCtrlDebugOutput, unknownTagPresent_printsUnknownTag)
     EXPECT_CALL(*m_pSerial, com_println(_)).Times(3);
     EXPECT_CALL(*m_pSerial, com_println("Tag: new, unknown"));
 
-    m_pNfcCtrl->print_debug_message();
+    m_pNfcControl->print_debug_message();
 }
 
 TEST_F(NfcCtrlDebugOutput, newTagPresent_printsNewTag)
@@ -241,7 +241,7 @@ TEST_F(NfcCtrlDebugOutput, newTagPresent_printsNewTag)
 
     EXPECT_CALL(*m_pSerial, com_println(_)).Times(3);
     EXPECT_CALL(*m_pSerial, com_println("Tag: new, known"));
-    m_pNfcCtrl->print_debug_message();
+    m_pNfcControl->print_debug_message();
 }
 
 TEST_F(NfcCtrlDebugOutput, error_printsError)
@@ -250,6 +250,6 @@ TEST_F(NfcCtrlDebugOutput, error_printsError)
     EXPECT_CALL(*m_pSerial, com_println(_)).Times(3);
     EXPECT_CALL(*m_pSerial, com_println("Error"));
 
-    m_pNfcCtrl->print_debug_message();
+    m_pNfcControl->print_debug_message();
 }
 */

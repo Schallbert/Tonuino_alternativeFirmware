@@ -6,52 +6,37 @@
 #include "../Nfc/NfcControl/NfcControl.h"
 #include "../UserInput/UserInput_interface/UserInput_interface.h"
 #include "../Mp3/Mp3PlayerControl_interface/Mp3PlayerControl_interface.h"
-
-#include "../Utilities/LinkMenu.h"
-#include "../Utilities/DeleteMenu.h"
-#include "../Utilities/SimpleTimer.h"
-#include "InputDispatcher_ErrorHandler.h"
+#include "../ErrorHandler/ErrorHandler_interface.h"
 
 class PlaybackControl
 {
 public:
-    PlaybackControl(Arduino_DIcontainer_interface *pArduinoHal,
-                  PowerManager_interface *pPwrCtrl,
-                  NfcControl *pNfcCtrl,
-                  Mp3PlayerControl_interface *pMp3Ctrl,
-                  SimpleTimer *pMenuTimer) : m_pArduinoHal(pArduinoHal),
-                                             m_pSysPwr(pPwrCtrl),
-                                             m_pNfcCtrl(pNfcCtrl),
-                                             m_pMp3Ctrl(pMp3Ctrl),
-                                             m_pMenuTimer(pMenuTimer){};
+    PlaybackControl(Arduino_DIcontainer_interface *pArduHal,
+                    PowerManager_interface *pPwrCtrl,
+                    NfcControl *pNfcCtrl,
+                    Mp3PlayerControl_interface *pMp3Ctrl,
+                    ErrorHandler_interface *pError) : m_pArduinoHal(pArduHal),
+                                                      m_pSystemPower(pPwrCtrl),
+                                                      m_pNfcControl(pNfcCtrl),
+                                                      m_pMp3Ctrl(pMp3Ctrl),
+                                                      m_pErrorHandler(pError){};
 
 public:
-    // Sets input states from card and buttons saving to member variables.
-    void setTagState(Nfc_interface::eTagState tagState);
-    void setUserInput(UserInput::eUserRequest userInput);
-//#if DEBUGSERIAL
-    void printDebugMessage();
-//#endif
-    // executes all actions based on input states.
+    void setUserInput(UserInput::eUserRequest input);
+
     void loop();
 
 private:
-    // Runs desicion table that calls functions depending on user input
-    void handleMenuState();
-    // sets power state according to player
-    void syncronizePowerStateWithIsPlaying();
+    void getTagState();
+
     // Dispatches cardState and userInput commands, calling downstream methods.
-    void runDispatcher();
-    // Checks link menu state and plays according voice prompts
-    void handleLinkMenu();
-    // Checks delete menu state and plays according voice prompts
-    void handleDeleteMenu();
-    // Prompts the new option chosen in Link Menu
-    void changeOption(uint16_t option);
+    void dispatchInputs();
     // Updates folder information on NFC card if necessary based on MP3 player read
     void updateFolderInformation();
 
     // ----- Wrapper methods to call target object's methods -----
+    // Reads NFC tag and starts playback
+    void read();
     // No action performed
     void none(){};
     // Play/pause
@@ -65,35 +50,21 @@ private:
     // decrease volume
     void decV() { m_pMp3Ctrl->volume_down(); };
     // play help prompt
-    void help() { m_pMp3Ctrl->playSpecificFile(MSG_HELP); };
-    // delete and unlink NFC card
-    void delt(); // delete menu entry
-    void delC(); // confirm deletion
-    // link NFC card to SD card folder
-    void linC();                                             // confirm link
-    void linN() { changeOption(m_linkMenu.select_next()); }; // link next command
-    void linP() { changeOption(m_linkMenu.select_prev()); }; // link prev command
-    // read and Play card's linked folder
-    void read();
-    // aborts current menu or process
-    void abrt();
+    void help() { m_pErrorHandler->setHelpRequested(); };
 
 private:
     typedef void (PlaybackControl::*dispatcher)(); // table of function pointers
     // members by dependency injection
     Arduino_DIcontainer_interface *m_pArduinoHal{nullptr};
-    PowerManager_interface *m_pSysPwr{nullptr};
-    NfcControl *m_pNfcCtrl{nullptr};
+    PowerManager_interface *m_pSystemPower{nullptr};
+    NfcControl *m_pNfcControl{nullptr};
     Mp3PlayerControl_interface *m_pMp3Ctrl{nullptr};
-    SimpleTimer *m_pMenuTimer{nullptr};
+    ErrorHandler_interface *m_pErrorHandler{nullptr};
 
     // Member objects
     Folder m_currentFolder{};
-    LinkMenu m_linkMenu{};
-    DeleteMenu m_deleteMenu{};
-    Nfc_interface::eTagState m_eTagState{Nfc_interface::NO_TAG};
+    Nfc_interface::eTagState m_tagState{Nfc_interface::NO_TAG};
     UserInput::eUserRequest m_eUserInput{UserInput::NO_ACTION};
-    InputDispatcher_ErrorHandler m_errorHandler{};
 };
 
 #endif // PLAYBACKCONTROL_H

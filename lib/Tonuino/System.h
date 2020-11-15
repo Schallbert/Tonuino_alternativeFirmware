@@ -56,7 +56,7 @@ private:
     // Init tag reader
     MFRC522_implementation *m_pMfrc522{nullptr}; // concrete NFC HW
     Nfc_interface *m_pNfc{nullptr};
-    NfcControl *m_pNfcCtrl{nullptr}; // Constructor injection of concrete reader
+    NfcControl *m_pNfcControl{nullptr}; // Constructor injection of concrete reader
     // DFPlayer Mini setup
     DfMini *m_pDfMini{nullptr};
     Mp3PlayerControl *m_pMp3Ctrl{nullptr};
@@ -84,7 +84,7 @@ private:
     // Work member objects -----------------------
     PlaybackControl m_inputDispatcher{PlaybackControl(m_pArduinoHal,
                                                 m_pPwrCtrl,
-                                                m_pNfcCtrl,
+                                                m_pNfcControl,
                                                 m_pMp3Ctrl,
                                                 m_pMenuTimer)};
 };
