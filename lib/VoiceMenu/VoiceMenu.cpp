@@ -21,7 +21,7 @@ void VoiceMenu::loop()
     {
         dispatchInputs();
         m_pMenuInstance->handlePlayback();
-        handleTimerElapsed();
+        checkTimerElapsed();
         checkLeaveMenu();        
     }
     else
@@ -102,7 +102,7 @@ void VoiceMenu::dispatchInputs()
     (this->*dispatchExecutor)();
 }
 
-void VoiceMenu::handleTimerElapsed()
+void VoiceMenu::checkTimerElapsed()
 {
     if (m_pMenuTimer->isElapsed())
     {
