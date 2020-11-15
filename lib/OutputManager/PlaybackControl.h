@@ -1,6 +1,6 @@
-#ifndef OUTPUTMANAGER_H
-#define OUTPUTMANAGER_H
-#if 0
+#ifndef PLAYBACKCONTROL_H
+#define PLAYBACKCONTROL_H
+
 #include "../Arduino/Arduino_interface/Arduino_DIcontainer_interface.h"
 #include "../PowerManager/PowerManager_interface/PowerManager_interface.h"
 #include "../Nfc/NfcControl/NfcControl.h"
@@ -12,10 +12,10 @@
 #include "../Utilities/SimpleTimer.h"
 #include "InputDispatcher_ErrorHandler.h"
 
-class InputDispatcher
+class PlaybackControl
 {
 public:
-    InputDispatcher(Arduino_DIcontainer_interface *pArduinoHal,
+    PlaybackControl(Arduino_DIcontainer_interface *pArduinoHal,
                   PowerManager_interface *pPwrCtrl,
                   NfcControl *pNfcCtrl,
                   Mp3PlayerControl_interface *pMp3Ctrl,
@@ -79,7 +79,7 @@ private:
     void abrt();
 
 private:
-    typedef void (InputDispatcher::*dispatcher)(); // table of function pointers
+    typedef void (PlaybackControl::*dispatcher)(); // table of function pointers
     // members by dependency injection
     Arduino_DIcontainer_interface *m_pArduinoHal{nullptr};
     PowerManager_interface *m_pSysPwr{nullptr};
@@ -96,5 +96,4 @@ private:
     InputDispatcher_ErrorHandler m_errorHandler{};
 };
 
-#endif // OUTPUTMANAGER_H
-#endif
+#endif // PLAYBACKCONTROL_H
