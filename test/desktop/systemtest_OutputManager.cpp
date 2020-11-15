@@ -287,7 +287,7 @@ TEST_F(OutputManagerTest, linkMenu_menuTimeout_resetsMenu)
     m_pOutputManager->setTagState(Nfc_interface::NEW_UNKNOWN_TAGsetUserINput(UserInput::NO_ACTION);; // enter linkMenu
     for (uint16_t i = 0; i <= MENU_TIMEOUT_SECS; ++i)
     {
-        m_pMenuTimer->timer_tick(); // make menuTimer elapse
+        m_pMenuTimer->timerTick(); // make menuTimer elapse
     }
     EXPECT_CALL(*m_pMp3Ctrl, play_specific_file(MSG_ABORTED));
     m_pOutputManager->setTagState(Nfc_interface::NEW_UNKNOWN_TAGsetUserINput(UserInput::NO_ACTION);; // enter linkMenu
@@ -337,7 +337,7 @@ TEST_F(OutputManagerTest, deleteCardMenu_menuTimeout_resetsMenu)
     m_pOutputManager->runDispatcher(); // enter delete menu
     for (uint16_t i = 0; i <= MENU_TIMEOUT_SECS; ++i)
     {
-        m_pMenuTimer->timer_tick(); // make menuTimer elapse
+        m_pMenuTimer->timerTick(); // make menuTimer elapse
     }
     EXPECT_CALL(*m_pMp3Ctrl, play_specific_file(MSG_ABORTED));
     m_pOutputManager->setTagState(Nfc_interface::ACTIVE_KNOWN_TAGsetUserINput(UserInput::NO_ACTION);;

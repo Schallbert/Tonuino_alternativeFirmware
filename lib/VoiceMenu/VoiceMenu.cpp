@@ -21,6 +21,7 @@ void VoiceMenu::loop()
     {
         dispatchInputs();
         m_pMenuInstance->handlePlayback();
+        handleTimerElapsed();
         checkLeaveMenu();        
     }
     else
@@ -53,6 +54,7 @@ void VoiceMenu::checkEnterLinkMenu()
                                                     m_pNfcControl,
                                                     m_pPromptPlayer);
         m_pMenuInstance->confirm();
+        m_pMenuTimer->start(MENU_TIMEOUT_SECS);
     }
 }
 
@@ -65,6 +67,7 @@ void VoiceMenu::checkEnterDeleteMenu()
                                                     m_pNfcControl,
                                                     m_pPromptPlayer);
         m_pMenuInstance->confirm();
+        m_pMenuTimer->start(MENU_TIMEOUT_SECS);
     }
 }
 
@@ -97,5 +100,13 @@ void VoiceMenu::dispatchInputs()
             &VM::none, &VM::conf, &VM::abrt, &VM::next, &VM::prev, &VM::none, &VM::none};
     dispatcher dispatchExecutor = dispatchTable[m_userInput];
     (this->*dispatchExecutor)();
+}
+
+void VoiceMenu::handleTimerElapsed()
+{
+    if (m_pMenuTimer->isElapsed())
+    {
+        abrt();
+    }
 }
 

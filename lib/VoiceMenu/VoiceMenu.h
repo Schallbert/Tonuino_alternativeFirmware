@@ -35,6 +35,7 @@ private:
     void checkEnterLinkMenu();
     void checkEnterDeleteMenu();
     void checkLeaveMenu();
+    void handleTimerElapsed();
 
     bool isComplete();
     void dispatchInputs();

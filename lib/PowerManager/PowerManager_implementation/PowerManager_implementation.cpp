@@ -61,7 +61,7 @@ void PowerManager::set_linkMenu()
 
 void PowerManager::notify_timer_tick()
 {
-    m_pIdleTimer->timer_tick();
+    m_pIdleTimer->timerTick();
     if (m_pIdleTimer->isElapsed())
     {
         m_pIdleTimer->stop();

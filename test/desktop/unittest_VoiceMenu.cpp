@@ -45,6 +45,33 @@ TEST_F(VoiceMenuTest, noInit_isActive_returnsFalse)
     ASSERT_FALSE(m_pVoiceMenu->isActive());
 }
 
+TEST_F(VoiceMenuTest, noInit_isTimerStarted_returnsFalse)
+{
+    ASSERT_FALSE(m_pMenuTimer->isRunning());
+}
+
+TEST_F(VoiceMenuTest, init_isTimerStarted_returnsTrue)
+{
+    ON_CALL(m_nfcControlMock, get_tag_presence()).WillByDefault(Return(Nfc_interface::NEW_UNKNOWN_TAG));
+    m_pVoiceMenu->loop(); // entry conditions for Link menu met
+
+    ASSERT_TRUE(m_pMenuTimer->isRunning());
+}
+
+TEST_F(VoiceMenuTest, timerElapes_isActive_returnFalse)
+{
+    ON_CALL(m_nfcControlMock, get_tag_presence()).WillByDefault(Return(Nfc_interface::NEW_UNKNOWN_TAG));
+    m_pVoiceMenu->loop(); // entry conditions for Link menu met
+
+    for(uint16_t i = 0; i <= MENU_TIMEOUT_SECS; ++i)
+    {
+        m_pMenuTimer->timerTick();
+    }
+    m_pVoiceMenu->loop();
+    
+    ASSERT_FALSE(m_pVoiceMenu->isActive());
+}
+
 // LinkMenu Specifics ---------------------------
 TEST_F(VoiceMenuTest, initLinkMenu_isActive_returnsTrue)
 {
@@ -173,5 +200,3 @@ TEST_F(VoiceMenuTest, deleteMenu_deletePreview_isInvoked)
     EXPECT_CALL(m_promptPlayerMock, playFolderPreview(_));
     m_pVoiceMenu->loop(); // should play preview for folder deletion
 }
-
-// Test: menu instance is deleted
