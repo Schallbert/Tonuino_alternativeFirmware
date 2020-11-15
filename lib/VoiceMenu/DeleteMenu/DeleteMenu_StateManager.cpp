@@ -31,7 +31,6 @@ uint16_t DeleteMenu_StateManager::getMenuStateMessage()
     return static_cast<uint16_t>(menuState);
 }
 
-
 void DeleteMenu_StateManager::initMenu()
 {
     menuState = PLACE_TAG_TO_DELETE;
@@ -44,8 +43,8 @@ void DeleteMenu_StateManager::handleDeletionConfirmed()
 
 bool DeleteMenu_StateManager::isActive()
 {
-    return ((menuState != NO_MENU &&
-             menuState != ABORTED));
+    return ((menuState != NO_MENU) &&
+            (menuState != ABORTED));
 }
 
 bool DeleteMenu_StateManager::isComplete()
@@ -53,7 +52,7 @@ bool DeleteMenu_StateManager::isComplete()
     return (menuState == COMPLETE);
 }
 
-bool DeleteMenu_StateManager::isDeletionConfirmed()
+bool DeleteMenu_StateManager::isPendingConfirmDelete()
 {
     return (menuState == CONFIRM_DELETE);
 }

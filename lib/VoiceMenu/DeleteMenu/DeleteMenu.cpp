@@ -33,7 +33,7 @@ void DeleteMenu::handleTagStateChanges()
     if (m_pNfcControl->get_tag_presence() == Nfc_interface::NEW_REGISTERED_TAG)
     {
         m_menuState.setTagToDeleteDetected();
-    }  
+    }
 }
 
 bool DeleteMenu::isActive()
@@ -55,7 +55,7 @@ void DeleteMenu::playPrompt()
 
 void DeleteMenu::playPreview()
 {
-    if (m_menuState.isDeletionConfirmed())
+    if (m_menuState.isPendingConfirmDelete())
     {
         Folder preview;
         if (m_pNfcControl->read_folder_from_card(preview))
