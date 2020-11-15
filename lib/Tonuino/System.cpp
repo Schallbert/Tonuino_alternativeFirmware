@@ -97,7 +97,7 @@ void System::timer1Task_1ms()
 void System::timer1Task_1sec()
 {
     m_pPwrCtrl->notify_timer_tick(); // idle timer and LED behavior
-    m_pLullabyeTimer->timer_tick();
-    m_pMenuTimer->timer_tick();
-    m_pDfMiniMsgTimeout->timer_tick();
+    m_pLullabyeTimer->timerTick();
+    m_pMenuTimer->timerTick();
+    m_pDfMiniMsgTimeout->timerTick();
 }

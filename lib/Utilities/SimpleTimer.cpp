@@ -1,38 +1,45 @@
 #include "SimpleTimer.h"
 
 // counts menu timer if active
-void SimpleTimer::timer_tick()
+void SimpleTimer::timerTick()
 {
-    if (m_ui16Timeout == 0)
+    if (m_timeout == 0)
     {
-        m_bElapsed = false;
+        m_elapsed = false;
         return; // timer stopped
     }
 
-    if(!m_bElapsed)
+    if (!m_elapsed)
     {
-        ++m_ui16Count;
+        ++m_count;
     }
 
-    if (m_ui16Count >= m_ui16Timeout)
+    if (m_count >= m_timeout)
     {
-        m_bElapsed = true; // timer elapsed
+        m_elapsed = true; // timer elapsed
     }
 }
 
 void SimpleTimer::start(uint16_t ui16Timeout)
 {
-    m_ui16Timeout = ui16Timeout;
+    m_timeout = ui16Timeout;
+    m_running = true;
 }
 
 void SimpleTimer::stop()
 {
-    m_ui16Timeout = 0;
-    m_ui16Count = 0;
-    m_bElapsed = false;
+    m_timeout = 0;
+    m_count = 0;
+    m_elapsed = false;
+    m_running = false;
 }
 
 bool SimpleTimer::isElapsed()
 {
-    return m_bElapsed;
+    return m_elapsed;
+}
+
+bool SimpleTimer::isRunning()
+{
+    return m_running;
 }

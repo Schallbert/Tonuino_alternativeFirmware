@@ -39,7 +39,7 @@ public:
 
 public:
     // counts timer if started
-    void timer_tick();
+    void timerTick();
     // sets timeout, count IS NOT RESET!
     // (timer runs automatically when timeout not reached)
     void start(uint16_t ui16Timeout);
@@ -47,11 +47,14 @@ public:
     void stop();
     // returns true on timeout
     bool isElapsed();
+    // returns true if timer is currently running
+    bool isRunning();
 
 private:
-    uint16_t m_ui16Count{0};
-    uint16_t m_ui16Timeout{0};
-    bool m_bElapsed{false};
+    uint16_t m_count{0};
+    uint16_t m_timeout{0};
+    bool m_elapsed{false};
+    bool m_running{false};
 };
 
 #endif // SIMPLETIMER_H

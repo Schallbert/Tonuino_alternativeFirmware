@@ -221,7 +221,7 @@ TEST_F(Mp3Ctrl, autoplay_LULLABYE_trackFinished_borderline_next)
     // make timeout expire
     for (long i = 0; i < (LULLABYE_TIMEOUT_SECS - 1); ++i)
     {
-        m_pLullabyeTimer->timer_tick();
+        m_pLullabyeTimer->timerTick();
     }
     EXPECT_CALL(*m_pDfMini, checkTrackFinished()).WillOnce(Return(true));
     EXPECT_CALL(*m_pDfMini, playFolderTrack(_, 1)).Times(1); // play_folder calls first track.
@@ -240,7 +240,7 @@ TEST_F(Mp3Ctrl, autoplay_LULLABYE_trackFinished_timeout_stop)
     m_pLullabyeTimer->start(LULLABYE_TIMEOUT_SECS);
     for (int i = 0; i < (LULLABYE_TIMEOUT_SECS); ++i)
     {
-        m_pLullabyeTimer->timer_tick();
+        m_pLullabyeTimer->timerTick();
     }
     EXPECT_CALL(*m_pDfMini, checkTrackFinished()).WillOnce(Return(true));
     EXPECT_CALL(*m_pDfMini, playFolderTrack(_, 1)).Times(1); // play_folder calls first track.
@@ -256,7 +256,7 @@ TEST_F(Mp3Ctrl, playPrompt_noSkip_notPlaying_Timeout)
     prompt.promptId = MSG_CONFIRMED;
 
     ON_CALL(*m_pPinCtrl, digital_read(_)).WillByDefault(Return(true)); // not playing                                                               // not playing
-    ON_CALL(*m_pDfMini, loop()).WillByDefault(InvokeWithoutArgs(m_pDfMiniMsgTimeout, &SimpleTimer::timer_tick)); //called twice before timeout
+    ON_CALL(*m_pDfMini, loop()).WillByDefault(InvokeWithoutArgs(m_pDfMiniMsgTimeout, &SimpleTimer::timerTick)); //called twice before timeout
     
     m_pMp3PlrCtrl->play_prompt(prompt);
 }
@@ -268,7 +268,7 @@ TEST_F(Mp3Ctrl, playPrompt_noSkip_notFinishing_Timeout)
     prompt.promptId = MSG_CONFIRMED;
 
     ON_CALL(*m_pPinCtrl, digital_read(_)).WillByDefault(Return(false)); // playing                                                                           // not playing
-    ON_CALL(*m_pDfMini, loop()).WillByDefault(InvokeWithoutArgs(m_pDfMiniMsgTimeout, &SimpleTimer::timer_tick)); //called twice before timeout
+    ON_CALL(*m_pDfMini, loop()).WillByDefault(InvokeWithoutArgs(m_pDfMiniMsgTimeout, &SimpleTimer::timerTick)); //called twice before timeout
     
     m_pMp3PlrCtrl->play_prompt(prompt);
 }
