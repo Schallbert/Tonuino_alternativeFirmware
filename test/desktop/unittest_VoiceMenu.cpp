@@ -1,25 +1,3 @@
-#if 0
-// interface to Menu.
-// dependencies: MenuTimer, Mp3PlayerCtrl for prompting, Nfc for tagStates
-
-//TASKS:
-// dispatch menu commands to the correct menu.
-// retrieve prompt info and play prompts.
-// return folder information in case of Link Menu.
-//
-
-// INPUTS:
-// MenuTimer state
-// NfcTag state
-// UserInput command
-
-// OUTPUTS:
-// Communicate whether a menu is active
-// Return folder information on request
-//
-
-// TO DECIDE:
-// Class architecture
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
@@ -32,6 +10,7 @@
 using ::testing::_;
 using ::testing::NiceMock;
 using ::testing::Return;
+using ::testing::Sequence;
 
 // TEST FIXTURE
 class VoiceMenuTest : public ::testing::Test
@@ -61,136 +40,138 @@ protected:
     VoiceMenu *m_pVoiceMenu{nullptr};
 };
 
-bool operator==(Folder lhs, Folder rhs)
-{
-    return (
-        (lhs.get_folder_id() == rhs.get_folder_id()) &&
-        (lhs.get_play_mode() == rhs.get_play_mode()) &&
-        (lhs.get_track_count() == rhs.get_track_count())
-    );
-}
-
-MATCHER_P(PromptIdsAreEqual, comp, "")
-{
-    return (
-        (arg.promptId == comp.promptId) &&
-        (arg.allowSkip == comp.allowSkip)
-    );
-}
-
-MATCHER_P(FoldersAreEqual, comp, "") 
-{
-    return (arg == comp);
-}
-
 TEST_F(VoiceMenuTest, noInit_isActive_returnsFalse)
 {
     ASSERT_FALSE(m_pVoiceMenu->isActive());
 }
 
+// LinkMenu Specifics ---------------------------
 TEST_F(VoiceMenuTest, initLinkMenu_isActive_returnsTrue)
 {
-    UserInput::eUserRequest input{};
-    input.tagState = Nfc_interface::NEW_UNKNOWN_TAG;
+    ON_CALL(m_nfcControlMock, get_tag_presence()).WillByDefault(Return(Nfc_interface::NEW_UNKNOWN_TAG));
 
-    m_pVoiceMenu->setUserInput(input);
+    m_pVoiceMenu->loop(); // entry conditions for Link menu met
+
+    ASSERT_TRUE(m_pVoiceMenu->isActive());
+}
+
+TEST_F(VoiceMenuTest, linkMenuRunning_isActive_returnsTrue)
+{
+    ON_CALL(m_nfcControlMock, get_tag_presence()).WillByDefault(Return(Nfc_interface::NEW_UNKNOWN_TAG));
+    m_pVoiceMenu->loop();                              // enters Menu: select folderId
+    m_pVoiceMenu->setUserInput(UserInput::PLAY_PAUSE); // enters (invalid) folderId
     m_pVoiceMenu->loop();
 
     ASSERT_TRUE(m_pVoiceMenu->isActive());
 }
 
-TEST_F(VoiceMenuTest, linkMenuComplete_isActive_returnsTrue)
+TEST_F(VoiceMenuTest, linkMenuComplete_isActive_returnsFalse)
 {
-     UserInput::eUserRequest input{};
-    input.tagState = Nfc_interface::NEW_UNKNOWN_TAG;
-
-    m_pVoiceMenu->setUserInput(input);
-    m_pVoiceMenu->loop(); // enters Menu: select folderId
-    input.tagState = Nfc_interface::ACTIVE_KNOWN_TAG;
-    input.btnState = UserInput::PLAY_PAUSE;
-    m_pVoiceMenu->setUserInput(input);
-    m_pVoiceMenu->loop(); // selects playMode and menu is complete
-
-    ASSERT_TRUE(m_pVoiceMenu->isActive());
-}
-
-TEST_F(VoiceMenuTest, linkMenuCompleteAndCalledAgain_isActive_returnsFalse)
-{
-     UserInput::eUserRequest input{};
-    input.tagState = Nfc_interface::NEW_UNKNOWN_TAG;
-
-    m_pVoiceMenu->setUserInput(input);
-    m_pVoiceMenu->loop(); // enters Menu: select folderId
-    input.tagState = Nfc_interface::ACTIVE_KNOWN_TAG;
-    input.btnState = UserInput::PLAY_PAUSE;
-    m_pVoiceMenu->setUserInput(input);
-    m_pVoiceMenu->loop(); // selects playMode and completes menu
-    m_pVoiceMenu->loop(); // leaves the menu
+    ON_CALL(m_nfcControlMock, get_tag_presence()).WillByDefault(Return(Nfc_interface::NEW_UNKNOWN_TAG));
+    m_pVoiceMenu->loop();                              // enters Menu: select folderId
+    m_pVoiceMenu->setUserInput(UserInput::PLAY_PAUSE); // provides (invalid) confirmation
+    m_pVoiceMenu->loop();                              // selects folder Id
+    m_pVoiceMenu->loop();                              // selects playmode and completes Menu
 
     ASSERT_FALSE(m_pVoiceMenu->isActive());
 }
 
-TEST_F(VoiceMenuTest, initLinkMenu_loop_invokesPlayPrompt)
+TEST_F(VoiceMenuTest, linkMenuCompleteAndCalledAgain_isActive_returnsTrue)
 {
-    UserInput::eUserRequest input{};
-    input.tagState = Nfc_interface::NEW_UNKNOWN_TAG;
-    VoicePrompt selFolderId{};
-    selFolderId.promptId = MSG_SELECT_FOLDERID;
-    Folder emptyFolder{};
+    ON_CALL(m_nfcControlMock, get_tag_presence()).WillByDefault(Return(Nfc_interface::NEW_UNKNOWN_TAG));
+    m_pVoiceMenu->loop();                              // enters Menu: select folderId
+    m_pVoiceMenu->setUserInput(UserInput::PLAY_PAUSE); // provides (invalid) confirmation
+    m_pVoiceMenu->loop();                              // selects folder Id
+    m_pVoiceMenu->loop();                              // selects playmode and completes Menu
 
-    m_pVoiceMenu->setUserInput(input);
+    m_pVoiceMenu->loop(); // call again
 
-    //EXPECT_CALL(m_promptPlayerMock, playPrompt(PromptIdsAreEqual(selFolderId)));
+    ASSERT_TRUE(m_pVoiceMenu->isActive());
+}
+
+TEST_F(VoiceMenuTest, initLinkMenu_loop_invokesPlayback)
+{
+    ON_CALL(m_nfcControlMock, get_tag_presence()).WillByDefault(Return(Nfc_interface::NEW_UNKNOWN_TAG));
+    m_pVoiceMenu->setUserInput(UserInput::PLAY_PAUSE); // provides (invalid) confirmation
+    m_pVoiceMenu->loop();
+
     EXPECT_CALL(m_promptPlayerMock, playPrompt(_));
-
     m_pVoiceMenu->loop();
 }
 
-TEST_F(VoiceMenuTest, initLinkMenu_loop_invokesFolderPreview)
+TEST_F(VoiceMenuTest, linkMenu_linkPreview_isInvoked)
 {
-    UserInput::eUserRequest input{};
-    input.tagState = Nfc_interface::NEW_UNKNOWN_TAG;
-    VoicePrompt selFolderId{};
-    selFolderId.promptId = MSG_SELECT_FOLDERID;
-    Folder emptyFolder{};
+    ON_CALL(m_nfcControlMock, read_folder_from_card(_)).WillByDefault(Return(true));
+    ON_CALL(m_nfcControlMock, get_tag_presence()).WillByDefault(Return(Nfc_interface::NEW_UNKNOWN_TAG));
 
-    m_pVoiceMenu->setUserInput(input);
+    m_pVoiceMenu->loop();                             // enter
+    m_pVoiceMenu->setUserInput(UserInput::NEXT_TRACK); // if it stays PP_LONGPRESS that will abort the menu
 
-    //EXPECT_CALL(*m_pPromptPlayer, playFolderPreview(FoldersAreEqual(emptyFolder)));
     EXPECT_CALL(m_promptPlayerMock, playFolderPreview(_));
-
-    m_pVoiceMenu->loop();
+    m_pVoiceMenu->loop(); // should play preview for folder deletion
 }
 
-TEST_F(VoiceMenuTest, initDeleteMenu_loop_invokesplayPrompt)
+// Delete Menu specifics --------------------------
+TEST_F(VoiceMenuTest, initDeleteMenu_isActive_returnsTrue)
 {
-    UserInput::eUserRequest input{};
-    input.tagState = Nfc_interface::ACTIVE_KNOWN_TAG;
-    input.btnState = UserInput::PP_LONGPRESS;
+    EXPECT_CALL(m_nfcControlMock, get_tag_presence()).WillRepeatedly(Return(Nfc_interface::ACTIVE_KNOWN_TAG));
+    m_pVoiceMenu->setUserInput(UserInput::PP_LONGPRESS);
 
-    m_pVoiceMenu->setUserInput(input);
+    m_pVoiceMenu->loop(); // entry conditions for Delete menu met
+
+    ASSERT_TRUE(m_pVoiceMenu->isActive());
+}
+
+TEST_F(VoiceMenuTest, deleteMenuRunning_isActive_returnsTrue)
+{
+    EXPECT_CALL(m_nfcControlMock, get_tag_presence()).WillRepeatedly(Return(Nfc_interface::NEW_REGISTERED_TAG));
+    EXPECT_CALL(m_nfcControlMock, get_tag_presence()).WillOnce(Return(Nfc_interface::ACTIVE_KNOWN_TAG)).RetiresOnSaturation();
+
+    m_pVoiceMenu->setUserInput(UserInput::PP_LONGPRESS);
+    m_pVoiceMenu->loop(); // enter
+    m_pVoiceMenu->setUserInput(UserInput::NO_ACTION);
+    m_pVoiceMenu->loop(); // state: please confirm deletion
+
+    ASSERT_TRUE(m_pVoiceMenu->isActive());
+}
+
+TEST_F(VoiceMenuTest, deleteMenuComplete_isActive_returnsFalse)
+{
+    EXPECT_CALL(m_nfcControlMock, get_tag_presence()).WillRepeatedly(Return(Nfc_interface::NEW_REGISTERED_TAG));
+    EXPECT_CALL(m_nfcControlMock, get_tag_presence()).WillOnce(Return(Nfc_interface::ACTIVE_KNOWN_TAG)).RetiresOnSaturation();
+
+    m_pVoiceMenu->setUserInput(UserInput::PP_LONGPRESS);
+    m_pVoiceMenu->loop();                              // enter
+    m_pVoiceMenu->loop();                              // register known tag
+    m_pVoiceMenu->setUserInput(UserInput::PLAY_PAUSE); // provides (invalid) confirmation
+    m_pVoiceMenu->loop();                              // completes menu
+
+    ASSERT_FALSE(m_pVoiceMenu->isActive());
+}
+
+TEST_F(VoiceMenuTest, initdeleteMenu_loop_invokesPlayback)
+{
+    ON_CALL(m_nfcControlMock, get_tag_presence()).WillByDefault(Return(Nfc_interface::ACTIVE_KNOWN_TAG));
+    m_pVoiceMenu->setUserInput(UserInput::PP_LONGPRESS);
+    m_pVoiceMenu->loop();                             // enter
+    m_pVoiceMenu->setUserInput(UserInput::NO_ACTION); // if it stays PP_LONGPRESS that will abort the menu
 
     EXPECT_CALL(m_promptPlayerMock, playPrompt(_));
-
     m_pVoiceMenu->loop();
 }
 
-/* most likely, this fails because deleteMenu's tagDetected is not set.
-TEST_F(VoiceMenuTest, linkMenuFolderId_loop_invokesPlayPreview)
+TEST_F(VoiceMenuTest, deleteMenu_deletePreview_isInvoked)
 {
-    UserInput::eUserRequest input{};
-    input.tagState = Nfc_interface::ACTIVE_KNOWN_TAG;
-    input.btnState = UserInput::PP_LONGPRESS;
+    ON_CALL(m_nfcControlMock, read_folder_from_card(_)).WillByDefault(Return(true));
+    EXPECT_CALL(m_nfcControlMock, get_tag_presence()).WillRepeatedly(Return(Nfc_interface::NEW_REGISTERED_TAG));
+    EXPECT_CALL(m_nfcControlMock, get_tag_presence()).WillOnce(Return(Nfc_interface::ACTIVE_KNOWN_TAG)).RetiresOnSaturation();
 
-    m_pVoiceMenu->setUserInput(input);
-    m_pVoiceMenu->loop();
-    input.tagState = Nfc_interface::NEW_REGISTERED_TAG;
+    m_pVoiceMenu->setUserInput(UserInput::PP_LONGPRESS);
+    m_pVoiceMenu->loop();                             // enter
+    m_pVoiceMenu->setUserInput(UserInput::NO_ACTION); // if it stays PP_LONGPRESS that will abort the menu
 
-    EXPECT_CALL(*m_pPromptPlayer, playFolderPre view(_));
-
-    m_pVoiceMenu->setUserInput(input);
-    m_pVoiceMenu->loop();
-}*/ 
+    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(_));
+    m_pVoiceMenu->loop(); // should play preview for folder deletion
+}
 
 // Test: menu instance is deleted
-#endif

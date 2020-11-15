@@ -13,6 +13,23 @@ void VoiceMenu::setUserInput(UserInput::eUserRequest input)
     m_userInput = input;
 }
 
+void VoiceMenu::loop()
+{
+    getTagState();
+
+    if (isActive())
+    {
+        dispatchInputs();
+        m_pMenuInstance->handlePlayback();
+        checkLeaveMenu();        
+    }
+    else
+    {
+        checkEnterLinkMenu();
+        checkEnterDeleteMenu();
+    }
+}
+
 bool VoiceMenu::isActive()
 {
     bool result{false};
@@ -21,24 +38,6 @@ bool VoiceMenu::isActive()
         result = m_pMenuInstance->isActive();
     }
     return result;
-}
-
-void VoiceMenu::loop()
-{
-    getTagState();
-
-    if (!isActive())
-    {
-        checkEnterLinkMenu();
-        checkEnterDeleteMenu();
-    }
-
-    if (isActive())
-    {
-        dispatchInputs();
-        m_pMenuInstance->handlePlayback();
-        checkLeaveMenu();
-    }
 }
 
 void VoiceMenu::getTagState()
@@ -59,8 +58,8 @@ void VoiceMenu::checkEnterLinkMenu()
 
 void VoiceMenu::checkEnterDeleteMenu()
 {
-    if (m_tagState == Nfc_interface::ACTIVE_KNOWN_TAG &&
-        m_userInput == UserInput::PP_LONGPRESS)
+    if ((m_tagState == Nfc_interface::ACTIVE_KNOWN_TAG) &&
+        (m_userInput == UserInput::PP_LONGPRESS))
     {
         m_pMenuInstance = Menu_factory::getInstance(Menu_factory::DELETE_MENU,
                                                     m_pNfcControl,
@@ -71,11 +70,22 @@ void VoiceMenu::checkEnterDeleteMenu()
 
 void VoiceMenu::checkLeaveMenu()
 {
-    if (isComplete())
+    // Could be completed or aborted
+    if (isComplete() || !isActive())
     {
         delete m_pMenuInstance;
         m_pMenuInstance = nullptr;
     }
+}
+
+bool VoiceMenu::isComplete()
+{
+    bool result{false};
+    if (m_pMenuInstance != nullptr)
+    {
+        result = m_pMenuInstance->isComplete();
+    }
+    return result;
 }
 
 void VoiceMenu::dispatchInputs()
@@ -89,12 +99,3 @@ void VoiceMenu::dispatchInputs()
     (this->*dispatchExecutor)();
 }
 
-bool VoiceMenu::isComplete()
-{
-    bool result{false};
-    if (m_pMenuInstance != nullptr)
-    {
-        result = m_pMenuInstance->isComplete();
-    }
-    return result;
-}
