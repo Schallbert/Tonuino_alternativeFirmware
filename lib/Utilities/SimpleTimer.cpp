@@ -32,7 +32,7 @@ void SimpleTimer::stop()
     m_bElapsed = false;
 }
 
-bool SimpleTimer::is_elapsed()
+bool SimpleTimer::isElapsed()
 {
     return m_bElapsed;
 }

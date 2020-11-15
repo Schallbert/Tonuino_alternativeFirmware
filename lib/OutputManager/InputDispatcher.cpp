@@ -24,7 +24,7 @@ void InputDispatcher::handleMenuState()
     handleDeleteMenu();
     handleLinkMenu();
 
-    if (m_pMenuTimer->is_elapsed())
+    if (m_pMenuTimer->isElapsed())
     {
         abrt(); // Timer elapsed, reset menu state.
     }

@@ -75,7 +75,7 @@ void Mp3PlayerControl::autoplay()
             m_pDfMiniMp3->stop();
             return;
         }
-        else if (mode == Folder::LULLABYE && m_pLullabyeTimer->is_elapsed())
+        else if (mode == Folder::LULLABYE && m_pLullabyeTimer->isElapsed())
         {
             m_debugMessage = autoplayLullabye;
             waitForPlayerReady();
@@ -152,13 +152,13 @@ void Mp3PlayerControl::dontSkipCurrentTrack()
     //Blocker method to make feature wait until voice prompt has played
     //To ensure following voice prompts do not overwrite current
     m_pDfMiniMsgTimeout->start(WAIT_DFMINI_READY);
-    while (!is_playing() && !(m_pDfMiniMsgTimeout->is_elapsed()))
+    while (!is_playing() && !(m_pDfMiniMsgTimeout->isElapsed()))
     {
         waitForPlayerReady(); //wait for track to start (until timeout kicks in)
     }
     m_pDfMiniMsgTimeout->stop();
     m_pDfMiniMsgTimeout->start(TIMEOUT_PROMPT_PLAYED);
-    while (is_playing() && !(m_pDfMiniMsgTimeout->is_elapsed()))
+    while (is_playing() && !(m_pDfMiniMsgTimeout->isElapsed()))
     {
         waitForPlayerReady(); //wait for track to finish
     }

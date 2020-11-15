@@ -46,7 +46,7 @@ public:
     // stops the timer and resets values
     void stop();
     // returns true on timeout
-    bool is_elapsed();
+    bool isElapsed();
 
 private:
     uint16_t m_ui16Count{0};
