@@ -36,14 +36,12 @@ void setup()
 // - refactor PowerManager DONE
 // - Unit tests for StatusLed DONE
 // - Unit tests for UserInput DONE
+// - code smell: Delete menu in NfcTag enum?! DONE
+// - Outsource menu handling to an own class DONE
 
 // - implement power save (arduino, nfc, etc.)
-
-// OUTPUTMANAGER:
-// - Outsource menu handling to an own class
 // - Outsource error handling to an own class
-// - code smell: Delete menu in NfcTag enum?!
-
+// - Folder: remove trackCount, have evaluated at Mp3PlayerControl
 // - solve naming differences (underscores) of HAL with namespaces!
 
 // - Integration testing on device

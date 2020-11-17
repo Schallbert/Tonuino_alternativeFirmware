@@ -1,7 +1,5 @@
 #include "PlaybackControl.h"
 
-
-
 void PlaybackControl::setUserInput(UserInput::eUserRequest userInput)
 {
     m_eUserInput = userInput;
