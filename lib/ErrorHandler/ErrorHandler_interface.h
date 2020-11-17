@@ -16,7 +16,7 @@ public:
 
     // Events
     virtual void setHelpRequested() = 0;
-    virtual void setCardReadError() = 0;
+    virtual void setTagReadError() = 0;
     virtual void setFolderError() = 0;
 };
 

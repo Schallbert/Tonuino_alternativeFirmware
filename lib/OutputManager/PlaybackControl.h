@@ -13,7 +13,7 @@ class PlaybackControl
 public:
     PlaybackControl(Arduino_DIcontainer_interface *pArduHal,
                     PowerManager_interface *pPwrCtrl,
-                    NfcControl *pNfcCtrl,
+                    NfcControl_interface *pNfcCtrl,
                     Mp3PlayerControl_interface *pMp3Ctrl,
                     ErrorHandler_interface *pError) : m_pArduinoHal(pArduHal),
                                                       m_pSystemPower(pPwrCtrl),
@@ -23,7 +23,6 @@ public:
 
 public:
     void setUserInput(UserInput::eUserRequest input);
-
     void loop();
 
 private:
@@ -57,7 +56,7 @@ private:
     // members by dependency injection
     Arduino_DIcontainer_interface *m_pArduinoHal{nullptr};
     PowerManager_interface *m_pSystemPower{nullptr};
-    NfcControl *m_pNfcControl{nullptr};
+    NfcControl_interface *m_pNfcControl{nullptr};
     Mp3PlayerControl_interface *m_pMp3Ctrl{nullptr};
     ErrorHandler_interface *m_pErrorHandler{nullptr};
 

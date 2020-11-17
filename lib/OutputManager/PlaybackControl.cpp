@@ -1,9 +1,6 @@
 #include "PlaybackControl.h"
 
-void PlaybackControl::getTagState()
-{
-    m_tagState = m_pNfcControl->get_tag_presence();
-}
+
 
 void PlaybackControl::setUserInput(UserInput::eUserRequest userInput)
 {
@@ -12,8 +9,15 @@ void PlaybackControl::setUserInput(UserInput::eUserRequest userInput)
 
 void PlaybackControl::loop()
 {
+    // TODO: Outsource!
+    getTagState();
     m_pSystemPower->set_playback(m_pMp3Ctrl->is_playing());
     dispatchInputs();
+}
+
+void PlaybackControl::getTagState()
+{
+    m_tagState = m_pNfcControl->get_tag_presence();
 }
 
 void PlaybackControl::dispatchInputs()
@@ -27,7 +31,7 @@ void PlaybackControl::dispatchInputs()
                                              {
                                                  //NOAC,     PL_PS,     PP_LP,     NEXT_,     PREV_,     INC_V,     DEC_V,
                                                  {&PC::none, &PC::plPs, &PC::help, &PC::next, &PC::prev, &PC::incV, &PC::decV}, // NO_TAG
-                                                 {&PC::none, &PC::plPs, &PC::help, &PC::next, &PC::prev, &PC::incV, &PC::decV}, // ACTIVE_KNOWN_TAG,
+                                                 {&PC::none, &PC::plPs, &PC::none, &PC::next, &PC::prev, &PC::incV, &PC::decV}, // ACTIVE_KNOWN_TAG,
                                                  {&PC::read, &PC::read, &PC::read, &PC::read, &PC::read, &PC::read, &PC::read}, // NEW_REGISTERED_TAG,
                                                  {&PC::none, &PC::none, &PC::help, &PC::none, &PC::none, &PC::none, &PC::none}, // NEW_UNKNOWN_TAG
                                              };
@@ -35,7 +39,7 @@ void PlaybackControl::dispatchInputs()
     (this->*dispatchExecutor)();
 }
 
-// All the actual exectutions should not be here. Put downstream. but how?
+// TODO: All the actual exectutions should not be here. Put downstream. but how?
 void PlaybackControl::read()
 {
     if (m_pNfcControl->read_folder_from_card(m_currentFolder))
@@ -46,7 +50,7 @@ void PlaybackControl::read()
     }
     else
     {
-       m_pErrorHandler->setCardReadError();
+       m_pErrorHandler->setTagReadError();
     }
 }
 
