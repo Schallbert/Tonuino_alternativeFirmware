@@ -4,7 +4,7 @@
 #include "mocks/unittest_NfcControl_mocks.h"
 #include "mocks/unittest_PromptPlayer_mocks.h"
 
-#include "Menu_implementation.h"
+#include "Menu_factory.h"
 
 using ::testing::_;
 using ::testing::NiceMock;

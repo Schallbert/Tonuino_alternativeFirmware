@@ -7,7 +7,7 @@
 #include "../Nfc/Nfc_interface/Nfc_interface.h"
 #include "../Utilities/SimpleTimer.h"
 
-#include "Menu_implementation.h"
+#include "Menu_factory.h"
 
 class NfcControl_interface;
 class PromptPlayer_interface;
