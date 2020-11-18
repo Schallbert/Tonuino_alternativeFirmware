@@ -3,6 +3,7 @@
 
 #include "mocks/unittest_NfcControl_mocks.h"
 #include "mocks/unittest_PromptPlayer_mocks.h"
+#include "mocks/unittest_PowerManager_Mocks.h"
 
 #include "Menu_factory.h"
 
@@ -13,7 +14,8 @@ protected:
     {
         linkMenu = Menu_factory::getInstance(Menu_factory::LINK_MENU,
                                              &m_nfcControlMock,
-                                             &m_promptPlayerMock);
+                                             &m_promptPlayerMock,
+                                             &m_powerManagerMock);
     }
 
     virtual void TearDown()
@@ -25,6 +27,7 @@ protected:
     Menu_interface *linkMenu{nullptr};
     NiceMock<Mock_NfcControl> m_nfcControlMock{};
     NiceMock<Mock_PromptPlayer> m_promptPlayerMock{};
+    NiceMock<Mock_PowerManager> m_powerManagerMock{};
 };
 
 MATCHER(invalidPrompt, "")
@@ -101,6 +104,40 @@ TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_isActive_returnsTrue)
     ASSERT_TRUE(linkMenu->isActive());
 }
 
+TEST_F(LinkMenuTest, noInit_setStatusLed_noStatusLedChangeRequested)
+{
+    EXPECT_CALL(m_powerManagerMock, set_linkMenu()).Times(0);
+    linkMenu->setStatusLed();
+}
+
+TEST_F(LinkMenuTest, entered_setStatusLed_statusLedSetTolinkMenu)
+{
+    linkMenu->confirm();
+
+    EXPECT_CALL(m_powerManagerMock, set_linkMenu());
+    linkMenu->setStatusLed();
+}
+
+TEST_F(LinkMenuTest, menuComplete_setStatusLed_statusLedChangeRequested)
+{
+    linkMenu->confirm(); // enter
+    linkMenu->confirm(); // confirm folderId
+    linkMenu->confirm(); // confirm playMode -->complete
+
+    EXPECT_CALL(m_powerManagerMock, set_linkMenu());
+    linkMenu->setStatusLed();
+}
+
+TEST_F(LinkMenuTest, menuAbort_setStatusLed_noStatusLedChangeRequested)
+{
+    linkMenu->confirm();   
+    linkMenu->abort();      
+
+    EXPECT_CALL(m_powerManagerMock, set_linkMenu()).Times(0);
+    linkMenu->setStatusLed();
+}
+
+// Prompt tests
 TEST_F(LinkMenuTest, noInit_noPromptSet)
 {
     EXPECT_CALL(m_promptPlayerMock, playPrompt(invalidPrompt()));

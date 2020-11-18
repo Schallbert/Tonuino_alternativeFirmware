@@ -3,6 +3,7 @@
 
 #include "mocks/unittest_NfcControl_mocks.h"
 #include "mocks/unittest_PromptPlayer_mocks.h"
+#include "mocks/unittest_PowerManager_Mocks.h"
 
 #include "Menu_factory.h"
 
@@ -17,7 +18,8 @@ protected:
     {
         deleteMenu = Menu_factory::getInstance(Menu_factory::DELETE_MENU,
                                                &m_nfcControlMock,
-                                               &m_promptPlayerMock);
+                                               &m_promptPlayerMock,
+                                               &m_powerManagerMock);
     }
 
     virtual void TearDown()
@@ -28,6 +30,7 @@ protected:
 protected:
     NiceMock<Mock_NfcControl> m_nfcControlMock{};
     NiceMock<Mock_PromptPlayer> m_promptPlayerMock{};
+    NiceMock<Mock_PowerManager> m_powerManagerMock{};
     Menu_interface *deleteMenu{nullptr};
 };
 
@@ -74,12 +77,58 @@ TEST_F(DeleteMenuTest, entered_isActive_returnsTrue)
     ASSERT_TRUE((deleteMenu->isActive()));
 }
 
-TEST_F(DeleteMenuTest, entered_abort_isActive_returnsFalse)
+TEST_F(DeleteMenuTest, enteredAbort_isActive_eturnsFalse)
 {
     deleteMenu->confirm();
     deleteMenu->abort();
 
     ASSERT_FALSE((deleteMenu->isActive()));
+}
+
+TEST_F(DeleteMenuTest, menuComplete_isActive_returnsTrue)
+{
+    ON_CALL(m_nfcControlMock, get_tag_presence()).WillByDefault(Return(Nfc_interface::NEW_REGISTERED_TAG));
+    deleteMenu->confirm();        // enter
+    deleteMenu->handlePlayback(); // detects tag to delete
+    deleteMenu->confirm();        //confirms deletion
+
+    ASSERT_TRUE((deleteMenu->isActive()));
+}
+
+TEST_F(DeleteMenuTest, noInit_setStatusLed_noStatusLedChangeRequested)
+{
+    EXPECT_CALL(m_powerManagerMock, set_delMenu()).Times(0);
+    deleteMenu->setStatusLed();
+}
+
+TEST_F(DeleteMenuTest, entered_setStatusLed_statusLedSetToDeleteMenu)
+{
+    deleteMenu->confirm();
+
+    EXPECT_CALL(m_powerManagerMock, set_delMenu());
+    deleteMenu->setStatusLed();
+}
+
+TEST_F(DeleteMenuTest, menuComplete_setStatusLed_statusLedChangeRequested)
+{
+    ON_CALL(m_nfcControlMock, get_tag_presence()).WillByDefault(Return(Nfc_interface::NEW_REGISTERED_TAG));
+    deleteMenu->confirm();        // enter
+    deleteMenu->handlePlayback(); // detects tag to delete
+    deleteMenu->confirm();        //confirms deletion
+
+    EXPECT_CALL(m_powerManagerMock, set_delMenu());
+    deleteMenu->setStatusLed();
+}
+
+TEST_F(DeleteMenuTest, menuAbort_setStatusLed_noStatusLedChangeRequested)
+{
+    ON_CALL(m_nfcControlMock, get_tag_presence()).WillByDefault(Return(Nfc_interface::NEW_REGISTERED_TAG));
+    deleteMenu->confirm();        // enter
+    deleteMenu->handlePlayback(); // detects tag to delete
+    deleteMenu->abort();      
+
+    EXPECT_CALL(m_powerManagerMock, set_delMenu()).Times(0);
+    deleteMenu->setStatusLed();
 }
 
 // PROMPT tests
@@ -184,8 +233,10 @@ TEST_F(DeleteMenuTest, tagToDeleteDetected_abort_noPromptSet)
 
 TEST_F(DeleteMenuTest, menuComplete_abort_reentry_promptsDeleteTag)
 {
+    ON_CALL(m_nfcControlMock, get_tag_presence()).WillByDefault(Return(Nfc_interface::NEW_REGISTERED_TAG));
+
     VoicePrompt expect{};
-    expect.promptId = MSG_DELETETAG;
+    expect.promptId = MSG_CONFIRM_DELETION;
     expect.allowSkip = true;
 
     deleteMenu->confirm();
