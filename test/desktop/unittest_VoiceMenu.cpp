@@ -3,6 +3,7 @@
 
 #include "mocks/unittest_PromptPlayer_mocks.h"
 #include "mocks/unittest_NfcControl_mocks.h"
+#include "mocks/unittest_PowerManager_Mocks.h"
 
 #include "../VoiceMenu/VoiceMenu.h"
 #include "../Utilities/SimpleTimer.h"
@@ -20,7 +21,10 @@ protected:
     {
         m_pMenuTimer = new SimpleTimer{};
 
-        m_pVoiceMenu = new VoiceMenu(&m_promptPlayerMock, &m_nfcControlMock, m_pMenuTimer);
+        m_pVoiceMenu = new VoiceMenu(&m_promptPlayerMock,
+                                     &m_nfcControlMock,
+                                     &m_powerManagerMock,
+                                     m_pMenuTimer);
     }
 
     virtual void TearDown()
@@ -35,6 +39,7 @@ protected:
 protected:
     NiceMock<Mock_PromptPlayer> m_promptPlayerMock{};
     NiceMock<Mock_NfcControl> m_nfcControlMock{};
+    NiceMock<Mock_PowerManager> m_powerManagerMock{};
     SimpleTimer *m_pMenuTimer{nullptr};
 
     VoiceMenu *m_pVoiceMenu{nullptr};
@@ -45,12 +50,12 @@ TEST_F(VoiceMenuTest, noInit_isActive_returnsFalse)
     ASSERT_FALSE(m_pVoiceMenu->isActive());
 }
 
-TEST_F(VoiceMenuTest, noInit_isTimerStarted_returnsFalse)
+TEST_F(VoiceMenuTest, noInit_isTimerRunning_returnsFalse)
 {
     ASSERT_FALSE(m_pMenuTimer->isRunning());
 }
 
-TEST_F(VoiceMenuTest, init_isTimerStarted_returnsTrue)
+TEST_F(VoiceMenuTest, init_isTimerRunning_returnsTrue)
 {
     ON_CALL(m_nfcControlMock, get_tag_presence()).WillByDefault(Return(Nfc_interface::NEW_UNKNOWN_TAG));
     m_pVoiceMenu->loop(); // entry conditions for Link menu met
@@ -63,12 +68,12 @@ TEST_F(VoiceMenuTest, timerElapes_isActive_returnFalse)
     ON_CALL(m_nfcControlMock, get_tag_presence()).WillByDefault(Return(Nfc_interface::NEW_UNKNOWN_TAG));
     m_pVoiceMenu->loop(); // entry conditions for Link menu met
 
-    for(uint16_t i = 0; i <= MENU_TIMEOUT_SECS; ++i)
+    for (uint16_t i = 0; i <= MENU_TIMEOUT_SECS; ++i)
     {
         m_pMenuTimer->timerTick();
     }
     m_pVoiceMenu->loop();
-    
+
     ASSERT_FALSE(m_pVoiceMenu->isActive());
 }
 
@@ -131,7 +136,7 @@ TEST_F(VoiceMenuTest, linkMenu_linkPreview_isInvoked)
     ON_CALL(m_nfcControlMock, read_folder_from_card(_)).WillByDefault(Return(true));
     ON_CALL(m_nfcControlMock, get_tag_presence()).WillByDefault(Return(Nfc_interface::NEW_UNKNOWN_TAG));
 
-    m_pVoiceMenu->loop();                             // enter
+    m_pVoiceMenu->loop();                              // enter
     m_pVoiceMenu->setUserInput(UserInput::NEXT_TRACK); // if it stays PP_LONGPRESS that will abort the menu
 
     EXPECT_CALL(m_promptPlayerMock, playFolderPreview(_));
