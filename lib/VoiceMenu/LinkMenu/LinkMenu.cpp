@@ -32,6 +32,14 @@ void LinkMenu::selectPrev()
     m_prompt.allowSkip = false; // as preview will be played right afterwards
 }
 
+void LinkMenu::setStatusLed()
+{
+    if(isActive())
+    {
+        m_pPowerManager->set_linkMenu();
+    }    
+}
+
 void LinkMenu::handlePlayback()
 {
     playPrompt();

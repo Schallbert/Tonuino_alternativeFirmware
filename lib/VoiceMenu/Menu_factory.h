@@ -21,7 +21,8 @@ public:
 public:
     static Menu_interface *getInstance(eMenuType menuType,
                                        NfcControl_interface *pNfcCtrl,
-                                       PromptPlayer_interface *pPromptPlayer);
+                                       PromptPlayer_interface *pPromptPlayer,
+                                       PowerManager_interface *pPowerMgr);
 };
 
 #endif // MENU_IMPLEMENTATION_H

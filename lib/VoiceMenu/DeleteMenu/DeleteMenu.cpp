@@ -20,6 +20,14 @@ void DeleteMenu::selectPrev()
     return;
 }
 
+void DeleteMenu::setStatusLed()
+{
+    if(isActive())
+    {
+        m_pPowerManager->set_delMenu();
+    }    
+}
+
 void DeleteMenu::handlePlayback()
 {
     handleTagStateChanges();

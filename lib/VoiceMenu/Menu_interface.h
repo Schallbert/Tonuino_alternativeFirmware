@@ -6,6 +6,7 @@ class Menu_interface
 
 public:
     // Handler
+    virtual void setStatusLed() = 0;
     virtual void handlePlayback() = 0;
 
     // Events
