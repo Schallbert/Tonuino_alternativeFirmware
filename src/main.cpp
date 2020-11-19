@@ -40,6 +40,7 @@ void setup()
 // - Outsource menu handling to an own class DONE
 
 // - implement power save (arduino, nfc, etc.)
+// - Insource InputDispatcher_errorHandler to respective value creators
 // - Outsource error handling to an own class
 // - Folder: remove trackCount, have evaluated at Mp3PlayerControl
 // - solve naming differences (underscores) of HAL with namespaces!

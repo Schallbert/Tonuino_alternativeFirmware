@@ -17,8 +17,10 @@
 #include "../UserInput/ClickEncoder_implementation/ClickEncoder_implementation.h"
 // MISC
 #include "../PowerManager/PowerManager_implementation/PowerManager_implementation.h"
+#include "../VoiceMenu/VoiceMenu.h"
 #include "PlaybackControl.h"
 #include "../Utilities/SimpleTimer.h"
+#include "../ErrorHandler/ErrorHandler_implementation.h"
 
 class Folder;
 
@@ -47,12 +49,13 @@ private:
     PowerManager *m_pPwrCtrl{nullptr};
     // Arduino Hardware Abstraction Layer
     Arduino_DIcontainer *m_pArduinoHal{nullptr};
+    ErrorHandler *m_pErrorHandler{nullptr};
     // timer instances
     SimpleTimer *m_pMenuTimer{nullptr};
     SimpleTimer *m_pLullabyeTimer{nullptr};
     SimpleTimer *m_pIdleTimer{nullptr};
     SimpleTimer *m_pDfMiniMsgTimeout{nullptr};
-    // Periphery
+    // PERIPHERY
     // Init tag reader
     MFRC522_implementation *m_pMfrc522{nullptr}; // concrete NFC HW
     Nfc_interface *m_pNfc{nullptr};
@@ -60,6 +63,7 @@ private:
     // DFPlayer Mini setup
     DfMini *m_pDfMini{nullptr};
     Mp3PlayerControl *m_pMp3Ctrl{nullptr};
+
 // User Input
 #if USERINPUT_VARIANT == THREE_BUTTONS
     ClickEncoder_implementation m_pinPlPs{ClickEncoder_implementation(PINPLPS, USERINPUTACTIVE_STATE)};
@@ -77,15 +81,19 @@ private:
                                     ENCSW,
                                     ENC_STEPSPERNOTCH,
                                     USERINPUTACTIVE_STATE)};
-// #elif USERINPUT_VARIANT == FIVE_BUTTONS
+    // #elif USERINPUT_VARIANT == FIVE_BUTTONS
 
 #endif
 
     // Work member objects -----------------------
-    PlaybackControl m_inputDispatcher{PlaybackControl(m_pArduinoHal,
-                                                m_pPwrCtrl,
-                                                m_pNfcControl,
-                                                m_pMp3Ctrl,
-                                                m_pMenuTimer)};
+    PlaybackControl m_playbackControl{PlaybackControl(m_pArduinoHal,
+                                                      m_pPwrCtrl,
+                                                      m_pNfcControl,
+                                                      m_pMp3Ctrl,
+                                                      m_pErrorHandler)};
+    VoiceMenu m_VoiceMenu{VoiceMenu(m_pPromptPlayer,
+                                    m_pNfcControl,
+                                    m_pPwrCtrl,
+                                    m_pMenuTimer)};
 };
 #endif // SYSTEM_H

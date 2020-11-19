@@ -20,35 +20,24 @@ System::System()
     m_pNfcControl = new NfcControl(m_pNfc, m_pArduinoHal->getSerial());
     m_pDfMini = new DfMini();
     m_pMp3Ctrl = new Mp3PlayerControl(m_pArduinoHal, m_pDfMini, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
-
-
+    m_pErrorHandler = new ErrorHandler(m_pArduinoHal, m_pMp3Ctrl);
 
     // Notify System up
-#if DEBUGSERIAL
-    Arduino_interface_com *pSerial = m_pArduinoHal->getSerial();
-    pSerial->com_begin(DEBUGSERIAL_BAUDRATE); // Some debug output via serial
-    pSerial->com_println("Booted, now initializing");
-#endif
+    m_pErrorHandler->onStartup();
 
     // Initialize objects if needed ------------------------
     //m_pUserInput = UserInput_Factory::getInstance(UserInput_Factory::THREE_BUTTONS);
     //init UserInput
     //m_pUserInput->set_input_pins(PINPLPS, PINPREV, PINNEXT);
     //m_pUserInput->init();
-
-#if DEBUGSERIAL
-    pSerial->com_println("Complete.");
-#endif
 }
 
 System::~System()
 {
-
-#if DEBUGSERIAL
-    m_pArduinoHal->getSerial()->com_println("Shutting down...");
-#endif
+    m_pErrorHandler->onShutdown();
 
     // delete dependency objects
+    delete m_pErrorHandler;
     delete m_pMfrc522;
     delete m_pNfc;
     delete m_pNfcControl;
@@ -67,16 +56,18 @@ System::~System()
 
 bool System::loop()
 {
-    m_inputDispatcher.setTagState(m_pNfcControl->get_tag_presence());
-    m_inputDispatcher.setUserInput(m_UserInput.get_user_request());
-    m_inputDispatcher.loop();
-#if DEBUGSERIAL
-    m_pMp3Ctrl->print_debug_message();
-    m_pNfcControl->print_debug_message();
-    m_inputDispatcher.printDebugMessage();
-    //systemCtrl->print_debug_message(); // TODO: IMPLEMENT
-#endif
+    UserInput::eUserRequest userRequest{m_UserInput.get_user_request()};
+    
+    m_VoiceMenu.setUserInput(userRequest);
+    m_VoiceMenu.loop();
 
+    if(!m_VoiceMenu.isActive())
+    {
+        m_playbackControl.setUserInput(userRequest);
+        m_playbackControl.loop();
+    }
+
+    m_pErrorHandler->printDebugMessage();
     return (!m_pPwrCtrl->get_shutdown_request());
 }
 
