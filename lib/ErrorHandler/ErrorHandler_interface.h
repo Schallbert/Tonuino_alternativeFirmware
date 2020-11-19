@@ -7,6 +7,8 @@ class ErrorHandler_interface
 {
 
 public:
+    virtual ~ErrorHandler_interface(){};
+
     // Handler
     virtual void handleErrors() = 0;
 
@@ -15,6 +17,10 @@ public:
     //#endif
 
     // Events
+    virtual void onStartup() = 0;
+    virtual void onShutdown() = 0;
+
+
     virtual void setHelpRequested() = 0;
     virtual void setTagReadError() = 0;
     virtual void setFolderError() = 0;
