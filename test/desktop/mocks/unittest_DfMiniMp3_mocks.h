@@ -2,7 +2,7 @@
 #define UNITTEST_DFMINIMP3_MOCKS_H
 
 #include <gmock/gmock.h>
-#include "../Mp3/DFMiniMp3_interface/DFMiniMp3_interface.h"
+#include "../Mp3/DFMiniMp3/DFMiniMp3_interface.h"
 
 // Wrapper class to separate dependency on dfMini Mp3 player from utilizing classes.
 // Enabler for mocks.

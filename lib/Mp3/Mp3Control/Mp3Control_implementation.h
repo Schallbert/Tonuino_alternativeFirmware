@@ -4,7 +4,7 @@
 #include "../Arduino/Arduino_interface/Arduino_DIcontainer_interface.h"
 
 #include "../Mp3Control/Mp3Control_interface.h"
-#include "../Mp3/DFMiniMp3_interface/DFMiniMp3_interface.h"
+#include "../Mp3/DFMiniMp3/DFMiniMp3_interface.h"
 #include "../Folder/Folder.h"
 
 #include "../Config/Tonuino_config.h"
