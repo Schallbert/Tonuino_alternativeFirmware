@@ -9,11 +9,11 @@ class Folder
 public:
     /*
         Implementation details:
-        LULLABYE: Mp3PlayerControl's autoplay method
+        LULLABYE: Mp3Control's autoplay method
         ALBUM:  folder's constructor
         RANDOM: folder's shuffle method
         SAVEPROGRESS: folder's next/prev methods
-        ONELARGETRACK: Mp3PlayerControl's autoplay method
+        ONELARGETRACK: Mp3Control's autoplay method
     */
     enum ePlayMode
     {

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "../Mp3/Mp3PlayerControl_implementation/Mp3PlayerControl_implementation.h"
+#include "../Mp3/Mp3Control_implementation/Mp3Control_implementation.h"
 #include "../Utilities/SimpleTimer.h"
 #include "mocks/unittest_DfMiniMp3_mocks.h"
 #include "mocks/unittest_ArduinoDIcontainer_mocks.h"
@@ -31,7 +31,7 @@ protected:
         m_pLullabyeTimer = new SimpleTimer{};
         m_pDfMiniMsgTimeout = new SimpleTimer{};
 
-        m_pMp3PlrCtrl = new Mp3PlayerControl(m_pArduinoHal, m_pDfMini, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
+        m_pMp3PlrCtrl = new Mp3Control(m_pArduinoHal, m_pDfMini, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
     }
 
     virtual void TearDown()
@@ -58,7 +58,7 @@ protected:
     SimpleTimer *m_pLullabyeTimer{nullptr};
     SimpleTimer *m_pDfMiniMsgTimeout{nullptr};
 
-    Mp3PlayerControl *m_pMp3PlrCtrl;
+    Mp3Control *m_pMp3PlrCtrl;
 };
 
 class Mp3CtrlDebugOutput : public Mp3Ctrl
@@ -117,7 +117,7 @@ TEST_F(Mp3Ctrl, ClassConstructorMethodsCalled)
     EXPECT_CALL(*m_pDfMini, begin());
     EXPECT_CALL(*m_pDfMini, setEq(DFMINI_EQ_SETTING));
     EXPECT_CALL(*m_pDfMini, setVolume(VOLUME_INIT));
-    Mp3PlayerControl myMp3(m_pArduinoHal, m_pDfMini, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
+    Mp3Control myMp3(m_pArduinoHal, m_pDfMini, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
 }
 
 TEST_F(Mp3Ctrl, AutoPlayCalledOnLoop)

@@ -1,5 +1,5 @@
-#ifndef MP3PLAYERCONTROL_INTERFACE_H
-#define MP3PLAYERCONTROL_INTERFACE_H
+#ifndef MP3CONTROL_INTERFACE_H
+#define MP3CONTROL_INTERFACE_H
 
 #include "../Arduino/Arduino_interface/Arduino_types.h"
 
@@ -12,10 +12,10 @@ struct VoicePrompt
     };
 
 // API to control the MP3 player hardware
-class Mp3PlayerControl_interface
+class Mp3Control_interface
 {
 public:
-    virtual ~Mp3PlayerControl_interface(){};
+    virtual ~Mp3Control_interface(){};
 
 public:
     // Call in main loop. Listens for DFminiMp3 replies & autoplays next song
@@ -40,4 +40,4 @@ public:
     virtual uint8_t get_trackCount_of_folder(uint8_t folderId) = 0;
 };
 
-#endif // MP3PLAYERCONTROL_INTERFACE_H
+#endif // MP3CONTROL_INTERFACE_H

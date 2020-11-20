@@ -6,7 +6,7 @@
 #include "mocks/unittest_ArduinoDIcontainer_mocks.h"
 #include "mocks/unittest_NfcControl_mocks.h"
 #include "mocks/unittest_PowerManager_Mocks.h"
-#include "mocks/unittest_Mp3PlayerControl_mocks.h"
+#include "mocks/unittest_Mp3Control_mocks.h"
 #include "mocks/unittest_ErrorHandler_mocks.h"
 
 using ::testing::_;
@@ -36,7 +36,7 @@ protected:
     NiceMock<Mock_ArduinoDIcontainer> m_arduHalMock{};
     NiceMock<Mock_PowerManager> m_powerManagerMock{};
     NiceMock<Mock_NfcControl> m_nfcControlMock{};
-    NiceMock<Mock_Mp3PlayerControl> m_mp3PlayerControlMock{};
+    NiceMock<Mock_Mp3Control> m_mp3PlayerControlMock{};
     NiceMock<Mock_ErrorHandler> m_errorHandlerMock{};
 
     PlaybackControl *m_pPlaybackControl{nullptr};

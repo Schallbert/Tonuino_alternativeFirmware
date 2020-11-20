@@ -1,7 +1,7 @@
 #ifndef MP3PLAY_INTERFACE_H
 #define MP3PLAY_INTERFACE_H
 
-#include "Mp3PlayerControl_interface/Mp3PlayerControl_interface.h"
+#include "Mp3Control_interface.h"
 
 class Mp3Play_interface
 {

@@ -10,7 +10,7 @@
 //#include "mocks/unittest_DfMiniMp3_mocks.h"
 #include "mocks/unittest_ArduinoDIcontainer_mocks.h"
 #include "mocks/unittest_PowerManager_mocks.h"
-#include "mocks/unittest_Mp3PlayerControl_mocks.h"
+#include "mocks/unittest_Mp3Control_mocks.h"
 
 #include <PlaybackControl.h>
 
@@ -35,7 +35,7 @@ protected:
         m_pArduinoHal->DelegateToMockEeprom(m_pEeprom);
         m_pArduinoHal->DelegateToMockRandom(m_pRandom);
 
-        m_pMp3Ctrl = new NiceMock<Mock_Mp3PlayerControl>;
+        m_pMp3Ctrl = new NiceMock<Mock_Mp3Control>;
         m_pSystemPower = new NiceMock<Mock_PowerManager>;
         m_pNfc = new NiceMock<Mock_Nfc>;
         m_pNfcControl = new NfcControl(m_pNfc, m_pArduinoHal->getSerial());
@@ -71,7 +71,7 @@ protected:
     NiceMock<Mock_pinCtrl> *m_pPins;
     NiceMock<Mock_eeprom> *m_pEeprom;
     NiceMock<Mock_random> *m_pRandom;
-    NiceMock<Mock_Mp3PlayerControl> *m_pMp3Ctrl;
+    NiceMock<Mock_Mp3Control> *m_pMp3Ctrl;
 
     NiceMock<Mock_PowerManager> *m_pSystemPower{nullptr};
     NiceMock<Mock_Nfc> *m_pNfc{nullptr};

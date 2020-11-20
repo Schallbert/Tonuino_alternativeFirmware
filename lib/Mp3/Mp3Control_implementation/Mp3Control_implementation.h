@@ -3,7 +3,7 @@
 
 #include "../Arduino/Arduino_interface/Arduino_DIcontainer_interface.h"
 
-#include "../Mp3PlayerControl_interface/Mp3PlayerControl_interface.h"
+#include "../Mp3Control_interface.h"
 #include "../Mp3/DFMiniMp3_interface/DFMiniMp3_interface.h"
 #include "../Folder/Folder.h"
 
@@ -15,10 +15,10 @@
 // Uses Software Serial to communicate with DfMiniMp3 player.
 // Dependencies use interfaces themselves for
 // Hardware abstraction and better testabililty.
-class Mp3PlayerControl : public Mp3PlayerControl_interface
+class Mp3Control : public Mp3Control_interface
 {
 public:
-    Mp3PlayerControl(Arduino_DIcontainer_interface *pArduinoHal,
+    Mp3Control(Arduino_DIcontainer_interface *pArduinoHal,
                      DfMiniMp3_interface *pPlayer,
                      SimpleTimer *pLullabyeTimer,
                      SimpleTimer *pDfMiniMsgTimeout);

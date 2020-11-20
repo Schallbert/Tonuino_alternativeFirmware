@@ -11,7 +11,7 @@
 #include "../Nfc/NfcControl/NfcControl.h"
 // MP3
 #include "../Mp3/DFMiniMp3_implementation/DFMiniMp3_implementation.h"
-#include "../Mp3/Mp3PlayerControl_implementation/Mp3PlayerControl_implementation.h"
+#include "../Mp3/Mp3Control_implementation/Mp3Control_implementation.h"
 // USER INPUT
 #include "../UserInput/UserInput_implementation/UserInput_implementation.h"
 #include "../UserInput/ClickEncoder_implementation/ClickEncoder_implementation.h"
@@ -62,7 +62,7 @@ private:
     NfcControl *m_pNfcControl{nullptr}; // Constructor injection of concrete reader
     // DFPlayer Mini setup
     DfMini *m_pDfMini{nullptr};
-    Mp3PlayerControl *m_pMp3Ctrl{nullptr};
+    Mp3Control *m_pMp3Ctrl{nullptr};
 
 // User Input
 #if USERINPUT_VARIANT == THREE_BUTTONS

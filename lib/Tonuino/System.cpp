@@ -19,7 +19,7 @@ System::System()
     m_pNfc = new Nfc_implementation(m_pMfrc522);
     m_pNfcControl = new NfcControl(m_pNfc, m_pArduinoHal->getSerial());
     m_pDfMini = new DfMini();
-    m_pMp3Ctrl = new Mp3PlayerControl(m_pArduinoHal, m_pDfMini, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
+    m_pMp3Ctrl = new Mp3Control(m_pArduinoHal, m_pDfMini, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
     m_pErrorHandler = new ErrorHandler(m_pArduinoHal, m_pMp3Ctrl);
 
     // Notify System up

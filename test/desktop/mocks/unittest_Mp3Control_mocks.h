@@ -2,8 +2,8 @@
 #define UNITTEST_MP3PLAYERCONTROL_MOCKS_H
 
 #include <gmock/gmock.h>
-#include "../Mp3/Mp3PlayerControl_interface/Mp3PlayerControl_interface.h"
-class Mock_Mp3PlayerControl : public Mp3PlayerControl_interface
+#include "../Mp3/Mp3Control_interface.h"
+class Mock_Mp3Control : public Mp3Control_interface
 {
 public:
     MOCK_METHOD(void, loop, (), (override));

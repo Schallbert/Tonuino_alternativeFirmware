@@ -2,7 +2,7 @@
 #define ERRORHANDLER_IMPLEMENTATION_H
 
 #include "Arduino_interface/Arduino_DIcontainer_interface.h"
-#include "Mp3PlayerControl_interface/Mp3PlayerControl_interface.h"
+#include "Mp3Control_interface/Mp3Control_interface.h"
 
 #include "ErrorHandler_interface.h"
 #include "PlayError.h"
@@ -13,7 +13,7 @@ class ErrorHandler : public ErrorHandler_interface
 public:
     ErrorHandler(Arduino_DIcontainer_interface *pArduHal,
                  NfcControl_interface *pNfcCtrl,
-                 Mp3PlayerControl_interface *pMp3Ctrl, ) : m_pArduinoHal(pArduHal),
+                 Mp3Control_interface *pMp3Ctrl, ) : m_pArduinoHal(pArduHal),
                                                            m_pNfcControl(pNfcCtrl),
                                                            m_pMp3Control(pMp3Ctrl){};
 
@@ -34,7 +34,7 @@ public:
 private:
     Arduino_DIcontainer_interface *m_pArduinoHal{nullptr};
     NfcControl_interface *m_pNfcControl{nullptr};
-    Mp3PlayerControl_interface *m_pMp3Control{nullptr};
+    Mp3Control_interface *m_pMp3Control{nullptr};
 
     PlayError m_playError{PlayError(m_pMp3Control)};
 };

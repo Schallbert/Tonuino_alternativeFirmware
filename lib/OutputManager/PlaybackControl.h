@@ -5,7 +5,7 @@
 #include "../PowerManager/PowerManager_interface/PowerManager_interface.h"
 #include "../Nfc/NfcControl/NfcControl.h"
 #include "../UserInput/UserInput_interface/UserInput_interface.h"
-#include "../Mp3/Mp3PlayerControl_interface/Mp3PlayerControl_interface.h"
+#include "../Mp3/Mp3Control_interface.h"
 #include "../ErrorHandler/ErrorHandler_interface.h"
 
 class PlaybackControl
@@ -14,7 +14,7 @@ public:
     PlaybackControl(Arduino_DIcontainer_interface *pArduHal,
                     PowerManager_interface *pPwrCtrl,
                     NfcControl_interface *pNfcCtrl,
-                    Mp3PlayerControl_interface *pMp3Ctrl,
+                    Mp3Control_interface *pMp3Ctrl,
                     ErrorHandler_interface *pError) : m_pArduinoHal(pArduHal),
                                                       m_pSystemPower(pPwrCtrl),
                                                       m_pNfcControl(pNfcCtrl),
@@ -57,7 +57,7 @@ private:
     Arduino_DIcontainer_interface *m_pArduinoHal{nullptr};
     PowerManager_interface *m_pSystemPower{nullptr};
     NfcControl_interface *m_pNfcControl{nullptr};
-    Mp3PlayerControl_interface *m_pMp3Ctrl{nullptr};
+    Mp3Control_interface *m_pMp3Ctrl{nullptr};
     ErrorHandler_interface *m_pErrorHandler{nullptr};
 
     // Member objects

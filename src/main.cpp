@@ -23,7 +23,7 @@ void setup()
 }
 
 // TODO:::::::
-// - Refactor pseudo timer in Mp3PlayerControl DONE
+// - Refactor pseudo timer in Mp3Control DONE
 // - Rethink folder creation (trackCount renewal) DONE
 // - Use class forward declaration for quicker compiles DONE
 // - Lib cleanup in solution (lib manager) DONE
@@ -42,7 +42,7 @@ void setup()
 // - implement power save (arduino, nfc, etc.)
 // - Insource InputDispatcher_errorHandler to respective value creators
 // - Outsource error handling to an own class
-// - Folder: remove trackCount, have evaluated at Mp3PlayerControl
+// - Folder: remove trackCount, have evaluated at Mp3Control
 // - solve naming differences (underscores) of HAL with namespaces!
 
 // - Integration testing on device
