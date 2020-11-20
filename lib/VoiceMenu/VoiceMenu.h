@@ -16,10 +16,10 @@ class Mp3Play_interface;
 class VoiceMenu
 {
 public:
-    VoiceMenu(Mp3Play_interface *pPromptPlayer,
+    VoiceMenu(Mp3Play_interface *pMp3Play,
               NfcControl_interface *pNfcCtrl,
               PowerManager_interface *pPowerMgr,
-              SimpleTimer *pMenuTimer) : m_pPromptPlayer(pPromptPlayer),
+              SimpleTimer *pMenuTimer) : m_pMp3Play(pMp3Play),
                                          m_pNfcControl(pNfcCtrl),
                                          m_pMenuTimer(pMenuTimer),
                                          m_pPowerManager(pPowerMgr){};
@@ -49,7 +49,7 @@ private:
 
 private:
     NfcControl_interface *m_pNfcControl{nullptr};
-    Mp3Play_interface *m_pPromptPlayer{nullptr};
+    Mp3Play_interface *m_pMp3Play{nullptr};
     PowerManager_interface *m_pPowerManager{nullptr};
     SimpleTimer *m_pMenuTimer{nullptr};
 

@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 
 #include "mocks/unittest_NfcControl_mocks.h"
-#include "mocks/unittest_PromptPlayer_mocks.h"
+#include "mocks/unittest_Mp3Play_mocks.h"
 #include "mocks/unittest_PowerManager_Mocks.h"
 
 #include "Menu_factory.h"
@@ -14,7 +14,7 @@ protected:
     {
         linkMenu = Menu_factory::getInstance(Menu_factory::LINK_MENU,
                                              &m_nfcControlMock,
-                                             &m_promptPlayerMock,
+                                             &m_Mp3PlayMock,
                                              &m_powerManagerMock);
     }
 
@@ -26,7 +26,7 @@ protected:
 protected:
     Menu_interface *linkMenu{nullptr};
     NiceMock<Mock_NfcControl> m_nfcControlMock{};
-    NiceMock<Mock_Mp3Play> m_promptPlayerMock{};
+    NiceMock<Mock_Mp3Play> m_Mp3PlayMock{};
     NiceMock<Mock_PowerManager> m_powerManagerMock{};
 };
 
@@ -140,7 +140,7 @@ TEST_F(LinkMenuTest, menuAbort_setStatusLed_noStatusLedChangeRequested)
 // Prompt tests
 TEST_F(LinkMenuTest, noInit_noPromptSet)
 {
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(invalidPrompt()));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(invalidPrompt()));
     linkMenu->handlePlayback();
 }
 
@@ -152,7 +152,7 @@ TEST_F(LinkMenuTest, selectFolderId_noSelection_getPrompt_FolderIdAndAllowSkip)
 
     linkMenu->confirm();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -165,7 +165,7 @@ TEST_F(LinkMenuTest, selectPlayMode_noSelection_getPrompt_PlayModeAndAllowSkip)
     linkMenu->confirm();
     linkMenu->confirm();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -179,7 +179,7 @@ TEST_F(LinkMenuTest, menuComplete_noSelection_getPrompt_TagConfigSuccess)
     linkMenu->confirm();
     linkMenu->confirm();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -190,7 +190,7 @@ TEST_F(LinkMenuTest, menuComplete_noSelection_confirmAgainAndGetPrompt_noPromptS
     linkMenu->confirm();
     linkMenu->confirm();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(invalidPrompt()));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(invalidPrompt()));
     linkMenu->handlePlayback();
 }
 
@@ -203,7 +203,7 @@ TEST_F(LinkMenuTest, selectFolderId1_getPrompt_returns1)
     linkMenu->confirm();
     linkMenu->selectNext();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -216,7 +216,7 @@ TEST_F(LinkMenuTest, selectFolderIdMAX_getPrompt_returnsMAX)
     linkMenu->confirm();
     linkMenu->selectPrev();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -230,7 +230,7 @@ TEST_F(LinkMenuTest, selectPlayMode1_getPrompt_returnsLULLABYE)
     linkMenu->confirm();
     linkMenu->selectNext();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -244,7 +244,7 @@ TEST_F(LinkMenuTest, selectPlayModeMAX_getPrompt_returnsONELARGETRACK)
     linkMenu->confirm();
     linkMenu->selectPrev();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -259,7 +259,7 @@ TEST_F(LinkMenuTest, selectPlayMode_testRollover_getPrompt_returnsSAVEPROGRESS)
     linkMenu->selectPrev();
     linkMenu->selectPrev();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -271,7 +271,7 @@ TEST_F(LinkMenuTest, noInit_abort_noPromptSet)
 
     linkMenu->abort();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -286,7 +286,7 @@ TEST_F(LinkMenuTest, folderId1Selected_abort_promptsAborted)
 
     linkMenu->abort();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -303,7 +303,7 @@ TEST_F(LinkMenuTest, folderIdAndPlayModeSelected_abort_promptsAborted)
 
     linkMenu->abort();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -321,7 +321,7 @@ TEST_F(LinkMenuTest, menuCompleted_abort_promptsAborted)
 
     linkMenu->abort();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -333,7 +333,7 @@ TEST_F(LinkMenuTest, selectFolderId1_getPreview_returnsPreviewFolder1)
     linkMenu->confirm();
     linkMenu->selectNext();
 
-    EXPECT_CALL(m_promptPlayerMock, playFolder(identicalFolder(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playFolder(identicalFolder(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -344,6 +344,6 @@ TEST_F(LinkMenuTest, selectFolderIdMAX_getPreview_returnsPreviewFolderMAX)
     linkMenu->confirm();
     linkMenu->selectPrev();
 
-    EXPECT_CALL(m_promptPlayerMock, playFolder(identicalFolder(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playFolder(identicalFolder(expect)));
     linkMenu->handlePlayback();
 }

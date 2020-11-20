@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 
 #include "mocks/unittest_NfcControl_mocks.h"
-#include "mocks/unittest_PromptPlayer_mocks.h"
+#include "mocks/unittest_Mp3Play_mocks.h"
 #include "mocks/unittest_PowerManager_Mocks.h"
 
 #include "Menu_factory.h"
@@ -18,7 +18,7 @@ protected:
     {
         deleteMenu = Menu_factory::getInstance(Menu_factory::DELETE_MENU,
                                                &m_nfcControlMock,
-                                               &m_promptPlayerMock,
+                                               &m_Mp3PlayMock,
                                                &m_powerManagerMock);
     }
 
@@ -29,7 +29,7 @@ protected:
 
 protected:
     NiceMock<Mock_NfcControl> m_nfcControlMock{};
-    NiceMock<Mock_Mp3Play> m_promptPlayerMock{};
+    NiceMock<Mock_Mp3Play> m_Mp3PlayMock{};
     NiceMock<Mock_PowerManager> m_powerManagerMock{};
     Menu_interface *deleteMenu{nullptr};
 };
@@ -134,7 +134,7 @@ TEST_F(DeleteMenuTest, menuAbort_setStatusLed_noStatusLedChangeRequested)
 // PROMPT tests
 TEST_F(DeleteMenuTest, noInit_noPromptSet)
 {
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(invalidPrompt()));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(invalidPrompt()));
     deleteMenu->handlePlayback();
 }
 
@@ -146,7 +146,7 @@ TEST_F(DeleteMenuTest, init_getPrompt_promptsDeleteTag)
 
     deleteMenu->confirm();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(identicalPrompt(expect)));
     deleteMenu->handlePlayback();
 }
 
@@ -159,7 +159,7 @@ TEST_F(DeleteMenuTest, init2x_getPrompt_promptsDeleteTag)
     deleteMenu->confirm();
     deleteMenu->confirm();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(identicalPrompt(expect)));
     deleteMenu->handlePlayback();
 }
 
@@ -172,7 +172,7 @@ TEST_F(DeleteMenuTest, placedTagToDelete_getPrompt_promptsWaitForConfirm)
 
     deleteMenu->confirm();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(identicalPrompt(expect)));
     deleteMenu->handlePlayback();
 }
 
@@ -187,7 +187,7 @@ TEST_F(DeleteMenuTest, placedTagToDelete_confirmDeletion_promptsTagConfiguration
     deleteMenu->handlePlayback(); // detects tag to delete
     deleteMenu->confirm();        //confirms deletion
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(identicalPrompt(expect)));
     deleteMenu->handlePlayback();
 }
 
@@ -199,7 +199,7 @@ TEST_F(DeleteMenuTest, noInit_abort_noPromptSet)
 
     deleteMenu->abort();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(identicalPrompt(expect)));
     deleteMenu->handlePlayback();
 }
 
@@ -212,7 +212,7 @@ TEST_F(DeleteMenuTest, entered_abort_noPromptSet)
     deleteMenu->confirm();
     deleteMenu->abort();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(identicalPrompt(expect)));
     deleteMenu->handlePlayback();
 }
 
@@ -227,7 +227,7 @@ TEST_F(DeleteMenuTest, tagToDeleteDetected_abort_noPromptSet)
     deleteMenu->handlePlayback();
     deleteMenu->abort();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(identicalPrompt(expect)));
     deleteMenu->handlePlayback();
 }
 
@@ -245,7 +245,7 @@ TEST_F(DeleteMenuTest, menuComplete_abort_reentry_promptsDeleteTag)
 
     deleteMenu->confirm();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(identicalPrompt(expect)));
     deleteMenu->handlePlayback();
 }
 
@@ -258,7 +258,7 @@ TEST_F(DeleteMenuTest, cardToDeleteDetected_cardPresent_playsPreview)
 
     deleteMenu->confirm();
 
-    EXPECT_CALL(m_promptPlayerMock, playFolder(identicalFolder(expect)));
+    EXPECT_CALL(m_Mp3PlayMock, playFolder(identicalFolder(expect)));
     deleteMenu->handlePlayback();
 }
 
@@ -269,6 +269,6 @@ TEST_F(DeleteMenuTest, cardToDeleteDetected_noCard_noPreviewPlayed)
 
     deleteMenu->confirm();
 
-    EXPECT_CALL(m_promptPlayerMock, playFolder(_)).Times(0);
+    EXPECT_CALL(m_Mp3PlayMock, playFolder(_)).Times(0);
     deleteMenu->handlePlayback();
 }

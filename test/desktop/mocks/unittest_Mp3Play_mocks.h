@@ -1,10 +1,10 @@
-#ifndef PROMPTPLAYER_MOCKS_H
-#define PROMPTPLAYER_MOCKS_H
+#ifndef Mp3Play_MOCKS_H
+#define Mp3Play_MOCKS_H
 
 #include <gmock/gmock.h>
 
 #include "Folder.h"
-#include "../Mp3/PromptPlayer/PromptPlayer_interface.h"
+#include "../Mp3/Mp3Play/Mp3Play_interface.h"
 
 class Mock_Mp3Play : public Mp3Play_interface
 {
@@ -13,4 +13,4 @@ class Mock_Mp3Play : public Mp3Play_interface
     MOCK_METHOD(void, playFolder, (Folder &previewFolder), (override));
 };
 
-#endif // PROMPTPLAYER_MOCKS_H
+#endif // Mp3Play_MOCKS_H

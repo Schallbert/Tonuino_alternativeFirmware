@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "mocks/unittest_PromptPlayer_mocks.h"
+#include "mocks/unittest_Mp3Play_mocks.h"
 #include "mocks/unittest_NfcControl_mocks.h"
 #include "mocks/unittest_PowerManager_Mocks.h"
 
@@ -21,7 +21,7 @@ protected:
     {
         m_pMenuTimer = new SimpleTimer{};
 
-        m_pVoiceMenu = new VoiceMenu(&m_promptPlayerMock,
+        m_pVoiceMenu = new VoiceMenu(&m_Mp3PlayMock,
                                      &m_nfcControlMock,
                                      &m_powerManagerMock,
                                      m_pMenuTimer);
@@ -37,7 +37,7 @@ protected:
     Menu_interface *m_deleteMenu{nullptr};
 
 protected:
-    NiceMock<Mock_Mp3Play> m_promptPlayerMock{};
+    NiceMock<Mock_Mp3Play> m_Mp3PlayMock{};
     NiceMock<Mock_NfcControl> m_nfcControlMock{};
     NiceMock<Mock_PowerManager> m_powerManagerMock{};
     SimpleTimer *m_pMenuTimer{nullptr};
@@ -127,7 +127,7 @@ TEST_F(VoiceMenuTest, initLinkMenu_loop_invokesPlayback)
     m_pVoiceMenu->setUserInput(UserInput::PLAY_PAUSE); // provides (invalid) confirmation
     m_pVoiceMenu->loop();
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(_));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(_));
     m_pVoiceMenu->loop();
 }
 
@@ -139,7 +139,7 @@ TEST_F(VoiceMenuTest, linkMenu_linkPreview_isInvoked)
     m_pVoiceMenu->loop();                              // enter
     m_pVoiceMenu->setUserInput(UserInput::NEXT_TRACK); // if it stays PP_LONGPRESS that will abort the menu
 
-    EXPECT_CALL(m_promptPlayerMock, playFolder(_));
+    EXPECT_CALL(m_Mp3PlayMock, playFolder(_));
     m_pVoiceMenu->loop(); // should play preview for folder deletion
 }
 
@@ -188,7 +188,7 @@ TEST_F(VoiceMenuTest, initdeleteMenu_loop_invokesPlayback)
     m_pVoiceMenu->loop();                             // enter
     m_pVoiceMenu->setUserInput(UserInput::NO_ACTION); // if it stays PP_LONGPRESS that will abort the menu
 
-    EXPECT_CALL(m_promptPlayerMock, playPrompt(_));
+    EXPECT_CALL(m_Mp3PlayMock, playPrompt(_));
     m_pVoiceMenu->loop();
 }
 
@@ -202,6 +202,6 @@ TEST_F(VoiceMenuTest, deleteMenu_deletePreview_isInvoked)
     m_pVoiceMenu->loop();                             // enter
     m_pVoiceMenu->setUserInput(UserInput::NO_ACTION); // if it stays PP_LONGPRESS that will abort the menu
 
-    EXPECT_CALL(m_promptPlayerMock, playFolder(_));
+    EXPECT_CALL(m_Mp3PlayMock, playFolder(_));
     m_pVoiceMenu->loop(); // should play preview for folder deletion
 }

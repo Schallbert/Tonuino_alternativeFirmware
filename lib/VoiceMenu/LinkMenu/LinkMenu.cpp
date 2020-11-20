@@ -58,7 +58,7 @@ bool LinkMenu::isComplete()
 
 void LinkMenu::playPrompt()
 {
-    m_pPromptPlayer->playPrompt(m_prompt);
+    m_pMp3Play->playPrompt(m_prompt);
 }
 
 void LinkMenu::playPreview()
@@ -66,6 +66,6 @@ void LinkMenu::playPreview()
         Folder preview = m_menuState.getPreview();
         if(preview.is_initiated())
         {
-             m_pPromptPlayer->playFolder(preview);
+             m_pMp3Play->playFolder(preview);
         }
 }

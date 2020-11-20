@@ -2,7 +2,7 @@
 #define LINKMENU_H
 
 #include "Folder.h"
-#include "../Mp3/PromptPlayer/PromptPlayer_interface.h"
+#include "../Mp3/Mp3Play/Mp3Play_interface.h"
 #include "../Nfc/NfcControl/NfcControl_interface.h"
 #include "../PowerManager/PowerManager_interface/PowerManager_interface.h"
 
@@ -16,9 +16,9 @@ class LinkMenu : public Menu_interface
 
 public:
     LinkMenu(NfcControl_interface *pNfcCtrl,
-             Mp3Play_interface *pPromptPlayer,
+             Mp3Play_interface *pMp3Play,
              PowerManager_interface *pPowerMgr) : m_pNfcControl(pNfcCtrl),
-                                                  m_pPromptPlayer(pPromptPlayer),
+                                                  m_pMp3Play(pMp3Play),
                                                   m_pPowerManager(pPowerMgr){};
 
 public:
@@ -41,7 +41,7 @@ private:
 
 private:
     NfcControl_interface *m_pNfcControl{nullptr};
-    Mp3Play_interface *m_pPromptPlayer{nullptr};
+    Mp3Play_interface *m_pMp3Play{nullptr};
     PowerManager_interface *m_pPowerManager{nullptr};
 
     LinkMenu_StateManager m_menuState{};

@@ -52,7 +52,7 @@ void VoiceMenu::checkEnterLinkMenu()
     {
         m_pMenuInstance = Menu_factory::getInstance(Menu_factory::LINK_MENU,
                                                     m_pNfcControl,
-                                                    m_pPromptPlayer,
+                                                    m_pMp3Play,
                                                     m_pPowerManager);
         m_pMenuInstance->confirm();
         m_pMenuTimer->start(MENU_TIMEOUT_SECS);
@@ -66,7 +66,7 @@ void VoiceMenu::checkEnterDeleteMenu()
     {
         m_pMenuInstance = Menu_factory::getInstance(Menu_factory::DELETE_MENU,
                                                     m_pNfcControl,
-                                                    m_pPromptPlayer,
+                                                    m_pMp3Play,
                                                     m_pPowerManager);
         m_pMenuInstance->confirm();
         m_pMenuTimer->start(MENU_TIMEOUT_SECS);

@@ -58,7 +58,7 @@ void DeleteMenu::playPrompt()
 {
     m_prompt.promptId = m_menuState.getMenuStateMessage();
     m_prompt.allowSkip = true;
-    m_pPromptPlayer->playPrompt(m_prompt);
+    m_pMp3Play->playPrompt(m_prompt);
 }
 
 void DeleteMenu::playPreview()
@@ -68,7 +68,7 @@ void DeleteMenu::playPreview()
         Folder preview;
         if (m_pNfcControl->read_folder_from_card(preview))
         {
-            m_pPromptPlayer->playFolder(preview);
+            m_pMp3Play->playFolder(preview);
         }
     }
 }

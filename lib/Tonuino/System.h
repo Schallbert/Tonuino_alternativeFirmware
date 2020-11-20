@@ -91,7 +91,7 @@ private:
                                                       m_pNfcControl,
                                                       m_pMp3Ctrl,
                                                       m_pErrorHandler)};
-    VoiceMenu m_VoiceMenu{VoiceMenu(m_pPromptPlayer,
+    VoiceMenu m_VoiceMenu{VoiceMenu(m_pMp3Play,
                                     m_pNfcControl,
                                     m_pPwrCtrl,
                                     m_pMenuTimer)};
