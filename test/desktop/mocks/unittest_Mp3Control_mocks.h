@@ -2,7 +2,7 @@
 #define UNITTEST_MP3PLAYERCONTROL_MOCKS_H
 
 #include <gmock/gmock.h>
-#include "../Mp3/Mp3Control_interface.h"
+#include "../Mp3/Mp3Control/Mp3Control_interface.h"
 class Mock_Mp3Control : public Mp3Control_interface
 {
 public:

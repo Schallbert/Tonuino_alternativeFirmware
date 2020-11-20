@@ -11,7 +11,7 @@
 #include "../Nfc/NfcControl/NfcControl.h"
 // MP3
 #include "../Mp3/DFMiniMp3_implementation/DFMiniMp3_implementation.h"
-#include "../Mp3/Mp3Control_implementation/Mp3Control_implementation.h"
+#include "../Mp3/Mp3Control_implementation/Mp3Control/Mp3Control_implementation.h"
 // USER INPUT
 #include "../UserInput/UserInput_implementation/UserInput_implementation.h"
 #include "../UserInput/ClickEncoder_implementation/ClickEncoder_implementation.h"

@@ -2,7 +2,7 @@
 #define ERRORHANDLER_IMPLEMENTATION_H
 
 #include "Arduino_interface/Arduino_DIcontainer_interface.h"
-#include "Mp3Control_interface/Mp3Control_interface.h"
+#include "Mp3Control_interface/Mp3Control/Mp3Control_interface.h"
 
 #include "ErrorHandler_interface.h"
 #include "PlayError.h"

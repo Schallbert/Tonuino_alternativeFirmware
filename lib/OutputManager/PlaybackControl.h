@@ -5,7 +5,7 @@
 #include "../PowerManager/PowerManager_interface/PowerManager_interface.h"
 #include "../Nfc/NfcControl/NfcControl.h"
 #include "../UserInput/UserInput_interface/UserInput_interface.h"
-#include "../Mp3/Mp3Control_interface.h"
+#include "../Mp3/Mp3Control/Mp3Control_interface.h"
 #include "../ErrorHandler/ErrorHandler_interface.h"
 
 class PlaybackControl

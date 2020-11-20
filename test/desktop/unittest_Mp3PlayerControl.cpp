@@ -1,7 +1,9 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "../Mp3/Mp3Control_implementation/Mp3Control_implementation.h"
+
+#include "../Mp3/Mp3Control/Mp3Control_implementation.h"
 #include "../Utilities/SimpleTimer.h"
+
 #include "mocks/unittest_DfMiniMp3_mocks.h"
 #include "mocks/unittest_ArduinoDIcontainer_mocks.h"
 #include "mocks/unittest_ArduinoIf_mocks.h"

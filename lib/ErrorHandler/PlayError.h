@@ -2,7 +2,7 @@
 #define PLAYERROR_H
 
 #include "Tonuino_config.h"
-#include "Mp3Control_interface.h"
+#include "Mp3Control/Mp3Control_interface.h"
 
 class PlayError
 {
