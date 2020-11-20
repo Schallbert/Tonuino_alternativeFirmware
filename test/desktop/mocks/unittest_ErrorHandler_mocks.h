@@ -12,6 +12,9 @@ public:
 
     MOCK_METHOD(void, printDebugMessage, (), (override));
 
+    MOCK_METHOD(void, onStartup, (), (override));
+    MOCK_METHOD(void, onShutdown, (), (override));
+
     MOCK_METHOD(void, setHelpRequested, (), (override));
     MOCK_METHOD(void, setTagReadError, (), (override));
     MOCK_METHOD(void, setFolderError, (), (override));

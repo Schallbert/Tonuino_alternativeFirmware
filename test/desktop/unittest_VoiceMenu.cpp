@@ -37,7 +37,7 @@ protected:
     Menu_interface *m_deleteMenu{nullptr};
 
 protected:
-    NiceMock<Mock_PromptPlayer> m_promptPlayerMock{};
+    NiceMock<Mock_Mp3Play> m_promptPlayerMock{};
     NiceMock<Mock_NfcControl> m_nfcControlMock{};
     NiceMock<Mock_PowerManager> m_powerManagerMock{};
     SimpleTimer *m_pMenuTimer{nullptr};
@@ -139,7 +139,7 @@ TEST_F(VoiceMenuTest, linkMenu_linkPreview_isInvoked)
     m_pVoiceMenu->loop();                              // enter
     m_pVoiceMenu->setUserInput(UserInput::NEXT_TRACK); // if it stays PP_LONGPRESS that will abort the menu
 
-    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(_));
+    EXPECT_CALL(m_promptPlayerMock, playFolder(_));
     m_pVoiceMenu->loop(); // should play preview for folder deletion
 }
 
@@ -202,6 +202,6 @@ TEST_F(VoiceMenuTest, deleteMenu_deletePreview_isInvoked)
     m_pVoiceMenu->loop();                             // enter
     m_pVoiceMenu->setUserInput(UserInput::NO_ACTION); // if it stays PP_LONGPRESS that will abort the menu
 
-    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(_));
+    EXPECT_CALL(m_promptPlayerMock, playFolder(_));
     m_pVoiceMenu->loop(); // should play preview for folder deletion
 }

@@ -42,7 +42,7 @@ void Mp3PlayerControl::volume_down()
     }
     m_debugMessage = volumeDown;
 }
-bool Mp3PlayerControl::is_playing()
+bool Mp3PlayerControl::is_playing() const
 {
     return !(m_pArduinoHal->getPins()->digital_read(DFMINI_PIN_ISIDLE));
 }
@@ -138,7 +138,7 @@ void Mp3PlayerControl::play_folder(Folder *currentFolder)
     m_debugMessage = play;
 }
 
-void Mp3PlayerControl::play_prompt(VoicePrompt prompt)
+void Mp3PlayerControl::play_prompt(const VoicePrompt &prompt) const
 {
     m_pDfMiniMp3->playAdvertisement(prompt.promptId);
     if(!prompt.allowSkip)
@@ -147,7 +147,7 @@ void Mp3PlayerControl::play_prompt(VoicePrompt prompt)
     }
 }
 
-void Mp3PlayerControl::dontSkipCurrentTrack()
+void Mp3PlayerControl::dontSkipCurrentTrack() const
 {
     //Blocker method to make feature wait until voice prompt has played
     //To ensure following voice prompts do not overwrite current
@@ -163,6 +163,15 @@ void Mp3PlayerControl::dontSkipCurrentTrack()
         waitForPlayerReady(); //wait for track to finish
     }
     m_pDfMiniMsgTimeout->stop();
+}
+
+// Waits for DfMiniMp3 player's serial connection to be ready for new commands
+void Mp3PlayerControl::waitForPlayerReady() const
+{
+    // command will wait for complete serial
+    // communication message to be received from Player
+    // assuming that the player is ready to process new input
+    m_pDfMiniMp3->loop();
 }
 
 uint8_t Mp3PlayerControl::get_trackCount_of_folder(uint8_t folderId)
@@ -189,13 +198,4 @@ bool Mp3PlayerControl::isFolderValid()
         }
     }
     return false;
-}
-
-// Waits for DfMiniMp3 player's serial connection to be ready for new commands
-void Mp3PlayerControl::waitForPlayerReady()
-{
-    // command will wait for complete serial
-    // communication message to be received from Player
-    // assuming that the player is ready to process new input
-    m_pDfMiniMp3->loop();
 }

@@ -33,11 +33,11 @@ public:
     void volume_up() override;
     void volume_down() override;
 
-    bool is_playing() override;
+    bool is_playing() const override;
     uint8_t get_trackCount_of_folder(uint8_t folderId) override;
 
     void play_folder(Folder *m_pCurrentFolder) override;
-    void play_prompt(VoicePrompt prompt) override;
+    void play_prompt(const VoicePrompt &prompt) const override;
 
 #if DEBUGSERIAL
     // Prints message from player periphery or player controller to Serial.
@@ -52,9 +52,9 @@ public:
 #endif
 
 private:
-    void waitForPlayerReady();
+    void waitForPlayerReady() const;
     void autoplay();
-    void dontSkipCurrentTrack();
+    void dontSkipCurrentTrack() const;
 
     bool isFolderValid();
 

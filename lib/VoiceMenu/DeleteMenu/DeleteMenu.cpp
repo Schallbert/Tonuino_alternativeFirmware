@@ -68,7 +68,7 @@ void DeleteMenu::playPreview()
         Folder preview;
         if (m_pNfcControl->read_folder_from_card(preview))
         {
-            m_pPromptPlayer->playFolderPreview(preview);
+            m_pPromptPlayer->playFolder(preview);
         }
     }
 }

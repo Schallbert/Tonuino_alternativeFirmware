@@ -7,7 +7,7 @@
 #include "DeleteMenu/DeleteMenu.h"
 
 class NfcControl_interface;
-class PromptPlayer_interface;
+class Mp3Play_interface;
 
 class Menu_factory
 {
@@ -21,7 +21,7 @@ public:
 public:
     static Menu_interface *getInstance(eMenuType menuType,
                                        NfcControl_interface *pNfcCtrl,
-                                       PromptPlayer_interface *pPromptPlayer,
+                                       Mp3Play_interface *pPromptPlayer,
                                        PowerManager_interface *pPowerMgr);
 };
 

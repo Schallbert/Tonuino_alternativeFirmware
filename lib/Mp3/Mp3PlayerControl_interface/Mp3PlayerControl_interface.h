@@ -31,11 +31,11 @@ public:
     // If playing, pauses track and vice versa
     virtual void play_pause() = 0;
     // Returns true if DFminiMp3 is currently playing
-    virtual bool is_playing() = 0;
+    virtual bool is_playing() const = 0;
     // Starts playback of specified folder (handles queueing and folder specific playmodes)
     virtual void play_folder(Folder *m_pCurrentFolder) = 0;
     // Plays specific file on sd:/advert/####fileId
-    virtual void play_prompt(VoicePrompt prompt) = 0;
+    virtual void play_prompt(const VoicePrompt &prompt) const = 0;
     // Starts inquiry to player to return number of tracks in selected folder.
     virtual uint8_t get_trackCount_of_folder(uint8_t folderId) = 0;
 };

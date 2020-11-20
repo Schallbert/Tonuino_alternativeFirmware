@@ -26,7 +26,7 @@ protected:
 protected:
     Menu_interface *linkMenu{nullptr};
     NiceMock<Mock_NfcControl> m_nfcControlMock{};
-    NiceMock<Mock_PromptPlayer> m_promptPlayerMock{};
+    NiceMock<Mock_Mp3Play> m_promptPlayerMock{};
     NiceMock<Mock_PowerManager> m_powerManagerMock{};
 };
 
@@ -333,7 +333,7 @@ TEST_F(LinkMenuTest, selectFolderId1_getPreview_returnsPreviewFolder1)
     linkMenu->confirm();
     linkMenu->selectNext();
 
-    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(identicalFolder(expect)));
+    EXPECT_CALL(m_promptPlayerMock, playFolder(identicalFolder(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -344,6 +344,6 @@ TEST_F(LinkMenuTest, selectFolderIdMAX_getPreview_returnsPreviewFolderMAX)
     linkMenu->confirm();
     linkMenu->selectPrev();
 
-    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(identicalFolder(expect)));
+    EXPECT_CALL(m_promptPlayerMock, playFolder(identicalFolder(expect)));
     linkMenu->handlePlayback();
 }

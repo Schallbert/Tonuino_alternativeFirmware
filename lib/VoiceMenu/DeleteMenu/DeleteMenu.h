@@ -17,7 +17,7 @@ class DeleteMenu : public Menu_interface
 
 public:
     DeleteMenu(NfcControl_interface *pNfcCtrl,
-               PromptPlayer_interface *pPromptPlayer,
+               Mp3Play_interface *pPromptPlayer,
                PowerManager_interface *pPowerMgr) : m_pNfcControl(pNfcCtrl),
                                                     m_pPromptPlayer(pPromptPlayer),
                                                     m_pPowerManager(pPowerMgr){};
@@ -43,7 +43,7 @@ private:
 
 private:
     NfcControl_interface *m_pNfcControl{nullptr};
-    PromptPlayer_interface *m_pPromptPlayer{nullptr};
+    Mp3Play_interface *m_pPromptPlayer{nullptr};
     PowerManager_interface *m_pPowerManager{nullptr};
 
     DeleteMenu_StateManager m_menuState{};

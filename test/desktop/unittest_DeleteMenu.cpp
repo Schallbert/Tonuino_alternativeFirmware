@@ -29,7 +29,7 @@ protected:
 
 protected:
     NiceMock<Mock_NfcControl> m_nfcControlMock{};
-    NiceMock<Mock_PromptPlayer> m_promptPlayerMock{};
+    NiceMock<Mock_Mp3Play> m_promptPlayerMock{};
     NiceMock<Mock_PowerManager> m_powerManagerMock{};
     Menu_interface *deleteMenu{nullptr};
 };
@@ -258,7 +258,7 @@ TEST_F(DeleteMenuTest, cardToDeleteDetected_cardPresent_playsPreview)
 
     deleteMenu->confirm();
 
-    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(identicalFolder(expect)));
+    EXPECT_CALL(m_promptPlayerMock, playFolder(identicalFolder(expect)));
     deleteMenu->handlePlayback();
 }
 
@@ -269,6 +269,6 @@ TEST_F(DeleteMenuTest, cardToDeleteDetected_noCard_noPreviewPlayed)
 
     deleteMenu->confirm();
 
-    EXPECT_CALL(m_promptPlayerMock, playFolderPreview(_)).Times(0);
+    EXPECT_CALL(m_promptPlayerMock, playFolder(_)).Times(0);
     deleteMenu->handlePlayback();
 }

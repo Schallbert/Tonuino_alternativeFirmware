@@ -8,7 +8,7 @@
 #include "Menu_factory.h"
 
 class NfcControl_interface;
-class PromptPlayer_interface;
+class Mp3Play_interface;
 
 // Owns the concrete voice menu instance using a factory.
 // Handles creation, their instatiation and destruction.
@@ -16,7 +16,7 @@ class PromptPlayer_interface;
 class VoiceMenu
 {
 public:
-    VoiceMenu(PromptPlayer_interface *pPromptPlayer,
+    VoiceMenu(Mp3Play_interface *pPromptPlayer,
               NfcControl_interface *pNfcCtrl,
               PowerManager_interface *pPowerMgr,
               SimpleTimer *pMenuTimer) : m_pPromptPlayer(pPromptPlayer),
@@ -49,7 +49,7 @@ private:
 
 private:
     NfcControl_interface *m_pNfcControl{nullptr};
-    PromptPlayer_interface *m_pPromptPlayer{nullptr};
+    Mp3Play_interface *m_pPromptPlayer{nullptr};
     PowerManager_interface *m_pPowerManager{nullptr};
     SimpleTimer *m_pMenuTimer{nullptr};
 
