@@ -9,10 +9,6 @@
 class Mock_DfMiniMp3 : public DfMiniMp3_interface
 {
 public:
-    virtual ~Mock_DfMiniMp3(){};
-
-public:
-    MOCK_METHOD(void, begin, (), (override));
     MOCK_METHOD(void, setEq, (eMp3Eq eq), (override));
     MOCK_METHOD(void, setVolume, (uint8_t volume), (override));
     MOCK_METHOD(void, loop, (), (override)); // DOES LOOP REALLY WORK? WATCH OUT FOR STRANGE ERROR MESSAGES

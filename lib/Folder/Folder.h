@@ -28,7 +28,7 @@ public:
 
 public:
     Folder(){};
-    Folder(uint8_t ui8FolderId, ePlayMode ePlayMode, uint8_t ui8TrackCount);
+    Folder(uint8_t ui8FolderId, ePlayMode ePlayMode);
     Folder(const Folder &cpySrcFolder);
     Folder &operator=(const Folder &cpySrcFolder); // = operator
     ~Folder();
@@ -48,6 +48,9 @@ public:
     uint8_t get_track_count() const;
     // Tries to initiate the track queue by using injected dependencies depending on play mode
     void setup_dependencies(Arduino_DIcontainer_interface *pArduinoHal); // Dependency injection: Random seed & eeprom
+    // sets trackCount of folder
+    void setTrackCount(uint8_t trackCount);
+    
     // Returns true if the folder can be fully setup and is ready to be used in other modules
     bool is_valid();
     // Returns true if folder is setup with relevant data (id, track count, playmode)
@@ -59,7 +62,7 @@ private:
     // Creates a sorted play queue (1= first track, 2= second track etc.)
     void init_sorted_queue();
     // Creates a 1:1 copy of the input track queue and saves in member variable
-    bool deep_copy_queue(uint8_t *pTrackQueue);
+    void deep_copy_queue(uint8_t *pTrackQueue);
     // Creates a Pseudo random queue, each track only once in queue
     void shuffle_queue();
     // Returns true if folder is bound to necessary external dependencies (eeprom, random seed)

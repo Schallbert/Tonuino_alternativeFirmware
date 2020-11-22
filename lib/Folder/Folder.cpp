@@ -2,23 +2,23 @@
 
 //Folders
 Folder::Folder(uint8_t ui8FolderId,
-               ePlayMode ePlayMode,
-               uint8_t ui8TrackCount) : m_ui8FolderId(ui8FolderId),
-                                        m_ePlayMode(ePlayMode),
-                                        m_ui8TrackCount(ui8TrackCount) {}
-// Copy Constructor
+               ePlayMode ePlayMode) : m_ui8FolderId(ui8FolderId),
+                                      m_ePlayMode(ePlayMode) {}
 
+// Copy Constructor
 Folder::Folder(const Folder &cpySrcFolder) : m_ui8FolderId(cpySrcFolder.m_ui8FolderId),
                                              m_ePlayMode(cpySrcFolder.m_ePlayMode),
                                              m_ui8TrackCount(cpySrcFolder.m_ui8TrackCount),
-                                             m_pTrackQueue(new uint8_t[cpySrcFolder.m_ui8TrackCount + 1]()),
                                              m_pArduinoHal(cpySrcFolder.m_pArduinoHal)
 {
-    if (deep_copy_queue(cpySrcFolder.m_pTrackQueue))
+    if (cpySrcFolder.m_pTrackQueue != nullptr)
     {
+        m_pTrackQueue = new uint8_t[cpySrcFolder.m_ui8TrackCount + 1]();
+        deep_copy_queue(cpySrcFolder.m_pTrackQueue);
         m_ui8CurrentQueueEntry = cpySrcFolder.m_ui8CurrentQueueEntry;
     }
 }
+
 // overload assignment operator
 Folder &Folder::operator=(const Folder &cpySrcFolder)
 {
@@ -29,14 +29,16 @@ Folder &Folder::operator=(const Folder &cpySrcFolder)
     m_ui8FolderId = cpySrcFolder.m_ui8FolderId;
     m_ePlayMode = cpySrcFolder.m_ePlayMode;
     m_ui8TrackCount = cpySrcFolder.m_ui8TrackCount;
-    m_pTrackQueue = new uint8_t[cpySrcFolder.m_ui8TrackCount + 1]();
     m_pArduinoHal = cpySrcFolder.m_pArduinoHal;
-    if (deep_copy_queue(cpySrcFolder.m_pTrackQueue))
+    if (cpySrcFolder.m_pTrackQueue != nullptr)
     {
+        m_pTrackQueue = new uint8_t[cpySrcFolder.m_ui8TrackCount + 1]();
+        deep_copy_queue(cpySrcFolder.m_pTrackQueue);
         m_ui8CurrentQueueEntry = cpySrcFolder.m_ui8CurrentQueueEntry;
     }
     return *this;
 }
+
 // Destructor
 Folder::~Folder()
 {
@@ -44,29 +46,22 @@ Folder::~Folder()
     {
         // only delete if it has been set with new!
         delete[] m_pTrackQueue;
+        m_pTrackQueue = nullptr;
     }
 }
 
-bool Folder::deep_copy_queue(uint8_t *pTrackQueue)
+void Folder::deep_copy_queue(uint8_t *pTrackQueue)
 {
-    // Deep copy queue if initialized
-    if (pTrackQueue != nullptr)
+    // Deep copy queue for copy constructor/assignment operator
+    for (uint8_t i = 1; i <= m_ui8TrackCount; ++i)
     {
-        for (uint8_t i = 1; i <= m_ui8TrackCount; ++i)
-        {
-            m_pTrackQueue[i] = pTrackQueue[i];
-        }
-        return true;
-    }
-    else
-    {
-        return false;
+        m_pTrackQueue[i] = pTrackQueue[i];
     }
 }
 
 bool Folder::is_valid()
 {
-    if (is_initiated())
+    if (is_initiated() && m_ui8TrackCount)
     {
         if (is_trackQueue_set())
         {
@@ -80,10 +75,12 @@ bool Folder::is_valid()
     }
     return false;
 }
+
 bool Folder::is_initiated() const
 {
-    return (m_ui8FolderId && m_ui8TrackCount && m_ePlayMode != Folder::UNDEFINED);
+    return (m_ui8FolderId && m_ePlayMode != Folder::UNDEFINED);
 }
+
 bool Folder::is_dependency_set()
 {
     // Dependencies only strictly necessary for certain playmodes
@@ -98,6 +95,7 @@ bool Folder::is_dependency_set()
     else
         return true; // no dependencies needed
 }
+
 bool Folder::is_trackQueue_set()
 {
     return (m_pTrackQueue != nullptr);
@@ -124,6 +122,11 @@ void Folder::setup_dependencies(Arduino_DIcontainer_interface *pArduinoHal)
 {
     m_pArduinoHal = pArduinoHal;
     is_valid(); // Call to setup play queue in case dependencies are correctly linked
+}
+
+void Folder::setTrackCount(uint8_t trackCount)
+{
+    m_ui8TrackCount = trackCount;
 }
 
 uint8_t Folder::get_next_track()
@@ -169,14 +172,16 @@ uint8_t Folder::get_prev_track()
     return m_pTrackQueue[m_ui8CurrentQueueEntry];
 }
 
-Folder::ePlayMode Folder::get_play_mode() const 
+Folder::ePlayMode Folder::get_play_mode() const
 {
     return m_ePlayMode;
 }
+
 uint8_t Folder::get_track_count() const
 {
     return m_ui8TrackCount;
 }
+
 // PRIVATE METHODS
 void Folder::setup_track_queue()
 {
@@ -219,11 +224,11 @@ void Folder::setup_track_queue()
         break;
     }
 }
+
 void Folder::shuffle_queue()
 {
     if (!is_valid())
     {
-        // Error: Folder somehow invalid
         init_sorted_queue();
         return;
     }
@@ -265,6 +270,7 @@ void Folder::shuffle_queue()
     }
     m_ui8CurrentQueueEntry = 1; //reset m_ui8TrackCounter
 }
+
 void Folder::init_sorted_queue()
 {
     m_ui8CurrentQueueEntry = 0; // Init: No track played yet.
