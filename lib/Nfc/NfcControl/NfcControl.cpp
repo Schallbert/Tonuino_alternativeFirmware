@@ -101,7 +101,8 @@ void NfcControl::buffer_to_folder()
     Folder::ePlayMode playMode = (Folder::ePlayMode)m_pBuffer[5];
     uint8_t trackCount = (uint8_t)m_pBuffer[6];
     // Set m_oFolder object.
-    m_oFolder = Folder(folderId, playMode, trackCount);
+    m_oFolder = Folder(folderId, playMode);
+    m_oFolder.setTrackCount(trackCount);
 }
 
 bool NfcControl::is_known_card()

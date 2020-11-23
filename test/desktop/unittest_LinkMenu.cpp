@@ -328,7 +328,7 @@ TEST_F(LinkMenuTest, menuCompleted_abort_promptsAborted)
 // Folder Preview Tests
 TEST_F(LinkMenuTest, selectFolderId1_getPreview_returnsPreviewFolder1)
 {
-    Folder expect{Folder(1, Folder::ONELARGETRACK, 1)};
+    Folder expect{Folder(1, Folder::ONELARGETRACK)};
 
     linkMenu->confirm();
     linkMenu->selectNext();
@@ -339,7 +339,7 @@ TEST_F(LinkMenuTest, selectFolderId1_getPreview_returnsPreviewFolder1)
 
 TEST_F(LinkMenuTest, selectFolderIdMAX_getPreview_returnsPreviewFolderMAX)
 {
-    Folder expect{Folder(MAXFOLDERCOUNT, Folder::ONELARGETRACK, 1)};
+    Folder expect{Folder(MAXFOLDERCOUNT, Folder::ONELARGETRACK)};
 
     linkMenu->confirm();
     linkMenu->selectPrev();

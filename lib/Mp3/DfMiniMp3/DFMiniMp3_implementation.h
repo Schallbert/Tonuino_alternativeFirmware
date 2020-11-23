@@ -7,8 +7,8 @@
 
 class Mp3Notify
 {
-    public:
-     enum eDfMiniNotify
+public:
+    enum eDfMiniNotify
     {
         noMessage = 0,
         playFinished,
@@ -71,35 +71,90 @@ private:
 class DfMini : public DfMiniMp3_interface
 {
 public:
+    DfMini()
+    {
+        m_dfMiniMp3.begin(); // init serial and start DfMiniMp3 module
+        m_dfMiniMp3.loop();
+    }
     ~DfMini(){};
 
 public:
-    void begin() override { m_dfMiniMp3.begin(); };
-    void setEq(eMp3Eq eq) override { m_dfMiniMp3.setEq((DfMp3_Eq)eq); };
-    void setVolume(uint8_t volume) override { m_dfMiniMp3.setVolume(volume); };
-    void loop() override { m_dfMiniMp3.loop(); };
-    uint8_t getVolume() override { return m_dfMiniMp3.getVolume(); };
-    void increaseVolume() override { m_dfMiniMp3.increaseVolume(); };
-    void decreaseVolume() override { m_dfMiniMp3.decreaseVolume(); };
-    void pause() override { m_dfMiniMp3.pause(); };
-    void start() override { m_dfMiniMp3.start(); };
-    void stop() override { m_dfMiniMp3.stop(); };
+    void loop() override
+    {
+        m_dfMiniMp3.loop();
+    }
+
+    void setEq(eMp3Eq eq) override
+    {
+        m_dfMiniMp3.setEq((DfMp3_Eq)eq);
+        m_dfMiniMp3.loop();
+    };
+
+    void setVolume(uint8_t volume) override
+    {
+        m_dfMiniMp3.setVolume(volume);
+        m_dfMiniMp3.loop();
+    };
+
+    uint8_t getVolume() override
+    {
+        return m_dfMiniMp3.getVolume();
+        m_dfMiniMp3.loop();
+    };
+
+    void increaseVolume() override
+    {
+        m_dfMiniMp3.increaseVolume();
+        m_dfMiniMp3.loop();
+    };
+
+    void decreaseVolume() override
+    {
+        m_dfMiniMp3.decreaseVolume();
+        m_dfMiniMp3.loop();
+    };
+
+    void pause() override
+    {
+        m_dfMiniMp3.pause();
+        m_dfMiniMp3.loop();
+    };
+
+    void start() override
+    {
+        m_dfMiniMp3.start();
+        m_dfMiniMp3.loop();
+    };
+
+    void stop() override
+    {
+        m_dfMiniMp3.stop();
+        m_dfMiniMp3.loop();
+    };
+
     void playFolderTrack(uint8_t folderId, uint8_t trackId) override
     {
         m_dfMiniMp3.playFolderTrack(folderId, trackId);
+        m_dfMiniMp3.loop();
     };
+
     void playAdvertisement(uint16_t trackId) override
     {
         m_dfMiniMp3.playAdvertisement(trackId);
+        m_dfMiniMp3.loop();
     };
+
     uint8_t getFolderTrackCount(uint8_t folderId) override
     {
+        m_dfMiniMp3.loop();
         return static_cast<uint8_t>(m_dfMiniMp3.getFolderTrackCount(static_cast<uint16_t>(folderId)));
     };
+
     const char *getPlayerNotification() override
     {
         return stringFromDfMiniNotify(Mp3Notify::getMessage());
     };
+    
     bool checkTrackFinished() override
     {
         return (Mp3Notify::getMessage() == Mp3Notify::playFinished);

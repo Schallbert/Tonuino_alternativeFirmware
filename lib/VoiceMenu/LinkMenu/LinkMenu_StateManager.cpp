@@ -117,7 +117,7 @@ uint16_t LinkMenu_StateManager::getMenuStateMessage()
 
 Folder LinkMenu_StateManager::getResult()
 {
-    return Folder(result.folderId, result.playMode, 1);
+    return Folder(result.folderId, result.playMode);
 }
 
 Folder LinkMenu_StateManager::getPreview()
@@ -128,7 +128,7 @@ Folder LinkMenu_StateManager::getPreview()
     {
         uint8_t folderId = static_cast<uint8_t>(options.getSelection() & 0xFF);
         Folder::ePlayMode playMode = Folder::ONELARGETRACK;
-        preview = Folder(folderId, playMode, 1);
+        preview = Folder(folderId, playMode);
     }
     return preview;
 }

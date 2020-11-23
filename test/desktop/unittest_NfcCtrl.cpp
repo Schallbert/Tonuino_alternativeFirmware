@@ -20,8 +20,8 @@ protected:
         m_pSerial = new NiceMock<Mock_serial>;
         m_pNfcControl = new NfcControl(m_pNfc, m_pSerial);
         m_pTestFolder = new Folder(fakeBufferData[4],
-                                   (Folder::ePlayMode)fakeBufferData[5],
-                                   fakeBufferData[6]);
+                                   (Folder::ePlayMode)fakeBufferData[5]);
+        m_pTestFolder->setTrackCount(fakeBufferData[6]);
     }
 
     virtual void TearDown()
@@ -136,8 +136,10 @@ TEST_F(NfcCtrlRead, isCalledWithCorrectPayload)
 
 TEST_F(NfcCtrlRead, Read_Successful_bufferEmpty_NoOverwriteOfSourceFolder)
 {
-    Folder resultFolder(27, Folder::LULLABYE, 5);
+    Folder resultFolder(27, Folder::LULLABYE);
+    resultFolder.setTrackCount(5);
     ON_CALL(*m_pNfc, readTag(_, _)).WillByDefault(Return(true));
+
     EXPECT_FALSE(m_pNfcControl->read_folder_from_card(resultFolder));
     EXPECT_EQ(27, resultFolder.get_folder_id());
     EXPECT_EQ(Folder::LULLABYE, resultFolder.get_play_mode());
