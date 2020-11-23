@@ -9,7 +9,6 @@
 #include "mocks/unittest_ErrorHandler_mocks.h"
 
 using ::testing::_;
-using ::testing::InvokeWithoutArgs;
 using ::testing::NiceMock;
 using ::testing::Return;
 

@@ -11,11 +11,10 @@ public:
     MOCK_METHOD(void, volume_down, (), (override));
     MOCK_METHOD(void, next_track, (), (override));
     MOCK_METHOD(void, prev_track, (), (override));
-    MOCK_METHOD(void, play_pause, (), (override));
-    MOCK_METHOD(bool, is_playing, (), (const, override));
-    MOCK_METHOD(void, play_folder, (Folder *m_pCurrentFolder), (override));
-    MOCK_METHOD(void, play_prompt, (const VoicePrompt &prompt), (const, override));
-    MOCK_METHOD(uint8_t, get_trackCount_of_folder, (uint8_t folderId), (override));
+    MOCK_METHOD(void, play, (), (override));
+    MOCK_METHOD(void, pause, (), (override));
+    MOCK_METHOD(uint8_t, get_trackCount_of_folder, (const uint8_t &folderId), (override));
+    MOCK_METHOD(void, setPlayStatus, (bool isPlaying), (override));
 };
 
 #endif // UNITTEST_MP3PLAYERCONTROL_MOCKS_H
