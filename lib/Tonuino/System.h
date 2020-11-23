@@ -54,7 +54,7 @@ private:
     SimpleTimer *m_pMenuTimer{nullptr};
     SimpleTimer *m_pLullabyeTimer{nullptr};
     SimpleTimer *m_pIdleTimer{nullptr};
-    SimpleTimer *m_pDfMiniMsgTimeout{nullptr};
+    SimpleTimer *m_pDfMiniPromptTimer{nullptr};
     // PERIPHERY
     // Init tag reader
     MFRC522_implementation *m_pMfrc522{nullptr}; // concrete NFC HW

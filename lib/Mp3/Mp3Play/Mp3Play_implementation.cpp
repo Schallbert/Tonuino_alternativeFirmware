@@ -5,7 +5,7 @@ Mp3Play_implementation::Mp3Play_implementation(Arduino_DIcontainer_interface *pA
                                                SimpleTimer *pDfMiniMsgTimeout,
                                                ErrorHandler_interface *pError) : m_pArduinoHal(pArduinoHal),
                                                                                  m_pDfMiniMp3(pDfMini),
-                                                                                 m_pDfMiniMsgTimeout(pDfMiniMsgTimeout),
+                                                                                 m_pDfMiniPromptTimer(pDfMiniMsgTimeout),
                                                                                  m_pErrorHandler(pError)
 {
 
@@ -87,18 +87,18 @@ void Mp3Play_implementation::dontSkipCurrentTrack() const
 {
     //Blocker method to make feature wait until voice prompt has played
     //To ensure following voice prompts do not overwrite current
-    m_pDfMiniMsgTimeout->start(WAIT_DFMINI_READY);
-    while (!isPlaying() && !(m_pDfMiniMsgTimeout->isElapsed()))
+    m_pDfMiniPromptTimer->start(WAIT_DFMINI_READY);
+    while (!isPlaying() && !(m_pDfMiniPromptTimer->isElapsed()))
     {
         m_pDfMiniMp3->loop(); //wait for track to start (until timeout kicks in)
     }
-    m_pDfMiniMsgTimeout->stop();
-    m_pDfMiniMsgTimeout->start(TIMEOUT_PROMPT_PLAYED);
-    while (isPlaying() && !(m_pDfMiniMsgTimeout->isElapsed()))
+    m_pDfMiniPromptTimer->stop();
+    m_pDfMiniPromptTimer->start(TIMEOUT_PROMPT_PLAYED);
+    while (isPlaying() && !(m_pDfMiniPromptTimer->isElapsed()))
     {
         m_pDfMiniMp3->loop(); //wait for track to finish
     }
-    m_pDfMiniMsgTimeout->stop();
+    m_pDfMiniPromptTimer->stop();
 }
 
 bool Mp3Play_implementation::isPlaying() const

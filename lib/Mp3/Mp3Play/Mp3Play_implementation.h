@@ -36,7 +36,7 @@ private:
 private:
     Arduino_DIcontainer_interface *m_pArduinoHal{nullptr};
     DfMiniMp3_interface *m_pDfMiniMp3{nullptr};
-    SimpleTimer *m_pDfMiniMsgTimeout{nullptr};
+    SimpleTimer *m_pDfMiniPromptTimer{nullptr};
     ErrorHandler_interface *m_pErrorHandler{nullptr};
 
     Folder m_currentFolder{};

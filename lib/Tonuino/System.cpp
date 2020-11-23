@@ -13,13 +13,13 @@ System::System()
     // Timers
     m_pMenuTimer = new SimpleTimer();
     m_pLullabyeTimer = new SimpleTimer();
-    m_pDfMiniMsgTimeout = new SimpleTimer();
+    m_pDfMiniPromptTimer = new SimpleTimer();
     // Periphery
     m_pMfrc522 = new MFRC522_implementation();
     m_pNfc = new Nfc_implementation(m_pMfrc522);
     m_pNfcControl = new NfcControl(m_pNfc, m_pArduinoHal->getSerial());
     m_pDfMini = new DfMini();
-    m_pMp3Ctrl = new Mp3Control(m_pArduinoHal, m_pDfMini, m_pLullabyeTimer, m_pDfMiniMsgTimeout);
+    m_pMp3Ctrl = new Mp3Control(m_pArduinoHal, m_pDfMini, m_pLullabyeTimer, m_pDfMiniPromptTimer);
     m_pErrorHandler = new ErrorHandler(m_pArduinoHal, m_pMp3Ctrl);
 
     // Notify System up
@@ -46,7 +46,7 @@ System::~System()
     delete m_pMenuTimer;
     delete m_pLullabyeTimer;
     delete m_pIdleTimer;
-    delete m_pDfMiniMsgTimeout;
+    delete m_pDfMiniPromptTimer;
 
     // finally shut down system
     m_pPwrCtrl->allow_shutdown();
@@ -90,5 +90,5 @@ void System::timer1Task_1sec()
     m_pPwrCtrl->notify_timer_tick(); // idle timer and LED behavior
     m_pLullabyeTimer->timerTick();
     m_pMenuTimer->timerTick();
-    m_pDfMiniMsgTimeout->timerTick();
+    m_pDfMiniPromptTimer->timerTick();
 }

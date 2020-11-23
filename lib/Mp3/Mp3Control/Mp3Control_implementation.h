@@ -46,8 +46,6 @@ private:
     Mp3Play_interface *m_pMp3Player{nullptr};
     SimpleTimer *m_pLullabyeTimer{nullptr};
     ErrorHandler_interface *m_pErrorHandler{nullptr};
-
-    SimpleTimer *m_pDfMiniMsgTimeout{nullptr};
 };
 
 #endif // MP3PLAYERCONTROL_IMPLEMENTATION_H
