@@ -146,6 +146,7 @@ TEST_F(Mp3PlayTest, playPrompt_noSkipNotPlaying_Timeout)
 
     ON_CALL(pinControlMock, digital_read(_)).WillByDefault(Return(true)); // not playing                                                               // not playing
     ON_CALL(m_dfMiniMock, loop()).WillByDefault(InvokeWithoutArgs(&m_dfMiniPromptTimer, &SimpleTimer::timerTick));
+
     EXPECT_CALL(m_dfMiniMock, loop()).Times(WAIT_DFMINI_READY); // timeout kicks in. to wait system calls MP3's loop
     m_pMp3Play->playPrompt(prompt);
 }
@@ -154,7 +155,7 @@ TEST_F(Mp3PlayTest, playPrompt_noSkipNotFinishing_Timeout)
 {
     VoicePrompt prompt;
     prompt.allowSkip = false;
-    prompt.promptId = MSG_CONFIRMED;
+    prompt.promptId = MSG_ABORTED;
 
     ON_CALL(pinControlMock, digital_read(_)).WillByDefault(Return(false)); //playing                                                               // not playing
     ON_CALL(m_dfMiniMock, loop()).WillByDefault(InvokeWithoutArgs(&m_dfMiniPromptTimer, &SimpleTimer::timerTick));
@@ -162,31 +163,34 @@ TEST_F(Mp3PlayTest, playPrompt_noSkipNotFinishing_Timeout)
     EXPECT_CALL(m_dfMiniMock, loop()).Times(TIMEOUT_PROMPT_PLAYED); // timeout kicks in. to wait system calls MP3's loop
     m_pMp3Play->playPrompt(prompt);
 }
-#if 0
-TEST_F(Mp3PlayTest, playPrompt_noSkip_notFinishing_Timeout)
-{
-    VoicePrompt prompt;
-    prompt.allowSkip = false;
-    prompt.promptId = MSG_CONFIRMED;
 
-    ON_CALL(*m_pPinCtrl, digital_read(_)).WillByDefault(Return(false));                                           // playing                                                                           // not playing
-    ON_CALL(m_dfMiniMock, loop()).WillByDefault(InvokeWithoutArgs(m_pDfMiniPromptTimer, &SimpleTimer::timerTick)); //called twice before timeout
-
-    m_pMp3Control->play_prompt(prompt);
-}
-
-TEST_F(Mp3PlayTest, playPrompt_noSkip_playing_noTimeout)
+TEST_F(Mp3PlayTest, playPrompt_noSkipPlaying_onlyStartTimeout)
 {
     VoicePrompt prompt;
     prompt.allowSkip = false;
     prompt.promptId = MSG_CONFIRMED;
     // timeout not elapsing
-    EXPECT_CALL(*m_pPinCtrl, digital_read(_)).Times(3).WillOnce(Return(false)).WillOnce(Return(false)).WillRepeatedly(Return(true)); // not playing
-    EXPECT_CALL(m_dfMiniMock, loop()).Times(1);                                                                                      //called once before isplaying returns true
-
-    m_pMp3Control->play_prompt(prompt);
+    EXPECT_CALL(pinControlMock, digital_read(_))
+        .Times(3)
+        .WillOnce(Return(false)) // playing
+        .WillOnce(Return(false)) // playing
+        .WillRepeatedly(Return(true)); // not playing
+    EXPECT_CALL(m_dfMiniMock, loop()).Times(WAIT_DFMINI_READY); //called once before isplaying returns true
+    m_pMp3Play->playPrompt(prompt);
 }
 
+TEST_F(Mp3PlayTest, playPrompt_callTwice_wontPlayAgain)
+{
+    VoicePrompt prompt;
+    prompt.allowSkip = true;
+    prompt.promptId = MSG_ABORTED;
+
+    EXPECT_CALL(m_dfMiniMock, playAdvertisement(_)).Times(1);
+    m_pMp3Play->playPrompt(prompt);
+    m_pMp3Play->playPrompt(prompt);
+}
+
+#if 0
 TEST_F(Mp3PlayTest, get_trackCount_noFolder_Returns0)
 {
     EXPECT_CALL(m_dfMiniMock, getFolderTrackCount(1)).WillRepeatedly(Return(0));
