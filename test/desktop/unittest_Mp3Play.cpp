@@ -45,6 +45,7 @@ protected:
     Mp3Play_implementation *m_pMp3Play{nullptr};
 };
 
+// IS PLAYING ////////////////////////////////////////////////////////////
 TEST_F(Mp3PlayTest, isPlaying_notPlaying_returnsFalse)
 {
     ON_CALL(pinControlMock, digital_read(_)).WillByDefault(Return(true));
@@ -59,6 +60,7 @@ TEST_F(Mp3PlayTest, isPlaying_Playing_returnsTrue)
     ASSERT_TRUE(m_pMp3Play->isPlaying());
 }
 
+// PLAY FOLDER ////////////////////////////////////////////////////////////
 TEST_F(Mp3PlayTest, playFolder_notInitialized_setsFolderError)
 {
     Folder unInitializedFolder;
@@ -104,6 +106,7 @@ TEST_F(Mp3PlayTest, playFolder_callTwice_wontPlayAgain)
     m_pMp3Play->playFolder(validFolder);
 }
 
+// GET CURRENT FOLDER ////////////////////////////////////////////////////////////
 TEST_F(Mp3PlayTest, getCurrentFolder_noFolderSet_returnsInvalidFolder)
 {
     Folder invalidFolder = m_pMp3Play->getCurrentFolder();
@@ -138,6 +141,7 @@ TEST_F(Mp3PlayTest, getCurrentFolder_folderSet_returnsValidatedFolder)
     EXPECT_EQ(resultFolder.get_next_track(), 2);
 }
 
+// PLAY PROMPT ////////////////////////////////////////////////////////////
 TEST_F(Mp3PlayTest, playPrompt_noSkipNotPlaying_Timeout)
 {
     VoicePrompt prompt;
@@ -189,27 +193,3 @@ TEST_F(Mp3PlayTest, playPrompt_callTwice_wontPlayAgain)
     m_pMp3Play->playPrompt(prompt);
     m_pMp3Play->playPrompt(prompt);
 }
-
-#if 0
-TEST_F(Mp3PlayTest, get_trackCount_noFolder_Returns0)
-{
-    EXPECT_CALL(m_dfMiniMock, getFolderTrackCount(1)).WillRepeatedly(Return(0));
-    EXPECT_EQ(0, m_pMp3Control->get_trackCount_of_folder(1));
-}
-
-TEST_F(Mp3PlayTest, get_trackCount_Folder_ReturnsNumber)
-{
-    Folder testFolder(1, Folder::ALBUM);
-    testFolder.setTrackCount(8);
-    EXPECT_CALL(m_dfMiniMock, getFolderTrackCount(1)).WillRepeatedly(Return(8));
-    EXPECT_EQ(8, m_pMp3Control->get_trackCount_of_folder(1));
-}
-
-TEST_F(Mp3PlayTest, get_trackCount_TrackNumberTooHigh_Returns0)
-{
-    Folder testFolder(1, Folder::ALBUM);
-    testFolder.setTrackCount(8);
-    EXPECT_CALL(m_dfMiniMock, getFolderTrackCount(1)).WillRepeatedly(Return(256));
-    EXPECT_EQ(0, m_pMp3Control->get_trackCount_of_folder(1));
-}
-#endif

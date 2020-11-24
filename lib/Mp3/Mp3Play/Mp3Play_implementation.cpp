@@ -69,30 +69,44 @@ bool Mp3Play_implementation::isFolderValid(Folder &folder)
 
 void Mp3Play_implementation::playPrompt(const VoicePrompt &prompt) const
 {
-    static VoicePrompt currentPrompt;
-    if (currentPrompt.promptId == prompt.promptId)
-    {
-        return; // no need to play already active/played prompt
-    }
+    m_pDfMiniMp3->stop();
 
-    m_pDfMiniMp3->playAdvertisement(prompt.promptId);
-    if (!prompt.allowSkip)
+    if (isPromptNew(prompt))
     {
-        dontSkipCurrentTrack();
+        m_pDfMiniMp3->playAdvertisement(prompt.promptId);
+        waitForPromptToStart();
+
+        if (!prompt.allowSkip)
+        {
+            waitForPromptToFinish();
+        }
     }
-    currentPrompt = prompt;
 }
 
-void Mp3Play_implementation::dontSkipCurrentTrack() const
+bool Mp3Play_implementation::isPromptNew(const VoicePrompt &prompt) const
 {
-    //Blocker method to make feature wait until voice prompt has played
-    //To ensure following voice prompts do not overwrite current
+    bool result{false}; // no need to play already active/played prompt
+    static VoicePrompt currentPrompt;
+    if (currentPrompt.promptId != prompt.promptId)
+    {
+        result = true;
+        currentPrompt = prompt;
+    }
+    return result;
+}
+
+void Mp3Play_implementation::waitForPromptToStart() const
+{
     m_pDfMiniPromptTimer->start(WAIT_DFMINI_READY);
     while (!isPlaying() && !(m_pDfMiniPromptTimer->isElapsed()))
     {
         m_pDfMiniMp3->loop(); //wait for track to start (until timeout kicks in)
     }
     m_pDfMiniPromptTimer->stop();
+}
+
+void Mp3Play_implementation::waitForPromptToFinish() const
+{
     m_pDfMiniPromptTimer->start(TIMEOUT_PROMPT_PLAYED);
     while (isPlaying() && !(m_pDfMiniPromptTimer->isElapsed()))
     {

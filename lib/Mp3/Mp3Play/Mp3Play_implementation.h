@@ -26,7 +26,10 @@ public:
     Folder getCurrentFolder() override;
 
 private:
-    void dontSkipCurrentTrack() const;
+    void waitForPromptToStart() const;
+    void waitForPromptToFinish() const;
+
+    bool isPromptNew(const VoicePrompt &prompt) const;
 
     bool prepareFolderToPlay(Folder &folder);
     bool isFolderNew(const Folder &folder) const;
