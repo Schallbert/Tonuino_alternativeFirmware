@@ -91,6 +91,22 @@ TEST_F(Mp3ControlTest, pause_Pauses)
     m_pMp3Control->pause();
 }
 
+TEST_F(Mp3ControlTest, pause_toggle_Plays)
+{
+    ON_CALL(m_mp3PlayMock, isPlaying()).WillByDefault(Return(false));
+
+    EXPECT_CALL(m_dfMiniMock, start());
+    m_pMp3Control->togglePlayPause();
+}
+
+TEST_F(Mp3ControlTest, play_toggle_Pauses)
+{
+    ON_CALL(m_mp3PlayMock, isPlaying()).WillByDefault(Return(true));
+
+    EXPECT_CALL(m_dfMiniMock, pause());
+    m_pMp3Control->togglePlayPause();
+}
+
 TEST_F(Mp3ControlTest, autoplay_trackPlaying_nop)
 {
     EXPECT_CALL(m_dfMiniMock, checkTrackFinished()).WillOnce(Return(false));
@@ -214,7 +230,7 @@ TEST_F(Mp3ControlTest, nextTrack_FolderSAVEPROGRESS_dependencyNotSet_noop)
     // dependencies not set
     EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, _)).Times(0);
     m_pMp3Control->next_track();
-} 
+}
 
 TEST_F(Mp3ControlTest, nextTrack_FolderRANDOM_dependencyNotSet_noop)
 {

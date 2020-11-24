@@ -28,10 +28,9 @@ public:
     virtual void next_track() = 0;
     // Gets previous track from queue and starts playback
     virtual void prev_track() = 0;
-    // plays track
     virtual void play() = 0;
-    // pauses track
     virtual void pause() = 0;
+    virtual void togglePlayPause() = 0;
 };
 
 #endif // MP3CONTROL_INTERFACE_H

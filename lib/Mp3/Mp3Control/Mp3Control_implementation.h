@@ -29,6 +29,7 @@ public:
 
     void play() override;
     void pause() override;
+    void togglePlayPause() override;
     void next_track() override;
     void prev_track() override;
 

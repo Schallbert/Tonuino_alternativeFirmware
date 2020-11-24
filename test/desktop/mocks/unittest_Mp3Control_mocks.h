@@ -13,8 +13,7 @@ public:
     MOCK_METHOD(void, prev_track, (), (override));
     MOCK_METHOD(void, play, (), (override));
     MOCK_METHOD(void, pause, (), (override));
-    MOCK_METHOD(uint8_t, get_trackCount_of_folder, (const uint8_t &folderId), (override));
-    MOCK_METHOD(void, setPlayStatus, (bool isPlaying), (override));
+    MOCK_METHOD(void, togglePlayPause, (), (override));
 };
 
 #endif // UNITTEST_MP3PLAYERCONTROL_MOCKS_H

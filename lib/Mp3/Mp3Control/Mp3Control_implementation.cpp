@@ -47,6 +47,18 @@ void Mp3Control::pause()
     m_pDfMiniMp3->pause();
 }
 
+void Mp3Control::togglePlayPause()
+{
+    if(m_pMp3Player->isPlaying())
+    {
+        pause();
+    }
+    else
+    {
+        play();
+    }
+}
+
 // Routine to check playmode and select next track
 void Mp3Control::autoplay()
 {
