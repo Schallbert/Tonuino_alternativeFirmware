@@ -30,11 +30,11 @@ public:
     void play() override;
     void pause() override;
     void togglePlayPause() override;
-    void next_track() override;
-    void prev_track() override;
+    void nextTrack() override;
+    void prevTrack() override;
 
-    void volume_up() override;
-    void volume_down() override;
+    void volumeUp() override;
+    void volumeDown() override;
 
 private:
     void autoplay();

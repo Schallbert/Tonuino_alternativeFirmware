@@ -18,7 +18,7 @@ void Mp3Control::loop()
     autoplay();
 }
 
-void Mp3Control::volume_up()
+void Mp3Control::volumeUp()
 {
     if (m_pDfMiniMp3->getVolume() < VOLUME_MAX)
     {
@@ -27,7 +27,7 @@ void Mp3Control::volume_up()
     }
 }
 
-void Mp3Control::volume_down()
+void Mp3Control::volumeDown()
 {
     if (m_pDfMiniMp3->getVolume() > VOLUME_MIN)
     {
@@ -82,12 +82,12 @@ void Mp3Control::autoplay()
         else
         {
             m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::autoplayNext);
-            next_track();
+            nextTrack();
         }
     }
 }
 
-void Mp3Control::next_track()
+void Mp3Control::nextTrack()
 {
     Folder currentFolder = m_pMp3Player->getCurrentFolder();
     if (!currentFolder.is_valid())
@@ -102,7 +102,7 @@ void Mp3Control::next_track()
     m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::next);
 }
 
-void Mp3Control::prev_track()
+void Mp3Control::prevTrack()
 {
     Folder currentFolder = m_pMp3Player->getCurrentFolder();
     if (!currentFolder.is_valid())

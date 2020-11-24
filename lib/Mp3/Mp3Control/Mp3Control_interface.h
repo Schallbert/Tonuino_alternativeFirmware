@@ -6,10 +6,10 @@
 class Folder;
 
 struct VoicePrompt
-    {
-        uint16_t promptId{0};
-        bool allowSkip{true};
-    };
+{
+    uint16_t promptId{0};
+    bool allowSkip{true};
+};
 
 // API to control the MP3 player hardware
 class Mp3Control_interface
@@ -21,13 +21,13 @@ public:
     // Call in main loop. Listens for DFminiMp3 replies & autoplays next song
     virtual void loop() = 0;
     // Increases volume (<= VOLUME_MAX)
-    virtual void volume_up() = 0;
+    virtual void volumeUp() = 0;
     // Decreases volume (>= VOLUME_MIN)
-    virtual void volume_down() = 0;
+    virtual void volumeDown() = 0;
     // Gets next track from queue and starts playback
-    virtual void next_track() = 0;
+    virtual void nextTrack() = 0;
     // Gets previous track from queue and starts playback
-    virtual void prev_track() = 0;
+    virtual void prevTrack() = 0;
     virtual void play() = 0;
     virtual void pause() = 0;
     virtual void togglePlayPause() = 0;

@@ -55,28 +55,28 @@ TEST_F(Mp3ControlTest, volumeUp_belowMax_volumeIsIncreased)
 {
     EXPECT_CALL(m_dfMiniMock, getVolume()).WillRepeatedly(Return(VOLUME_MAX - 1));
     EXPECT_CALL(m_dfMiniMock, increaseVolume()).Times(1);
-    m_pMp3Control->volume_up();
+    m_pMp3Control->volumeUp();
 }
 
 TEST_F(Mp3ControlTest, volumeUp_Max_volumeNotIncreased)
 {
     EXPECT_CALL(m_dfMiniMock, getVolume()).WillRepeatedly(Return(VOLUME_MAX));
     EXPECT_CALL(m_dfMiniMock, increaseVolume()).Times(0); // not allowed to increase volume here
-    m_pMp3Control->volume_up();
+    m_pMp3Control->volumeUp();
 }
 
 TEST_F(Mp3ControlTest, volumeDown_aboveMin_volumeIsDecreased)
 {
     EXPECT_CALL(m_dfMiniMock, getVolume()).WillRepeatedly(Return(VOLUME_MIN + 1));
     EXPECT_CALL(m_dfMiniMock, decreaseVolume()).Times(1);
-    m_pMp3Control->volume_down();
+    m_pMp3Control->volumeDown();
 }
 
 TEST_F(Mp3ControlTest, volumeDown_Min_volumeNotDecreased)
 {
     EXPECT_CALL(m_dfMiniMock, getVolume()).WillRepeatedly(Return(VOLUME_MIN));
     EXPECT_CALL(m_dfMiniMock, decreaseVolume()).Times(0); // not allowed to increase volume here
-    m_pMp3Control->volume_down();
+    m_pMp3Control->volumeDown();
 }
 
 TEST_F(Mp3ControlTest, play_Plays)
@@ -125,7 +125,7 @@ TEST_F(Mp3ControlTest, autoplay_ALBUM_trackFinished_next)
     ON_CALL(m_mp3PlayMock, getCurrentFolder()).WillByDefault(Return(testFolder));
     ON_CALL(m_dfMiniMock, checkTrackFinished()).WillByDefault(Return(true));
 
-    EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, 2)); // autoplay calls next_track.
+    EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, 2)); // autoplay calls nextTrack.
     m_pMp3Control->loop();
 }
 
@@ -150,7 +150,7 @@ TEST_F(Mp3ControlTest, autoplay_LULLABYE_trackFinished_next)
     ON_CALL(m_mp3PlayMock, getCurrentFolder()).WillByDefault(Return(testFolder));
     ON_CALL(m_dfMiniMock, checkTrackFinished()).WillByDefault(Return(true));
 
-    EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, 2)); // autoplay calls next_track.
+    EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, 2)); // autoplay calls nextTrack.
     EXPECT_CALL(m_dfMiniMock, stop()).Times(0);
 
     m_pMp3Control->loop();
@@ -201,7 +201,7 @@ TEST_F(Mp3ControlTest, nextTrack_folderInvalid_setsError)
     ON_CALL(m_mp3PlayMock, getCurrentFolder()).WillByDefault(Return(testFolder));
     // trackCount not set
     EXPECT_CALL(m_errorHandlerMock, setFolderError());
-    m_pMp3Control->next_track();
+    m_pMp3Control->nextTrack();
 }
 
 TEST_F(Mp3ControlTest, nextTrack_folderInvalid_noop)
@@ -210,7 +210,7 @@ TEST_F(Mp3ControlTest, nextTrack_folderInvalid_noop)
     ON_CALL(m_mp3PlayMock, getCurrentFolder()).WillByDefault(Return(testFolder));
     // No folder defined!
     EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, _)).Times(0);
-    m_pMp3Control->next_track();
+    m_pMp3Control->nextTrack();
 }
 
 TEST_F(Mp3ControlTest, nextTrack_trackCountNotSet_noop)
@@ -219,7 +219,7 @@ TEST_F(Mp3ControlTest, nextTrack_trackCountNotSet_noop)
     ON_CALL(m_mp3PlayMock, getCurrentFolder()).WillByDefault(Return(testFolder));
     // trackCount not set
     EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, _)).Times(0);
-    m_pMp3Control->next_track();
+    m_pMp3Control->nextTrack();
 }
 
 TEST_F(Mp3ControlTest, nextTrack_FolderSAVEPROGRESS_dependencyNotSet_noop)
@@ -229,7 +229,7 @@ TEST_F(Mp3ControlTest, nextTrack_FolderSAVEPROGRESS_dependencyNotSet_noop)
     ON_CALL(m_mp3PlayMock, getCurrentFolder()).WillByDefault(Return(testFolder));
     // dependencies not set
     EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, _)).Times(0);
-    m_pMp3Control->next_track();
+    m_pMp3Control->nextTrack();
 }
 
 TEST_F(Mp3ControlTest, nextTrack_FolderRANDOM_dependencyNotSet_noop)
@@ -239,7 +239,7 @@ TEST_F(Mp3ControlTest, nextTrack_FolderRANDOM_dependencyNotSet_noop)
     ON_CALL(m_mp3PlayMock, getCurrentFolder()).WillByDefault(Return(testFolder));
     // dependencies not set
     EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, _)).Times(0);
-    m_pMp3Control->next_track();
+    m_pMp3Control->nextTrack();
 }
 
 TEST_F(Mp3ControlTest, nextTrack_FolderALBUM_dependencyNotSet_playsNext)
@@ -249,14 +249,14 @@ TEST_F(Mp3ControlTest, nextTrack_FolderALBUM_dependencyNotSet_playsNext)
     ON_CALL(m_mp3PlayMock, getCurrentFolder()).WillByDefault(Return(testFolder));
     // dependencies not set
     EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, _));
-    m_pMp3Control->next_track();
+    m_pMp3Control->nextTrack();
 }
 
 TEST_F(Mp3ControlTest, prevTrack_noFolder_noop)
 {
     // No folder defined!
     EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, _)).Times(0);
-    m_pMp3Control->prev_track();
+    m_pMp3Control->prevTrack();
 }
 
 TEST_F(Mp3ControlTest, prevTrack_FolderALBUM_dependencyNotSet_playsPrev)
@@ -266,7 +266,7 @@ TEST_F(Mp3ControlTest, prevTrack_FolderALBUM_dependencyNotSet_playsPrev)
     ON_CALL(m_mp3PlayMock, getCurrentFolder()).WillByDefault(Return(testFolder));
     // dependencies not set
     EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, _));
-    m_pMp3Control->prev_track();
+    m_pMp3Control->prevTrack();
 }
 
 TEST_F(Mp3ControlTest, prevTrack_FolderALBUM_dependencySet_playsPrev)
@@ -276,5 +276,5 @@ TEST_F(Mp3ControlTest, prevTrack_FolderALBUM_dependencySet_playsPrev)
     ON_CALL(m_mp3PlayMock, getCurrentFolder()).WillByDefault(Return(testFolder));
 
     EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, _));
-    m_pMp3Control->prev_track();
+    m_pMp3Control->prevTrack();
 }
