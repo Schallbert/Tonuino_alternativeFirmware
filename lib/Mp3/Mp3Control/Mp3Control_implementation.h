@@ -22,19 +22,18 @@ class Mp3Control : public Mp3Control_interface
 public:
     Mp3Control(DfMiniMp3_interface *pDfMini,
                Mp3Play_interface *pPlayer,
-               SimpleTimer *pLullabyeTimer,
                ErrorHandler_interface *pError);
 
-    void loop() override;
+    void loop() const override;
 
-    void play() override;
-    void pause() override;
-    void togglePlayPause() override;
-    void nextTrack() override;
-    void prevTrack() override;
+    void play() const override;
+    void pause() const override;
+    void togglePlayPause() const override;
+    void nextTrack() const override;
+    void prevTrack() const override;
 
-    void volumeUp() override;
-    void volumeDown() override;
+    void volumeUp() const override;
+    void volumeDown() const override;
 
 private:
     void autoplay();
@@ -45,7 +44,6 @@ private:
     //DFMiniMp3<SoftwareSerial, Mp3Notify> m_dfMiniMp3{DFMiniMp3<SoftwareSerial, Mp3Notify>(m_Mp3SwSerial)};
     DfMiniMp3_interface *m_pDfMiniMp3{nullptr};
     Mp3Play_interface *m_pMp3Player{nullptr};
-    SimpleTimer *m_pLullabyeTimer{nullptr};
     ErrorHandler_interface *m_pErrorHandler{nullptr};
 };
 

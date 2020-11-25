@@ -2,10 +2,8 @@
 
 Mp3Control::Mp3Control(DfMiniMp3_interface *pDfMini,
                        Mp3Play_interface *pPlayer,
-                       SimpleTimer *pLullabyeTimer,
                        ErrorHandler_interface *pError) : m_pDfMiniMp3(pDfMini),
                                                          m_pMp3Player(pPlayer),
-                                                         m_pLullabyeTimer(pLullabyeTimer),
                                                          m_pErrorHandler(pError)
 {
 
@@ -13,41 +11,22 @@ Mp3Control::Mp3Control(DfMiniMp3_interface *pDfMini,
     m_pDfMiniMp3->setVolume(VOLUME_INIT);
 }
 
-void Mp3Control::loop()
+void Mp3Control::loop() const
 {
-    autoplay();
+    m_pMp3Player->autoplay(); // TODO: HOW TO RESET LULLABYE TIMER?
 }
 
-void Mp3Control::volumeUp()
+void Mp3Control::play() const
 {
-    if (m_pDfMiniMp3->getVolume() < VOLUME_MAX)
-    {
-        m_pDfMiniMp3->increaseVolume();
-        m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::volumeUp);
-    }
-}
-
-void Mp3Control::volumeDown()
-{
-    if (m_pDfMiniMp3->getVolume() > VOLUME_MIN)
-    {
-        m_pDfMiniMp3->decreaseVolume();
-        m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::volumeDown);
-    }
-}
-
-void Mp3Control::play()
-{
-    m_pLullabyeTimer->start(LULLABYE_TIMEOUT_SECS); // start&reset shutdown timer
     m_pDfMiniMp3->start();                          // Only successful if a track is entered.
 }
 
-void Mp3Control::pause()
+void Mp3Control::pause() const
 {
     m_pDfMiniMp3->pause();
 }
 
-void Mp3Control::togglePlayPause()
+void Mp3Control::togglePlayPause() const
 {
     if(m_pMp3Player->isPlaying())
     {
@@ -59,60 +38,30 @@ void Mp3Control::togglePlayPause()
     }
 }
 
-// Routine to check playmode and select next track
-void Mp3Control::autoplay()
+void Mp3Control::nextTrack() const
 {
-    // Autoplay implementation
-    if (m_pDfMiniMp3->checkTrackFinished())
+    m_pMp3Player->playNext();
+}
+
+void Mp3Control::prevTrack() const
+{
+    m_pMp3Player->playPrev();
+}
+
+void Mp3Control::volumeUp() const
+{
+    if (m_pDfMiniMp3->getVolume() < VOLUME_MAX)
     {
-        Folder currentFolder = m_pMp3Player->getCurrentFolder();
-        Folder::ePlayMode mode = currentFolder.get_play_mode();
-        if (mode == Folder::ONELARGETRACK)
-        {
-            m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::autoplayOneLargeTrack);
-            m_pDfMiniMp3->stop();
-            return;
-        }
-        else if (mode == Folder::LULLABYE && m_pLullabyeTimer->isElapsed())
-        {
-            m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::autoplayLullabye);
-            m_pDfMiniMp3->stop();
-            return;
-        }
-        else
-        {
-            m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::autoplayNext);
-            nextTrack();
-        }
+        m_pDfMiniMp3->increaseVolume();
+        m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::volumeUp);
     }
 }
 
-void Mp3Control::nextTrack()
+void Mp3Control::volumeDown() const
 {
-    Folder currentFolder = m_pMp3Player->getCurrentFolder();
-    if (!currentFolder.is_valid())
+    if (m_pDfMiniMp3->getVolume() > VOLUME_MIN)
     {
-        m_pErrorHandler->setFolderError();
-        m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::next_noFolder);
-        return; // Cannot play a track if folder is not fully defined.
+        m_pDfMiniMp3->decreaseVolume();
+        m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::volumeDown);
     }
-
-    m_pDfMiniMp3->playFolderTrack(currentFolder.get_folder_id(),
-                                  currentFolder.get_next_track());
-    m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::next);
-}
-
-void Mp3Control::prevTrack()
-{
-    Folder currentFolder = m_pMp3Player->getCurrentFolder();
-    if (!currentFolder.is_valid())
-    {
-        m_pErrorHandler->setFolderError();
-        m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::prev_noFolder);
-        return; // Cannot play a track if the card is not linked.
-    }
-
-    m_pDfMiniMp3->playFolderTrack(currentFolder.get_folder_id(),
-                                  currentFolder.get_prev_track());
-    m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::prev);
 }

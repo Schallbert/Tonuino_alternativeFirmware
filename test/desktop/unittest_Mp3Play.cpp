@@ -25,6 +25,7 @@ protected:
         m_arduinoHalMock.DelegateToMockEeprom(&eepromMock);
         m_pMp3Play = new Mp3Play_implementation(&m_arduinoHalMock,
                                                 &m_dfMiniMock,
+                                                &m_lullabyeTimer,
                                                 &m_dfMiniPromptTimer,
                                                 &m_errorHandlerMock);
     }
@@ -38,6 +39,7 @@ protected:
     NiceMock<Mock_ArduinoDIcontainer> m_arduinoHalMock{};
     NiceMock<Mock_DfMiniMp3> m_dfMiniMock{};
     SimpleTimer m_dfMiniPromptTimer{};
+    SimpleTimer m_lullabyeTimer{};
     NiceMock<Mock_ErrorHandler> m_errorHandlerMock{};
     NiceMock<Mock_pinCtrl> pinControlMock{};
     NiceMock<Mock_eeprom> eepromMock{};
@@ -106,39 +108,164 @@ TEST_F(Mp3PlayTest, playFolder_callTwice_wontPlayAgain)
     m_pMp3Play->playFolder(validFolder);
 }
 
-// GET CURRENT FOLDER ////////////////////////////////////////////////////////////
-TEST_F(Mp3PlayTest, getCurrentFolder_noFolderSet_returnsInvalidFolder)
+// AUTOPLAY ////////////////////////////////////////////////////////////
+TEST_F(Mp3PlayTest, autoplay_trackPlaying_nop)
 {
-    Folder invalidFolder = m_pMp3Play->getCurrentFolder();
+    ON_CALL(m_dfMiniMock, isTrackFinished()).WillByDefault(Return(false));
 
-    EXPECT_EQ(invalidFolder.get_folder_id(), 0);
-    EXPECT_EQ(invalidFolder.get_play_mode(), Folder::UNDEFINED);
-    EXPECT_EQ(invalidFolder.get_track_count(), 0);
+    EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, _)).Times(0);
+    EXPECT_CALL(m_dfMiniMock, stop()).Times(0);
+
+    m_pMp3Play->autoplay();
 }
 
-TEST_F(Mp3PlayTest, getCurrentFolder_folderSet_returnsThatFolder)
+TEST_F(Mp3PlayTest, autoplay_ALBUM_trackFinished_next)
 {
-    Folder expectFolder(1, Folder::ALBUM);
-    ON_CALL(m_dfMiniMock, getFolderTrackCount(_)).WillByDefault(Return(2));
-    m_pMp3Play->playFolder(expectFolder);
+    ON_CALL(m_dfMiniMock, getFolderTrackCount(_)).WillByDefault(Return(8));
+    Folder testFolder(1, Folder::ALBUM);
+    m_pMp3Play->playFolder(testFolder);
 
-    Folder resultFolder = m_pMp3Play->getCurrentFolder();
+    ON_CALL(m_dfMiniMock, isTrackFinished()).WillByDefault(Return(true));
 
-    EXPECT_EQ(resultFolder.get_folder_id(), expectFolder.get_folder_id());
-    EXPECT_EQ(resultFolder.get_play_mode(), expectFolder.get_play_mode());
-    EXPECT_EQ(resultFolder.get_track_count(), expectFolder.get_track_count());
+    EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, 2)); // autoplay calls playNext.
+    m_pMp3Play->autoplay();
 }
 
-TEST_F(Mp3PlayTest, getCurrentFolder_folderSet_returnsValidatedFolder)
+TEST_F(Mp3PlayTest, autoplay_ONELARGETRACK_trackFinished_stop)
 {
-    Folder expectFolder(1, Folder::SAVEPROGRESS);
-    ON_CALL(m_dfMiniMock, getFolderTrackCount(_)).WillByDefault(Return(2));
-    m_pMp3Play->playFolder(expectFolder);
+    ON_CALL(m_dfMiniMock, getFolderTrackCount(_)).WillByDefault(Return(8));
+    Folder testFolder(1, Folder::ONELARGETRACK);
+    m_pMp3Play->playFolder(testFolder);
 
-    Folder resultFolder = m_pMp3Play->getCurrentFolder();
+    ON_CALL(m_dfMiniMock, isTrackFinished()).WillByDefault(Return(true));
 
-    EXPECT_TRUE(resultFolder.is_valid());
-    EXPECT_EQ(resultFolder.get_next_track(), 2);
+    EXPECT_CALL(m_dfMiniMock, stop()); // autoplay calls stop
+    m_pMp3Play->autoplay();
+}
+
+TEST_F(Mp3PlayTest, autoplay_LULLABYE_trackFinished_next)
+{
+    ON_CALL(m_dfMiniMock, getFolderTrackCount(_)).WillByDefault(Return(8));
+    Folder testFolder(1, Folder::LULLABYE);
+    m_pMp3Play->playFolder(testFolder);
+
+    ON_CALL(m_dfMiniMock, isTrackFinished()).WillByDefault(Return(true));
+
+    EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, 2)); // autoplay calls playNext.
+    EXPECT_CALL(m_dfMiniMock, stop()).Times(0);
+
+    m_pMp3Play->autoplay();
+}
+
+TEST_F(Mp3PlayTest, autoplay_LULLABYE_trackFinished_borderline_next)
+{
+    ON_CALL(m_dfMiniMock, getFolderTrackCount(_)).WillByDefault(Return(8));
+    Folder testFolder(1, Folder::LULLABYE);
+    m_pMp3Play->playFolder(testFolder);
+
+    ON_CALL(m_dfMiniMock, isTrackFinished()).WillByDefault(Return(true));
+
+    m_lullabyeTimer.start(LULLABYE_TIMEOUT_SECS);
+    // make timeout expire
+    for (long i = 0; i < (LULLABYE_TIMEOUT_SECS - 1); ++i)
+    {
+        m_lullabyeTimer.timerTick();
+    }
+
+    EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, 2)); // autoplay calls playNext.
+    m_pMp3Play->autoplay();
+}
+
+TEST_F(Mp3PlayTest, autoplay_LULLABYE_trackFinished_timeout_stop)
+{
+    ON_CALL(m_dfMiniMock, getFolderTrackCount(_)).WillByDefault(Return(8));
+    Folder testFolder(1, Folder::LULLABYE);
+    m_pMp3Play->playFolder(testFolder);
+
+    ON_CALL(m_dfMiniMock, isTrackFinished()).WillByDefault(Return(true));
+    // make timeout expire
+    m_lullabyeTimer.start(LULLABYE_TIMEOUT_SECS);
+    for (int i = 0; i < (LULLABYE_TIMEOUT_SECS); ++i)
+    {
+        m_lullabyeTimer.timerTick();
+    }
+
+    EXPECT_CALL(m_dfMiniMock, stop()); // autoplay calls stop
+    m_pMp3Play->autoplay();
+}
+
+// NEXT TRACK ////////////////////////////////////////////////////////////
+TEST_F(Mp3PlayTest, playNext_folderInvalid_setsError)
+{
+    Folder testFolder;
+    m_pMp3Play->playFolder(testFolder);
+    // trackCount not set
+    EXPECT_CALL(m_errorHandlerMock, setFolderError());
+    m_pMp3Play->playNext();
+}
+
+TEST_F(Mp3PlayTest, playNext_folderInvalid_noop)
+{
+    Folder testFolder;
+    m_pMp3Play->playFolder(testFolder);
+    // No folder defined!
+    EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, _)).Times(0);
+    m_pMp3Play->playNext();
+}
+
+TEST_F(Mp3PlayTest, playNext_folderNotOnSdCard_noop)
+{
+    Folder testFolder(1, Folder::ALBUM);
+    m_pMp3Play->playFolder(testFolder);
+    // trackCount not set
+    EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, _)).Times(0);
+    m_pMp3Play->playNext();
+}
+
+TEST_F(Mp3PlayTest, playNext_playsNext)
+{
+    ON_CALL(m_dfMiniMock, getFolderTrackCount(_)).WillByDefault(Return(8));
+    Folder testFolder(1, Folder::SAVEPROGRESS);
+    m_pMp3Play->playFolder(testFolder);
+    // dependencies not set
+    EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, _));
+    m_pMp3Play->playNext();
+}
+
+// PREV TRACK ////////////////////////////////////////////////////////////
+TEST_F(Mp3PlayTest, playPrev_folderInvalid_setsError)
+{
+    Folder testFolder;
+    m_pMp3Play->playFolder(testFolder);
+    // trackCount not set
+    EXPECT_CALL(m_errorHandlerMock, setFolderError());
+    m_pMp3Play->playPrev();
+}
+
+TEST_F(Mp3PlayTest, playPrev_noFolder_noop)
+{
+    // No folder defined!
+    EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, _)).Times(0);
+    m_pMp3Play->playPrev();
+}
+
+TEST_F(Mp3PlayTest, playPrev_folderNotOnSdCard_noop)
+{
+    Folder testFolder(1, Folder::ALBUM);
+    m_pMp3Play->playFolder(testFolder);
+    // trackCount not set
+    EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, _)).Times(0);
+    m_pMp3Play->playPrev();
+}
+
+TEST_F(Mp3PlayTest, playPrev_playsPrev)
+{
+    ON_CALL(m_dfMiniMock, getFolderTrackCount(_)).WillByDefault(Return(8));
+    Folder testFolder(1, Folder::SAVEPROGRESS);
+    m_pMp3Play->playFolder(testFolder);
+    // dependencies not set
+    EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, _));
+    m_pMp3Play->playPrev();
 }
 
 // PLAY PROMPT ////////////////////////////////////////////////////////////
@@ -176,9 +303,9 @@ TEST_F(Mp3PlayTest, playPrompt_noSkipPlaying_onlyStartTimeout)
     // timeout not elapsing
     EXPECT_CALL(pinControlMock, digital_read(_))
         .Times(3)
-        .WillOnce(Return(false)) // playing
-        .WillOnce(Return(false)) // playing
-        .WillRepeatedly(Return(true)); // not playing
+        .WillOnce(Return(false))                                // playing
+        .WillOnce(Return(false))                                // playing
+        .WillRepeatedly(Return(true));                          // not playing
     EXPECT_CALL(m_dfMiniMock, loop()).Times(WAIT_DFMINI_READY); //called once before isplaying returns true
     m_pMp3Play->playPrompt(prompt);
 }

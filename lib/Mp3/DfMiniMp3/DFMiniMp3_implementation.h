@@ -155,7 +155,7 @@ public:
         return stringFromDfMiniNotify(Mp3Notify::getMessage());
     };
     
-    bool checkTrackFinished() override
+    bool isTrackFinished() override
     {
         return (Mp3Notify::getMessage() == Mp3Notify::playFinished);
     };

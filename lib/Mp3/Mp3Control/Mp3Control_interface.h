@@ -19,18 +19,18 @@ public:
 
 public:
     // Call in main loop. Listens for DFminiMp3 replies & autoplays next song
-    virtual void loop() = 0;
+    virtual void loop() const = 0;
     // Increases volume (<= VOLUME_MAX)
-    virtual void volumeUp() = 0;
+    virtual void volumeUp() const  = 0;
     // Decreases volume (>= VOLUME_MIN)
-    virtual void volumeDown() = 0;
+    virtual void volumeDown() const = 0;
     // Gets next track from queue and starts playback
-    virtual void nextTrack() = 0;
+    virtual void nextTrack() const = 0;
     // Gets previous track from queue and starts playback
-    virtual void prevTrack() = 0;
-    virtual void play() = 0;
-    virtual void pause() = 0;
-    virtual void togglePlayPause() = 0;
+    virtual void prevTrack() const = 0;
+    virtual void play() const = 0;
+    virtual void pause() const = 0;
+    virtual void togglePlayPause() const = 0;
 };
 
 #endif // MP3CONTROL_INTERFACE_H

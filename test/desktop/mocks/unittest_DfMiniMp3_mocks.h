@@ -21,7 +21,7 @@ public:
     MOCK_METHOD(void, playFolderTrack, (uint8_t folderId, uint8_t trackId), (override));
     MOCK_METHOD(void, playAdvertisement, (uint16_t trackId), (override));
     MOCK_METHOD(uint8_t, getFolderTrackCount, (uint8_t folderId), (override));
-    MOCK_METHOD(bool, checkTrackFinished, (), (override));
+    MOCK_METHOD(bool, isTrackFinished, (), (override));
     MOCK_METHOD(const char*, getPlayerNotification, (), (override));
 };
 #endif // UNITTEST_DFMINIMP3_MOCKS_H

@@ -2,9 +2,11 @@
 
 Mp3Play_implementation::Mp3Play_implementation(Arduino_DIcontainer_interface *pArduinoHal,
                                                DfMiniMp3_interface *pDfMini,
+                                               SimpleTimer *pLullabyeTimer,
                                                SimpleTimer *pDfMiniMsgTimeout,
                                                ErrorHandler_interface *pError) : m_pArduinoHal(pArduinoHal),
                                                                                  m_pDfMiniMp3(pDfMini),
+                                                                                 m_pLullabyeTimer(pLullabyeTimer),
                                                                                  m_pDfMiniPromptTimer(pDfMiniMsgTimeout),
                                                                                  m_pErrorHandler(pError)
 {
@@ -14,12 +16,7 @@ Mp3Play_implementation::Mp3Play_implementation(Arduino_DIcontainer_interface *pA
     m_pDfMiniMp3->setEq(DFMINI_EQ_SETTING);
 }
 
-Folder Mp3Play_implementation::getCurrentFolder()
-{
-    return m_currentFolder;
-}
-
-void Mp3Play_implementation::playFolder(Folder &folder)
+void Mp3Play_implementation::playFolder(Folder &folder) // TODO: Start lullabye timer here?
 {
     if (prepareFolderToPlay(folder))
     {
@@ -62,9 +59,62 @@ bool Mp3Play_implementation::isFolderValid(Folder &folder)
     else
     {
         m_pErrorHandler->setFolderError();
+        m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::noFolder);
         result = false;
     }
     return result;
+}
+
+void Mp3Play_implementation::autoplay()
+{
+    if (m_pDfMiniMp3->isTrackFinished())
+    {
+        if (shouldPlaybackStop())
+        {
+            m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::autoplayStop);
+            m_pDfMiniMp3->stop();
+        }
+        else
+        {
+            m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::autoplayNext);
+            playNext();
+        }
+    }
+}
+
+bool Mp3Play_implementation::shouldPlaybackStop() const
+{
+    Folder::ePlayMode mode = m_currentFolder.get_play_mode();
+    bool shouldStop{false};
+    if (mode == Folder::LULLABYE && m_pLullabyeTimer->isElapsed())
+    {
+        shouldStop = true;
+    }
+    else if (mode == Folder::ONELARGETRACK)
+    {
+        shouldStop = true;
+    }
+    return shouldStop;
+}
+
+void Mp3Play_implementation::playNext()
+{
+    if (isFolderValid(m_currentFolder))
+    {
+        m_pDfMiniMp3->playFolderTrack(m_currentFolder.get_folder_id(),
+                                      m_currentFolder.get_next_track());
+        m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::next);
+    }
+}
+
+void Mp3Play_implementation::playPrev()
+{
+    if (isFolderValid(m_currentFolder))
+    {
+        m_pDfMiniMp3->playFolderTrack(m_currentFolder.get_folder_id(),
+                                      m_currentFolder.get_prev_track());
+        m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::prev);
+    }
 }
 
 void Mp3Play_implementation::playPrompt(const VoicePrompt &prompt) const

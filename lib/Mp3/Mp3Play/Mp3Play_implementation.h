@@ -17,15 +17,22 @@ class Mp3Play_implementation : public Mp3Play_interface
 public:
     Mp3Play_implementation(Arduino_DIcontainer_interface *pArduinoHal,
                            DfMiniMp3_interface *pDfMini,
+                           SimpleTimer *pLullabyeTimer,
                            SimpleTimer *pDfMiniMsgTimeout,
                            ErrorHandler_interface *pError);
 
     void playPrompt(const VoicePrompt &prompt) const override;
+    
     void playFolder(Folder &folder) override;
+    void playPrev() override;
+    void playNext() override;
+    void autoplay() override;
+    
     bool isPlaying() const override;
-    Folder getCurrentFolder() override;
 
 private:
+    bool shouldPlaybackStop() const;
+
     bool isPromptNew(const VoicePrompt &prompt) const;
     void waitForPromptToStart() const;
     void waitForPromptToFinish() const;
@@ -38,6 +45,7 @@ private:
 private:
     Arduino_DIcontainer_interface *m_pArduinoHal{nullptr};
     DfMiniMp3_interface *m_pDfMiniMp3{nullptr};
+    SimpleTimer *m_pLullabyeTimer{nullptr};
     SimpleTimer *m_pDfMiniPromptTimer{nullptr};
     ErrorHandler_interface *m_pErrorHandler{nullptr};
 
