@@ -1,7 +1,13 @@
 #ifndef MP3PLAY_INTERFACE_H
 #define MP3PLAY_INTERFACE_H
 
-#include "Mp3Control/Mp3Control_interface.h"
+struct VoicePrompt
+{
+    uint16_t promptId{0};
+    bool allowSkip{true};
+};
+
+class Folder;
 
 class Mp3Play_interface
 {

@@ -3,10 +3,10 @@
 
 #include "../Arduino/Arduino_interface/Arduino_DIcontainer_interface.h"
 
+#include "UserInput_interface/UserInput_interface.h"
 #include "Mp3Control/Mp3Control_interface.h"
 #include "Mp3Play/Mp3Play_interface.h"
 #include "DfMiniMp3/DFMiniMp3_interface.h"
-#include "Folder.h"
 #include "../ErrorHandler/ErrorHandler_interface.h"
 
 #include "../Config/Tonuino_config.h"
@@ -24,20 +24,24 @@ public:
                Mp3Play_interface *pPlayer,
                ErrorHandler_interface *pError);
 
-    void loop() const override;
-
-    void play() const override;
-    void pause() const override;
-    void togglePlayPause() const override;
-    void nextTrack() const override;
-    void prevTrack() const override;
-    void help() const override;
-
-    void volumeUp() const override;
-    void volumeDown() const override;
+    void setUserInput(UserInput::eUserRequest input) override;
+    void loop() override;
 
 private:
+    void handleUserInput();
     void autoplay();
+
+    void none(){};
+    void play();
+    void pause();
+
+    void plPs();
+    void next();
+    void prev();
+
+    void incV();
+    void decV();
+    void help();
 
 private:
     // Solution for constructor error found here: https://stackoverflow.com/questions/35762196/expected-a-type-specifier-error-when-creating-an-object-of-a-class-inside-anot
@@ -46,6 +50,9 @@ private:
     DfMiniMp3_interface *m_pDfMiniMp3{nullptr};
     Mp3Play_interface *m_pMp3Player{nullptr};
     ErrorHandler_interface *m_pErrorHandler{nullptr};
+
+    UserInput::eUserRequest m_userInput{UserInput::NO_ACTION};
+    typedef void (Mp3Control::*dispatcher)(); // table of function pointers
 };
 
 #endif // MP3PLAYERCONTROL_IMPLEMENTATION_H
