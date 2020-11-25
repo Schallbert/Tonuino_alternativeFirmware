@@ -30,6 +30,7 @@ public:
     virtual void prevTrack() const = 0;
     virtual void play() const = 0;
     virtual void pause() const = 0;
+    virtual void help() const = 0;
     virtual void togglePlayPause() const = 0;
 };
 

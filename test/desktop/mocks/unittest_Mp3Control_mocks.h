@@ -6,14 +6,15 @@
 class Mock_Mp3Control : public Mp3Control_interface
 {
 public:
-    MOCK_METHOD(void, loop, (), (override));
-    MOCK_METHOD(void, volumeUp, (), (override));
-    MOCK_METHOD(void, volumeDown, (), (override));
-    MOCK_METHOD(void, nextTrack, (), (override));
-    MOCK_METHOD(void, prevTrack, (), (override));
-    MOCK_METHOD(void, play, (), (override));
-    MOCK_METHOD(void, pause, (), (override));
-    MOCK_METHOD(void, togglePlayPause, (), (override));
+    MOCK_METHOD(void, loop, (), (override, const));
+    MOCK_METHOD(void, volumeUp, (), (override, const));
+    MOCK_METHOD(void, volumeDown, (), (override, const));
+    MOCK_METHOD(void, nextTrack, (), (override, const));
+    MOCK_METHOD(void, prevTrack, (), (override, const));
+    MOCK_METHOD(void, play, (), (override, const));
+    MOCK_METHOD(void, pause, (), (override, const));
+    MOCK_METHOD(void, togglePlayPause, (), (override, const));
+    MOCK_METHOD(void, help, (), (override, const));
 };
 
 #endif // UNITTEST_MP3PLAYERCONTROL_MOCKS_H

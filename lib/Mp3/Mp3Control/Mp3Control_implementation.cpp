@@ -65,3 +65,10 @@ void Mp3Control::volumeDown() const
         m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::volumeDown);
     }
 }
+
+void Mp3Control::help() const{
+    VoicePrompt helpMessage;
+    helpMessage.promptId = MSG_HELP;
+    helpMessage.allowSkip = true;
+    m_pMp3Player->playPrompt(helpMessage);
+}

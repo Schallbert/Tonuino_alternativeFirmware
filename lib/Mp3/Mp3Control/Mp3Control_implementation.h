@@ -31,6 +31,7 @@ public:
     void togglePlayPause() const override;
     void nextTrack() const override;
     void prevTrack() const override;
+    void help() const override;
 
     void volumeUp() const override;
     void volumeDown() const override;
