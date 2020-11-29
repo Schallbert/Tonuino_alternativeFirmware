@@ -2,9 +2,9 @@
 
 Mp3Control::Mp3Control(DfMiniMp3_interface *pDfMini,
                        Mp3Play_interface *pPlayer,
-                       ErrorHandler_interface *pError) : m_pDfMiniMp3(pDfMini),
+                       MessageHander_interface *pMsgHandler) : m_pDfMiniMp3(pDfMini),
                                                          m_pMp3Player(pPlayer),
-                                                         m_pErrorHandler(pError)
+                                                         m_pMessageHandler(pMsgHandler)
 {
 
     // Init communication with module and setup
@@ -31,19 +31,10 @@ void Mp3Control::handleUserInput()
 
 void Mp3Control::loop()
 {
-    m_pMp3Player->autoplay();
     handleUserInput();
+    m_pMp3Player->autoplay();
 }
 
-void Mp3Control::play()
-{
-    m_pDfMiniMp3->start(); // Only successful if a track is entered.
-}
-
-void Mp3Control::pause()
-{
-    m_pDfMiniMp3->pause();
-}
 
 void Mp3Control::plPs()
 {
@@ -57,14 +48,28 @@ void Mp3Control::plPs()
     }
 }
 
+void Mp3Control::play()
+{
+    m_pDfMiniMp3->start(); // Only successful if a track is entered.
+    m_pMessageHandler->printMessage(Mp3ControlNotify::toString(Mp3ControlNotify::play));
+}
+
+void Mp3Control::pause()
+{
+    m_pDfMiniMp3->pause();
+    m_pMessageHandler->printMessage(Mp3ControlNotify::toString(Mp3ControlNotify::pause));
+}
+
 void Mp3Control::next()
 {
     m_pMp3Player->playNext();
+    m_pMessageHandler->printMessage(Mp3ControlNotify::toString(Mp3ControlNotify::next));
 }
 
 void Mp3Control::prev()
 {
     m_pMp3Player->playPrev();
+    m_pMessageHandler->printMessage(Mp3ControlNotify::toString(Mp3ControlNotify::prev));
 }
 
 void Mp3Control::incV()
@@ -72,7 +77,7 @@ void Mp3Control::incV()
     if (m_pDfMiniMp3->getVolume() < VOLUME_MAX)
     {
         m_pDfMiniMp3->increaseVolume();
-        m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::volumeUp);
+        m_pMessageHandler->printMessage(Mp3ControlNotify::toString(Mp3ControlNotify::volumeUp));
     }
 }
 
@@ -81,7 +86,7 @@ void Mp3Control::decV()
     if (m_pDfMiniMp3->getVolume() > VOLUME_MIN)
     {
         m_pDfMiniMp3->decreaseVolume();
-        m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::volumeDown);
+        m_pMessageHandler->printMessage(Mp3ControlNotify::toString(Mp3ControlNotify::volumeDown));
     }
 }
 

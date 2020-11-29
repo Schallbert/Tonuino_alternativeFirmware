@@ -13,6 +13,42 @@
 #include "../Config/Arduino_config.h"
 #include "../Utilities/SimpleTimer.h"
 
+class Mp3ControlNotify
+{
+public:
+    enum eDebugMessage
+    {
+        noMessage = 0,
+        volumeUp,
+        volumeDown,
+        next,
+        prev,
+        play,
+        pause
+    };
+
+#if DEBUGSERIAL
+    static const char *toString(eDebugMessage message)
+    {
+        static const char *NOTIFY_STRING[] = {
+            nullptr,
+            "volume up",
+            "volume down",
+            "next track",
+            "previous track",
+            "play"
+            "pause"};
+
+        return NOTIFY_STRING[message];
+    };
+#else
+    static const char *toString(eDebugMessage message)
+    {
+        return nullptr;
+    }
+#endif
+};
+
 // Implementation of Player controller interface.
 // Uses Software Serial to communicate with DfMiniMp3 player.
 // Dependencies use interfaces themselves for
@@ -22,7 +58,7 @@ class Mp3Control : public Mp3Control_interface
 public:
     Mp3Control(DfMiniMp3_interface *pDfMini,
                Mp3Play_interface *pPlayer,
-               ErrorHandler_interface *pError);
+               MessageHander_interface *pMsgHandler);
 
     void setUserInput(UserInput::eUserRequest input) override;
     void loop() override;
@@ -49,7 +85,7 @@ private:
     //DFMiniMp3<SoftwareSerial, Mp3Notify> m_dfMiniMp3{DFMiniMp3<SoftwareSerial, Mp3Notify>(m_Mp3SwSerial)};
     DfMiniMp3_interface *m_pDfMiniMp3{nullptr};
     Mp3Play_interface *m_pMp3Player{nullptr};
-    ErrorHandler_interface *m_pErrorHandler{nullptr};
+    MessageHander_interface *m_pMessageHandler{nullptr};
 
     UserInput::eUserRequest m_userInput{UserInput::NO_ACTION};
     typedef void (Mp3Control::*dispatcher)(); // table of function pointers

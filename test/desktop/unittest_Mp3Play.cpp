@@ -67,7 +67,7 @@ TEST_F(Mp3PlayTest, playFolder_notInitialized_setsFolderError)
 {
     Folder unInitializedFolder;
 
-    EXPECT_CALL(m_errorHandlerMock, setFolderError());
+    EXPECT_CALL(m_errorHandlerMock, setPromptMessage(_));
     m_pMp3Play->playFolder(unInitializedFolder);
 }
 
@@ -76,7 +76,7 @@ TEST_F(Mp3PlayTest, playFolder_playerCannotFindFolderOnSdCard_setsFolderError)
     Folder nonExistantFolder(1, Folder::ALBUM);
     ON_CALL(m_dfMiniMock, getFolderTrackCount(_)).WillByDefault(Return(0));
 
-    EXPECT_CALL(m_errorHandlerMock, setFolderError());
+    EXPECT_CALL(m_errorHandlerMock, setPromptMessage(_));
     m_pMp3Play->playFolder(nonExistantFolder);
 }
 
@@ -94,7 +94,7 @@ TEST_F(Mp3PlayTest, playFolder_folderValid_notifiesPlaying)
     Folder validFolder(1, Folder::ALBUM);
     ON_CALL(m_dfMiniMock, getFolderTrackCount(_)).WillByDefault(Return(1));
 
-    EXPECT_CALL(m_errorHandlerMock, setMp3ControlNotify(Mp3ControlNotify::play));
+    EXPECT_CALL(m_errorHandlerMock, printMessage(_));
     m_pMp3Play->playFolder(validFolder);
 }
 
@@ -200,7 +200,7 @@ TEST_F(Mp3PlayTest, playNext_folderInvalid_setsError)
     Folder testFolder;
     m_pMp3Play->playFolder(testFolder);
     // trackCount not set
-    EXPECT_CALL(m_errorHandlerMock, setFolderError());
+    EXPECT_CALL(m_errorHandlerMock, printMessage(_));
     m_pMp3Play->playNext();
 }
 
@@ -238,7 +238,7 @@ TEST_F(Mp3PlayTest, playPrev_folderInvalid_setsError)
     Folder testFolder;
     m_pMp3Play->playFolder(testFolder);
     // trackCount not set
-    EXPECT_CALL(m_errorHandlerMock, setFolderError());
+    EXPECT_CALL(m_errorHandlerMock, printMessage(_));
     m_pMp3Play->playPrev();
 }
 

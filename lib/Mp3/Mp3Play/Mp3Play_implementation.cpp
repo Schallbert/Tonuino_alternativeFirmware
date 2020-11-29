@@ -4,11 +4,11 @@ Mp3Play_implementation::Mp3Play_implementation(Arduino_DIcontainer_interface *pA
                                                DfMiniMp3_interface *pDfMini,
                                                SimpleTimer *pLullabyeTimer,
                                                SimpleTimer *pDfMiniMsgTimeout,
-                                               ErrorHandler_interface *pError) : m_pArduinoHal(pArduinoHal),
+                                               MessageHander_interface *pMessage) : m_pArduinoHal(pArduinoHal),
                                                                                  m_pDfMiniMp3(pDfMini),
                                                                                  m_pLullabyeTimer(pLullabyeTimer),
                                                                                  m_pDfMiniPromptTimer(pDfMiniMsgTimeout),
-                                                                                 m_pErrorHandler(pError)
+                                                                                 m_pMessageHandler(pMessage)
 {
 
     // Init communication with module and setup
@@ -23,7 +23,7 @@ void Mp3Play_implementation::playFolder(Folder &folder) // TODO: Start lullabye 
         // Start playing folder: first track of current folder.
         m_pDfMiniMp3->playFolderTrack(m_currentFolder.get_folder_id(),
                                       m_currentFolder.get_current_track());
-        m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::play);
+        m_pMessageHandler->printMessage(Mp3PlayNotify::toString(Mp3PlayNotify::playFolder));
     }
 }
 
@@ -58,8 +58,11 @@ bool Mp3Play_implementation::isFolderValid(Folder &folder)
     }
     else
     {
-        m_pErrorHandler->setFolderError();
-        m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::noFolder);
+        VoicePrompt folderError;
+        folderError.promptId = MSG_ERROR_FOLDER;
+        folderError.allowSkip = false;
+        m_pMessageHandler->printMessage(Mp3PlayNotify::toString(Mp3PlayNotify::noFolder));
+        m_pMessageHandler->setPromptMessage(folderError);
         result = false;
     }
     return result;
@@ -71,12 +74,12 @@ void Mp3Play_implementation::autoplay()
     {
         if (shouldPlaybackStop())
         {
-            m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::autoplayStop);
+            m_pMessageHandler->printMessage(Mp3PlayNotify::toString(Mp3PlayNotify::autoplayStop));
             m_pDfMiniMp3->stop();
         }
         else
         {
-            m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::autoplayNext);
+            m_pMessageHandler->printMessage(Mp3PlayNotify::toString(Mp3PlayNotify::autoplayNext));
             playNext();
         }
     }
@@ -103,7 +106,6 @@ void Mp3Play_implementation::playNext()
     {
         m_pDfMiniMp3->playFolderTrack(m_currentFolder.get_folder_id(),
                                       m_currentFolder.get_next_track());
-        m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::next);
     }
 }
 
@@ -113,7 +115,6 @@ void Mp3Play_implementation::playPrev()
     {
         m_pDfMiniMp3->playFolderTrack(m_currentFolder.get_folder_id(),
                                       m_currentFolder.get_prev_track());
-        m_pErrorHandler->setMp3ControlNotify(Mp3ControlNotify::prev);
     }
 }
 

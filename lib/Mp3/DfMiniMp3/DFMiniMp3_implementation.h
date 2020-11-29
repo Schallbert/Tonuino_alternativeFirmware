@@ -44,7 +44,7 @@ public:
         setMessage(playSourceRemoved);
     }
     // returns true if track has been set finished
-    // to set state call method setFinished = true
+    // to set state  call method setFinished = true
     // to get state call method setFinished = false
     static eDfMiniNotify getMessage()
     {
