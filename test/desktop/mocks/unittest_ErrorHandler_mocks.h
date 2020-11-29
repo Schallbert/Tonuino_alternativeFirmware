@@ -5,19 +5,12 @@
 
 #include "../ErrorHandler/ErrorHandler_interface.h"
 
-class Mock_ErrorHandler : public ErrorHandler_interface
+class Mock_ErrorHandler : public MessageHander_interface
 {
 public:
-    MOCK_METHOD(void, handleErrors, (), (override));
-
-    MOCK_METHOD(void, printDebugMessage, (), (override));
-
-    MOCK_METHOD(void, onStartup, (), (override));
-    MOCK_METHOD(void, onShutdown, (), (override));
-
-    MOCK_METHOD(void, setHelpRequested, (), (override));
-    MOCK_METHOD(void, setTagReadError, (), (override));
-    MOCK_METHOD(void, setFolderError, (), (override));
+    MOCK_METHOD(void, loop, (), (override));
+    MOCK_METHOD(void, printMessage, (const char* message), (override));
+    MOCK_METHOD(void, setPromptMessage, (const VoicePrompt &message), (override));
 };
 
 #endif // ERRORHANDLER_MOCKS_H

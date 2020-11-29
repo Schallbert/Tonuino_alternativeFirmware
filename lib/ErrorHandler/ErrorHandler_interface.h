@@ -1,29 +1,23 @@
 #ifndef ERRORHANDLER_INTERFACE_H
 #define ERRORHANDLER_INTERFACE_H
 
+#include "Tonuino_config.h"
+
+struct VoicePrompt;
+
 // Requires HAL to print to serial
 // Requires PromptManager to prompt error/help messages.
-class ErrorHandler_interface
+
+class MessageHander_interface
 {
 
 public:
-    virtual ~ErrorHandler_interface(){};
+    virtual ~MessageHander_interface(){};
 
     // Handler
-    virtual void handleErrors() = 0;
-
-    //#if DEBUGSERIAL
-    virtual void printDebugMessage() = 0;
-    //#endif
-
-    // Events
-    virtual void onStartup() = 0;
-    virtual void onShutdown() = 0;
-
-
-    virtual void setHelpRequested() = 0;
-    virtual void setTagReadError() = 0;
-    virtual void setFolderError() = 0;
+    virtual void loop() = 0;
+    virtual void printMessage(const char *message) = 0;
+    virtual void setPromptMessage(const VoicePrompt &message) = 0;
 };
 
 #endif // ERRORHANDLER_INTERFACE_H

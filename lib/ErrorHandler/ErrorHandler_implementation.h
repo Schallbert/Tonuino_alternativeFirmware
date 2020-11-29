@@ -7,29 +7,31 @@
 #include "ErrorHandler_interface.h"
 #include "PlayError.h"
 
-
-class ErrorHandler : public ErrorHandler_interface
+class ErrorHandler : public MessageHander_interface
 {
 public:
     ErrorHandler(Arduino_DIcontainer_interface *pArduHal,
                  NfcControl_interface *pNfcCtrl,
                  Mp3Control_interface *pMp3Ctrl, ) : m_pArduinoHal(pArduHal),
-                                                           m_pNfcControl(pNfcCtrl),
-                                                           m_pMp3Control(pMp3Ctrl){};
+                                                     m_pNfcControl(pNfcCtrl),
+                                                     m_pMp3Control(pMp3Ctrl){};
 
-    void handleErrors() override;
-
-    //#if DEBUGSERIAL
-    void printDebugMessage() override;
-    //#endif
+    virtual void handleErrors() = 0;
 
     // Events
     void onStartup() override;
     void onShutdown() override;
 
-    void setHelpRequested() override { m_playError.promptHelpRequested(); };
-    void setTagReadError() override { m_playError.promptTagReadError(); };
-    void setFolderError() override { m_playError.promptFolderError(); };
+    virtual void printMessage(char* message); // TODO: implement
+    virtual void setMessagePrompt(uint16_t messageCode)
+    {
+        m_error.promptId = messageCode;
+        m_error.allowSkip = false;
+    };
+
+private:
+    void playErrorMessage();
+    void printDebugMessage();
 
 private:
     Arduino_DIcontainer_interface *m_pArduinoHal{nullptr};
@@ -37,6 +39,8 @@ private:
     Mp3Control_interface *m_pMp3Control{nullptr};
 
     PlayError m_playError{PlayError(m_pMp3Control)};
+
+    VoicePrompt m_error{};
 };
 
 #endif // ERRORHANDLER_IMPLEMENTATION_H
