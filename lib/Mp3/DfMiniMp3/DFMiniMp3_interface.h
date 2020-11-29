@@ -37,6 +37,5 @@ public:
     virtual void playAdvertisement(uint16_t trackId) = 0;
     virtual uint8_t getFolderTrackCount(uint8_t folderId) = 0;
     virtual bool isTrackFinished() = 0;
-    virtual const char *getPlayerNotification() = 0;
 };
 #endif // DFMINIMP3_INTERFACE_H

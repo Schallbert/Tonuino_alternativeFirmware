@@ -9,7 +9,7 @@ class Nfc_interface
 public:
     enum eTagState
     {
-        NO_TAG = 0,         // 0 allow certain actions (help, deleteCard etc)
+        NO_TAG = 0,         // 0
         ACTIVE_KNOWN_TAG,   // 1 full playback
         NEW_REGISTERED_TAG, // 2 read card, get folder, full playback
         NEW_UNKNOWN_TAG,    // 3 play voice menu, link folder to card
