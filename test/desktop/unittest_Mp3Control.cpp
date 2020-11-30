@@ -32,7 +32,7 @@ protected:
 protected:
     NiceMock<Mock_DfMiniMp3> m_dfMiniMock{};
     NiceMock<Mock_Mp3Play> m_mp3PlayMock{};
-    NiceMock<Mock_ErrorHandler> m_errorHandlerMock{};
+    NiceMock<Mock_MessageHandler> m_errorHandlerMock{};
 
     Mp3Control *m_pMp3Control{nullptr};
 };

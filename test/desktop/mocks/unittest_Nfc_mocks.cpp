@@ -20,10 +20,6 @@ bool Fake_Nfc::readTag(byte blockAddress, byte *readResult)
     }
     return true;
 }
-const char *Fake_Nfc::getNfcNotification()
-{
-    return "no Message";
-}
 
 bool Fake_MFRC522_MifareMini1k4k::tagRead(byte blockAddress, byte *buffer, byte bufferSize) 
 {

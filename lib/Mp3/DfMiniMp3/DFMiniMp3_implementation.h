@@ -20,6 +20,22 @@ public:
     };
 
 private:
+    static inline const char *toString(Mp3Notify::eDfMiniNotify value)
+    {
+#if DEBUGSERIAL
+        static const char *NOTIFY_STRING[] = {
+            nullptr,
+            "finished playing track",
+            "SD card online",
+            "SD card inserted",
+            "SD Card removed",
+            "Com Error"};
+        return NOTIFY_STRING[value];
+#endif
+        return nullptr;
+    };
+
+private:
     // Disallow creating an instance of this object
     Mp3Notify(){};
 
@@ -58,28 +74,6 @@ public:
     {
         return toString(getMessage());
     };
-
-private:
-#if DEBUGSERIAL
-    static inline const char *toString(Mp3Notify::eDfMiniNotify value)
-    {
-
-        static const char *NOTIFY_STRING[] = {
-            nullptr,
-            "finished playing track",
-            "SD card online",
-            "SD card inserted",
-            "SD Card removed",
-            "Com Error"};
-
-        return NOTIFY_STRING[value];
-    }
-#else
-    static inline const char *toString(Mp3Notify::eDfMiniNotify value)
-    {
-        return nullptr;
-    }
-#endif
 
     static eDfMiniNotify setMessage(eDfMiniNotify incomingMessage)
     {

@@ -5,7 +5,7 @@
 
 #include "../ErrorHandler/ErrorHandler_interface.h"
 
-class Mock_ErrorHandler : public MessageHander_interface
+class Mock_MessageHandler : public MessageHander_interface
 {
 public:
     MOCK_METHOD(void, loop, (), (override));

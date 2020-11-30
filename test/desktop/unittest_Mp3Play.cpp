@@ -40,7 +40,7 @@ protected:
     NiceMock<Mock_DfMiniMp3> m_dfMiniMock{};
     SimpleTimer m_dfMiniPromptTimer{};
     SimpleTimer m_lullabyeTimer{};
-    NiceMock<Mock_ErrorHandler> m_errorHandlerMock{};
+    NiceMock<Mock_MessageHandler> m_errorHandlerMock{};
     NiceMock<Mock_pinCtrl> pinControlMock{};
     NiceMock<Mock_eeprom> eepromMock{};
 

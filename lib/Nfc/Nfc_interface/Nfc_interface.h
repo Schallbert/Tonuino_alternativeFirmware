@@ -29,7 +29,5 @@ public:
     // Returns true on successful read
     // of data to a sector->block of the tag
     virtual bool readTag(byte blockAddress, byte *readResult) = 0;
-    // Debug function. Returns notification from NFC reader system.
-    virtual const char *getNfcNotification() = 0;
 };
 #endif // NFC_INTERFACE_H

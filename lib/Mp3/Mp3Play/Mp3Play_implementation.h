@@ -22,9 +22,9 @@ public:
         autoplayNext,
     };
 
-#if DEBUGSERIAL
     static const char *toString(eDebugMessage message)
     {
+#if DEBUGSERIAL
         static const char *NOTIFY_STRING[] = {
             nullptr,
             "Error: folder invalid!",
@@ -33,14 +33,9 @@ public:
             "autoplay next"};
 
         return NOTIFY_STRING[message];
-    };
-
-#else
-    static const char *toString(eDebugMessage message)
-    {
-        return nullptr;
-    }
 #endif
+        return nullptr;
+    };
 };
 
 class Mp3Play_implementation : public Mp3Play_interface

@@ -2,8 +2,7 @@
 #define ERRORHANDLER_INTERFACE_H
 
 #include "Tonuino_config.h"
-
-struct VoicePrompt;
+#include "Mp3Play/Mp3Play_interface.h"
 
 // Requires HAL to print to serial
 // Requires PromptManager to prompt error/help messages.

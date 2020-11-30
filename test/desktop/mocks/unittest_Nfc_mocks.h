@@ -32,7 +32,6 @@ public:
     bool writeTag(byte blockAddress, byte *dataToWrite) override;
     // copies fakeBufferData to "readResult", simulating read from NFC tag
     bool readTag(byte blockAddress, byte *readResult) override;
-    const char *getNfcNotification() override;
 };
 
 class Fake_MFRC522_MifareMini1k4k : public MFRC522_interface
@@ -80,7 +79,6 @@ public:
     MOCK_METHOD(Nfc_interface::eTagState, getTagPresence, (), (override));
     MOCK_METHOD(bool, writeTag, (byte blockAddress, byte *dataToWrite), (override));
     MOCK_METHOD(bool, readTag, (byte blockAddress, byte *readResult), (override));
-    MOCK_METHOD(const char *, getNfcNotification, (), (override));
 
     void DelegateToFake()
     {
@@ -135,8 +133,6 @@ public:
      Fake_MFRC522_MifareMini1k4k m_FakeMini1k4k{};
      Fake_MFRC522_MifareUltralight m_FakeUltralight{};
 };
-
-
 
 // MATCHERS
 MATCHER_P2(arrayByteCompare, target, size, "Compares array bites and throws errors for each byte that does not match.")
