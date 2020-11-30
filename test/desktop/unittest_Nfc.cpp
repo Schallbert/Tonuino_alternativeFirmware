@@ -33,7 +33,6 @@ protected:
 
 class Nfc_write : public Nfc_getTagPresence{};
 class Nfc_read : public Nfc_getTagPresence{};
-class Nfc_notify : public Nfc_getTagPresence{};
 
 // TESTS
 TEST_F(Nfc_getTagPresence, init_callsReadersInit)
@@ -63,35 +62,15 @@ TEST_F(Nfc_getTagPresence, newTag_returnsNEW_UNKNOWN_TAG)
     ASSERT_EQ(Nfc_interface::NEW_UNKNOWN_TAG, m_pNfc->getTagPresence());
 }
 
-/* TODO:  CHANGE THESE TESTS TO RETURN DEBUG INFORMATION
-TEST_F(Nfc_getTagPresence, cannotSetTagOnline_returnsERROR)
+TEST_F(Nfc_getTagPresence, canNotSetTagOnline_returnsERROR)
 {
     ON_CALL(m_mfrc, isCardPresent()).WillByDefault(Return(true));
     ON_CALL(m_mfrc, isNewCardPresent()).WillByDefault(Return(true));
     ON_CALL(m_mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_NOT_COMPLETE));
-    ASSERT_EQ(Nfc_interface::ERROR, m_pNfc->getTagPresence());
-}
 
-TEST_F(Nfc_getTagPresence, tagWriteError_returnsError)
-{
-    ON_CALL(m_mfrc, isCardPresent()).WillByDefault(Return(true));
-    ON_CALL(m_mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
-    ON_CALL(m_mfrc, tagWrite(_, _, _)).WillByDefault(Return(false));
-    uint8_t dataToWrite[16] = {};
-    m_pNfc->writeTag(4, dataToWrite);
-    ASSERT_EQ(Nfc_interface::ERROR, m_pNfc->getTagPresence());
+    EXPECT_CALL(m_messageHandler, printMessage(NfcNotify::toString(NfcNotify::tagTypeNotImplementedError)));
+    m_pNfc->getTagPresence();
 }
-
-TEST_F(Nfc_getTagPresence, tagReadError_returnsError)
-{
-    ON_CALL(m_mfrc, isCardPresent()).WillByDefault(Return(true));
-    ON_CALL(m_mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
-    ON_CALL(m_mfrc, tagRead(_, _, _)).WillByDefault(Return(false));
-    uint8_t dataToWrite[16] = {};
-    m_pNfc->readTag(4, dataToWrite);
-    ASSERT_EQ(Nfc_interface::ERROR, m_pNfc->getTagPresence());
-}
-*/
 
 TEST_F(Nfc_write, getTagFails_writeNotCalled)
 {
@@ -122,6 +101,28 @@ TEST_F(Nfc_write, mfrcWriteSucceeds_returnsTrue)
     ASSERT_EQ(true, m_pNfc->writeTag(4, dataToWrite));
 }
 
+TEST_F(Nfc_write, tagWriteError_returnsError)
+{
+    ON_CALL(m_mfrc, isCardPresent()).WillByDefault(Return(true));
+    ON_CALL(m_mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
+    ON_CALL(m_mfrc, tagWrite(_, _, _)).WillByDefault(Return(false));
+    uint8_t dataToWrite[16] = {};
+
+    EXPECT_CALL(m_messageHandler, printMessage(NfcNotify::toString(NfcNotify::tagWriteError)));
+    m_pNfc->writeTag(4, dataToWrite);
+}
+
+TEST_F(Nfc_write, tagWriteSuccess_returnsSuccessNotification)
+{
+    ON_CALL(m_mfrc, isCardPresent()).WillByDefault(Return(true));
+    ON_CALL(m_mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
+    ON_CALL(m_mfrc, tagWrite(_, _, _)).WillByDefault(Return(true));
+    uint8_t dataToWrite[16] = {};
+
+    EXPECT_CALL(m_messageHandler, printMessage(NfcNotify::toString(NfcNotify::tagWriteSuccess)));
+    m_pNfc->writeTag(4, dataToWrite);
+}
+
 TEST_F(Nfc_read, getTagFails_readNotCalled)
 {
     ON_CALL(m_mfrc, isCardPresent()).WillByDefault(Return(true));
@@ -149,5 +150,27 @@ TEST_F(Nfc_read, mfrcReadSucceeds_returnsTrue)
     ON_CALL(m_mfrc, tagRead(_, _, _)).WillByDefault(Return(true));
     uint8_t dataToRead[16] = {};
     ASSERT_EQ(true, m_pNfc->readTag(4, dataToRead));
+}
+
+TEST_F(Nfc_read, tagReadError_returnsError)
+{
+    ON_CALL(m_mfrc, isCardPresent()).WillByDefault(Return(true));
+    ON_CALL(m_mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
+    ON_CALL(m_mfrc, tagRead(_, _, _)).WillByDefault(Return(false));
+    uint8_t readData[16] = {};
+    
+    EXPECT_CALL(m_messageHandler, printMessage(NfcNotify::toString(NfcNotify::tagReadError)));
+    m_pNfc->readTag(4, readData);
+}
+
+TEST_F(Nfc_read, tagReadSuccess_returnsSuccessNotification)
+{
+    ON_CALL(m_mfrc, isCardPresent()).WillByDefault(Return(true));
+    ON_CALL(m_mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
+    ON_CALL(m_mfrc, tagRead(_, _, _)).WillByDefault(Return(true));
+    uint8_t readData[16] = {};
+
+    EXPECT_CALL(m_messageHandler, printMessage(NfcNotify::toString(NfcNotify::tagReadSuccess)));
+    m_pNfc->readTag(4, readData);
 }
 

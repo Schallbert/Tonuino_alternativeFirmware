@@ -30,7 +30,7 @@ void Nfc_implementation::initNfc()
 bool Nfc_implementation::writeTag(byte blockAddress, byte *dataToWrite)
 {
     bool status{false};
-    if(setTagOnline())
+    if (setTagOnline())
     {
         status = m_pConcreteTag->writeTag(blockAddress, dataToWrite);
     }
@@ -42,7 +42,7 @@ bool Nfc_implementation::writeTag(byte blockAddress, byte *dataToWrite)
 bool Nfc_implementation::readTag(byte blockAddress, byte *readResult)
 {
     bool status{false};
-    if(setTagOnline())
+    if (setTagOnline())
     {
         status = m_pConcreteTag->readTag(blockAddress, readResult);
     }
@@ -55,16 +55,17 @@ void Nfc_implementation::setNotification(bool status, NfcNotify::eNfcNotify succ
 {
     static NfcNotify::eNfcNotify message{NfcNotify::noMessage};
     NfcNotify::eNfcNotify newMessage{NfcNotify::noMessage};
-    if(status)
+    if (status)
     {
-         newMessage = successMessage;
+        newMessage = successMessage;
     }
     else
     {
         newMessage = failureMessage;
-    } 
+    }
 
-    if(newMessage != message)
+    if (newMessage != NfcNotify::noMessage &&
+        newMessage != message)
     {
         m_pMessageHandler->printMessage(NfcNotify::toString(newMessage));
     }
@@ -89,7 +90,7 @@ bool Nfc_implementation::setTagOnline()
 bool Nfc_implementation::getTag()
 {
     bool status{false};
-    if(m_pConcreteTag)
+    if (m_pConcreteTag)
     {
         delete m_pConcreteTag; // make sure to delete earlier instances (mem leak)
     }
