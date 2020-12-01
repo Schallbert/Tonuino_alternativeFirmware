@@ -1,8 +1,8 @@
 #include "NfcControl.h"
 
 NfcControl::NfcControl(Nfc_interface *pNfc,
-                       Arduino_interface_com *pUsb) : m_pNfc(pNfc),
-                                                      m_pSerial(pUsb)
+                       MessageHander_interface *pMessageHandler) : m_pNfc(pNfc),
+                                                                   m_pMessageHandler(pMessageHandler)
 {
     m_pNfc->initNfc();
     m_pBuffer = new uint8_t[NFCTAG_MEMORY_TO_OCCUPY]();
@@ -13,21 +13,11 @@ NfcControl::~NfcControl()
     delete[] m_pBuffer;
 }
 
-#if DEBUGSERIAL
-void NfcControl::print_debug_message()
-{
-    m_pSerial->com_println("NFC CONTROL DEBUG:");
-    m_pSerial->com_println(stringFromNfcTagNotify(get_tag_presence()));
-    m_pSerial->com_println("NFC DEBUG: MFRC522");
-    m_pSerial->com_println(m_pNfc->getNfcNotification());
-};
-#endif
-
 Nfc_interface::eTagState NfcControl::get_tag_presence()
 {
     // Adds "known tag" information if a new tag has been placed.
     // Otherwise, just wrapper for layer down method.
-    auto tagPresence = m_pNfc->getTagPresence();
+    Nfc_interface::eTagState tagPresence = m_pNfc->getTagPresence();
     if (tagPresence == Nfc_interface::NEW_UNKNOWN_TAG)
     {
         if (is_known_card())
@@ -35,6 +25,7 @@ Nfc_interface::eTagState NfcControl::get_tag_presence()
             tagPresence = Nfc_interface::NEW_REGISTERED_TAG;
         }
     }
+    m_pMessageHandler->printMessage(NfcControlNotify::toString(tagPresence));
     return tagPresence;
 }
 
@@ -72,7 +63,7 @@ bool NfcControl::read_folder_from_card(Folder &targetFolder)
             status = true;
         }
     }
-    return status; 
+    return status;
 }
 
 void NfcControl::folder_to_buffer()
@@ -114,23 +105,7 @@ bool NfcControl::is_known_card()
     }
     else
     {
-       return false;
+        return false;
     }
     // if false Card has never been written with Magic Cookie, thus is unknown to the system
-}
-
-const char *NfcControl::stringFromNfcTagNotify(Nfc_interface::eTagState value)
-{
-#if DEBUGSERIAL
-    static const char *NOTIFY_STRING[Nfc_interface::NUMBER_OF_TAG_STATES] = {
-        "no Tag",
-        "Tag: active, known",
-        "Tag: new, known",
-        "Tag: new, unknown",
-        "", // unused: reserved for DELETE_TAG
-        "Error"};
-
-    return NOTIFY_STRING[value];
-#endif
-    return "";
 }

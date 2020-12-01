@@ -17,22 +17,20 @@ public:
         tagReadSuccess,
         tagWriteError,
         tagReadError,
-        tagTypeNotImplementedError,
-        tagRequestOutOfRangeWarning,
-        number_of_notifications = 7
+        tagTypeNotImplementedError
     };
 
     static const char *toString(eNfcNotify value)
     {
 #if DEBUGSERIAL
-        static const char *NOTIFY_STRING[number_of_notifications] = {
+        static const char *NOTIFY_STRING[] = {
             nullptr,
             "Tag Write Success",
             "Tag Read Success",
             "Tag write Error",
             "Tag read Error",
-            "Tag type unknown/not implemented",
-            "Warning: request out of Memory Range"};
+            "Tag type unknown/not implemented"
+            };
         return NOTIFY_STRING[value];
 #endif
         return nullptr;

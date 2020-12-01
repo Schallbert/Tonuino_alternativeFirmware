@@ -3,8 +3,27 @@
 
 #include "Folder.h"
 #include "NfcControl_interface.h"
+#include "ErrorHandler_interface.h"
+
 #include "Tonuino_config.h"
-#include "../Arduino/Arduino_interface/Arduino_interface.h"
+
+class NfcControlNotify
+{
+public:
+    static const char *toString(Nfc_interface::eTagState value)
+    {
+#if DEBUGSERIAL
+        static const char *NOTIFY_STRING[Nfc_interface::NUMBER_OF_TAG_STATES] = {
+            "No Tag",
+            "active Tag",
+            "new Tag",
+            "unknown Tag",
+            "Error"};
+        return NOTIFY_STRING[value];
+#endif
+        return nullptr;
+    }
+};
 
 // this object stores nfc tag data
 class NfcControl : public NfcControl_interface
@@ -12,7 +31,7 @@ class NfcControl : public NfcControl_interface
 public:
     // Create NfcControl object with dependency-injected NfcReader object
     NfcControl(Nfc_interface *pNfc,
-               Arduino_interface_com *pUsb);
+               MessageHander_interface *pMessageHandler);
     ~NfcControl();
 
 public:
@@ -26,11 +45,6 @@ public:
     bool write_folder_to_card(const Folder &sourceFolder);
     // Sets tag contents the system writes to to 0
     bool erase_card();
-// Gets notification message from card reader
-#if DEBUGSERIAL
-    // Prints message from player periphery or player controller to Serial.
-    void print_debug_message();
-#endif
 
 private:
     // Handle Read: converts bytestream from NFC tag to folder/ cookie data
@@ -42,14 +56,13 @@ private:
     // Returns true if the current card is known to the system
     // if it has the "magic cookie" equal to system's
     bool is_known_card();
-    // string interpretation of this class's Tag State (defined in Nfc_interface.h)
-    static inline const char *stringFromNfcTagNotify(Nfc_interface::eTagState value);
 
 public:
     static const uint32_t cui32MagicCookie{0x1337b437}; // Magic Id to tag all cards
 private:
-    Nfc_interface *m_pNfc{nullptr};                  // NfcReader object to interact with
-    Arduino_interface_com *m_pSerial{nullptr};          // USB_COM serial debug interface
+    Nfc_interface *m_pNfc{nullptr}; // NfcReader object to interact with
+    MessageHander_interface *m_pMessageHandler{nullptr};
+
     uint32_t m_ui32CardCookie{0};                    //Cookie read from card to compare against magic ID
     static const uint8_t blockAddressToReadWrite{4}; // sector 1 block 0 for Mini1k4k, page 4-7 for UltraLight
     uint8_t *m_pBuffer{nullptr};                     // Buffer to read/write from/to tag reader
