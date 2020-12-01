@@ -43,7 +43,7 @@ bool VoiceMenu::isActive()
 
 void VoiceMenu::getTagState()
 {
-    m_tagState = m_pNfcControl->get_tag_presence();
+    m_tagState = m_pNfcControl->getTagPresence();
 }
 
 void VoiceMenu::checkEnterLinkMenu()

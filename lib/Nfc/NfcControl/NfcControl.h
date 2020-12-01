@@ -36,15 +36,15 @@ public:
 
 public:
     // Returns tag state of presence to requesting entity.
-    Nfc_interface::eTagState get_tag_presence();
+    Nfc_interface::eTagState getTagPresence();
     // takes a reference to an existing folder and copies the card's saved data into that object
     // [cookie, folderId, playMode, trackCount]
-    bool read_folder_from_card(Folder &targetFolder);
+    bool readFolderFromTag(Folder &targetFolder);
     // writes an existing source folder's data to card (by reference)
     // writes cookie to card
-    bool write_folder_to_card(const Folder &sourceFolder);
+    bool writeFolderToTag(const Folder &sourceFolder);
     // Sets tag contents the system writes to to 0
-    bool erase_card();
+    bool eraseTag();
 
 private:
     // Handle Read: converts bytestream from NFC tag to folder/ cookie data

@@ -56,19 +56,19 @@ TEST_F(NfcCtrlWrite, initNfc_IsCalledOnConstruction)
 TEST_F(NfcCtrlWrite, invalidFolder_ReturnsFalse)
 {
     Folder incompleteFolder;
-    EXPECT_FALSE(m_pNfcControl->write_folder_to_card(incompleteFolder));
+    EXPECT_FALSE(m_pNfcControl->writeFolderToTag(incompleteFolder));
 }
 
 TEST_F(NfcCtrlWrite, validFolder_IsCalled)
 {
     EXPECT_CALL(m_nfc, writeTag(_, _)).Times(1);
-    m_pNfcControl->write_folder_to_card(*m_pTestFolder);
+    m_pNfcControl->writeFolderToTag(*m_pTestFolder);
 }
 
 TEST_F(NfcCtrlWrite, validFolder_IsCalledWithCorrectBlockAddr)
 {
     EXPECT_CALL(m_nfc, writeTag(4, _)).Times(1);
-    m_pNfcControl->write_folder_to_card(*m_pTestFolder);
+    m_pNfcControl->writeFolderToTag(*m_pTestFolder);
 }
 
 TEST_F(NfcCtrlWrite, validFolder_IsCalledWithCorrectPayload)
@@ -77,13 +77,13 @@ TEST_F(NfcCtrlWrite, validFolder_IsCalledWithCorrectPayload)
                                          fakeBufferData,
                                          NFCTAG_MEMORY_TO_OCCUPY)))
         .Times(1);
-    m_pNfcControl->write_folder_to_card(*m_pTestFolder);
+    m_pNfcControl->writeFolderToTag(*m_pTestFolder);
 }
 
 TEST_F(NfcCtrlWrite, validFolder_writeSuccess)
 {
     ON_CALL(m_nfc, writeTag(_, _)).WillByDefault(Return(true));
-    EXPECT_TRUE(m_pNfcControl->write_folder_to_card(*m_pTestFolder));
+    EXPECT_TRUE(m_pNfcControl->writeFolderToTag(*m_pTestFolder));
 }
 
 TEST_F(NfcCtrlWrite, EraseTag)
@@ -93,28 +93,28 @@ TEST_F(NfcCtrlWrite, EraseTag)
     EXPECT_CALL(m_nfc, writeTag(_, arrayByteCompare(
                                          emptyBuffer,
                                          NFCTAG_MEMORY_TO_OCCUPY)));
-    m_pNfcControl->erase_card();
+    m_pNfcControl->eraseTag();
 }
 
 TEST_F(NfcCtrlRead, Read_NotSuccessful_returnsFalse)
 {
     Folder resultFolder;
     ON_CALL(m_nfc, readTag(_, _)).WillByDefault(Return(false));
-    EXPECT_FALSE(m_pNfcControl->read_folder_from_card(resultFolder));
+    EXPECT_FALSE(m_pNfcControl->readFolderFromTag(resultFolder));
 }
 
 TEST_F(NfcCtrlRead, Read_Successful_NoDataToRead_returnsFalse)
 {
     Folder resultFolder;
     ON_CALL(m_nfc, readTag(_, _)).WillByDefault(Return(true));
-    EXPECT_FALSE(m_pNfcControl->read_folder_from_card(resultFolder));
+    EXPECT_FALSE(m_pNfcControl->readFolderFromTag(resultFolder));
 }
 
 TEST_F(NfcCtrlRead, isCalledWithCorrectBlockAddr)
 {
     Folder resultFolder;
     ON_CALL(m_nfc, readTag(4, _)).WillByDefault(Return(true));
-    m_pNfcControl->read_folder_from_card(resultFolder);
+    m_pNfcControl->readFolderFromTag(resultFolder);
 }
 
 TEST_F(NfcCtrlRead, isCalledWithCorrectPayload)
@@ -124,9 +124,9 @@ TEST_F(NfcCtrlRead, isCalledWithCorrectPayload)
                                         fakeBufferData,
                                         NFCTAG_MEMORY_TO_OCCUPY)));
     // sets buffer to a certain value
-    m_pNfcControl->write_folder_to_card(*m_pTestFolder);
+    m_pNfcControl->writeFolderToTag(*m_pTestFolder);
     // read with this buffer sets correct argument at readTag
-    m_pNfcControl->read_folder_from_card(resultFolder);
+    m_pNfcControl->readFolderFromTag(resultFolder);
 }
 
 TEST_F(NfcCtrlRead, Read_Successful_bufferEmpty_NoOverwriteOfSourceFolder)
@@ -135,7 +135,7 @@ TEST_F(NfcCtrlRead, Read_Successful_bufferEmpty_NoOverwriteOfSourceFolder)
     resultFolder.setTrackCount(5);
     ON_CALL(m_nfc, readTag(_, _)).WillByDefault(Return(true));
 
-    EXPECT_FALSE(m_pNfcControl->read_folder_from_card(resultFolder));
+    EXPECT_FALSE(m_pNfcControl->readFolderFromTag(resultFolder));
     EXPECT_EQ(27, resultFolder.get_folder_id());
     EXPECT_EQ(Folder::LULLABYE, resultFolder.get_play_mode());
     EXPECT_EQ(5, resultFolder.get_track_count());
@@ -145,7 +145,7 @@ TEST_F(NfcCtrlRead, Read_Successful_bufferSet_returnsCorrectFolderData)
 {
     Folder resultFolder;
     m_nfc.DelegateToFake(); // Delegates readTag() call to fake object
-    EXPECT_TRUE(m_pNfcControl->read_folder_from_card(resultFolder));
+    EXPECT_TRUE(m_pNfcControl->readFolderFromTag(resultFolder));
 
     EXPECT_EQ(m_pTestFolder->get_folder_id(), resultFolder.get_folder_id());
     EXPECT_EQ(m_pTestFolder->get_play_mode(), resultFolder.get_play_mode());
@@ -156,21 +156,21 @@ TEST_F(NfcCtrlTagPresence, noTag_returnsNoTag)
 {
     Nfc_interface::eTagState tagPresence = Nfc_interface::NO_TAG;
     ON_CALL(m_nfc, getTagPresence()).WillByDefault(Return(tagPresence));
-    ASSERT_EQ(tagPresence, m_pNfcControl->get_tag_presence());
+    ASSERT_EQ(tagPresence, m_pNfcControl->getTagPresence());
 }
 
 TEST_F(NfcCtrlTagPresence, activeTag_returnsActiveTag)
 {
     Nfc_interface::eTagState tagPresence = Nfc_interface::ACTIVE_KNOWN_TAG;
     ON_CALL(m_nfc, getTagPresence()).WillByDefault(Return(tagPresence));
-    ASSERT_EQ(tagPresence, m_pNfcControl->get_tag_presence());
+    ASSERT_EQ(tagPresence, m_pNfcControl->getTagPresence());
 }
 
 TEST_F(NfcCtrlTagPresence, newTag_simulateUnknown_returnsUnknownTag)
 {
     Nfc_interface::eTagState tagPresence = Nfc_interface::NEW_UNKNOWN_TAG;
     ON_CALL(m_nfc, getTagPresence()).WillByDefault(Return(tagPresence));
-    ASSERT_EQ(tagPresence, m_pNfcControl->get_tag_presence());
+    ASSERT_EQ(tagPresence, m_pNfcControl->getTagPresence());
 }
 
 TEST_F(NfcCtrlTagPresence, newTag_simulateKnown_returnsKnownTag)
@@ -179,12 +179,12 @@ TEST_F(NfcCtrlTagPresence, newTag_simulateKnown_returnsKnownTag)
     Nfc_interface::eTagState tagPresence = Nfc_interface::NEW_UNKNOWN_TAG;
     ON_CALL(m_nfc, getTagPresence()).WillByDefault(Return(tagPresence));
     m_nfc.DelegateToFake(); // will return known card cookie
-    ASSERT_EQ(Nfc_interface::NEW_REGISTERED_TAG, myTest.get_tag_presence());
+    ASSERT_EQ(Nfc_interface::NEW_REGISTERED_TAG, myTest.getTagPresence());
 }
 
 TEST_F(NfcCtrlTagPresence, OutOfRange_returnsOutOfRange)
 {
     Nfc_interface::eTagState tagPresence = static_cast<Nfc_interface::eTagState>(static_cast<uint8_t>(Nfc_interface::NUMBER_OF_TAG_STATES) + 1);
     ON_CALL(m_nfc, getTagPresence()).WillByDefault(Return(tagPresence));
-    ASSERT_EQ(tagPresence, m_pNfcControl->get_tag_presence());
+    ASSERT_EQ(tagPresence, m_pNfcControl->getTagPresence());
 }

@@ -38,7 +38,7 @@ void DeleteMenu::handlePlayback()
 void DeleteMenu::handleTagStateChanges()
 {
     // tag to delete detected
-    if (m_pNfcControl->get_tag_presence() == Nfc_interface::NEW_REGISTERED_TAG)
+    if (m_pNfcControl->getTagPresence() == Nfc_interface::NEW_REGISTERED_TAG)
     {
         m_menuState.setTagToDeleteDetected();
     }
@@ -66,7 +66,7 @@ void DeleteMenu::playPreview()
     if (m_menuState.isPendingConfirmDelete())
     {
         Folder preview;
-        if (m_pNfcControl->read_folder_from_card(preview))
+        if (m_pNfcControl->readFolderFromTag(preview))
         {
             m_pMp3Play->playFolder(preview);
         }

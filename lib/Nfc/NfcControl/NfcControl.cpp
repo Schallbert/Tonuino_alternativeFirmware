@@ -13,7 +13,7 @@ NfcControl::~NfcControl()
     delete[] m_pBuffer;
 }
 
-Nfc_interface::eTagState NfcControl::get_tag_presence()
+Nfc_interface::eTagState NfcControl::getTagPresence()
 {
     // Adds "known tag" information if a new tag has been placed.
     // Otherwise, just wrapper for layer down method.
@@ -29,7 +29,7 @@ Nfc_interface::eTagState NfcControl::get_tag_presence()
     return tagPresence;
 }
 
-bool NfcControl::write_folder_to_card(const Folder &sourceFolder)
+bool NfcControl::writeFolderToTag(const Folder &sourceFolder)
 {
     m_oFolder = sourceFolder; // Copy source folder to member object
     if (!m_oFolder.is_valid())
@@ -42,7 +42,7 @@ bool NfcControl::write_folder_to_card(const Folder &sourceFolder)
     return m_pNfc->writeTag(blockAddressToReadWrite, m_pBuffer);
 }
 
-bool NfcControl::erase_card()
+bool NfcControl::eraseTag()
 {
     for (int i = 0; i < NFCTAG_MEMORY_TO_OCCUPY; ++i) // 7-15: Empty
     {
@@ -51,7 +51,7 @@ bool NfcControl::erase_card()
     return m_pNfc->writeTag(blockAddressToReadWrite, m_pBuffer);
 }
 
-bool NfcControl::read_folder_from_card(Folder &targetFolder)
+bool NfcControl::readFolderFromTag(Folder &targetFolder)
 {
     bool status{false}; //unknown or corrupted card
     if (m_pNfc->readTag(blockAddressToReadWrite, m_pBuffer))
@@ -99,7 +99,7 @@ void NfcControl::buffer_to_folder()
 bool NfcControl::is_known_card()
 {
     Folder dummy;
-    if (read_folder_from_card(dummy)) // gets magic cookie.
+    if (readFolderFromTag(dummy)) // gets magic cookie.
     {
         return (m_ui32CardCookie == cui32MagicCookie);
     }
