@@ -3,7 +3,7 @@
 
 #include <gmock/gmock.h>
 
-#include "../ErrorHandler/ErrorHandler_interface.h"
+#include "../MessageHandler/MessageHandler_interface.h"
 
 class Mock_MessageHandler : public MessageHander_interface
 {

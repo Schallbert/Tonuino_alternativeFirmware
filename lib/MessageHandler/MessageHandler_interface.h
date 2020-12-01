@@ -1,5 +1,5 @@
-#ifndef ERRORHANDLER_INTERFACE_H
-#define ERRORHANDLER_INTERFACE_H
+#ifndef MESSAGEHANDLER_INTERFACE_H
+#define MESSAGEHANDLER_INTERFACE_H
 
 #include "Tonuino_config.h"
 #include "Mp3Play/Mp3Play_interface.h"
@@ -19,4 +19,4 @@ public:
     virtual void setPromptMessage(const VoicePrompt &message) = 0;
 };
 
-#endif // ERRORHANDLER_INTERFACE_H
+#endif // MESSAGEHANDLER_INTERFACE_H

@@ -7,7 +7,7 @@
 #include "Mp3Control/Mp3Control_interface.h"
 #include "Mp3Play/Mp3Play_interface.h"
 #include "DfMiniMp3/DFMiniMp3_interface.h"
-#include "../ErrorHandler/ErrorHandler_interface.h"
+#include "../MessageHandler/MessageHandler_interface.h"
 
 #include "../Config/Tonuino_config.h"
 #include "../Config/Arduino_config.h"

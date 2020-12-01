@@ -4,7 +4,7 @@
 #include "Folder.h"
 #include "DfMiniMp3/DFMiniMp3_interface.h"
 #include "../Arduino/Arduino_interface/Arduino_DIcontainer_interface.h"
-#include "../ErrorHandler/ErrorHandler_interface.h"
+#include "../MessageHandler/MessageHandler_interface.h"
 #include "../Utilities/SimpleTimer.h"
 
 #include "Tonuino_config.h"

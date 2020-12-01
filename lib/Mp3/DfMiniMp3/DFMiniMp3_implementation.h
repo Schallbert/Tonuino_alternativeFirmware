@@ -2,7 +2,7 @@
 #define DFMINIMP3_IMPLEMENTATION_H
 #include "DFMiniMp3.h"
 #include "../Mp3/DFMiniMp3/DFMiniMp3_interface.h"
-#include "../ErrorHandler/ErrorHandler_interface.h"
+#include "../MessageHandler/MessageHandler_interface.h"
 #include <Arduino_config.h>
 #include <SoftwareSerial.h>
 

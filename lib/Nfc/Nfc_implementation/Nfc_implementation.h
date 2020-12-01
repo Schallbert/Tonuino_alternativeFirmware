@@ -5,7 +5,7 @@
 #include "../MFRC522/MFRC522_interface.h" // to access actual HW
 #include "../Nfc_interface/Nfc_interface.h"
 #include "../NfcTag_implementation/NfcTag_factory.h"
-#include "../ErrorHandler/ErrorHandler_interface.h"
+#include "../MessageHandler/MessageHandler_interface.h"
 
 class NfcNotify
 {

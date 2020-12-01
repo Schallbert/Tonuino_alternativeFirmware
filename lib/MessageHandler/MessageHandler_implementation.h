@@ -4,13 +4,13 @@
 #include "Arduino_interface/Arduino_DIcontainer_interface.h"
 #include "Mp3Control_interface/Mp3Control/Mp3Control_interface.h"
 
-#include "ErrorHandler_interface.h"
+#include "MessageHandler_interface.h"
 #include "PlayError.h"
 
-class ErrorHandler : public MessageHander_interface
+class MessageHandler : public MessageHander_interface
 {
 public:
-    ErrorHandler(Arduino_DIcontainer_interface *pArduHal,
+    MessageHandler(Arduino_DIcontainer_interface *pArduHal,
                  NfcControl_interface *pNfcCtrl,
                  Mp3Control_interface *pMp3Ctrl, ) : m_pArduinoHal(pArduHal),
                                                      m_pNfcControl(pNfcCtrl),
