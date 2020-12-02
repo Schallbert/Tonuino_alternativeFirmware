@@ -13,10 +13,8 @@ class MessageHander_interface
 public:
     virtual ~MessageHander_interface(){};
 
-    // Handler
-    virtual void loop() = 0;
     virtual void printMessage(const char *message) = 0;
-    virtual void setPromptMessage(const VoicePrompt &message) = 0;
+    virtual void promptMessage(const VoicePrompt &message) = 0;
 };
 
 #endif // MESSAGEHANDLER_INTERFACE_H

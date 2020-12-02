@@ -62,7 +62,7 @@ bool Mp3Play_implementation::isFolderValid(Folder &folder)
         folderError.promptId = MSG_ERROR_FOLDER;
         folderError.allowSkip = false;
         m_pMessageHandler->printMessage(Mp3PlayNotify::toString(Mp3PlayNotify::noFolder));
-        m_pMessageHandler->setPromptMessage(folderError);
+        m_pMessageHandler->promptMessage(folderError);
         result = false;
     }
     return result;
