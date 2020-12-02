@@ -1,5 +1,5 @@
-#ifndef ERRORHANDLER_IMPLEMENTATION_H
-#define ERRORHANDLER_IMPLEMENTATION_H
+#ifndef MESSAGEHANDLER_IMPLEMENTATION_H
+#define MESSAGEHANDLER_IMPLEMENTATION_H
 
 #include "Arduino_interface/Arduino_DIcontainer_interface.h"
 #include "Mp3Play/Mp3Play_interface.h"
@@ -30,4 +30,4 @@ private:
     const char *m_lastPrint{nullptr};
 };
 
-#endif // ERRORHANDLER_IMPLEMENTATION_H
+#endif // MESSAGEHANDLER_IMPLEMENTATION_H

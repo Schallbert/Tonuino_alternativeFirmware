@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 
 #include "mocks/unittest_Nfc_mocks.h"
-#include "mocks/unittest_ErrorHandler_mocks.h"
+#include "mocks/unittest_MessageHandler_mocks.h"
 
 #include "../Nfc/Nfc_implementation/Nfc_implementation.h"
 

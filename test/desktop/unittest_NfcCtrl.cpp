@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include "Arduino_config.h"
-#include "mocks/unittest_ErrorHandler_mocks.h"
+#include "mocks/unittest_MessageHandler_mocks.h"
 #include "../Nfc/NfcControl/NfcControl.h"
 #include "mocks/unittest_Nfc_mocks.h"
 

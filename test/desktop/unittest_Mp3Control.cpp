@@ -6,7 +6,7 @@
 
 #include "mocks/unittest_Mp3Play_mocks.h"
 #include "mocks/unittest_DfMiniMp3_mocks.h"
-#include "mocks/unittest_ErrorHandler_mocks.h"
+#include "mocks/unittest_MessageHandler_mocks.h"
 
 using ::testing::_;
 using ::testing::NiceMock;
@@ -21,7 +21,7 @@ protected:
     {
         m_pMp3Control = new Mp3Control(&m_dfMiniMock,
                                        &m_mp3PlayMock,
-                                       &m_errorHandlerMock);
+                                       &m_MessageHandlerMock);
     }
 
     virtual void TearDown()
@@ -32,7 +32,7 @@ protected:
 protected:
     NiceMock<Mock_DfMiniMp3> m_dfMiniMock{};
     NiceMock<Mock_Mp3Play> m_mp3PlayMock{};
-    NiceMock<Mock_MessageHandler> m_errorHandlerMock{};
+    NiceMock<Mock_MessageHandler> m_MessageHandlerMock{};
 
     Mp3Control *m_pMp3Control{nullptr};
 };
@@ -40,7 +40,7 @@ protected:
 TEST_F(Mp3ControlTest, ClassConstructorMethodsCalled)
 {
     EXPECT_CALL(m_dfMiniMock, setVolume(VOLUME_INIT));
-    Mp3Control myMp3(&m_dfMiniMock, &m_mp3PlayMock, &m_errorHandlerMock);
+    Mp3Control myMp3(&m_dfMiniMock, &m_mp3PlayMock, &m_MessageHandlerMock);
 }
 
 TEST_F(Mp3ControlTest, loop_callesAutoplay)
