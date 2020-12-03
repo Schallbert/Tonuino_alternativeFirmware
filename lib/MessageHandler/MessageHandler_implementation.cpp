@@ -2,56 +2,25 @@
 
 void MessageHandler::printMessage(const char *message)
 {
-    if (isNewValidPrint(message))
+    if (message != nullptr)
     {
-        m_pArduinoHal->getSerial()->com_println(m_lastPrint);
+        m_pSerial->com_println(message);
     }
-}
-
-bool MessageHandler::isNewValidPrint(const char *message)
-{
-    if (message == nullptr)
-    {
-        return false;
-    }
-
-    if (isEqualPrint(message))
-    {
-        return false;
-    }
-
-    m_lastPrint = message;
-    return true;
-}
-
-bool MessageHandler::isEqualPrint(const char *message)
-{
-    bool result{true};
-    while (*message && *m_lastPrint)
-    {
-        result &= (*message == *m_lastPrint);
-        ++message;
-        ++m_lastPrint;
-    }
-    return result;
 }
 
 void MessageHandler::promptMessage(const VoicePrompt &message)
 {
-    if (isNewValidPrompt(message))
+    if (isNewPrompt(message))
     {
         m_pMp3Play->playPrompt(message);
     }
 }
 
-bool MessageHandler::isNewValidPrompt(const VoicePrompt &message)
+bool MessageHandler::isNewPrompt(const VoicePrompt &message)
 {
-    if (message.promptId == m_lastPrompt.promptId)
-    {
-        return false;
-    }
-
+    bool result{message.promptId != m_lastPrompt.promptId};
     m_lastPrompt.promptId = message.promptId;
     m_lastPrompt.allowSkip = message.allowSkip;
-    return true;
+
+    return (result);
 }

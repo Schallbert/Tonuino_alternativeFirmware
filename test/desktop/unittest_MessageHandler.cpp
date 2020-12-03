@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "mocks/unittest_ArduinoDIcontainer_mocks.h"
+#include "mocks/unittest_ArduinoIf_mocks.h"
 #include "mocks/unittest_Mp3Play_mocks.h"
 
 #include "../MessageHandler/MessageHandler_implementation.h"
@@ -16,7 +16,7 @@ class MessageHandlerTest : public ::testing::Test
 protected:
     virtual void SetUp()
     {
-        m_pMessageHandler = new MessageHandler(&m_ArduDIMock,
+        m_pMessageHandler = new MessageHandler(&m_serialMock,
                                                &m_mp3PlayMock);
     }
 
@@ -26,15 +26,20 @@ protected:
     }
 
 protected:
-    NiceMock<Mock_ArduinoDIcontainer> m_ArduDIMock{};
+    NiceMock<Mock_serial> m_serialMock{};
     NiceMock<Mock_Mp3Play> m_mp3PlayMock{};
 
     MessageHandler *m_pMessageHandler{nullptr};
 };
 
-/*
-TEST_F(MessageHandlerTest, ClassConstructorMethodsCalled)
+TEST_F(MessageHandlerTest, PrintMessage_nullptr_WontPrint)
 {
-    EXPECT_CALL(m_dfMiniMock, setVolume(VOLUME_INIT));
-    Mp3Control myMp3(&m_dfMiniMock, &m_mp3PlayMock, &m_errorHandlerMock);
-}*/
+    EXPECT_CALL(m_serialMock, com_println(_)).Times(0);
+    m_pMessageHandler->printMessage(nullptr);
+}
+
+TEST_F(MessageHandlerTest, PrintMessage_Valid_WillPrint)
+{
+    EXPECT_CALL(m_serialMock, com_println(_));
+    m_pMessageHandler->printMessage("Test");
+}
