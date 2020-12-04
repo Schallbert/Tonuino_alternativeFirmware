@@ -28,27 +28,27 @@ public:
 
 public:
     // Returns current track in queue
-    uint8_t get_current_track();
+    uint8_t getCurrentTrack();
     // Increments queue pointer (rollover) and returns next track [number]
-    uint8_t get_next_track(); // External dependency: EEPROM
+    uint8_t getNextTrack(); // External dependency: EEPROM
     // Decrements queue pointer (rollover) and returns previous track [number]
-    uint8_t get_prev_track(); // External dependency: EEPROM
+    uint8_t getPrevTrack(); // External dependency: EEPROM
     // Returns folder's play mode [enum]
-    ePlayMode get_play_mode() const;
+    ePlayMode getPlayMode() const;
     // Returns folder's id [number]
-    uint8_t get_folder_id() const;
+    uint8_t getFolderId() const;
     // Returns track count of folder [number], yielded from MP3 player request
-    uint8_t get_track_count() const;
+    uint8_t getTrackCount() const;
     // Tries to initiate the track queue by using injected dependencies depending on play mode
-    void setup_dependencies(Arduino_DIcontainer_interface *pArduinoHal,
+    void setupDependencies(Arduino_DIcontainer_interface *pArduinoHal,
                             MessageHander_interface *pMessageHandler); // Dependency injection: Random seed & eeprom
     // sets trackCount of folder
     void setTrackCount(uint8_t trackCount);
 
     // Returns true if the folder can be fully setup and is ready to be used in other modules
-    bool is_valid();
+    bool isValid();
     // Returns true if folder is setup with relevant data (id, track count, playmode)
-    bool is_initiated() const;
+    bool isInitiated() const;
 
 private:
     // Sets the queue pointer to first track and initializes the queue based on playMode

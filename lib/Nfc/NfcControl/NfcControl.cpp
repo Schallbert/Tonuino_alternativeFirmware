@@ -32,7 +32,7 @@ Nfc_interface::eTagState NfcControl::getTagPresence()
 bool NfcControl::writeFolderToTag(const Folder &sourceFolder)
 {
     m_oFolder = sourceFolder; // Copy source folder to member object
-    if (!m_oFolder.is_valid())
+    if (!m_oFolder.isValid())
     {
         m_oFolder = Folder(); // re-init to empty object
         return false;
@@ -57,7 +57,7 @@ bool NfcControl::readFolderFromTag(Folder &targetFolder)
     if (m_pNfc->readTag(blockAddressToReadWrite, m_pBuffer))
     {
         buffer_to_folder();
-        if (m_oFolder.is_initiated())
+        if (m_oFolder.isInitiated())
         {
             targetFolder = m_oFolder; // Copy member object to target folder
             status = true;
@@ -72,9 +72,9 @@ void NfcControl::folder_to_buffer()
     m_pBuffer[1] = (byte)((cui32MagicCookie >> 16) & 0xFF); // 1
     m_pBuffer[2] = (byte)((cui32MagicCookie >> 8) & 0xFF);  // 2
     m_pBuffer[3] = (byte)(cui32MagicCookie & 0xFF);         // 3: magic cookie to identify our nfc tags
-    m_pBuffer[4] = (byte)m_oFolder.get_folder_id();         // 4: folder picked by the user
-    m_pBuffer[5] = (byte)m_oFolder.get_play_mode();         // 5: playback mode picked by the user
-    m_pBuffer[6] = (byte)m_oFolder.get_track_count();       // 6: track count of that m_oFolder
+    m_pBuffer[4] = (byte)m_oFolder.getFolderId();         // 4: folder picked by the user
+    m_pBuffer[5] = (byte)m_oFolder.getPlayMode();         // 5: playback mode picked by the user
+    m_pBuffer[6] = (byte)m_oFolder.getTrackCount();       // 6: track count of that m_oFolder
     for (int i = 7; i < NFCTAG_MEMORY_TO_OCCUPY; ++i)       // 7-15: Empty
     {
         m_pBuffer[i] = 0x00;

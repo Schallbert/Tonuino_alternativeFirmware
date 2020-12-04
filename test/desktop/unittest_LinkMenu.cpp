@@ -44,19 +44,19 @@ MATCHER_P(identicalPrompt, comp, "")
 
 MATCHER(invalidFolder, "")
 {
-    return (!arg.is_initiated());
+    return (!arg.isInitiated());
 }
 
 MATCHER(validFolder, "")
 {
-    return (arg.is_initiated());
+    return (arg.isInitiated());
 }
 
 MATCHER_P(identicalFolder, comp, "")
 {
-    return ((arg.get_folder_id() == comp.get_folder_id()) &&
-            (arg.get_play_mode() == comp.get_play_mode()) &&
-            (arg.get_track_count() == comp.get_track_count()));
+    return ((arg.getFolderId() == comp.getFolderId()) &&
+            (arg.getPlayMode() == comp.getPlayMode()) &&
+            (arg.getTrackCount() == comp.getTrackCount()));
 }
 
 // INIT() ------------------------------------------------------

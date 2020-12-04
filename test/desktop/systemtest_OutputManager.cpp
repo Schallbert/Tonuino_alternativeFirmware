@@ -192,7 +192,7 @@ TEST_F(OutputManagerTest, linkMenu_linkMenuFolderSelect_folderInvalidSelection0)
     m_pOutputManager->dispatchInputs();
 }
 
-MATCHER_P(folderIdIs, value, "") { return (arg->get_folder_id() == value); }
+MATCHER_P(folderIdIs, value, "") { return (arg->getFolderId() == value); }
 
 TEST_F(OutputManagerTest, linkMenu_linkMenuFolderSelect_folderPreviewPlayed)
 {
@@ -259,9 +259,9 @@ TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_writesInfoToCard)
 
 MATCHER_P3(folderOk, expFolderId, expPlayMode, expTrackCnt, "")
 {
-    return ((arg->get_folder_id() == expFolderId) &&
-            (arg->get_play_mode() == expPlayMode) &&
-            (arg->get_track_count() == expTrackCnt));
+    return ((arg->getFolderId() == expFolderId) &&
+            (arg->getPlayMode() == expPlayMode) &&
+            (arg->getTrackCount() == expTrackCnt));
 }
 
 TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_startsPlaybackWithCorrectSettings)

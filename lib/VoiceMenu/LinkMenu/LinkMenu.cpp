@@ -64,7 +64,7 @@ void LinkMenu::playPrompt()
 void LinkMenu::playPreview()
 {
         Folder preview = m_menuState.getPreview();
-        if(preview.is_initiated())
+        if(preview.isInitiated())
         {
              m_pMp3Play->playFolder(preview);
         }

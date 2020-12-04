@@ -15,8 +15,8 @@ using ::testing::Return;
 class folderInvalid : public ::testing::Test
 {
 protected:
-    NiceMock<Mock_ArduinoDIcontainer> m_aDIC;
-    NiceMock<Mock_MessageHandler> m_msgHdlr;
+    NiceMock<Mock_ArduinoDIcontainer> m_arduinoHalMock;
+    NiceMock<Mock_MessageHandler> m_messageHandlerMock;
 };
 
 // This fixture will return Mock_eeprom dependency
@@ -27,7 +27,7 @@ protected:
     {
         folderInvalid::SetUp();
         m_pEeprom = new NiceMock<Mock_eeprom>;
-        folderInvalid::m_aDIC.DelegateToMockEeprom(m_pEeprom);
+        folderInvalid::m_arduinoHalMock.DelegateToMockEeprom(m_pEeprom);
     }
 
     virtual void TearDown()
@@ -50,7 +50,7 @@ protected:
         folderMethods::SetUp();
         pValidFolder = new Folder(2, Folder::ALBUM);
         pValidFolder->setTrackCount(10);
-        pValidFolder->setup_dependencies(&m_aDIC, &m_msgHdlr);
+        pValidFolder->setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     }
 
     virtual void TearDown()
@@ -72,7 +72,7 @@ protected:
     {
         folderMethods::SetUp();
         m_pRandom = new NiceMock<Mock_random>;
-        folderMethods::m_aDIC.DelegateToMockRandom(m_pRandom);
+        folderMethods::m_arduinoHalMock.DelegateToMockRandom(m_pRandom);
     }
 
     virtual void TearDown()
@@ -89,83 +89,83 @@ protected:
 TEST_F(folderInvalid, folder_defaultConstructor_isInvalid)
 {
     Folder invalidFolder;
-    ASSERT_EQ(false, invalidFolder.is_valid());
+    ASSERT_EQ(false, invalidFolder.isValid());
 }
 
 TEST_F(folderInvalid, folderIdIs0)
 {
     Folder invalidFolder;
-    ASSERT_EQ(0, invalidFolder.get_folder_id());
+    ASSERT_EQ(0, invalidFolder.getFolderId());
 }
 
 TEST_F(folderInvalid, playModeIsUndefined)
 {
     Folder invalidFolder;
-    ASSERT_EQ(Folder::UNDEFINED, invalidFolder.get_play_mode());
+    ASSERT_EQ(Folder::UNDEFINED, invalidFolder.getPlayMode());
 }
 
 TEST_F(folderInvalid, trackCountIs0)
 {
     Folder invalidFolder;
-    ASSERT_EQ(0, invalidFolder.get_track_count());
+    ASSERT_EQ(0, invalidFolder.getTrackCount());
 }
 
 TEST_F(folderInvalid, currentTrackIs0)
 {
     Folder invalidFolder;
-    ASSERT_EQ(0, invalidFolder.get_current_track());
+    ASSERT_EQ(0, invalidFolder.getCurrentTrack());
 }
 
 TEST_F(folderInvalid, nextTrackIs0)
 {
     Folder invalidFolder;
-    ASSERT_EQ(0, invalidFolder.get_next_track());
+    ASSERT_EQ(0, invalidFolder.getNextTrack());
 }
 
 TEST_F(folderInvalid, prevTrackIs0)
 {
     Folder invalidFolder;
-    ASSERT_EQ(0, invalidFolder.get_prev_track());
+    ASSERT_EQ(0, invalidFolder.getPrevTrack());
 }
 
 TEST_F(folderInvalid, initiated_isInitialized_returnsTrue)
 {
     Folder invalidFolder(1, Folder::ALBUM);
-    ASSERT_TRUE(invalidFolder.is_initiated());
+    ASSERT_TRUE(invalidFolder.isInitiated());
 }
 
 TEST_F(folderInvalid, initiated_isValid_returnsFalse)
 {
     Folder invalidFolder(1, Folder::ALBUM);
-    ASSERT_FALSE(invalidFolder.is_valid());
+    ASSERT_FALSE(invalidFolder.isValid());
 }
 
 TEST_F(folderInvalid, initiated_trackCountSet_isValid_returnsFalse)
 {
     Folder invalidFolder(1, Folder::SAVEPROGRESS);
     invalidFolder.setTrackCount(2);
-    ASSERT_FALSE(invalidFolder.is_valid());
+    ASSERT_FALSE(invalidFolder.isValid());
 }
 
 TEST_F(folderInvalid, dependenciesSetup_isValidReturnsFalse)
 {
     Folder invalidFolder(1, Folder::ALBUM);
-    invalidFolder.setup_dependencies(&m_aDIC, &m_msgHdlr);
-    ASSERT_FALSE(invalidFolder.is_valid());
+    invalidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
+    ASSERT_FALSE(invalidFolder.isValid());
 }
 
 TEST_F(folderInvalid, playModeUndefined_isValidReturnsFalse)
 {
     Folder invalidFolder(1, Folder::UNDEFINED);
-    invalidFolder.setup_dependencies(&m_aDIC, &m_msgHdlr);
-    ASSERT_FALSE(invalidFolder.is_valid());
+    invalidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
+    ASSERT_FALSE(invalidFolder.isValid());
 }
 
 TEST_F(folderInvalid, folderIdIs0_isValidReturnsFalse)
 {
     Folder invalidFolder(0, Folder::ALBUM);
-    invalidFolder.setup_dependencies(&m_aDIC, &m_msgHdlr);
-    ASSERT_FALSE(invalidFolder.is_valid());
+    invalidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
+    ASSERT_FALSE(invalidFolder.isValid());
 }
 
 TEST_F(folderMethods, copyConstructor_workingOK)
@@ -174,11 +174,11 @@ TEST_F(folderMethods, copyConstructor_workingOK)
     ON_CALL(*m_pEeprom, eeprom_read(254)).WillByDefault(Return(13));
     Folder testFolder(254, Folder::SAVEPROGRESS);
     testFolder.setTrackCount(1);
-    testFolder.setup_dependencies(&m_aDIC, &m_msgHdlr);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     // Act
     Folder copyFolder(testFolder);
     // Assert
-    ASSERT_TRUE(copyFolder.is_valid());
+    ASSERT_TRUE(copyFolder.isValid());
 }
 
 TEST_F(folderMethods, copyConstructor_dependencyIsNullptr_isAlsoCopied)
@@ -189,8 +189,8 @@ TEST_F(folderMethods, copyConstructor_dependencyIsNullptr_isAlsoCopied)
     // Act
     Folder copyFolder(testFolder);
     // Assert
-    ASSERT_FALSE(testFolder.is_valid());
-    ASSERT_FALSE(copyFolder.is_valid());
+    ASSERT_FALSE(testFolder.isValid());
+    ASSERT_FALSE(copyFolder.isValid());
 }
 
 TEST_F(folderMethods, copyConstructor_valuesOK)
@@ -198,43 +198,43 @@ TEST_F(folderMethods, copyConstructor_valuesOK)
     ON_CALL(*m_pEeprom, eeprom_read(254)).WillByDefault(Return(13));
     Folder testFolder(254, Folder::SAVEPROGRESS);
     testFolder.setTrackCount(14);
-    testFolder.setup_dependencies(&m_aDIC, &m_msgHdlr);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
 
     Folder copyFolder(testFolder);
 
     // Validate that contents is copied OK
-    EXPECT_EQ(13, copyFolder.get_current_track());
-    EXPECT_EQ(254, copyFolder.get_folder_id());
-    EXPECT_EQ(Folder::SAVEPROGRESS, copyFolder.get_play_mode());
-    EXPECT_EQ(14, copyFolder.get_track_count());
+    EXPECT_EQ(13, copyFolder.getCurrentTrack());
+    EXPECT_EQ(254, copyFolder.getFolderId());
+    EXPECT_EQ(Folder::SAVEPROGRESS, copyFolder.getPlayMode());
+    EXPECT_EQ(14, copyFolder.getTrackCount());
 }
 
 TEST_F(folderMethods, assignmentOperator_workingOK)
 {
     Folder testFolder(254, Folder::ALBUM);
-    testFolder.setup_dependencies(&m_aDIC, &m_msgHdlr);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     testFolder.setTrackCount(1);
     Folder copyFolder = Folder();
 
     copyFolder = testFolder;
     // Check if variables are set OK
-    EXPECT_TRUE(copyFolder.is_valid());
+    EXPECT_TRUE(copyFolder.isValid());
 }
 
 TEST_F(folderMethods, assignmentOperator_valuesOK)
 {
     Folder testFolder(254, Folder::ALBUM);
     testFolder.setTrackCount(1);
-    testFolder.setup_dependencies(&m_aDIC, &m_msgHdlr);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     Folder copyFolder = Folder();
 
     copyFolder = testFolder;
 
     // Validate that contents is copied OK
-    EXPECT_EQ(1, copyFolder.get_current_track());
-    EXPECT_EQ(254, copyFolder.get_folder_id());
-    EXPECT_EQ(Folder::ALBUM, copyFolder.get_play_mode());
-    EXPECT_EQ(1, copyFolder.get_track_count());
+    EXPECT_EQ(1, copyFolder.getCurrentTrack());
+    EXPECT_EQ(254, copyFolder.getFolderId());
+    EXPECT_EQ(Folder::ALBUM, copyFolder.getPlayMode());
+    EXPECT_EQ(1, copyFolder.getTrackCount());
 }
 
 TEST_F(folderMethods, assignmentOperator_dependencyIsNullptr_isAlsoCopied)
@@ -246,7 +246,7 @@ TEST_F(folderMethods, assignmentOperator_dependencyIsNullptr_isAlsoCopied)
     Folder copyFolder = Folder();
     copyFolder = testFolder;
     // Assert
-    ASSERT_FALSE(copyFolder.is_valid());
+    ASSERT_FALSE(copyFolder.isValid());
 }
 
 TEST_F(folderMethods, validFolder_createsQueue_callsNotification)
@@ -254,65 +254,65 @@ TEST_F(folderMethods, validFolder_createsQueue_callsNotification)
     Folder testFolder(254, Folder::ALBUM);
     testFolder.setTrackCount(1);
     
-    EXPECT_CALL(m_msgHdlr, printMessage(_));
-    testFolder.setup_dependencies(&m_aDIC, &m_msgHdlr);
+    EXPECT_CALL(m_messageHandlerMock, printMessage(_));
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
 }
 
 TEST_F(folderAlbum, folder_ALBUM_valid)
 {
-    ASSERT_TRUE(pValidFolder->is_valid());
+    ASSERT_TRUE(pValidFolder->isValid());
 }
 
 TEST_F(folderAlbum, ALBUM_idIs2)
 {
-    ASSERT_EQ(2, pValidFolder->get_folder_id());
+    ASSERT_EQ(2, pValidFolder->getFolderId());
 }
 
 TEST_F(folderAlbum, playModeIsALBUM)
 {
-    ASSERT_EQ(Folder::ALBUM, pValidFolder->get_play_mode());
+    ASSERT_EQ(Folder::ALBUM, pValidFolder->getPlayMode());
 }
 
 TEST_F(folderAlbum, trackCountIs10)
 {
-    ASSERT_EQ(10, pValidFolder->get_track_count());
+    ASSERT_EQ(10, pValidFolder->getTrackCount());
 }
 
 TEST_F(folderAlbum, currentTrackIs1)
 {
-    ASSERT_EQ(1, pValidFolder->get_current_track());
+    ASSERT_EQ(1, pValidFolder->getCurrentTrack());
 }
 
 TEST_F(folderAlbum, nextTrackIs2)
 {
-    ASSERT_EQ(2, pValidFolder->get_next_track());
+    ASSERT_EQ(2, pValidFolder->getNextTrack());
 }
 
 TEST_F(folderAlbum, ChooseNextTrack_currentTrackIs2)
 {
-    pValidFolder->get_next_track();
-    ASSERT_EQ(2, pValidFolder->get_current_track());
+    pValidFolder->getNextTrack();
+    ASSERT_EQ(2, pValidFolder->getCurrentTrack());
 }
 
 TEST_F(folderAlbum, trackCount10_CallPrevTrack_returns10)
 {
     // Tests rollover track count
-    ASSERT_EQ(10, pValidFolder->get_prev_track());
+    ASSERT_EQ(10, pValidFolder->getPrevTrack());
 }
 
 TEST_F(folderAlbum, trackCount10_CallPrevTrack_GetCurrentTrackReturns10)
 {
     // Tests rollover track count
-    pValidFolder->get_prev_track();
-    ASSERT_EQ(10, pValidFolder->get_current_track());
+    pValidFolder->getPrevTrack();
+    ASSERT_EQ(10, pValidFolder->getCurrentTrack());
 }
 
 TEST_F(folderAlbum, trackCountIs10_AllTracksAreInQueue)
 {
-    uint8_t trackSum = pValidFolder->get_current_track();
-    for (int i = 2; i <= pValidFolder->get_track_count(); ++i)
+    uint8_t trackSum = pValidFolder->getCurrentTrack();
+    for (int i = 2; i <= pValidFolder->getTrackCount(); ++i)
     {
-        trackSum += pValidFolder->get_next_track();
+        trackSum += pValidFolder->getNextTrack();
     }
     ASSERT_EQ(55, trackSum);
 }
@@ -333,11 +333,11 @@ TEST_F(folderDependencies, RANDOM_trackCountIs10_trackQueueLoopComplete)
         .WillOnce(Return(7))
         .WillOnce(Return(5))
         .WillOnce(Return(6));
-    testFolder.setup_dependencies(&m_aDIC, &m_msgHdlr);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     // take sample that track queue is correctly setup
     // ALSO CONFIRMS THAT TRACK LIST IS OK BECAUSE OF WILLONCE STRUCTURE
-    EXPECT_EQ(1, testFolder.get_current_track());
-    EXPECT_EQ(10, testFolder.get_next_track());
+    EXPECT_EQ(1, testFolder.getCurrentTrack());
+    EXPECT_EQ(10, testFolder.getNextTrack());
 }
 
 TEST_F(folderDependencies, RANDOM_trackCountIs10_willNotAllowSameTrackMultipleTimesInQueue)
@@ -359,10 +359,10 @@ TEST_F(folderDependencies, RANDOM_trackCountIs10_willNotAllowSameTrackMultipleTi
         .WillOnce(Return(5))
         .WillOnce(Return(6));
 
-    testFolder.setup_dependencies(&m_aDIC, &m_msgHdlr);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     // take sample that track queue is correctly setup
-    testFolder.get_next_track();
-    ASSERT_EQ(2, testFolder.get_next_track());
+    testFolder.getNextTrack();
+    ASSERT_EQ(2, testFolder.getNextTrack());
 }
 
 TEST_F(folderDependencies, RANDOM_trackCountIs10_willNotAllowTrackNumber0)
@@ -384,9 +384,9 @@ TEST_F(folderDependencies, RANDOM_trackCountIs10_willNotAllowTrackNumber0)
         .WillOnce(Return(5))
         .WillOnce(Return(6));
 
-    testFolder.setup_dependencies(&m_aDIC, &m_msgHdlr);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     // take sample that track queue is correctly setup
-    ASSERT_EQ(10, testFolder.get_next_track());
+    ASSERT_EQ(10, testFolder.getNextTrack());
 }
 
 TEST_F(folderDependencies, RANDOM_trackCountIs10_willNotAllowTrackNumberOutOfRange)
@@ -408,9 +408,9 @@ TEST_F(folderDependencies, RANDOM_trackCountIs10_willNotAllowTrackNumberOutOfRan
         .WillOnce(Return(5))
         .WillOnce(Return(6));
 
-    testFolder.setup_dependencies(&m_aDIC, &m_msgHdlr);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     // take sample that track queue is correctly setup
-    ASSERT_EQ(10, testFolder.get_next_track());
+    ASSERT_EQ(10, testFolder.getNextTrack());
 }
 
 TEST_F(folderDependencies, SAVEPROGRESS_trackLoadIsWorking)
@@ -418,9 +418,9 @@ TEST_F(folderDependencies, SAVEPROGRESS_trackLoadIsWorking)
     Folder testFolder(99, Folder::SAVEPROGRESS);
     testFolder.setTrackCount(16);
     ON_CALL(*m_pEeprom, eeprom_read(_)).WillByDefault(Return(13));
-    testFolder.setup_dependencies(&m_aDIC, &m_msgHdlr);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
 
-    EXPECT_EQ(13, testFolder.get_current_track());
+    EXPECT_EQ(13, testFolder.getCurrentTrack());
 }
 
 TEST_F(folderDependencies, SAVEPROGRESS_trackLoadValueIsCorrupt_ReturnsTrack1)
@@ -428,9 +428,9 @@ TEST_F(folderDependencies, SAVEPROGRESS_trackLoadValueIsCorrupt_ReturnsTrack1)
     Folder testFolder(99, Folder::SAVEPROGRESS);
     testFolder.setTrackCount(10);
     ON_CALL(*m_pEeprom, eeprom_read(_)).WillByDefault(Return(13));
-    testFolder.setup_dependencies(&m_aDIC, &m_msgHdlr);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
 
-    EXPECT_EQ(1, testFolder.get_current_track());
+    EXPECT_EQ(1, testFolder.getCurrentTrack());
 }
 
 TEST_F(folderDependencies, SAVEPROGRESS_trackSaveIsWorking)
@@ -440,8 +440,8 @@ TEST_F(folderDependencies, SAVEPROGRESS_trackSaveIsWorking)
     ON_CALL(*m_pEeprom, eeprom_read(_)).WillByDefault(Return(13));
 
     EXPECT_CALL(*m_pEeprom, eeprom_write(99, 14));
-    testFolder.setup_dependencies(&m_aDIC, &m_msgHdlr);
-    EXPECT_EQ(14, testFolder.get_next_track());
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
+    EXPECT_EQ(14, testFolder.getNextTrack());
 }
 
 TEST_F(folderDependencies, SAVEPROGRESS_EepromRead0_currentTrackDefaultsTo1)
@@ -450,8 +450,8 @@ TEST_F(folderDependencies, SAVEPROGRESS_EepromRead0_currentTrackDefaultsTo1)
     testFolder.setTrackCount(16);
     ON_CALL(*m_pEeprom, eeprom_read(_)).WillByDefault(Return(0));
 
-    testFolder.setup_dependencies(&m_aDIC, &m_msgHdlr);
-    EXPECT_EQ(1, testFolder.get_current_track());
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
+    EXPECT_EQ(1, testFolder.getCurrentTrack());
 }
 TEST_F(folderDependencies, SAVEPROGRESS_EepromReadOutOfRange_currentTrackDefaultsTo1)
 {
@@ -459,6 +459,6 @@ TEST_F(folderDependencies, SAVEPROGRESS_EepromReadOutOfRange_currentTrackDefault
     testFolder.setTrackCount(16);
     ON_CALL(*m_pEeprom, eeprom_read(_)).WillByDefault(Return(17));
 
-    testFolder.setup_dependencies(&m_aDIC, &m_msgHdlr);
-    EXPECT_EQ(1, testFolder.get_current_track());
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
+    EXPECT_EQ(1, testFolder.getCurrentTrack());
 }

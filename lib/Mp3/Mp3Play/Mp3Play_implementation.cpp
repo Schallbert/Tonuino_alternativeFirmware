@@ -21,8 +21,8 @@ void Mp3Play_implementation::playFolder(Folder &folder) // TODO: Start lullabye 
     if (prepareFolderToPlay(folder))
     {
         // Start playing folder: first track of current folder.
-        m_pDfMiniMp3->playFolderTrack(m_currentFolder.get_folder_id(),
-                                      m_currentFolder.get_current_track());
+        m_pDfMiniMp3->playFolderTrack(m_currentFolder.getFolderId(),
+                                      m_currentFolder.getCurrentTrack());
         m_pMessageHandler->printMessage(Mp3PlayNotify::toString(Mp3PlayNotify::playFolder));
     }
 }
@@ -32,7 +32,7 @@ bool Mp3Play_implementation::prepareFolderToPlay(Folder &folder)
     bool check{true};
     check &= isFolderNew(folder);
 
-    folder.setup_dependencies(m_pArduinoHal, m_pMessageHandler);
+    folder.setupDependencies(m_pArduinoHal, m_pMessageHandler);
     folder.setTrackCount(getTrackCountOfFolderOnSdCard(folder));
 
     check &= isFolderValid(folder);
@@ -41,18 +41,18 @@ bool Mp3Play_implementation::prepareFolderToPlay(Folder &folder)
 
 bool Mp3Play_implementation::isFolderNew(const Folder &folder) const
 {
-    return (m_currentFolder.get_folder_id() != folder.get_folder_id());
+    return (m_currentFolder.getFolderId() != folder.getFolderId());
 }
 
 uint8_t Mp3Play_implementation::getTrackCountOfFolderOnSdCard(const Folder &folder) const
 {
-    return m_pDfMiniMp3->getFolderTrackCount(folder.get_folder_id());
+    return m_pDfMiniMp3->getFolderTrackCount(folder.getFolderId());
 }
 
 bool Mp3Play_implementation::isFolderValid(Folder &folder)
 {
     bool result{true};
-    if (folder.is_valid())
+    if (folder.isValid())
     {
         m_currentFolder = folder;
     }
@@ -87,7 +87,7 @@ void Mp3Play_implementation::autoplay()
 
 bool Mp3Play_implementation::shouldPlaybackStop() const
 {
-    Folder::ePlayMode mode = m_currentFolder.get_play_mode();
+    Folder::ePlayMode mode = m_currentFolder.getPlayMode();
     bool shouldStop{false};
     if (mode == Folder::LULLABYE && m_pLullabyeTimer->isElapsed())
     {
@@ -104,8 +104,8 @@ void Mp3Play_implementation::playNext()
 {
     if (isFolderValid(m_currentFolder))
     {
-        m_pDfMiniMp3->playFolderTrack(m_currentFolder.get_folder_id(),
-                                      m_currentFolder.get_next_track());
+        m_pDfMiniMp3->playFolderTrack(m_currentFolder.getFolderId(),
+                                      m_currentFolder.getNextTrack());
     }
 }
 
@@ -113,8 +113,8 @@ void Mp3Play_implementation::playPrev()
 {
     if (isFolderValid(m_currentFolder))
     {
-        m_pDfMiniMp3->playFolderTrack(m_currentFolder.get_folder_id(),
-                                      m_currentFolder.get_prev_track());
+        m_pDfMiniMp3->playFolderTrack(m_currentFolder.getFolderId(),
+                                      m_currentFolder.getPrevTrack());
     }
 }
 

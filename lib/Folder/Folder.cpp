@@ -61,9 +61,9 @@ void Folder::deep_copy_queue(uint8_t *pTrackQueue)
     }
 }
 
-bool Folder::is_valid()
+bool Folder::isValid()
 {
-    if (is_initiated() && m_ui8TrackCount)
+    if (isInitiated() && m_ui8TrackCount)
     {
         if (is_trackQueue_set())
         {
@@ -78,7 +78,7 @@ bool Folder::is_valid()
     return false;
 }
 
-bool Folder::is_initiated() const
+bool Folder::isInitiated() const
 {
     return (m_ui8FolderId && m_ePlayMode != Folder::UNDEFINED);
 }
@@ -104,14 +104,14 @@ bool Folder::is_trackQueue_set()
     return (m_pTrackQueue != nullptr);
 }
 
-uint8_t Folder::get_folder_id() const
+uint8_t Folder::getFolderId() const
 {
     return m_ui8FolderId;
 }
 
-uint8_t Folder::get_current_track()
+uint8_t Folder::getCurrentTrack()
 {
-    if (is_valid())
+    if (isValid())
     {
         return m_pTrackQueue[m_ui8CurrentQueueEntry];
     }
@@ -121,11 +121,11 @@ uint8_t Folder::get_current_track()
     }
 }
 
-void Folder::setup_dependencies(Arduino_DIcontainer_interface *pArduinoHal, MessageHander_interface *pMessageHandler)
+void Folder::setupDependencies(Arduino_DIcontainer_interface *pArduinoHal, MessageHander_interface *pMessageHandler)
 {
     m_pArduinoHal = pArduinoHal;
     m_pMessageHandler = pMessageHandler;
-    is_valid(); // Call to setup play queue in case dependencies are correctly linked
+    isValid(); // Call to setup play queue in case dependencies are correctly linked
 }
 
 void Folder::setTrackCount(uint8_t trackCount)
@@ -133,9 +133,9 @@ void Folder::setTrackCount(uint8_t trackCount)
     m_ui8TrackCount = trackCount;
 }
 
-uint8_t Folder::get_next_track()
+uint8_t Folder::getNextTrack()
 {
-    if (!is_valid())
+    if (!isValid())
     {
         return 0; //Error: folder not initialized
     }
@@ -154,9 +154,9 @@ uint8_t Folder::get_next_track()
     return m_pTrackQueue[m_ui8CurrentQueueEntry];
 }
 
-uint8_t Folder::get_prev_track()
+uint8_t Folder::getPrevTrack()
 {
-    if (!is_valid())
+    if (!isValid())
     {
         return 0; //Error: folder not initialized
     }
@@ -176,12 +176,12 @@ uint8_t Folder::get_prev_track()
     return m_pTrackQueue[m_ui8CurrentQueueEntry];
 }
 
-Folder::ePlayMode Folder::get_play_mode() const
+Folder::ePlayMode Folder::getPlayMode() const
 {
     return m_ePlayMode;
 }
 
-uint8_t Folder::get_track_count() const
+uint8_t Folder::getTrackCount() const
 {
     return m_ui8TrackCount;
 }
@@ -229,7 +229,7 @@ void Folder::setup_track_queue()
 
 void Folder::shuffle_queue()
 {
-    if (!is_valid())
+    if (!isValid())
     {
         init_sorted_queue();
         return;

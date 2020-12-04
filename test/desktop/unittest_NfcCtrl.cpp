@@ -21,7 +21,7 @@ protected:
         m_pTestFolder = new Folder(fakeBufferData[4],
                                    (Folder::ePlayMode)fakeBufferData[5]);
         m_pTestFolder->setTrackCount(fakeBufferData[6]);
-        m_pTestFolder->setup_dependencies(&m_arduinoHalMock, &m_messageHandlerMock);
+        m_pTestFolder->setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     }
 
     virtual void TearDown()
@@ -139,9 +139,9 @@ TEST_F(NfcCtrlRead, Read_Successful_bufferEmpty_NoOverwriteOfSourceFolder)
     ON_CALL(m_nfcMock, readTag(_, _)).WillByDefault(Return(true));
 
     EXPECT_FALSE(m_pNfcControl->readFolderFromTag(resultFolder));
-    EXPECT_EQ(27, resultFolder.get_folder_id());
-    EXPECT_EQ(Folder::LULLABYE, resultFolder.get_play_mode());
-    EXPECT_EQ(5, resultFolder.get_track_count());
+    EXPECT_EQ(27, resultFolder.getFolderId());
+    EXPECT_EQ(Folder::LULLABYE, resultFolder.getPlayMode());
+    EXPECT_EQ(5, resultFolder.getTrackCount());
 }
 
 TEST_F(NfcCtrlRead, Read_Successful_bufferSet_returnsCorrectFolderData)
@@ -150,9 +150,9 @@ TEST_F(NfcCtrlRead, Read_Successful_bufferSet_returnsCorrectFolderData)
     m_nfcMock.DelegateToFake(); // Delegates readTag() call to fake object
     EXPECT_TRUE(m_pNfcControl->readFolderFromTag(resultFolder));
 
-    EXPECT_EQ(m_pTestFolder->get_folder_id(), resultFolder.get_folder_id());
-    EXPECT_EQ(m_pTestFolder->get_play_mode(), resultFolder.get_play_mode());
-    EXPECT_EQ(m_pTestFolder->get_track_count(), resultFolder.get_track_count());
+    EXPECT_EQ(m_pTestFolder->getFolderId(), resultFolder.getFolderId());
+    EXPECT_EQ(m_pTestFolder->getPlayMode(), resultFolder.getPlayMode());
+    EXPECT_EQ(m_pTestFolder->getTrackCount(), resultFolder.getTrackCount());
 }
 
 TEST_F(NfcCtrlTagPresence, noTag_returnsNoTag)
