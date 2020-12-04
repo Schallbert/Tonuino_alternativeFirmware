@@ -38,8 +38,41 @@ TEST_F(MessageHandlerTest, PrintMessage_nullptr_WontPrint)
     m_pMessageHandler->printMessage(nullptr);
 }
 
+TEST_F(MessageHandlerTest, PrintMessage_emptyString_WontPrint)
+{
+    EXPECT_CALL(m_serialMock, com_println(_)).Times(0);
+    m_pMessageHandler->printMessage("");
+}
+
 TEST_F(MessageHandlerTest, PrintMessage_Valid_WillPrint)
 {
     EXPECT_CALL(m_serialMock, com_println(_));
     m_pMessageHandler->printMessage("Test");
+}
+
+TEST_F(MessageHandlerTest, PromptMessage_Undefined_WillNotPrompt)
+{
+    VoicePrompt undefined;
+    EXPECT_CALL(m_mp3PlayMock, playPrompt(_)).Times(0);
+    m_pMessageHandler->promptMessage(undefined);
+}
+
+TEST_F(MessageHandlerTest, PromptMessage_New_WilltPrompt)
+{
+    VoicePrompt valid;
+    valid.allowSkip = true;
+    valid.promptId = MSG_HELP;
+    EXPECT_CALL(m_mp3PlayMock, playPrompt(_));
+    m_pMessageHandler->promptMessage(valid);
+}
+
+TEST_F(MessageHandlerTest, PromptMessage_NotNew_WillNotPrompt)
+{
+    VoicePrompt noNewContent;
+    noNewContent.allowSkip = true;
+    noNewContent.promptId = MSG_HELP;
+    m_pMessageHandler->promptMessage(noNewContent);
+
+    EXPECT_CALL(m_mp3PlayMock, playPrompt(_)).Times(0);
+    m_pMessageHandler->promptMessage(noNewContent);
 }

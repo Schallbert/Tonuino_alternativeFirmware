@@ -4,7 +4,10 @@ void MessageHandler::printMessage(const char *message)
 {
     if (message != nullptr)
     {
-        m_pSerial->com_println(message);
+        if(*message != 0)
+        {
+            m_pSerial->com_println(message);
+        }     
     }
 }
 
@@ -18,7 +21,8 @@ void MessageHandler::promptMessage(const VoicePrompt &message)
 
 bool MessageHandler::isNewPrompt(const VoicePrompt &message)
 {
-    bool result{message.promptId != m_lastPrompt.promptId};
+    bool result{(message.promptId != 0 &&
+                 message.promptId != m_lastPrompt.promptId)};
     m_lastPrompt.promptId = message.promptId;
     m_lastPrompt.allowSkip = message.allowSkip;
 
