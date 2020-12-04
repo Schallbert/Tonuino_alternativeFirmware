@@ -1,7 +1,7 @@
 #ifndef MESSAGEHANDLER_IMPLEMENTATION_H
 #define MESSAGEHANDLER_IMPLEMENTATION_H
 
-#include "Arduino_interface/Arduino_DIcontainer_interface.h"
+#include "Arduino_DIcontainer_interface.h"
 #include "Mp3Play/Mp3Play_interface.h"
 
 #include "MessageHandler_interface.h"

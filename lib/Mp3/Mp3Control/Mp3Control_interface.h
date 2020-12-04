@@ -1,7 +1,7 @@
 #ifndef MP3CONTROL_INTERFACE_H
 #define MP3CONTROL_INTERFACE_H
 
-#include "../Arduino/Arduino_interface/Arduino_types.h"
+#include "../Arduino/Arduino_types.h"
 #include "../UserInput/UserInput_interface/UserInput_interface.h"
 
 // API to control the MP3 player hardware

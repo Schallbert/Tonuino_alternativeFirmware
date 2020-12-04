@@ -1,6 +1,6 @@
 #ifndef NFC_INTERFACE_H
 #define NFC_INTERFACE_H
-#include "../Arduino/Arduino_interface/Arduino_types.h"
+#include "../Arduino/Arduino_types.h"
 
 // Wrapper class to separate dependency MFRC522 card reader from utilizing classes.
 // Enabler for mocking MFRC522 behavior.

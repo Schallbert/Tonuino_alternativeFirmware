@@ -1,7 +1,7 @@
 #ifndef MP3PLAYERCONTROL_IMPLEMENTATION_H
 #define MP3PLAYERCONTROL_IMPLEMENTATION_H
 
-#include "../Arduino/Arduino_interface/Arduino_DIcontainer_interface.h"
+#include "../Arduino/Arduino_DIcontainer_interface.h"
 
 #include "UserInput_interface/UserInput_interface.h"
 #include "Mp3Control/Mp3Control_interface.h"

@@ -2,7 +2,7 @@
 #define FOLDER_H
 
 #include "Arduino_config.h"
-#include "../Arduino/Arduino_interface/Arduino_DIcontainer_interface.h"
+#include "../Arduino/Arduino_DIcontainer_interface.h"
 #include "../MessageHandler/MessageHandler_interface.h"
 
 class Folder

@@ -1,7 +1,7 @@
 #ifndef DELETEMENU_STATEMANAGER_h
 #define DELETEMENU_STATEMANAGER_h
 
-#include "../Arduino/Arduino_interface/Arduino_types.h"
+#include "../Arduino/Arduino_types.h"
 #include "../Config/Tonuino_config.h"
 
 

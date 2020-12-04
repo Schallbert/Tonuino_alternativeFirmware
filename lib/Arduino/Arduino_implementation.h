@@ -3,7 +3,7 @@
 
 #include "Arduino.h"
 #include "EEPROM.h"
-#include "../Arduino/Arduino_interface/Arduino_interface.h"
+#include "../Arduino/Arduino_interface.h"
 
 class Arduino_pins : public Arduino_interface_pins
 {
