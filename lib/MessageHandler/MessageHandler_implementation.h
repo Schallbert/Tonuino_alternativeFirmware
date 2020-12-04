@@ -5,7 +5,6 @@
 #include "Mp3Play/Mp3Play_interface.h"
 
 #include "MessageHandler_interface.h"
-#include "PlayError.h"
 
 class MessageHandler : public MessageHander_interface
 {

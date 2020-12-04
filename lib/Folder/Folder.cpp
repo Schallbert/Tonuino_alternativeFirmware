@@ -9,7 +9,8 @@ Folder::Folder(uint8_t ui8FolderId,
 Folder::Folder(const Folder &cpySrcFolder) : m_ui8FolderId(cpySrcFolder.m_ui8FolderId),
                                              m_ePlayMode(cpySrcFolder.m_ePlayMode),
                                              m_ui8TrackCount(cpySrcFolder.m_ui8TrackCount),
-                                             m_pArduinoHal(cpySrcFolder.m_pArduinoHal)
+                                             m_pArduinoHal(cpySrcFolder.m_pArduinoHal),
+                                             m_pMessageHandler(cpySrcFolder.m_pMessageHandler)
 {
     if (cpySrcFolder.m_pTrackQueue != nullptr)
     {
@@ -30,6 +31,7 @@ Folder &Folder::operator=(const Folder &cpySrcFolder)
     m_ePlayMode = cpySrcFolder.m_ePlayMode;
     m_ui8TrackCount = cpySrcFolder.m_ui8TrackCount;
     m_pArduinoHal = cpySrcFolder.m_pArduinoHal;
+    m_pMessageHandler = cpySrcFolder.m_pMessageHandler;
     if (cpySrcFolder.m_pTrackQueue != nullptr)
     {
         m_pTrackQueue = new uint8_t[cpySrcFolder.m_ui8TrackCount + 1]();
@@ -84,7 +86,7 @@ bool Folder::is_initiated() const
 bool Folder::is_dependency_set()
 {
     // Dependencies only strictly necessary for certain playmodes
-    if (m_ePlayMode == Folder::SAVEPROGRESS)
+    /*if (m_ePlayMode == Folder::SAVEPROGRESS)
     {
         return (m_pArduinoHal != nullptr);
     }
@@ -93,7 +95,8 @@ bool Folder::is_dependency_set()
         return (m_pArduinoHal != nullptr);
     }
     else
-        return true; // no dependencies needed
+        return true; // no dependencies needed*/
+    return (m_pArduinoHal != nullptr && m_pMessageHandler != nullptr);
 }
 
 bool Folder::is_trackQueue_set()
@@ -118,9 +121,10 @@ uint8_t Folder::get_current_track()
     }
 }
 
-void Folder::setup_dependencies(Arduino_DIcontainer_interface *pArduinoHal)
+void Folder::setup_dependencies(Arduino_DIcontainer_interface *pArduinoHal, MessageHander_interface *pMessageHandler)
 {
     m_pArduinoHal = pArduinoHal;
+    m_pMessageHandler = pMessageHandler;
     is_valid(); // Call to setup play queue in case dependencies are correctly linked
 }
 
@@ -185,6 +189,7 @@ uint8_t Folder::get_track_count() const
 // PRIVATE METHODS
 void Folder::setup_track_queue()
 {
+    m_pMessageHandler->printMessage(FolderNotify::toString(m_ePlayMode));
     m_ui8CurrentQueueEntry = 1;
     m_pTrackQueue = new uint8_t[m_ui8TrackCount + 1](); // () is to init contents with 0, new to allow dynamically sized array
     switch (m_ePlayMode)
@@ -192,9 +197,6 @@ void Folder::setup_track_queue()
     case ePlayMode::RANDOM:
     {
         shuffle_queue();
-#if DEBUGSERIAL
-        Serial.println(F("SHUFFLE -> random queue"));
-#endif
         break;
     }
     case ePlayMode::SAVEPROGRESS:

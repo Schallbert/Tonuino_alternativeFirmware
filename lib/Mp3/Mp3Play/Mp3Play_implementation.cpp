@@ -32,7 +32,7 @@ bool Mp3Play_implementation::prepareFolderToPlay(Folder &folder)
     bool check{true};
     check &= isFolderNew(folder);
 
-    folder.setup_dependencies(m_pArduinoHal);
+    folder.setup_dependencies(m_pArduinoHal, m_pMessageHandler);
     folder.setTrackCount(getTrackCountOfFolderOnSdCard(folder));
 
     check &= isFolderValid(folder);
