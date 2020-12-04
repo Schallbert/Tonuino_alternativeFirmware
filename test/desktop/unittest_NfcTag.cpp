@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 
 #include "mocks/unittest_Nfc_mocks.h"
-#include "../Nfc/NfcTag_implementation/NfcTag_factory.h"
+#include "../Nfc/NfcTag/NfcTag_factory.h"
 
 // This file tests the Nfc implementation
 using ::testing::_;

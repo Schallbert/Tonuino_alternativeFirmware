@@ -1,7 +1,7 @@
 #ifndef NFCTAG_MIFAREULTRALIGHT_H
 #define NFCTAG_MIFAREULTRALIGHT_H
 
-#include "../Nfc/NfcTag_interface/NfcTag_interface.h"
+#include "../Nfc/NfcTag/NfcTag_interface.h"
 #include "../Nfc/MFRC522/MFRC522_interface.h"
 
 class NfcTag_MifareUltralight : public NfcTag_interface

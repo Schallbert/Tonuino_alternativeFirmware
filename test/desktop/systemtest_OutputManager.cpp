@@ -4,7 +4,7 @@
 
 #include "SimpleTimer.h"
 #include "../Nfc/NfcControl/NfcControl.h"
-#include "../Nfc/Nfc_interface/Nfc_interface.h"
+#include "../Nfc/Nfc/Nfc_interface.h"
 
 #include "mocks/unittest_Nfc_mocks.h"
 //#include "mocks/unittest_DfMiniMp3_mocks.h"

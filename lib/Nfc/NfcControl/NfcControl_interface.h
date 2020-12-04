@@ -1,7 +1,7 @@
 #ifndef NFCCONTROL_INTERFACE_H
 #define NFCCONTROL_INTERFACE_H
 
-#include "../Nfc_interface/Nfc_interface.h"
+#include "../Nfc/Nfc_interface.h"
 
 class Folder;
 

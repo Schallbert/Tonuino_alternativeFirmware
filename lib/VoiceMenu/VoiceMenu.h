@@ -2,7 +2,7 @@
 #define VOICEMENU_H
 
 #include "../UserInput/UserInput_interface/UserInput_interface.h"
-#include "../Nfc/Nfc_interface/Nfc_interface.h"
+#include "../Nfc/Nfc/Nfc_interface.h"
 #include "../Utilities/SimpleTimer.h"
 
 #include "Menu_factory.h"
