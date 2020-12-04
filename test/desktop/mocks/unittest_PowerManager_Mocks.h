@@ -3,7 +3,7 @@
 
 #include <gmock/gmock.h>
 #include "../Arduino/Arduino_types.h"
-#include "../PowerManager/PowerManager_interface/PowerManager_interface.h"
+#include "../PowerManager/PowerManager_interface.h"
 
 class Mock_PowerManager : public PowerManager_interface
 {

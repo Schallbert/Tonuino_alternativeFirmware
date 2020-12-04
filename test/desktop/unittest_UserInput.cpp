@@ -3,8 +3,8 @@
 
 #include "mocks/unittest_ClickEncoder_mocks.h"
 
-#include "../UserInput/ClickEncoder_implementation/ClickEncoder_supportsLongPress.h"
-#include "../UserInput/UserInput_implementation/UserInput_implementation.h"
+#include "../UserInput/ClickEncoder/ClickEncoder_supportsLongPress.h"
+#include "../UserInput/UserInput/UserInput_implementation.h"
 
 using ::testing::NiceMock;
 using ::testing::_;

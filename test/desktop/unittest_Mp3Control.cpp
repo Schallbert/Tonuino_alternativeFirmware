@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "../UserInput/UserInput_interface/UserInput_interface.h"
+#include "../UserInput/UserInput/UserInput_interface.h"
 #include "../Mp3/Mp3Control/Mp3Control_implementation.h"
 
 #include "mocks/unittest_Mp3Play_mocks.h"

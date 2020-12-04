@@ -3,7 +3,7 @@
 
 #include <gmock/gmock.h>
 
-#include "../UserInput/ClickEncoder_interface/ClickEncoder_interface.h"
+#include "../UserInput/ClickEncoder/ClickEncoder_interface.h"
 
 class Mock_ClickEncoder : public ClickEncoder_interface
 {

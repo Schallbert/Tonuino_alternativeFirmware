@@ -4,7 +4,7 @@
 #include <gmock/gmock.h>
 
 #include "../Mp3/Mp3Control/Mp3Control_interface.h"
-#include "../UserInput/UserInput_interface/UserInput_interface.h"
+#include "../UserInput/UserInput/UserInput_interface.h"
 
 class Mock_Mp3Control : public Mp3Control_interface
 {

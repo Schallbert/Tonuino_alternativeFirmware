@@ -1,9 +1,9 @@
 #ifndef USERINPUT_IMPLEMENTATION_H
 #define USERINPUT_IMPLEMENTATION_H
 
-#include "../UserInput_interface/UserInput_interface.h"
-#include "../ClickEncoder_interface/ClickEncoder_interface.h"
-#include "../UserInput/ClickEncoder_implementation/ClickEncoder_supportsLongPress.h"
+#include "../UserInput/UserInput_interface.h"
+#include "../ClickEncoder/ClickEncoder_interface.h"
+#include "../UserInput/ClickEncoder/ClickEncoder_supportsLongPress.h"
 #include "Tonuino_config.h"
 #include "Arduino_config.h"
 

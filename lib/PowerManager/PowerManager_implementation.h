@@ -4,7 +4,7 @@
 #include "../Utilities/StatusLed/StatusLed.h"
 #include "../Utilities/KeepAlive/KeepAlive.h"
 
-#include "../PowerManager/PowerManager_interface/PowerManager_interface.h"
+#include "../PowerManager/PowerManager_interface.h"
 #include "../Config/Arduino_config.h"
 #include "../Config/Tonuino_config.h"
 #include "../Utilities/SimpleTimer.h"

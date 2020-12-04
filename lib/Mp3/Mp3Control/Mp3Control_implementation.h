@@ -3,7 +3,7 @@
 
 #include "../Arduino/Arduino_DIcontainer_interface.h"
 
-#include "UserInput_interface/UserInput_interface.h"
+#include "UserInput/UserInput_interface.h"
 #include "Mp3Control/Mp3Control_interface.h"
 #include "Mp3Play/Mp3Play_interface.h"
 #include "DfMiniMp3/DFMiniMp3_interface.h"
