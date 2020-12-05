@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 
 #include "../Mp3/Mp3Play/Mp3Play_implementation.h"
-#include "../Utilities/SimpleTimer.h"
+#include "../Utilities/SimpleTimer/SimpleTimer.h"
 
 #include "mocks/unittest_ArduinoDIcontainer_mocks.h"
 #include "mocks/unittest_ArduinoIf_mocks.h"

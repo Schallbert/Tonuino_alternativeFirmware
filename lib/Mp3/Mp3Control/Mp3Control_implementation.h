@@ -11,7 +11,7 @@
 
 #include "../Config/Tonuino_config.h"
 #include "../Config/Arduino_config.h"
-#include "../Utilities/SimpleTimer.h"
+#include "../Utilities/SimpleTimer/SimpleTimer.h"
 
 class Mp3ControlNotify
 {

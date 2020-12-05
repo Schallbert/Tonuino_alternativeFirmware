@@ -6,7 +6,7 @@
 #include "mocks/unittest_PowerManager_Mocks.h"
 
 #include "../VoiceMenu/VoiceMenu.h"
-#include "../Utilities/SimpleTimer.h"
+#include "../Utilities/SimpleTimer/SimpleTimer.h"
 
 using ::testing::_;
 using ::testing::NiceMock;

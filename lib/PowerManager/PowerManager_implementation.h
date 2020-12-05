@@ -7,7 +7,7 @@
 #include "../PowerManager/PowerManager_interface.h"
 #include "../Config/Arduino_config.h"
 #include "../Config/Tonuino_config.h"
-#include "../Utilities/SimpleTimer.h"
+#include "../Utilities/SimpleTimer/SimpleTimer.h"
 
 /*
 The PowerManager class controls both

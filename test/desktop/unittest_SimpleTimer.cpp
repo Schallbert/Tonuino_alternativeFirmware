@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <SimpleTimer.h>
+#include "../Utilities/SimpleTimer/SimpleTimer.h"
 
 TEST(simpleTimer, timerNotSet_doesNotElapse)
 {
