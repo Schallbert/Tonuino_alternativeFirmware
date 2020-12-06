@@ -73,9 +73,10 @@ void System::notifyShutdown()
 
 bool System::loop()
 {
+    // UserINput, NfcControl, Mp3Play, VoiceMenu, Mp3Control
     UserInput::eUserRequest userRequest{m_UserInput.get_user_request()};
-
-    if (m_pNfcControl->getTagPresence() == Nfc_interface::NEW_REGISTERED_TAG)
+    Nfc_interface::eTagState tagState{m_pNfcControl->getTagPresence()};
+    if (tagState == Nfc_interface::NEW_REGISTERED_TAG)
     {
         Folder readFolder;
         if (m_pNfcControl->readFolderFromTag(readFolder))
@@ -86,6 +87,7 @@ bool System::loop()
     else if (m_VoiceMenu.isActive())
     {
         // Handle Voice Menu
+        m_VoiceMenu.setTagState(tagState);
         m_VoiceMenu.setUserInput(userRequest);
         m_VoiceMenu.loop();
     }
@@ -95,26 +97,17 @@ bool System::loop()
         m_pMp3Control.setUserInput(userRequest);
         m_pMp3Control.loop();
     }
+
     return (!m_pPwrCtrl->isShutdownRequested()); // TODO: Code smell?!
 }
-
-enum eTagState
-{
-    NO_TAG = 0,         // 0
-    ACTIVE_KNOWN_TAG,   // 1 full playback
-    NEW_REGISTERED_TAG, // 2 read card, get folder, full playback
-    NEW_UNKNOWN_TAG,    // 3 play voice menu, link folder to card
-    NUMBER_OF_TAG_STATES = 4
-};
 
 void System::timer1Task_1ms()
 {
     static volatile uint16_t ui16Ticks = 0;
-
     m_UserInput.userinput_service_isr(); // userInput service 1ms task
 
     ++ui16Ticks;
-    if (ui16Ticks >= 1000) // 1ms --> 1s
+    if (ui16Ticks >= MS_TO_S) // 1ms --> 1s
     {
         ui16Ticks = 0;
         timer1Task_1sec();

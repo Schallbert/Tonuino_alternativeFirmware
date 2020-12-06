@@ -52,9 +52,9 @@
 #undef ENC_HOLDTIME
 #define ENC_BUTTONINTERVAL 20           // check button every x milliseconds, also debouce time
 #define ENC_DOUBLECLICKTIME 400         // second click within x ms
-#define ENC_HOLDTIME 1000               // report held button after 1.2s
+#define ENC_HOLDTIME 1000               // report held button after x ms
 #define ENC_LONGPRESSREPEATINTERVAL 400 // reports repeating-held every x ms
 #define ENC_STEPSPERNOTCH 4             // resolution of encoder.
-#define USERINPUTACTIVE_STATE LOW           // button's "pressed" state
+#define USERINPUTACTIVE_STATE LOW       // button's "pressed" state
 
 #endif // TONUINO_CONFIG_H

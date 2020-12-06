@@ -5,7 +5,7 @@
 
 // project includes -------
 #include <TimerOne.h>
-#include <System.h>
+#include "../Tonuino/System.h"
 
 void timer1Task_1ms();
 
@@ -41,9 +41,9 @@ void setup()
 // - Folder: remove trackCount, have evaluated at Mp3Control DONE
 // - Insource InputDispatcher_errorHandler to respective value creators DONE
 // - Outsource error handling to an own class DONE
+// - cleanup folder structure/levels DONE
 
 // - implement power save (arduino, nfc, etc.)
-// - cleanup folder structure/levels
 
 // - Take NFC state decision on SYSTEM level
 // - solve reset lullabye timer on button press
@@ -63,12 +63,16 @@ void loop()
         pTimer1->detachInterrupt();
         delete pTimer1;
         delete pSys; // shutdown system
+        pSys = nullptr;
         return; // leave loop
     }
 }
 
 void timer1Task_1ms()
 {
-    pSys->timer1Task_1ms();
+    if(pSys != nullptr)
+    {
+        pSys->timer1Task_1ms();
+    } 
 }
 #endif //UNIT_TEST

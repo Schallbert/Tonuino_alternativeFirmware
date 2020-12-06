@@ -1,8 +1,6 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
-// project includes -------
-
 // ARDUINO HAL
 #include "../Arduino/Arduino_DIcontainer.h"
 // NFC
@@ -86,7 +84,6 @@ private:
                                     ENC_STEPSPERNOTCH,
                                     USERINPUTACTIVE_STATE)};
     // #elif USERINPUT_VARIANT == FIVE_BUTTONS
-
 #endif
 
     // Work member objects -----------------------
