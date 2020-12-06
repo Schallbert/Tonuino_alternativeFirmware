@@ -2,7 +2,7 @@
 #define MESSAGEHANDLER_INTERFACE_H
 
 #include "Tonuino_config.h"
-#include "Mp3Play/Mp3Play_interface.h"
+#include "../Mp3/Mp3Play/Mp3Play_interface.h"
 
 // Requires HAL to print to serial
 // Requires PromptManager to prompt error/help messages.

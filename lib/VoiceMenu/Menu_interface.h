@@ -3,8 +3,8 @@
 
 class Menu_interface
 {
-
 public:
+    virtual ~Menu_interface(){};
     // Handler
     virtual void setStatusLed() = 0;
     virtual void handlePlayback() = 0;

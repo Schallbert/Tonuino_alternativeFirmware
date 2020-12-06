@@ -21,8 +21,8 @@ public:
               PowerManager_interface *pPowerMgr,
               SimpleTimer *pMenuTimer) : m_pMp3Play(pMp3Play),
                                          m_pNfcControl(pNfcCtrl),
-                                         m_pMenuTimer(pMenuTimer),
-                                         m_pPowerManager(pPowerMgr){};
+                                         m_pPowerManager(pPowerMgr),
+                                         m_pMenuTimer(pMenuTimer){};
     ~VoiceMenu();
 
 public:
@@ -48,8 +48,8 @@ private:
     void prev() { m_pMenuInstance->selectPrev(); };
 
 private:
-    NfcControl_interface *m_pNfcControl{nullptr};
     Mp3Play_interface *m_pMp3Play{nullptr};
+    NfcControl_interface *m_pNfcControl{nullptr};
     PowerManager_interface *m_pPowerManager{nullptr};
     SimpleTimer *m_pMenuTimer{nullptr};
 
