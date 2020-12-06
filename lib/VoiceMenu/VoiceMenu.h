@@ -27,11 +27,11 @@ public:
 
 public:
     void setUserInput(UserInput::eUserRequest input);
+    void setTagState(Nfc_interface::eTagState input);
     bool isActive();
     void loop();
 
 private:
-    void getTagState();
     void checkEnterLinkMenu();
     void checkEnterDeleteMenu();
     void checkLeaveMenu();

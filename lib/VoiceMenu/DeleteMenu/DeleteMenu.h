@@ -24,6 +24,7 @@ public:
 
 public:
     void setStatusLed() override;
+    void setTagState(Nfc_interface::eTagState input) override;
     void handlePlayback() override;
 
     void confirm() override;

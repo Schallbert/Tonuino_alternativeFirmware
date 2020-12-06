@@ -13,13 +13,17 @@ void VoiceMenu::setUserInput(UserInput::eUserRequest input)
     m_userInput = input;
 }
 
+void VoiceMenu::setTagState(Nfc_interface::eTagState input)
+{
+    m_tagState = input;
+}
+
 void VoiceMenu::loop()
 {
-    getTagState();
-
     if (isActive())
     {
         dispatchInputs();
+        m_pMenuInstance->setTagState(m_tagState);
         m_pMenuInstance->handlePlayback();
         checkTimerElapsed();
         checkLeaveMenu();        
@@ -39,11 +43,6 @@ bool VoiceMenu::isActive()
         result = m_pMenuInstance->isActive();
     }
     return result;
-}
-
-void VoiceMenu::getTagState()
-{
-    m_tagState = m_pNfcControl->getTagPresence();
 }
 
 void VoiceMenu::checkEnterLinkMenu()

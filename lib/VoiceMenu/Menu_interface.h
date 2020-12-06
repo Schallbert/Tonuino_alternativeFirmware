@@ -1,12 +1,15 @@
 #ifndef MENU_INTERFACE_H
 #define MENU_INTERFACE_H
 
+#include "Nfc/Nfc_interface.h"
+
 class Menu_interface
 {
 public:
     virtual ~Menu_interface(){};
     // Handler
     virtual void setStatusLed() = 0;
+    virtual void setTagState(Nfc_interface::eTagState input) = 0;
     virtual void handlePlayback() = 0;
 
     // Events
