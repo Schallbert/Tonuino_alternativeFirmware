@@ -45,6 +45,10 @@ public:
     void timer1Task_1sec();
 
 private:
+    void notifyStartup();
+    void notifyShutdown();
+
+private:
     // Dependency objects -------------------------------------
     PowerManager *m_pPwrCtrl{nullptr};
     // Arduino Hardware Abstraction Layer

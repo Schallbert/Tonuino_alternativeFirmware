@@ -4,16 +4,14 @@ System::System()
 {
     // Controller Hardware Abstraction
     m_pArduinoHal = new Arduino_DIcontainer();
-    // First, secure power supply TODO: Lets move the init part to a method, away from constructor
-    m_pIdleTimer = new SimpleTimer();
-    m_pPwrCtrl = new PowerManager(m_pArduinoHal->getPins(), m_pIdleTimer);
-
     // Timers
+    m_pIdleTimer = new SimpleTimer();
     m_pMenuTimer = new SimpleTimer();
     m_pLullabyeTimer = new SimpleTimer();
     m_pDfMiniPromptTimer = new SimpleTimer();
     // Utilities
     m_pMessageHandler = new MessageHandler(m_pArduinoHal->getSerial(), m_pMp3Play);
+    m_pPwrCtrl = new PowerManager(m_pArduinoHal->getPins(), m_pIdleTimer);
     // Periphery
     m_pMfrc522 = new MFRC522_implementation();
     m_pNfc = new Nfc_implementation(m_pMfrc522, m_pMessageHandler);
@@ -25,14 +23,10 @@ System::System()
                                             m_pDfMiniPromptTimer,
                                             m_pMessageHandler);
     //m_pMp3Control = new Mp3Control(m_pArduinoHal, m_pDfMini, m_pLullabyeTimer, m_pDfMiniPromptTimer);
-
-    // Notify System up
-    VoicePrompt startup;
-    startup.promptId = MSG_STARTUP;
-    startup.allowSkip = false;
-    m_pMessageHandler->promptMessage(startup);
-
-    // Initialize objects if needed ------------------------
+    m_pPwrCtrl->requestKeepAlive();
+    notifyStartup();
+    
+    // Initialize objects if needed ------------------------ TODO: ???
     //m_pUserInput = UserInput_Factory::getInstance(UserInput_Factory::THREE_BUTTONS);
     //init UserInput
     //m_pUserInput->set_input_pins(PINPLPS, PINPREV, PINNEXT);
@@ -41,10 +35,7 @@ System::System()
 
 System::~System()
 {
-    VoicePrompt shutdown;
-    shutdown.promptId = MSG_SHUTDOWN;
-    shutdown.allowSkip = false;
-    m_pMessageHandler->promptMessage(shutdown);
+    notifyShutdown();
 
     // delete dependency objects
     delete m_pMessageHandler;
@@ -62,6 +53,22 @@ System::~System()
     m_pPwrCtrl->allowShutdown();
     delete m_pPwrCtrl;
     delete m_pArduinoHal;
+}
+
+void System::notifyStartup()
+{
+    VoicePrompt startup;
+    startup.promptId = MSG_STARTUP;
+    startup.allowSkip = false;
+    m_pMessageHandler->promptMessage(startup);
+}
+
+void System::notifyShutdown()
+{
+    VoicePrompt shutdown;
+    shutdown.promptId = MSG_SHUTDOWN;
+    shutdown.allowSkip = false;
+    m_pMessageHandler->promptMessage(shutdown);
 }
 
 bool System::loop()
