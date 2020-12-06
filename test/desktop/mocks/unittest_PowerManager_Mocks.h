@@ -8,13 +8,13 @@
 class Mock_PowerManager : public PowerManager_interface
 {
 public:
-    MOCK_METHOD(void, set_playback, (bool isPlaying), (override));
-    MOCK_METHOD(void, set_delMenu, (), (override));
-    MOCK_METHOD(void, set_linkMenu, (), (override));
-    MOCK_METHOD(void, request_shutdown, (), (override));
-    MOCK_METHOD(bool, get_shutdown_request, (), (override));
-    MOCK_METHOD(void, allow_shutdown, (), (override));
-    MOCK_METHOD(void, notify_timer_tick, (), (override));
+    MOCK_METHOD(void, setPlayback, (bool isPlaying), (override));
+    MOCK_METHOD(void, setDeleteMenu, (), (override));
+    MOCK_METHOD(void, setLinkMenu, (), (override));
+    MOCK_METHOD(void, requestShutdown, (), (override));
+    MOCK_METHOD(bool, isShutdownRequested, (), (override));
+    MOCK_METHOD(void, allowShutdown, (), (override));
+    MOCK_METHOD(void, notifyTimerTick, (), (override));
 };
 
 #endif // UNITTEST_POWERMANAGER_MOCKS_H

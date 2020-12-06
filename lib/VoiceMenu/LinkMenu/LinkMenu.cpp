@@ -36,7 +36,7 @@ void LinkMenu::setStatusLed()
 {
     if(isActive())
     {
-        m_pPowerManager->set_linkMenu();
+        m_pPowerManager->setLinkMenu();
     }    
 }
 

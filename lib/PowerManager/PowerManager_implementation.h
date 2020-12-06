@@ -23,19 +23,19 @@ public:
 
 public:
     // assumes that mp3 is playing on TRUE
-    void set_playback(bool isPlaying);
+    void setPlayback(bool isPlaying);
     // sets LED behavior for delete Menu
-    void set_delMenu();
+    void setDeleteMenu();
     // sets LED behavior for link Menu
-    void set_linkMenu();
+    void setLinkMenu();
     // shuts down the system
-    void request_shutdown();
+    void requestShutdown();
     // returns current shutdown status
-    bool get_shutdown_request();
+    bool isShutdownRequested();
     // shuts system down if shutdown has been requested and bAllow is TRUE
-    void allow_shutdown();
+    void allowShutdown();
     // notifies classes that another timer interval passed
-    void notify_timer_tick();
+    void notifyTimerTick();
 
 private:
     // Dependency object

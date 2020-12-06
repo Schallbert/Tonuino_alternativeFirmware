@@ -24,7 +24,7 @@ void DeleteMenu::setStatusLed()
 {
     if(isActive())
     {
-        m_pPowerManager->set_delMenu();
+        m_pPowerManager->setDeleteMenu();
     }    
 }
 

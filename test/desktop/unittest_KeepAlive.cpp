@@ -53,24 +53,24 @@ TEST_F(KeepAliveTest, keepAlive_writesActiveState_True_Correctly)
 
 TEST_F(KeepAliveTest, getShutdownRequest_returnsFalseByDefault)
 {
-    EXPECT_FALSE(kA->get_shutdown_request());
+    EXPECT_FALSE(kA->isShutdownRequested());
 }
 
 TEST_F(KeepAliveTest, getShutdownRequest_returnsTrueWhenRequested)
 {
-    kA->request_shutdown();
-    EXPECT_TRUE(kA->get_shutdown_request());
+    kA->requestShutdown();
+    EXPECT_TRUE(kA->isShutdownRequested());
 }
 
 TEST_F(KeepAliveTest, allowShutdown_notRequested_willNotShutdown)
 {
     EXPECT_CALL(pinCtrl, digital_write(keepAlivePinId, !pinActiveState)).Times(0);
-    kA->allow_shutdown();
+    kA->allowShutdown();
 }
 
 TEST_F(KeepAliveTest, allowShutdown_Requested_willShutdown)
 {
-    kA->request_shutdown();
+    kA->requestShutdown();
     EXPECT_CALL(pinCtrl, digital_write(keepAlivePinId, !pinActiveState));
-    kA->allow_shutdown();
+    kA->allowShutdown();
 }

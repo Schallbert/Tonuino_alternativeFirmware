@@ -97,7 +97,7 @@ TEST_F(DeleteMenuTest, menuComplete_isActive_returnsTrue)
 
 TEST_F(DeleteMenuTest, noInit_setStatusLed_noStatusLedChangeRequested)
 {
-    EXPECT_CALL(m_powerManagerMock, set_delMenu()).Times(0);
+    EXPECT_CALL(m_powerManagerMock, setDeleteMenu()).Times(0);
     deleteMenu->setStatusLed();
 }
 
@@ -105,7 +105,7 @@ TEST_F(DeleteMenuTest, entered_setStatusLed_statusLedSetToDeleteMenu)
 {
     deleteMenu->confirm();
 
-    EXPECT_CALL(m_powerManagerMock, set_delMenu());
+    EXPECT_CALL(m_powerManagerMock, setDeleteMenu());
     deleteMenu->setStatusLed();
 }
 
@@ -116,7 +116,7 @@ TEST_F(DeleteMenuTest, menuComplete_setStatusLed_statusLedChangeRequested)
     deleteMenu->handlePlayback(); // detects tag to delete
     deleteMenu->confirm();        //confirms deletion
 
-    EXPECT_CALL(m_powerManagerMock, set_delMenu());
+    EXPECT_CALL(m_powerManagerMock, setDeleteMenu());
     deleteMenu->setStatusLed();
 }
 
@@ -127,7 +127,7 @@ TEST_F(DeleteMenuTest, menuAbort_setStatusLed_noStatusLedChangeRequested)
     deleteMenu->handlePlayback(); // detects tag to delete
     deleteMenu->abort();      
 
-    EXPECT_CALL(m_powerManagerMock, set_delMenu()).Times(0);
+    EXPECT_CALL(m_powerManagerMock, setDeleteMenu()).Times(0);
     deleteMenu->setStatusLed();
 }
 

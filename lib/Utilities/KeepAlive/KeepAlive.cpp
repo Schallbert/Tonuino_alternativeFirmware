@@ -18,17 +18,17 @@ void KeepAlive::keep_alive()
     m_pPinCtrl->digital_write(m_ui8PinID, m_bPinActiveState);
 }
 
-void KeepAlive::request_shutdown()
+void KeepAlive::requestShutdown()
 {
     m_bShutDownRequested = true;
 }
 
-bool KeepAlive::get_shutdown_request()
+bool KeepAlive::isShutdownRequested()
 {
     return m_bShutDownRequested;
 }
 
-void KeepAlive::allow_shutdown()
+void KeepAlive::allowShutdown()
 {
     // disables power supply circuit
     if (m_bShutDownRequested)

@@ -86,13 +86,13 @@ protected:
 TEST_F(OutputManagerTest, setTagState_noCardNoAction_deleteMenuNotCalled)
 {
     m_pOutputManager->setTagState(Nfc_interface::NO_TAG);;
-    EXPECT_CALL(*m_pSystemPower, set_delMenu()).Times(0);
+    EXPECT_CALL(*m_pSystemPower, setDeleteMenu()).Times(0);
 }
 
 TEST_F(OutputManagerTest, setTagState_noCardNoAction_linkMenuNotCalled)
 {
     m_pOutputManager->setTagState(Nfc_interface::NO_TAGsetUserINput(UserInput::NO_ACTION);;
-    EXPECT_CALL(*m_pSystemPower, set_linkMenu()).Times(0);
+    EXPECT_CALL(*m_pSystemPower, setLinkMenu()).Times(0);
 }
 
 TEST_F(OutputManagerTest, dispatcher_noCardNoAction_errorHandler_noError)

@@ -16,23 +16,23 @@ PowerManager::~PowerManager()
     delete m_pKeepAlive;
 }
 
-void PowerManager::request_shutdown()
+void PowerManager::requestShutdown()
 {
     m_pLed->set_led_behavior(StatusLed::off);
-    m_pKeepAlive->request_shutdown();
+    m_pKeepAlive->requestShutdown();
 }
 
-bool PowerManager::get_shutdown_request()
+bool PowerManager::isShutdownRequested()
 {
-    return m_pKeepAlive->get_shutdown_request();
+    return m_pKeepAlive->isShutdownRequested();
 }
 
-void PowerManager::allow_shutdown()
+void PowerManager::allowShutdown()
 {
-    m_pKeepAlive->allow_shutdown();
+    m_pKeepAlive->allowShutdown();
 }
 
-void PowerManager::set_playback(bool isPlaying)
+void PowerManager::setPlayback(bool isPlaying)
 {
     if (isPlaying)
     {
@@ -47,25 +47,25 @@ void PowerManager::set_playback(bool isPlaying)
     }
 }
 
-void PowerManager::set_delMenu()
+void PowerManager::setDeleteMenu()
 {
     m_pIdleTimer->stop();
     m_pLed->set_led_behavior(StatusLed::flash_quick); // Delete Menu
 }
 
-void PowerManager::set_linkMenu()
+void PowerManager::setLinkMenu()
 {
     m_pIdleTimer->stop();
     m_pLed->set_led_behavior(StatusLed::flash_slow); // Link Menu
 }
 
-void PowerManager::notify_timer_tick()
+void PowerManager::notifyTimerTick()
 {
     m_pIdleTimer->timerTick();
     if (m_pIdleTimer->isElapsed())
     {
         m_pIdleTimer->stop();
-        request_shutdown();
+        requestShutdown();
     }
     m_pLed->led_service();
 }

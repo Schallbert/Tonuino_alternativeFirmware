@@ -59,7 +59,7 @@ System::~System()
     delete m_pDfMiniPromptTimer;
 
     // finally shut down system
-    m_pPwrCtrl->allow_shutdown();
+    m_pPwrCtrl->allowShutdown();
     delete m_pPwrCtrl;
     delete m_pArduinoHal;
 }
@@ -88,7 +88,7 @@ bool System::loop()
         m_pMp3Control.setUserInput(userRequest);
         m_pMp3Control.loop();
     }
-    return (!m_pPwrCtrl->get_shutdown_request()); // TODO: Code smell?!
+    return (!m_pPwrCtrl->isShutdownRequested()); // TODO: Code smell?!
 }
 
 enum eTagState
@@ -116,7 +116,7 @@ void System::timer1Task_1ms()
 
 void System::timer1Task_1sec()
 {
-    m_pPwrCtrl->notify_timer_tick(); // idle timer and LED behavior
+    m_pPwrCtrl->notifyTimerTick(); // idle timer and LED behavior
     m_pLullabyeTimer->timerTick();
     m_pMenuTimer->timerTick();
     m_pDfMiniPromptTimer->timerTick();

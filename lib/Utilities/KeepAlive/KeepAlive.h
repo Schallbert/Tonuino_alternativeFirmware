@@ -23,11 +23,11 @@ public:
     // Physically keeps system powered (depending on external cirtuitry)
     void keep_alive();
     // Requests shut down to keep alive system; will be evaluated when "allow" method is called
-    void request_shutdown();
+    void requestShutdown();
     // returns if shutdown currently requested or not
-    bool get_shutdown_request();
+    bool isShutdownRequested();
     // Will actually shut down once shutdown has been requested
-    void allow_shutdown();
+    void allowShutdown();
 
 private:
     Arduino_interface_pins *m_pPinCtrl{nullptr};
