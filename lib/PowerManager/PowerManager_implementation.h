@@ -22,20 +22,18 @@ public:
     ~PowerManager();
 
 public:
-    // assumes that mp3 is playing on TRUE
-    void setPlayback(bool isPlaying);
-    // sets LED behavior for delete Menu
-    void setDeleteMenu();
-    // sets LED behavior for link Menu
-    void setLinkMenu();
-    // shuts down the system
-    void requestShutdown();
-    // returns current shutdown status
-    bool isShutdownRequested();
-    // shuts system down if shutdown has been requested and bAllow is TRUE
-    void allowShutdown();
+    void setPlayback(bool isPlaying) override;
+    void setDeleteMenu() override;
+    void setLinkMenu() override;
+    
+    void requestShutdown() override;
+    void requestKeepAlive() override;
+    void allowShutdown() override;
+
+    bool isShutdownRequested() override;
+
     // notifies classes that another timer interval passed
-    void notifyTimerTick();
+    void notifyTimerTick() override;
 
 private:
     // Dependency object

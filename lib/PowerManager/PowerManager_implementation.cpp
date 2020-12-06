@@ -6,14 +6,18 @@ PowerManager::PowerManager(Arduino_interface_pins *pPinCtrl,
     m_pIdleTimer = pIdleTimer;
     StatusLed *m_pLed = new StatusLed(pPinCtrl, LED_PIN, FLASHSLOWMS, FLASHQUICKMS, LED_ACTIVE_STATE);
     KeepAlive *m_pKeepAlive = new KeepAlive(pPinCtrl, KEEPALIVE_PIN, KEEPALIVE_ACTIVE_STATE);
-    m_pKeepAlive->keep_alive(); //Activate KeepAlive to maintain power supply to circuits
-    m_pLed->set_led_behavior(StatusLed::solid);
 }
 
 PowerManager::~PowerManager()
 {
     delete m_pLed;
     delete m_pKeepAlive;
+}
+
+void PowerManager::requestKeepAlive()
+{
+    m_pKeepAlive->keep_alive(); //Activate KeepAlive to maintain power supply to circuits
+    m_pLed->set_led_behavior(StatusLed::solid);
 }
 
 void PowerManager::requestShutdown()
@@ -41,7 +45,6 @@ void PowerManager::setPlayback(bool isPlaying)
     }
     else
     {
-
         m_pIdleTimer->start(IDLE_TIMEOUT_SECS);
         m_pLed->set_led_behavior(StatusLed::flash_slow);
     }

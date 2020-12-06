@@ -12,6 +12,7 @@ public:
     MOCK_METHOD(void, setDeleteMenu, (), (override));
     MOCK_METHOD(void, setLinkMenu, (), (override));
     MOCK_METHOD(void, requestShutdown, (), (override));
+    MOCK_METHOD(void, requestKeepAlive, (), (override));
     MOCK_METHOD(bool, isShutdownRequested, (), (override));
     MOCK_METHOD(void, allowShutdown, (), (override));
     MOCK_METHOD(void, notifyTimerTick, (), (override));
