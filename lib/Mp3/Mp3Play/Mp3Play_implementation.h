@@ -59,6 +59,7 @@ public:
 
 private:
     bool shouldPlaybackStop() const;
+    void restartLullabyeTimer();
 
     bool isPromptNew(const VoicePrompt &prompt) const;
     void waitForPromptToStart() const;

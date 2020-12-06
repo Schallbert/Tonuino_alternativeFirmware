@@ -42,18 +42,18 @@ void setup()
 // - Insource InputDispatcher_errorHandler to respective value creators DONE
 // - Outsource error handling to an own class DONE
 // - cleanup folder structure/levels DONE
+// - Take NFC state decision on SYSTEM level DONE
+// - solve reset lullabye timer on button press DONE
 
 // - implement power save (arduino, nfc, etc.)
 
 // - Rename Folder to PlayList
-// - Take NFC state decision on SYSTEM level
-// - solve reset lullabye timer on button press
 // - solve naming differences (underscores) of HAL with namespaces!
 
 // - Integration testing on device
 
 // - FEATURE: Card stays on system or can be removed while playing? Config?
-// - FEATURE: add combination of lullabye & saveprogress ^^ (Hörbuch)
+// - FEATURE: change Lullabye in a way that it's a feature, not a playmode.
 
 void loop()
 {

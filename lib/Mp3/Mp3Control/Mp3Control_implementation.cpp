@@ -28,7 +28,6 @@ void Mp3Control::setBlocked(bool isBlocked)
     m_blocked = isBlocked;
 }
 
-
 void Mp3Control::loop()
 {
     if(m_blocked)

@@ -46,9 +46,25 @@ TEST_F(Mp3ControlTest, ClassConstructorMethodsCalled)
     Mp3Control myMp3(&m_dfMiniMock, &m_mp3PlayMock, &m_nfcControlMock, &m_MessageHandlerMock);
 }
 
-TEST_F(Mp3ControlTest, loop_callesAutoplay)
+TEST_F(Mp3ControlTest, loop_blocked_wontDoAnything)
+{
+    m_pMp3Control->setBlocked(true);
+
+    EXPECT_CALL(m_mp3PlayMock, autoplay()).Times(0);
+    m_pMp3Control->loop();
+}
+
+TEST_F(Mp3ControlTest, loop_callsAutoplay)
 {
     EXPECT_CALL(m_mp3PlayMock, autoplay());
+    m_pMp3Control->loop();
+}
+
+TEST_F(Mp3ControlTest, newRegisteredTag_readSuccessful_startsPlayback)
+{
+    ON_CALL(m_nfcControlMock, readFolderFromTag(_)).WillByDefault(Return(true));
+    m_pMp3Control->setTagState(Nfc_interface::NEW_REGISTERED_TAG);
+    EXPECT_CALL(m_mp3PlayMock, playFolder(_));
     m_pMp3Control->loop();
 }
 

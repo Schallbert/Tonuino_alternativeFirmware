@@ -89,6 +89,7 @@ private:
     // Work member objects -----------------------
     Mp3Control m_pMp3Control{Mp3Control(m_pDfMini,
                                         m_pMp3Play,
+                                        m_pNfcControl,
                                         m_pMessageHandler)};
     VoiceMenu m_VoiceMenu{VoiceMenu(m_pMp3Play,
                                     m_pNfcControl,

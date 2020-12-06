@@ -22,7 +22,6 @@ System::System()
                                             m_pLullabyeTimer,
                                             m_pDfMiniPromptTimer,
                                             m_pMessageHandler);
-    //m_pMp3Control = new Mp3Control(m_pArduinoHal, m_pDfMini, m_pLullabyeTimer, m_pDfMiniPromptTimer);
     m_pPwrCtrl->requestKeepAlive();
     notifyStartup();
 
@@ -85,7 +84,7 @@ bool System::loop()
     // Handle Mp3 Playback
     m_pMp3Control.setTagState(tagState);
     m_pMp3Control.setUserInput(userRequest);
-    m_pMp3Control.setBlocked(m_VoiceMenu.isActive());
+    m_pMp3Control.setBlocked(m_VoiceMenu.isActive()); // VoiceMenu overrules Playback
     m_pMp3Control.loop();
 
     return (!m_pPwrCtrl->isShutdownRequested()); // TODO: Code smell?!

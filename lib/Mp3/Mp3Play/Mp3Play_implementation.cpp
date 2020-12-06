@@ -16,7 +16,7 @@ Mp3Play_implementation::Mp3Play_implementation(Arduino_DIcontainer_interface *pA
     m_pDfMiniMp3->setEq(DFMINI_EQ_SETTING);
 }
 
-void Mp3Play_implementation::playFolder(Folder &folder) // TODO: Start lullabye timer here?
+void Mp3Play_implementation::playFolder(Folder &folder)
 {
     if (prepareFolderToPlay(folder))
     {
@@ -25,6 +25,13 @@ void Mp3Play_implementation::playFolder(Folder &folder) // TODO: Start lullabye 
                                       m_currentFolder.getCurrentTrack());
         m_pMessageHandler->printMessage(Mp3PlayNotify::toString(Mp3PlayNotify::playFolder));
     }
+    restartLullabyeTimer();
+}
+
+void Mp3Play_implementation::restartLullabyeTimer()
+{
+    m_pLullabyeTimer->stop();
+    m_pLullabyeTimer->start(LULLABYE_TIMEOUT_SECS);
 }
 
 bool Mp3Play_implementation::prepareFolderToPlay(Folder &folder)
@@ -76,6 +83,7 @@ void Mp3Play_implementation::autoplay()
         {
             m_pMessageHandler->printMessage(Mp3PlayNotify::toString(Mp3PlayNotify::autoplayStop));
             m_pDfMiniMp3->stop();
+            restartLullabyeTimer();
         }
         else
         {
