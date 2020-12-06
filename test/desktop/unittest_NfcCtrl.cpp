@@ -134,13 +134,13 @@ TEST_F(NfcCtrlRead, isCalledWithCorrectPayload)
 
 TEST_F(NfcCtrlRead, Read_Successful_bufferEmpty_NoOverwriteOfSourceFolder)
 {
-    Folder resultFolder(27, Folder::LULLABYE);
+    Folder resultFolder(27, Folder::ONELARGETRACK);
     resultFolder.setTrackCount(5);
     ON_CALL(m_nfcMock, readTag(_, _)).WillByDefault(Return(true));
 
     EXPECT_FALSE(m_pNfcControl->readFolderFromTag(resultFolder));
     EXPECT_EQ(27, resultFolder.getFolderId());
-    EXPECT_EQ(Folder::LULLABYE, resultFolder.getPlayMode());
+    EXPECT_EQ(Folder::ONELARGETRACK, resultFolder.getPlayMode());
     EXPECT_EQ(5, resultFolder.getTrackCount());
 }
 

@@ -18,7 +18,7 @@ static const byte fakeBufferData[18]{
     (byte)((NfcControl::cui32MagicCookie >> 8) & 0xFF),  // 2
     (byte)(NfcControl::cui32MagicCookie & 0xFF),         // 3
     (byte)1,                                             // 4 FolderId
-    (byte)Folder::LULLABYE,                              // 5 ePlayMode
+    (byte)Folder::ALBUM,                              // 5 ePlayMode
     (byte)5,                                             // 6 TrackCount
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0x13, 0x37}; // last 2 bytes are fake "checksum ;)"
 

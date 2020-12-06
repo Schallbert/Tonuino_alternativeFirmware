@@ -214,10 +214,6 @@ void Folder::setup_track_queue()
         init_sorted_queue();
         break;
 
-    case ePlayMode::LULLABYE:
-        init_sorted_queue();
-        break;
-
     case ePlayMode::ONELARGETRACK:
         init_sorted_queue();
         break;

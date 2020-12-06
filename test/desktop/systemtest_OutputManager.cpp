@@ -276,9 +276,9 @@ TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_startsPlaybackWithCorrectSet
     m_pOutputManager->setTagState(Nfc_interface::NEW_UNKNOWN_TAG, UserInput::PLAY_PAUSE);
     m_pOutputManager->dispatchInputs(); // should log folder 1
     m_pOutputManager->setTagState(Nfc_interface::NEW_UNKNOWN_TAG, UserInput::NEXT_TRACK);
-    m_pOutputManager->dispatchInputs(); // should set link menu to playmode LULLABYE
+    m_pOutputManager->dispatchInputs(); // should set link menu to playmode ALBUM
     m_pOutputManager->setTagState(Nfc_interface::NEW_UNKNOWN_TAG, UserInput::PLAY_PAUSE);
-    EXPECT_CALL(*m_pMp3Control, play_folder(folderOk(1, Folder::LULLABYE, 8)));
+    EXPECT_CALL(*m_pMp3Control, play_folder(folderOk(1, Folder::ALBUM, 8)));
     m_pOutputManager->dispatchInputs(); // should log playmode and complete linkMenu
 }
 

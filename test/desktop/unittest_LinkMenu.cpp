@@ -220,10 +220,10 @@ TEST_F(LinkMenuTest, selectFolderIdMAX_getPrompt_returnsMAX)
     linkMenu->handlePlayback();
 }
 
-TEST_F(LinkMenuTest, selectPlayMode1_getPrompt_returnsLULLABYE)
+TEST_F(LinkMenuTest, selectPlayMode1_getPrompt_returnsALBUM)
 {
     VoicePrompt expect{};
-    expect.promptId = MSG_SELECT_PLAYMODE + static_cast<uint16_t>(Folder::LULLABYE);
+    expect.promptId = MSG_SELECT_PLAYMODE + static_cast<uint16_t>(Folder::ALBUM);
     expect.allowSkip = false;
 
     linkMenu->confirm();

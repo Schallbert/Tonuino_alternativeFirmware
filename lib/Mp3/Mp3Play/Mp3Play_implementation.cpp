@@ -97,7 +97,7 @@ bool Mp3Play_implementation::shouldPlaybackStop() const
 {
     Folder::ePlayMode mode = m_currentFolder.getPlayMode();
     bool shouldStop{false};
-    if (mode == Folder::LULLABYE && m_pLullabyeTimer->isElapsed())
+    if (LULLABYE_TIMEOUT_ACTIVE && m_pLullabyeTimer->isElapsed())
     {
         shouldStop = true;
     }

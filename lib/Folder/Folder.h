@@ -11,12 +11,11 @@ public:
     enum ePlayMode
     {
         UNDEFINED = 0,     // Not implemented
-        LULLABYE = 1,      // like ALBUM but stops playback after timeout TODO: RECORD VOICE OUTPUT.
-        ALBUM = 2,         // Play tracks in order on SD card (1,2,3...), endless, rollover.
-        RANDOM = 3,        // Like ALBUM but with shuffled non-repeating queue. TODO: RECORD VOICE OUTPUT
-        SAVEPROGRESS = 4,  // like ALBUM but saves track that is currently active. TODO: RE-RECORD VOICE OUTPUT
-        ONELARGETRACK = 5, // So-called Hörspielmodus. Queue like ALBUM but stops playback after finishing track. TODO: RE-RECORD VOICE OUTPUT.
-        ENUM_COUNT = 5,    // Last entry of enum to allow iteration (no value for content)
+        ALBUM = 1,         // Play tracks in order on SD card (1,2,3...), endless, rollover.
+        RANDOM = 2,        // Like ALBUM but with shuffled non-repeating queue. TODO: RECORD VOICE OUTPUT
+        SAVEPROGRESS = 3,  // like ALBUM but saves track that is currently active. TODO: RE-RECORD VOICE OUTPUT
+        ONELARGETRACK = 4, // So-called Hörspielmodus. Queue like ALBUM but stops playback after finishing track. TODO: RE-RECORD VOICE OUTPUT.
+        ENUM_COUNT = 4    // Last entry of enum to allow iteration (no value for content)
     };
 
 public:
