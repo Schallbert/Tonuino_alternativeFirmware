@@ -2,9 +2,11 @@
 
 Mp3Control::Mp3Control(DfMiniMp3_interface *pDfMini,
                        Mp3Play_interface *pPlayer,
+                       NfcControl_interface *pNfcControl,
                        MessageHander_interface *pMsgHandler) : m_pDfMiniMp3(pDfMini),
-                                                         m_pMp3Player(pPlayer),
-                                                         m_pMessageHandler(pMsgHandler)
+                                                               m_pMp3Player(pPlayer),
+                                                               m_pNfcControl(pNfcControl),
+                                                               m_pMessageHandler(pMsgHandler)
 {
 
     // Init communication with module and setup
@@ -14,6 +16,41 @@ Mp3Control::Mp3Control(DfMiniMp3_interface *pDfMini,
 void Mp3Control::setUserInput(UserInput::eUserRequest input)
 {
     m_userInput = input;
+}
+
+void Mp3Control::setTagState(Nfc_interface::eTagState input)
+{
+    m_tagState = input;
+}
+
+void Mp3Control::setBlocked(bool isBlocked)
+{
+    m_blocked = isBlocked;
+}
+
+
+void Mp3Control::loop()
+{
+    if(m_blocked)
+    {
+        return;
+    }
+
+    handleCardInput();
+    handleUserInput();
+    m_pMp3Player->autoplay();
+}
+
+void Mp3Control::handleCardInput()
+{
+    if (m_tagState == Nfc_interface::NEW_REGISTERED_TAG)
+    {
+        Folder readFolder;
+        if (m_pNfcControl->readFolderFromTag(readFolder))
+        {
+            m_pMp3Player->playFolder(readFolder);
+        }
+    }
 }
 
 void Mp3Control::handleUserInput()
@@ -28,13 +65,6 @@ void Mp3Control::handleUserInput()
     dispatcher dispatchExecutor = dispatchTable[m_userInput];
     (this->*dispatchExecutor)();
 }
-
-void Mp3Control::loop()
-{
-    handleUserInput();
-    m_pMp3Player->autoplay();
-}
-
 
 void Mp3Control::plPs()
 {

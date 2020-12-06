@@ -45,6 +45,7 @@ void setup()
 
 // - implement power save (arduino, nfc, etc.)
 
+// - Rename Folder to PlayList
 // - Take NFC state decision on SYSTEM level
 // - solve reset lullabye timer on button press
 // - solve naming differences (underscores) of HAL with namespaces!

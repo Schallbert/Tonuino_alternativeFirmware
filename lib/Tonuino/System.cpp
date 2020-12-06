@@ -25,7 +25,7 @@ System::System()
     //m_pMp3Control = new Mp3Control(m_pArduinoHal, m_pDfMini, m_pLullabyeTimer, m_pDfMiniPromptTimer);
     m_pPwrCtrl->requestKeepAlive();
     notifyStartup();
-    
+
     // Initialize objects if needed ------------------------ TODO: ???
     //m_pUserInput = UserInput_Factory::getInstance(UserInput_Factory::THREE_BUTTONS);
     //init UserInput
@@ -76,27 +76,17 @@ bool System::loop()
     // UserINput, NfcControl, Mp3Play, VoiceMenu, Mp3Control
     UserInput::eUserRequest userRequest{m_UserInput.get_user_request()};
     Nfc_interface::eTagState tagState{m_pNfcControl->getTagPresence()};
-    if (tagState == Nfc_interface::NEW_REGISTERED_TAG)
-    {
-        Folder readFolder;
-        if (m_pNfcControl->readFolderFromTag(readFolder))
-        {
-            m_pMp3Play->playFolder(readFolder);
-        }
-    }
-    else if (m_VoiceMenu.isActive())
-    {
-        // Handle Voice Menu
-        m_VoiceMenu.setTagState(tagState);
-        m_VoiceMenu.setUserInput(userRequest);
-        m_VoiceMenu.loop();
-    }
-    else
-    {
-        // Handle Mp3 Playback
-        m_pMp3Control.setUserInput(userRequest);
-        m_pMp3Control.loop();
-    }
+
+    // Handle Voice Menu
+    m_VoiceMenu.setTagState(tagState);
+    m_VoiceMenu.setUserInput(userRequest);
+    m_VoiceMenu.loop();
+
+    // Handle Mp3 Playback
+    m_pMp3Control.setTagState(tagState);
+    m_pMp3Control.setUserInput(userRequest);
+    m_pMp3Control.setBlocked(m_VoiceMenu.isActive());
+    m_pMp3Control.loop();
 
     return (!m_pPwrCtrl->isShutdownRequested()); // TODO: Code smell?!
 }
