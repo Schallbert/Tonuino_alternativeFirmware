@@ -38,11 +38,15 @@ void setup()
 // - Unit tests for UserInput DONE
 // - code smell: Delete menu in NfcTag enum?! DONE
 // - Outsource menu handling to an own class DONE
+// - Folder: remove trackCount, have evaluated at Mp3Control DONE
+// - Insource InputDispatcher_errorHandler to respective value creators DONE
+// - Outsource error handling to an own class DONE
 
 // - implement power save (arduino, nfc, etc.)
-// - Insource InputDispatcher_errorHandler to respective value creators
-// - Outsource error handling to an own class
-// - Folder: remove trackCount, have evaluated at Mp3Control
+// - cleanup folder structure/levels
+
+// - Take NFC state decision on SYSTEM level
+// - solve reset lullabye timer on button press
 // - solve naming differences (underscores) of HAL with namespaces!
 
 // - Integration testing on device
