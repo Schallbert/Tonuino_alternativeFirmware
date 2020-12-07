@@ -120,6 +120,16 @@ TEST_F(DeleteMenuTest, menuComplete_setStatusLed_statusLedChangeRequested)
     deleteMenu->setStatusLed();
 }
 
+TEST_F(DeleteMenuTest, menuComplete_callsEraseCard)
+{
+    EXPECT_CALL(m_nfcControlMock, eraseTag());
+
+    deleteMenu->confirm();        // enter
+    deleteMenu->setTagState(Nfc_interface::NEW_REGISTERED_TAG);
+    deleteMenu->handlePlayback(); // detects tag to delete
+    deleteMenu->confirm();        //confirms deletion
+}
+
 TEST_F(DeleteMenuTest, menuAbort_setStatusLed_noStatusLedChangeRequested)
 {
     deleteMenu->setTagState(Nfc_interface::NEW_REGISTERED_TAG);

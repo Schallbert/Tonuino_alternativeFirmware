@@ -6,6 +6,16 @@ void LinkMenu::confirm()
 
     m_prompt.promptId = m_menuState.getMenuStateMessage();
     m_prompt.allowSkip = true;
+
+    if(isComplete())
+    {
+        m_pNfcControl->writeFolderToTag(m_menuState.getResult());
+    }
+}
+
+bool LinkMenu::isComplete()
+{
+    return (m_menuState.getMenuStateMessage() == MSG_TAGCONFSUCCESS);
 }
 
 void LinkMenu::abort()
@@ -49,11 +59,6 @@ void LinkMenu::handlePlayback()
 bool LinkMenu::isActive()
 {
     return (m_menuState.getMenuStateMessage() != 0);
-}
-
-bool LinkMenu::isComplete()
-{
-    return (m_menuState.getMenuStateMessage() == MSG_TAGCONFSUCCESS);
 }
 
 void LinkMenu::playPrompt()

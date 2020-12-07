@@ -92,6 +92,19 @@ TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_isComplete_returnsTrue)
     ASSERT_TRUE(linkMenu->isComplete());
 }
 
+TEST_F(LinkMenuTest, menuComplete_writesConfigToCard)
+{
+    EXPECT_CALL(m_nfcControlMock, writeFolderToTag(_));
+    // enter, select folderId1, saveFolderId
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+
+    ASSERT_TRUE(linkMenu->isComplete());
+}
+
 TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_isActive_returnsTrue)
 {
     // enter, select folderId1, saveFolderId

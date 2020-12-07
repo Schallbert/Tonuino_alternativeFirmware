@@ -3,6 +3,15 @@
 void DeleteMenu::confirm()
 {
     m_menuState.confirm();
+    if(isComplete())
+    {
+        m_pNfcControl->eraseTag();
+    }
+}
+
+bool DeleteMenu::isComplete()
+{
+    return m_menuState.isComplete();
 }
 
 void DeleteMenu::abort()
@@ -51,11 +60,6 @@ void DeleteMenu::handleTagStateChanges()
 bool DeleteMenu::isActive()
 {
     return m_menuState.isActive();
-}
-
-bool DeleteMenu::isComplete()
-{
-    return m_menuState.isComplete();
 }
 
 void DeleteMenu::playPrompt()

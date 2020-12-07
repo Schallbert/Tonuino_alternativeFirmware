@@ -121,7 +121,7 @@ TEST_F(VoiceMenuTest, linkMenuCompleteAndCalledAgain_isActive_returnsTrue)
     ASSERT_TRUE(m_pVoiceMenu->isActive());
 }
 
-TEST_F(VoiceMenuTest, initLinkMenu_loop_invokesPlayback)
+TEST_F(VoiceMenuTest, initLinkMenu_loop_invokesPrompt)
 {
     m_pVoiceMenu->setTagState(Nfc_interface::NEW_UNKNOWN_TAG);
     m_pVoiceMenu->setUserInput(UserInput::PLAY_PAUSE); // provides (invalid) confirmation
@@ -180,7 +180,7 @@ TEST_F(VoiceMenuTest, deleteMenuComplete_isActive_returnsFalse)
     ASSERT_FALSE(m_pVoiceMenu->isActive());
 }
 
-TEST_F(VoiceMenuTest, initdeleteMenu_loop_invokesPlayback)
+TEST_F(VoiceMenuTest, initdeleteMenu_loop_invokesPrompt)
 {
     m_pVoiceMenu->setTagState(Nfc_interface::ACTIVE_KNOWN_TAG);
     m_pVoiceMenu->setUserInput(UserInput::PP_LONGPRESS);
