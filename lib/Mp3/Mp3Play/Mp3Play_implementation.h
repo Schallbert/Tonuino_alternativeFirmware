@@ -53,8 +53,6 @@ public:
     void playNext() override;
     void autoplay() override;
 
-    bool isPlaying() const override;
-
 private:
     bool shouldPlaybackStop() const;
     void restartLullabyeTimer();

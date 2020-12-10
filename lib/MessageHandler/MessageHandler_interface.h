@@ -7,9 +7,14 @@
 // Requires HAL to print to serial
 // Requires PromptManager to prompt error/help messages.
 
+struct VoicePrompt
+{
+    uint16_t promptId{0};
+    bool allowSkip{true};
+};
+
 class MessageHander_interface
 {
-
 public:
     virtual ~MessageHander_interface(){};
 

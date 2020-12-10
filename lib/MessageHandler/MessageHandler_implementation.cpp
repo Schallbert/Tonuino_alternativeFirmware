@@ -40,7 +40,7 @@ bool MessageHandler::isNewPrompt(const VoicePrompt &message)
 void MessageHandler::waitForPromptToStart() const
 {
     m_pDfMiniPromptTimer->start(WAIT_DFMINI_READY);
-    while (!isPlaying() && !(m_pDfMiniPromptTimer->isElapsed()))
+    while (!m_pDfMiniMp3->isPlaying() && !(m_pDfMiniPromptTimer->isElapsed()))
     {
         m_pDfMiniMp3->loop(); //wait for track to start (until timeout kicks in)
     }
@@ -50,7 +50,7 @@ void MessageHandler::waitForPromptToStart() const
 void MessageHandler::waitForPromptToFinish() const
 {
     m_pDfMiniPromptTimer->start(TIMEOUT_PROMPT_PLAYED);
-    while (isPlaying() && !(m_pDfMiniPromptTimer->isElapsed()))
+    while (m_pDfMiniMp3->isPlaying() && !(m_pDfMiniPromptTimer->isElapsed()))
     {
         m_pDfMiniMp3->loop(); //wait for track to finish
     }

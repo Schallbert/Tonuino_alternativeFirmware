@@ -123,8 +123,3 @@ void Mp3Play_implementation::playPrev()
                                       m_currentFolder.getPrevTrack());
     }
 }
-
-bool Mp3Play_implementation::isPlaying() const
-{
-    return !((m_pArduinoHal->getPins())->digital_read(DFMINI_PIN_ISIDLE));
-}

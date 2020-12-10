@@ -67,7 +67,7 @@ void Mp3Control::handleUserInput()
 
 void Mp3Control::plPs()
 {
-    if (m_pMp3Player->isPlaying())
+    if (m_pDfMiniMp3->isPlaying())
     {
         pause();
     }
@@ -124,5 +124,5 @@ void Mp3Control::help()
     VoicePrompt helpMessage;
     helpMessage.promptId = MSG_HELP;
     helpMessage.allowSkip = true;
-    m_pMp3Player->playPrompt(helpMessage);
+    m_pMessageHandler->promptMessage(helpMessage);
 }

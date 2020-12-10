@@ -10,13 +10,15 @@ System::System()
     m_pLullabyeTimer = new SimpleTimer();
     m_pDfMiniPromptTimer = new SimpleTimer();
     // Utilities
-    m_pMessageHandler = new MessageHandler(m_pArduinoHal->getSerial(), m_pMp3Play);
+    m_pMessageHandler = new MessageHandler(m_pArduinoHal->getSerial(),
+                                           m_pDfMini,
+                                           m_pDfMiniPromptTimer);
     m_pPwrCtrl = new PowerManager(m_pArduinoHal->getPins(), m_pIdleTimer);
     // Periphery
     m_pMfrc522 = new MFRC522_implementation();
     m_pNfc = new Nfc_implementation(m_pMfrc522, m_pMessageHandler);
     m_pNfcControl = new NfcControl(m_pNfc, m_pMessageHandler);
-    m_pDfMini = new DfMini(m_pMessageHandler);
+    m_pDfMini = new DfMini(m_pArduinoHal->getPins(), m_pMessageHandler);
     m_pMp3Play = new Mp3Play_implementation(m_pArduinoHal,
                                             m_pDfMini,
                                             m_pLullabyeTimer,

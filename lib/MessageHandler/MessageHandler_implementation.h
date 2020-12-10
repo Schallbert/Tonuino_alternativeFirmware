@@ -11,10 +11,11 @@ class MessageHandler : public MessageHander_interface
 {
 public:
     MessageHandler(Arduino_interface_com *pSerial,
-                   SimpleTimer *pDfMiniPromptTimer,
-                   DfMiniMp3_interface *pDfMini) : m_pSerial(pSerial),
-                                                   m_pDfMiniPromptTimer(pDfMiniPromptTimer),
-                                                   m_pDfMiniMp3(pDfMini){};
+
+                   DfMiniMp3_interface *pDfMini,
+                   SimpleTimer *pDfMiniPromptTimer) : m_pSerial(pSerial),
+                                                      m_pDfMiniMp3(pDfMini),
+                                                      m_pDfMiniPromptTimer(pDfMiniPromptTimer){};
 
     virtual void printMessage(const char *message) override;
     virtual void promptMessage(const VoicePrompt &message) override;
@@ -26,8 +27,8 @@ private:
 
 private:
     Arduino_interface_com *m_pSerial{nullptr};
-    SimpleTimer *m_pDfMiniPromptTimer{nullptr};
     DfMiniMp3_interface *m_pDfMiniMp3{nullptr};
+    SimpleTimer *m_pDfMiniPromptTimer{nullptr};
 
     VoicePrompt m_lastPrompt;
 };

@@ -90,7 +90,9 @@ public:
 class DfMini : public DfMiniMp3_interface
 {
 public:
-    DfMini(MessageHander_interface *pMessageHandler) : m_pMessageHandler(pMessageHandler)
+    DfMini(Arduino_interface_pins *pArduinoPins,
+           MessageHander_interface *pMessageHandler) : m_pArduinoPins(pArduinoPins),
+                                                       m_pMessageHandler(pMessageHandler)
     {
         m_dfMiniMp3.begin(); // init serial and start DfMiniMp3 module
         m_dfMiniMp3.loop();
@@ -170,10 +172,15 @@ public:
         return static_cast<uint8_t>(m_dfMiniMp3.getFolderTrackCount(static_cast<uint16_t>(folderId)));
     };
 
-    bool isTrackFinished()
+    bool isTrackFinished() const override
     {
         return (Mp3Notify::getMessage() == Mp3Notify::playFinished);
     };
+
+    bool isPlaying() const override
+    {
+        return !(m_pArduinoPins->digital_read(DFMINI_PIN_ISIDLE));
+    }
 
 private:
     void sendMessage()
@@ -188,6 +195,7 @@ private:
     }
 
 private:
+    Arduino_interface_pins *m_pArduinoPins{nullptr};
     MessageHander_interface *m_pMessageHandler{nullptr};
     // Solution for constructor error found here:
     //https://stackoverflow.com/questions/35762196/expected-a-type-specifier-error-when-creating-an-object-of-a-class-inside-anot
