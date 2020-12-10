@@ -44,11 +44,10 @@ void setup()
 // - cleanup folder structure/levels DONE
 // - Take NFC state decision on SYSTEM level DONE
 // - solve reset lullabye timer on button press DONE
-// - FEATURE: change Lullabye in a way that it's a feature, not a playmode. DONE
+// - FEATURE: change Lullabye in a way that it's a configurable feature, not a playmode. DONE
 
 // - implement power save (arduino, nfc, etc.)
 
-// - Rename Folder to PlayList
 // - solve naming differences (underscores) of HAL with namespaces!
 // - solve all TODOS.
 

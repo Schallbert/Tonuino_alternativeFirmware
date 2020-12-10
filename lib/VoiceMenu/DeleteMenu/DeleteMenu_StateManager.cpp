@@ -18,6 +18,11 @@ void DeleteMenu_StateManager::abort()
     menuState = ABORTED;
 }
 
+void DeleteMenu_StateManager::setError()
+{
+    menuState = ERROR;
+}
+
 void DeleteMenu_StateManager::setTagToDeleteDetected()
 {
     if (menuState == PLACE_TAG_TO_DELETE)
@@ -44,7 +49,8 @@ void DeleteMenu_StateManager::handleDeletionConfirmed()
 bool DeleteMenu_StateManager::isActive()
 {
     return ((menuState != NO_MENU) &&
-            (menuState != ABORTED));
+            (menuState != ABORTED) &&
+            (menuState != ERROR));
 }
 
 bool DeleteMenu_StateManager::isComplete()

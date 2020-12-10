@@ -4,6 +4,7 @@
 #include "mocks/unittest_Mp3Play_mocks.h"
 #include "mocks/unittest_NfcControl_mocks.h"
 #include "mocks/unittest_PowerManager_Mocks.h"
+#include "mocks/unittest_MessageHandler_mocks.h"
 
 #include "../VoiceMenu/VoiceMenu.h"
 #include "../Utilities/SimpleTimer/SimpleTimer.h"
@@ -23,6 +24,7 @@ protected:
 
         m_pVoiceMenu = new VoiceMenu(&m_Mp3PlayMock,
                                      &m_nfcControlMock,
+                                     &m_messageHandlerMock,
                                      &m_powerManagerMock,
                                      m_pMenuTimer);
     }
@@ -39,6 +41,7 @@ protected:
 protected:
     NiceMock<Mock_Mp3Play> m_Mp3PlayMock{};
     NiceMock<Mock_NfcControl> m_nfcControlMock{};
+    NiceMock<Mock_MessageHandler> m_messageHandlerMock{};
     NiceMock<Mock_PowerManager> m_powerManagerMock{};
     SimpleTimer *m_pMenuTimer{nullptr};
 
@@ -127,7 +130,7 @@ TEST_F(VoiceMenuTest, initLinkMenu_loop_invokesPrompt)
     m_pVoiceMenu->setUserInput(UserInput::PLAY_PAUSE); // provides (invalid) confirmation
     m_pVoiceMenu->loop();
 
-    EXPECT_CALL(m_Mp3PlayMock, playPrompt(_));
+    EXPECT_CALL(m_messageHandlerMock, promptMessage(_));
     m_pVoiceMenu->loop();
 }
 
@@ -187,7 +190,7 @@ TEST_F(VoiceMenuTest, initdeleteMenu_loop_invokesPrompt)
     m_pVoiceMenu->loop();                             // enter
     m_pVoiceMenu->setUserInput(UserInput::NO_ACTION); // if it stays PP_LONGPRESS that will abort the menu
 
-    EXPECT_CALL(m_Mp3PlayMock, playPrompt(_));
+    EXPECT_CALL(m_messageHandlerMock, promptMessage(_));
     m_pVoiceMenu->loop();
 }
 

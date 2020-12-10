@@ -22,6 +22,7 @@ public:
     static Menu_interface *getInstance(eMenuType menuType,
                                        NfcControl_interface *pNfcCtrl,
                                        Mp3Play_interface *pMp3Play,
+                                       MessageHander_interface *pMessageHandler,
                                        PowerManager_interface *pPowerMgr);
 };
 

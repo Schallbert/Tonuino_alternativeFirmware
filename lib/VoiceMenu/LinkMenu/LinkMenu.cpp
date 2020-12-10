@@ -7,7 +7,7 @@ void LinkMenu::confirm()
     m_prompt.promptId = m_menuState.getMenuStateMessage();
     m_prompt.allowSkip = true;
 
-    if(isComplete())
+    if (isComplete())
     {
         m_pNfcControl->writeFolderToTag(m_menuState.getResult());
     }
@@ -44,10 +44,10 @@ void LinkMenu::selectPrev()
 
 void LinkMenu::setStatusLed()
 {
-    if(isActive())
+    if (isActive())
     {
         m_pPowerManager->setLinkMenu();
-    }    
+    }
 }
 
 void LinkMenu::handlePlayback()
@@ -63,14 +63,14 @@ bool LinkMenu::isActive()
 
 void LinkMenu::playPrompt()
 {
-    m_pMp3Play->playPrompt(m_prompt);
+    m_pMessageHandler->promptMessage(m_prompt);
 }
 
 void LinkMenu::playPreview()
 {
-        Folder preview = m_menuState.getPreview();
-        if(preview.isInitiated())
-        {
-             m_pMp3Play->playFolder(preview);
-        }
+    Folder preview = m_menuState.getPreview();
+    if (preview.isInitiated())
+    {
+        m_pMp3Play->playFolder(preview);
+    }
 }

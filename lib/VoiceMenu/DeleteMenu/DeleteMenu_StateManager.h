@@ -12,6 +12,7 @@ public:
     void abort();
 
     void setTagToDeleteDetected();
+    void setError();
 
     uint16_t getMenuStateMessage();
 
@@ -31,7 +32,8 @@ private:
         PLACE_TAG_TO_DELETE = MSG_DELETETAG,
         CONFIRM_DELETE = MSG_CONFIRM_DELETION,
         COMPLETE = MSG_TAGCONFSUCCESS,
-        ABORTED = MSG_ABORTED
+        ABORTED = MSG_ABORTED,
+        ERROR = MSG_ERROR_CARDREAD
     };
 
     eMenuState menuState{NO_MENU};

@@ -54,14 +54,14 @@ TEST_F(UserInput_ClickEncoderTest, ServiceCalled)
 {
     EXPECT_CALL(enc, service());
 
-    m_pUserInput->userinput_service_isr();
+    m_pUserInput->userinputServiceIsr();
 }
 
 TEST_F(UserInput_ClickEncoderTest, NoActionOnAnyButton_willReturnNoAction)
 {
     ON_CALL(enc, getButton()).WillByDefault(Return(ClickEncoder_interface::Open));
    
-    ASSERT_EQ(m_pUserInput->get_user_request(), UserInput::NO_ACTION);
+    ASSERT_EQ(m_pUserInput->getUserRequest(), UserInput::NO_ACTION);
 }
 
 TEST_F(UserInput_ClickEncoderTest, LockUserInput_buttonPress_willReturnNoAction)
@@ -69,9 +69,9 @@ TEST_F(UserInput_ClickEncoderTest, LockUserInput_buttonPress_willReturnNoAction)
     ClickEncoder_interface::eButtonState btnState = ClickEncoder_interface::DoubleClicked;
     ON_CALL(enc, getButton()).WillByDefault(ReturnPointee(&btnState)); 
 
-    EXPECT_EQ(m_pUserInput->get_user_request(), UserInput::NO_ACTION);
+    EXPECT_EQ(m_pUserInput->getUserRequest(), UserInput::NO_ACTION);
     btnState = ClickEncoder_interface::Clicked;
-    EXPECT_EQ(m_pUserInput->get_user_request(), UserInput::NO_ACTION);
+    EXPECT_EQ(m_pUserInput->getUserRequest(), UserInput::NO_ACTION);
 }
 
 TEST_F(UserInput_ClickEncoderTest, LockUserInput_turnRight_willReturnNoAction)
@@ -80,9 +80,9 @@ TEST_F(UserInput_ClickEncoderTest, LockUserInput_turnRight_willReturnNoAction)
     ON_CALL(enc, getButton()).WillByDefault(ReturnPointee(&btnState));
     ON_CALL(enc, getValue()).WillByDefault(Return(1));  
 
-    EXPECT_EQ(m_pUserInput->get_user_request(), UserInput::NO_ACTION);
+    EXPECT_EQ(m_pUserInput->getUserRequest(), UserInput::NO_ACTION);
     btnState = ClickEncoder_interface::Open;
-    EXPECT_EQ(m_pUserInput->get_user_request(), UserInput::NO_ACTION);
+    EXPECT_EQ(m_pUserInput->getUserRequest(), UserInput::NO_ACTION);
 }
 
 TEST_F(UserInput_ClickEncoderTest, LockUserInput_turnLeft_willReturnNoAction)
@@ -91,41 +91,41 @@ TEST_F(UserInput_ClickEncoderTest, LockUserInput_turnLeft_willReturnNoAction)
     ON_CALL(enc, getButton()).WillByDefault(ReturnPointee(&btnState));
     ON_CALL(enc, getValue()).WillByDefault(Return(-1));  
 
-    EXPECT_EQ(m_pUserInput->get_user_request(), UserInput::NO_ACTION);
+    EXPECT_EQ(m_pUserInput->getUserRequest(), UserInput::NO_ACTION);
     btnState = ClickEncoder_interface::Open;
-    EXPECT_EQ(m_pUserInput->get_user_request(), UserInput::NO_ACTION);
+    EXPECT_EQ(m_pUserInput->getUserRequest(), UserInput::NO_ACTION);
 }
 
 TEST_F(UserInput_ClickEncoderTest, LockUserInput_Unlock_willReturnAction)
 {
     ClickEncoder_interface::eButtonState btnState = ClickEncoder_interface::DoubleClicked;
     ON_CALL(enc, getButton()).WillByDefault(ReturnPointee(&btnState)); 
-    m_pUserInput->get_user_request(); // lock
-    m_pUserInput->get_user_request(); // unlock
+    m_pUserInput->getUserRequest(); // lock
+    m_pUserInput->getUserRequest(); // unlock
     btnState = ClickEncoder_interface::Clicked;
 
-    ASSERT_NE(m_pUserInput->get_user_request(), UserInput::NO_ACTION);
+    ASSERT_NE(m_pUserInput->getUserRequest(), UserInput::NO_ACTION);
 }
 
 TEST_F(UserInput_ClickEncoderTest, encClicked_willReturnPlayPause)
 {
     ON_CALL(enc, getButton()).WillByDefault(Return(ClickEncoder_interface::Clicked));
 
-    ASSERT_EQ(m_pUserInput->get_user_request(), UserInput::PLAY_PAUSE);
+    ASSERT_EQ(m_pUserInput->getUserRequest(), UserInput::PLAY_PAUSE);
 }
 
 TEST_F(UserInput_ClickEncoderTest, plpsHeld_willReturnPPLongPress)
 {
     ON_CALL(enc, getButton()).WillByDefault(Return(ClickEncoder_interface::Held));
 
-    ASSERT_EQ(m_pUserInput->get_user_request(), UserInput::PP_LONGPRESS);
+    ASSERT_EQ(m_pUserInput->getUserRequest(), UserInput::PP_LONGPRESS);
 }
 
 TEST_F(UserInput_ClickEncoderTest, turnRight_willReturnNextTrack)
 {
     ON_CALL(enc, getValue()).WillByDefault(Return(1));
 
-    ASSERT_EQ(m_pUserInput->get_user_request(), UserInput::NEXT_TRACK);
+    ASSERT_EQ(m_pUserInput->getUserRequest(), UserInput::NEXT_TRACK);
 }
 
 TEST_F(UserInput_ClickEncoderTest, turnRightWhileHeld_willReturnIncVolume)
@@ -133,7 +133,7 @@ TEST_F(UserInput_ClickEncoderTest, turnRightWhileHeld_willReturnIncVolume)
     ON_CALL(enc, getButton()).WillByDefault(Return(ClickEncoder_interface::Held));
     ON_CALL(enc, getValue()).WillByDefault(Return(1));
 
-    ASSERT_EQ(m_pUserInput->get_user_request(), UserInput::INC_VOLUME);
+    ASSERT_EQ(m_pUserInput->getUserRequest(), UserInput::INC_VOLUME);
 }
 
 TEST_F(UserInput_ClickEncoderTest, turnRightWhilePressed_willReturnIncVolume)
@@ -141,14 +141,14 @@ TEST_F(UserInput_ClickEncoderTest, turnRightWhilePressed_willReturnIncVolume)
     ON_CALL(enc, getButton()).WillByDefault(Return(ClickEncoder_interface::Pressed));
     ON_CALL(enc, getValue()).WillByDefault(Return(1));
 
-    ASSERT_EQ(m_pUserInput->get_user_request(), UserInput::INC_VOLUME);
+    ASSERT_EQ(m_pUserInput->getUserRequest(), UserInput::INC_VOLUME);
 }
 
 TEST_F(UserInput_ClickEncoderTest, turnLeft_willReturnPrevTrack)
 {
     ON_CALL(enc, getValue()).WillByDefault(Return(-1));
 
-    ASSERT_EQ(m_pUserInput->get_user_request(), UserInput::PREV_TRACK);
+    ASSERT_EQ(m_pUserInput->getUserRequest(), UserInput::PREV_TRACK);
 }
 
 TEST_F(UserInput_ClickEncoderTest, turnLeftWhileHeld_willReturnDecVolume)
@@ -156,7 +156,7 @@ TEST_F(UserInput_ClickEncoderTest, turnLeftWhileHeld_willReturnDecVolume)
     ON_CALL(enc, getButton()).WillByDefault(Return(ClickEncoder_interface::Held));
     ON_CALL(enc, getValue()).WillByDefault(Return(-1));
 
-    ASSERT_EQ(m_pUserInput->get_user_request(), UserInput::DEC_VOLUME);
+    ASSERT_EQ(m_pUserInput->getUserRequest(), UserInput::DEC_VOLUME);
 }
 
 TEST_F(UserInput_ClickEncoderTest, turnLeftWhilePressed_willReturnDecVolume)
@@ -164,7 +164,7 @@ TEST_F(UserInput_ClickEncoderTest, turnLeftWhilePressed_willReturnDecVolume)
     ON_CALL(enc, getButton()).WillByDefault(Return(ClickEncoder_interface::Pressed));
     ON_CALL(enc, getValue()).WillByDefault(Return(-1));
 
-    ASSERT_EQ(m_pUserInput->get_user_request(), UserInput::DEC_VOLUME);
+    ASSERT_EQ(m_pUserInput->getUserRequest(), UserInput::DEC_VOLUME);
 }
 
 
@@ -174,7 +174,7 @@ TEST_F(UserInput_3ButtonsTest, ServiceCalled)
     EXPECT_CALL(next, service());
     EXPECT_CALL(prev, service());
 
-    m_pUserInput->userinput_service_isr();
+    m_pUserInput->userinputServiceIsr();
 }
 
 TEST_F(UserInput_3ButtonsTest, NoActionOnAnyButton_willReturnNoAction)
@@ -183,7 +183,7 @@ TEST_F(UserInput_3ButtonsTest, NoActionOnAnyButton_willReturnNoAction)
     ON_CALL(next, getButton()).WillByDefault(Return(ClickEncoder_interface::Open));
     ON_CALL(prev, getButton()).WillByDefault(Return(ClickEncoder_interface::Open));
 
-    ASSERT_EQ(m_pUserInput->get_user_request(), UserInput::NO_ACTION);
+    ASSERT_EQ(m_pUserInput->getUserRequest(), UserInput::NO_ACTION);
 }
 
 TEST_F(UserInput_3ButtonsTest, LockUserInput_plPsButtonPress_willReturnNoAction)
@@ -191,9 +191,9 @@ TEST_F(UserInput_3ButtonsTest, LockUserInput_plPsButtonPress_willReturnNoAction)
     ClickEncoder_interface::eButtonState plpsBtnState = ClickEncoder_interface::DoubleClicked;
     ON_CALL(plPs, getButton()).WillByDefault(ReturnPointee(&plpsBtnState)); 
 
-    EXPECT_EQ(m_pUserInput->get_user_request(), UserInput::NO_ACTION);
+    EXPECT_EQ(m_pUserInput->getUserRequest(), UserInput::NO_ACTION);
     plpsBtnState = ClickEncoder_interface::Clicked;
-    EXPECT_EQ(m_pUserInput->get_user_request(), UserInput::NO_ACTION);
+    EXPECT_EQ(m_pUserInput->getUserRequest(), UserInput::NO_ACTION);
 }
 
 TEST_F(UserInput_3ButtonsTest, LockUserInput_nextButtonPress_willReturnNoAction)
@@ -202,9 +202,9 @@ TEST_F(UserInput_3ButtonsTest, LockUserInput_nextButtonPress_willReturnNoAction)
     ON_CALL(plPs, getButton()).WillByDefault(ReturnPointee(&plpsBtnState));
     ON_CALL(next, getButton()).WillByDefault(Return(ClickEncoder_interface::Clicked));  
 
-    EXPECT_EQ(m_pUserInput->get_user_request(), UserInput::NO_ACTION);
+    EXPECT_EQ(m_pUserInput->getUserRequest(), UserInput::NO_ACTION);
     plpsBtnState = ClickEncoder_interface::Open;
-    EXPECT_EQ(m_pUserInput->get_user_request(), UserInput::NO_ACTION);
+    EXPECT_EQ(m_pUserInput->getUserRequest(), UserInput::NO_ACTION);
 }
 
 TEST_F(UserInput_3ButtonsTest, LockUserInput_prevButtonPress_willReturnNoAction)
@@ -213,34 +213,34 @@ TEST_F(UserInput_3ButtonsTest, LockUserInput_prevButtonPress_willReturnNoAction)
     ON_CALL(plPs, getButton()).WillByDefault(ReturnPointee(&plpsBtnState));
     ON_CALL(prev, getButton()).WillByDefault(Return(ClickEncoder_interface::Clicked));  
 
-    EXPECT_EQ(m_pUserInput->get_user_request(), UserInput::NO_ACTION);
+    EXPECT_EQ(m_pUserInput->getUserRequest(), UserInput::NO_ACTION);
     plpsBtnState = ClickEncoder_interface::Open;
-    EXPECT_EQ(m_pUserInput->get_user_request(), UserInput::NO_ACTION);
+    EXPECT_EQ(m_pUserInput->getUserRequest(), UserInput::NO_ACTION);
 }
 
 TEST_F(UserInput_3ButtonsTest, LockUserInput_Unlock_willReturnAction)
 {
     ClickEncoder_interface::eButtonState plpsBtnState = ClickEncoder_interface::DoubleClicked;
     ON_CALL(plPs, getButton()).WillByDefault(ReturnPointee(&plpsBtnState)); 
-    m_pUserInput->get_user_request(); // lock
-    m_pUserInput->get_user_request(); // unlock
+    m_pUserInput->getUserRequest(); // lock
+    m_pUserInput->getUserRequest(); // unlock
     plpsBtnState = ClickEncoder_interface::Clicked;
 
-    ASSERT_NE(m_pUserInput->get_user_request(), UserInput::NO_ACTION);
+    ASSERT_NE(m_pUserInput->getUserRequest(), UserInput::NO_ACTION);
 }
 
 TEST_F(UserInput_3ButtonsTest, plpsClicked_willReturnPlayPause)
 {
     ON_CALL(plPs, getButton()).WillByDefault(Return(ClickEncoder_interface::Clicked));
 
-    ASSERT_EQ(m_pUserInput->get_user_request(), UserInput::PLAY_PAUSE);
+    ASSERT_EQ(m_pUserInput->getUserRequest(), UserInput::PLAY_PAUSE);
 }
 
 TEST_F(UserInput_3ButtonsTest, plpsHeld_willReturnPPLongPress)
 {
     ON_CALL(plPs, getButton()).WillByDefault(Return(ClickEncoder_interface::Held));
 
-    ASSERT_EQ(m_pUserInput->get_user_request(), UserInput::PP_LONGPRESS);
+    ASSERT_EQ(m_pUserInput->getUserRequest(), UserInput::PP_LONGPRESS);
 }
 
 TEST_F(UserInput_3ButtonsTest, plpsLongPressRepeat_willReturnPPLongPress)
@@ -248,16 +248,16 @@ TEST_F(UserInput_3ButtonsTest, plpsLongPressRepeat_willReturnPPLongPress)
     ON_CALL(plPs, getButton()).WillByDefault(Return(ClickEncoder_interface::Held));
     for(uint8_t i = 0; i < longPressRepeatTicks + 1; ++i)
     {
-        m_pUserInput->userinput_service_isr();
+        m_pUserInput->userinputServiceIsr();
     }
-    ASSERT_EQ(m_pUserInput->get_user_request(), UserInput::PP_LONGPRESS);
+    ASSERT_EQ(m_pUserInput->getUserRequest(), UserInput::PP_LONGPRESS);
 }
 
 TEST_F(UserInput_3ButtonsTest, nextClicked_willReturnNextTrack)
 {
     ON_CALL(next, getButton()).WillByDefault(Return(ClickEncoder_interface::Clicked));
 
-    ASSERT_EQ(m_pUserInput->get_user_request(), UserInput::NEXT_TRACK);
+    ASSERT_EQ(m_pUserInput->getUserRequest(), UserInput::NEXT_TRACK);
 }
 
 TEST_F(UserInput_3ButtonsTest, nextLongPressRepeat_willReturnIncVolume)
@@ -265,16 +265,16 @@ TEST_F(UserInput_3ButtonsTest, nextLongPressRepeat_willReturnIncVolume)
     ON_CALL(next, getButton()).WillByDefault(Return(ClickEncoder_interface::Held));
     for(uint8_t i = 0; i < longPressRepeatTicks + 1; ++i)
     {
-        m_pUserInput->userinput_service_isr();
+        m_pUserInput->userinputServiceIsr();
     }
-    ASSERT_EQ(m_pUserInput->get_user_request(), UserInput::INC_VOLUME);
+    ASSERT_EQ(m_pUserInput->getUserRequest(), UserInput::INC_VOLUME);
 }
 
 TEST_F(UserInput_3ButtonsTest, prevClicked_willReturnPrevTrack)
 {
     ON_CALL(prev, getButton()).WillByDefault(Return(ClickEncoder_interface::Clicked));
 
-    ASSERT_EQ(m_pUserInput->get_user_request(), UserInput::PREV_TRACK);
+    ASSERT_EQ(m_pUserInput->getUserRequest(), UserInput::PREV_TRACK);
 }
 
 TEST_F(UserInput_3ButtonsTest, prevLongPressRepeat_willReturnDecVolume)
@@ -282,8 +282,8 @@ TEST_F(UserInput_3ButtonsTest, prevLongPressRepeat_willReturnDecVolume)
     ON_CALL(prev, getButton()).WillByDefault(Return(ClickEncoder_interface::Held));
     for(uint8_t i = 0; i < longPressRepeatTicks + 1; ++i)
     {
-        m_pUserInput->userinput_service_isr();
+        m_pUserInput->userinputServiceIsr();
     }
-    ASSERT_EQ(m_pUserInput->get_user_request(), UserInput::DEC_VOLUME);
+    ASSERT_EQ(m_pUserInput->getUserRequest(), UserInput::DEC_VOLUME);
 }
 

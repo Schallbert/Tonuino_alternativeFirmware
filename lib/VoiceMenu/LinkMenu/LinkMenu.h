@@ -17,8 +17,10 @@ class LinkMenu : public Menu_interface
 public:
     LinkMenu(NfcControl_interface *pNfcCtrl,
              Mp3Play_interface *pMp3Play,
+             MessageHander_interface *pMessageHandler,
              PowerManager_interface *pPowerMgr) : m_pNfcControl(pNfcCtrl),
                                                   m_pMp3Play(pMp3Play),
+                                                  m_pMessageHandler(pMessageHandler),
                                                   m_pPowerManager(pPowerMgr){};
 
 public:
@@ -43,6 +45,7 @@ private:
 private:
     NfcControl_interface *m_pNfcControl{nullptr};
     Mp3Play_interface *m_pMp3Play{nullptr};
+    MessageHander_interface *m_pMessageHandler{nullptr};
     PowerManager_interface *m_pPowerManager{nullptr};
 
     LinkMenu_StateManager m_menuState{};

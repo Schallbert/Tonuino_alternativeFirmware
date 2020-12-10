@@ -3,9 +3,19 @@
 void DeleteMenu::confirm()
 {
     m_menuState.confirm();
-    if(isComplete())
+    if (isComplete())
     {
-        m_pNfcControl->eraseTag();
+        eraseTag();
+    }
+}
+
+void DeleteMenu::eraseTag()
+{
+    bool status = m_pNfcControl->eraseTag();
+    m_prompt.allowSkip = false;
+    if (!status)
+    {
+        m_menuState.setError();
     }
 }
 
@@ -31,10 +41,10 @@ void DeleteMenu::selectPrev()
 
 void DeleteMenu::setStatusLed()
 {
-    if(isActive())
+    if (isActive())
     {
         m_pPowerManager->setDeleteMenu();
-    }    
+    }
 }
 
 void DeleteMenu::setTagState(Nfc_interface::eTagState input)
@@ -66,7 +76,7 @@ void DeleteMenu::playPrompt()
 {
     m_prompt.promptId = m_menuState.getMenuStateMessage();
     m_prompt.allowSkip = true;
-    m_pMp3Play->playPrompt(m_prompt);
+    m_pMessageHandler->promptMessage(m_prompt);
 }
 
 void DeleteMenu::playPreview()

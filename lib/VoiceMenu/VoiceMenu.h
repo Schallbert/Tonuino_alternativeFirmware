@@ -18,9 +18,11 @@ class VoiceMenu
 public:
     VoiceMenu(Mp3Play_interface *pMp3Play,
               NfcControl_interface *pNfcCtrl,
+              MessageHander_interface *pMessageHandler,
               PowerManager_interface *pPowerMgr,
               SimpleTimer *pMenuTimer) : m_pMp3Play(pMp3Play),
                                          m_pNfcControl(pNfcCtrl),
+                                         m_pMessageHandler(pMessageHandler),
                                          m_pPowerManager(pPowerMgr),
                                          m_pMenuTimer(pMenuTimer){};
     ~VoiceMenu();
@@ -50,6 +52,7 @@ private:
 private:
     Mp3Play_interface *m_pMp3Play{nullptr};
     NfcControl_interface *m_pNfcControl{nullptr};
+    MessageHander_interface *m_pMessageHandler{nullptr};
     PowerManager_interface *m_pPowerManager{nullptr};
     SimpleTimer *m_pMenuTimer{nullptr};
 
