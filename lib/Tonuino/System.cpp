@@ -72,8 +72,7 @@ void System::notifyShutdown()
 
 bool System::loop()
 {
-    // UserINput, NfcControl, Mp3Play, VoiceMenu, Mp3Control
-    UserInput::eUserRequest userRequest{m_UserInput.get_user_request()};
+    UserInput::eUserRequest userRequest{m_UserInput.getUserRequest()};
     Nfc_interface::eTagState tagState{m_pNfcControl->getTagPresence()};
 
     // Handle Voice Menu
@@ -93,7 +92,7 @@ bool System::loop()
 void System::timer1Task_1ms()
 {
     static volatile uint16_t ui16Ticks = 0;
-    m_UserInput.userinput_service_isr(); // userInput service 1ms task
+    m_UserInput.userinputServiceIsr(); // userInput service 1ms task
 
     ++ui16Ticks;
     if (ui16Ticks >= MS_TO_S) // 1ms --> 1s

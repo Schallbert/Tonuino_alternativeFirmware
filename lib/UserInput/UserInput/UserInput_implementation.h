@@ -29,11 +29,11 @@ public:
     ~UserInput_ClickEncoder() = default;
 
 public:
-    void userinput_service_isr() override;
-    eUserRequest get_user_request() override;
+    void userinputServiceIsr() override;
+    eUserRequest getUserRequest() override;
 
 private:
-    void userinput_refresh() override;
+    void userinputRefresh() override;
 
 private:
     ClickEncoder_interface *m_pEncoder;
@@ -86,11 +86,11 @@ public:
     };
 
 public:
-    void userinput_service_isr(void) override;
-    eUserRequest get_user_request() override;
+    void userinputServiceIsr(void) override;
+    eUserRequest getUserRequest() override;
 
 private:
-    void userinput_refresh() override;
+    void userinputRefresh() override;
 
 private:
     //OBJECTS

@@ -17,7 +17,7 @@ public:
     {
         NO_ACTION = 0,
         PLAY_PAUSE,
-        PP_LONGPRESS, 
+        PP_LONGPRESS,
         NEXT_TRACK,
         PREV_TRACK,
         INC_VOLUME,
@@ -29,11 +29,11 @@ protected:
     bool userInputLocked{false};
 
 public:
-    virtual eUserRequest get_user_request(void) = 0;           // returns user's request to main program
-    virtual void userinput_service_isr(void) = 0;               // recurring task to poll UserInput's connected hardware
+    virtual eUserRequest getUserRequest(void) = 0; // returns user's request to main program
+    virtual void userinputServiceIsr(void) = 0;  // recurring task to poll UserInput's connected hardware
 
 private:
-    virtual void userinput_refresh(void) = 0; // refreshes button status to UserInput class
+    virtual void userinputRefresh(void) = 0; // refreshes button status to UserInput class
 
 }; // UserInput
 

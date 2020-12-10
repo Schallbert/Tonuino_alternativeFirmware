@@ -77,7 +77,7 @@ private:
         &m_pinPrev,
         ENC_LONGPRESSREPEATINTERVAL};
 #elif USERINPUT_VARIANT == ONE_ENCODER
-    UserInput_ClickEncoder m_UserINput{
+    UserInput_ClickEncoder m_UserInput{
         ClickEncoder_implementation(PINA,
                                     PINB,
                                     ENCSW,
@@ -93,6 +93,7 @@ private:
                                         m_pMessageHandler)};
     VoiceMenu m_VoiceMenu{VoiceMenu(m_pMp3Play,
                                     m_pNfcControl,
+                                    m_pMessageHandler,
                                     m_pPwrCtrl,
                                     m_pMenuTimer)};
 };

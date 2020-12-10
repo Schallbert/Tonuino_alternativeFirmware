@@ -1,14 +1,14 @@
 #include "UserInput_implementation.h"
 
-void UserInput_ClickEncoder::userinput_service_isr()
+void UserInput_ClickEncoder::userinputServiceIsr()
 {
     m_pEncoder->service();
 }
 
-UserInput::eUserRequest UserInput_ClickEncoder::get_user_request()
+UserInput::eUserRequest UserInput_ClickEncoder::getUserRequest()
 {
     //Poll for current encoder position and button state
-    userinput_refresh();
+    userinputRefresh();
 
     if (buttonState == ClickEncoder_interface::DoubleClicked)
     {
@@ -62,7 +62,7 @@ UserInput::eUserRequest UserInput_ClickEncoder::get_user_request()
     return NO_ACTION;
 }
 
-void UserInput_ClickEncoder::userinput_refresh()
+void UserInput_ClickEncoder::userinputRefresh()
 {
 
     //Get values from encoder
@@ -76,17 +76,17 @@ void UserInput_ClickEncoder::userinput_refresh()
 // USERINPUT___3BUTTONS     ---------------------------------------------------------------
 //UserInput_3Buttons::UserInput_3Buttons(){}
 
-void UserInput_3Buttons::userinput_service_isr()
+void UserInput_3Buttons::userinputServiceIsr()
 {
     m_pPlpsButton->service();
     m_pNextButton->service();
     m_pPrevButton->service();
 }
 
-UserInput::eUserRequest UserInput_3Buttons::get_user_request()
+UserInput::eUserRequest UserInput_3Buttons::getUserRequest()
 {
     //Get current button's states
-    userinput_refresh();
+    userinputRefresh();
 
     if (buttonStates.plpsButton == Encoder_longPressRepeat::DoubleClicked)
     {
@@ -131,7 +131,7 @@ UserInput::eUserRequest UserInput_3Buttons::get_user_request()
     return NO_ACTION;
 }
 
-void UserInput_3Buttons::userinput_refresh()
+void UserInput_3Buttons::userinputRefresh()
 {
     buttonStates.plpsButton = m_pPlpsButton->getButton();
     buttonStates.nextButton = m_pNextButton->getButton();
