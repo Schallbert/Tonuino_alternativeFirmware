@@ -4,18 +4,26 @@ void MessageHandler::printMessage(const char *message)
 {
     if (message != nullptr)
     {
-        if(*message != 0)
+        if (*message != 0)
         {
             m_pSerial->com_println(message);
-        }     
+        }
     }
 }
 
 void MessageHandler::promptMessage(const VoicePrompt &message)
 {
+    m_pDfMiniMp3->stop();
+
     if (isNewPrompt(message))
     {
-        m_pMp3Play->playPrompt(message);
+        m_pDfMiniMp3->playAdvertisement(message.promptId);
+        waitForPromptToStart();
+
+        if (!message.allowSkip)
+        {
+            waitForPromptToFinish();
+        }
     }
 }
 
@@ -27,4 +35,24 @@ bool MessageHandler::isNewPrompt(const VoicePrompt &message)
     m_lastPrompt.allowSkip = message.allowSkip;
 
     return (result);
+}
+
+void MessageHandler::waitForPromptToStart() const
+{
+    m_pDfMiniPromptTimer->start(WAIT_DFMINI_READY);
+    while (!isPlaying() && !(m_pDfMiniPromptTimer->isElapsed()))
+    {
+        m_pDfMiniMp3->loop(); //wait for track to start (until timeout kicks in)
+    }
+    m_pDfMiniPromptTimer->stop();
+}
+
+void MessageHandler::waitForPromptToFinish() const
+{
+    m_pDfMiniPromptTimer->start(TIMEOUT_PROMPT_PLAYED);
+    while (isPlaying() && !(m_pDfMiniPromptTimer->isElapsed()))
+    {
+        m_pDfMiniMp3->loop(); //wait for track to finish
+    }
+    m_pDfMiniPromptTimer->stop();
 }

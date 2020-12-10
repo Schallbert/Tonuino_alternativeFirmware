@@ -26,7 +26,6 @@ protected:
         m_pMp3Play = new Mp3Play_implementation(&m_arduinoHalMock,
                                                 &m_dfMiniMock,
                                                 &m_lullabyeTimer,
-                                                &m_dfMiniPromptTimer,
                                                 &m_messageHandlerMock);
     }
 

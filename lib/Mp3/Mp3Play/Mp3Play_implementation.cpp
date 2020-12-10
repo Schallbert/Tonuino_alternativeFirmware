@@ -3,12 +3,10 @@
 Mp3Play_implementation::Mp3Play_implementation(Arduino_DIcontainer_interface *pArduinoHal,
                                                DfMiniMp3_interface *pDfMini,
                                                SimpleTimer *pLullabyeTimer,
-                                               SimpleTimer *pDfMiniMsgTimeout,
                                                MessageHander_interface *pMessage) : m_pArduinoHal(pArduinoHal),
-                                                                                 m_pDfMiniMp3(pDfMini),
-                                                                                 m_pLullabyeTimer(pLullabyeTimer),
-                                                                                 m_pDfMiniPromptTimer(pDfMiniMsgTimeout),
-                                                                                 m_pMessageHandler(pMessage)
+                                                                                    m_pDfMiniMp3(pDfMini),
+                                                                                    m_pLullabyeTimer(pLullabyeTimer),
+                                                                                    m_pMessageHandler(pMessage)
 {
 
     // Init communication with module and setup
@@ -124,54 +122,6 @@ void Mp3Play_implementation::playPrev()
         m_pDfMiniMp3->playFolderTrack(m_currentFolder.getFolderId(),
                                       m_currentFolder.getPrevTrack());
     }
-}
-
-void Mp3Play_implementation::playPrompt(const VoicePrompt &prompt) const
-{
-    m_pDfMiniMp3->stop();
-
-    if (isPromptNew(prompt))
-    {
-        m_pDfMiniMp3->playAdvertisement(prompt.promptId);
-        waitForPromptToStart();
-
-        if (!prompt.allowSkip)
-        {
-            waitForPromptToFinish();
-        }
-    }
-}
-
-bool Mp3Play_implementation::isPromptNew(const VoicePrompt &prompt) const
-{
-    bool result{false}; // no need to play already active/played prompt
-    static VoicePrompt currentPrompt;
-    if (currentPrompt.promptId != prompt.promptId)
-    {
-        result = true;
-        currentPrompt = prompt;
-    }
-    return result;
-}
-
-void Mp3Play_implementation::waitForPromptToStart() const
-{
-    m_pDfMiniPromptTimer->start(WAIT_DFMINI_READY);
-    while (!isPlaying() && !(m_pDfMiniPromptTimer->isElapsed()))
-    {
-        m_pDfMiniMp3->loop(); //wait for track to start (until timeout kicks in)
-    }
-    m_pDfMiniPromptTimer->stop();
-}
-
-void Mp3Play_implementation::waitForPromptToFinish() const
-{
-    m_pDfMiniPromptTimer->start(TIMEOUT_PROMPT_PLAYED);
-    while (isPlaying() && !(m_pDfMiniPromptTimer->isElapsed()))
-    {
-        m_pDfMiniMp3->loop(); //wait for track to finish
-    }
-    m_pDfMiniPromptTimer->stop();
 }
 
 bool Mp3Play_implementation::isPlaying() const

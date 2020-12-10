@@ -20,7 +20,6 @@ System::System()
     m_pMp3Play = new Mp3Play_implementation(m_pArduinoHal,
                                             m_pDfMini,
                                             m_pLullabyeTimer,
-                                            m_pDfMiniPromptTimer,
                                             m_pMessageHandler);
     m_pPwrCtrl->requestKeepAlive();
     notifyStartup();
