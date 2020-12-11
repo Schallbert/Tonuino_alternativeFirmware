@@ -2,7 +2,7 @@
 #define TONUINO_CONFIG_H
 
 //DEBUG OUTPUT [just write "false" to disable debug output on serial]
-#define DEBUGSERIAL false
+#define DEBUGSERIAL true
 #define DEBUGSERIAL_BAUDRATE 9600
 
 //Tonuino mp3 prompt IDs -----------------------
@@ -13,9 +13,7 @@
 #define MSG_SHUTDOWN 501
 #define MSG_SELECT_FOLDERID 300
 #define MSG_SELECT_PLAYMODE 310
-#define MSG_SELECTFILE 320 // NOT USED
 #define MSG_HELP 330
-#define MSG_CONFIRMED 340  // NOT USED
 #define MSG_TAGCONFSUCCESS 400 
 #define MSG_DELETETAG 700
 #define MSG_CONFIRM_DELETION 710

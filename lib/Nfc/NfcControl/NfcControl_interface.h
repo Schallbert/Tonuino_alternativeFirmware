@@ -16,10 +16,6 @@ public:
     virtual bool readFolderFromTag(Folder &targetFolder) = 0;
     virtual bool writeFolderToTag(const Folder &sourceFolder) = 0;
     virtual bool eraseTag() = 0;
-#if DEBUGSERIAL
-    virtual void print_debug_message() = 0;
-#endif
-
 };
 
 #endif //NFCCONTROL_INTERFACE_H

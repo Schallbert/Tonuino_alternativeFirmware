@@ -17,8 +17,7 @@ public:
             "No Tag",
             "active Tag",
             "new Tag",
-            "unknown Tag",
-            "Error"};
+            "unknown Tag"};
         return NOTIFY_STRING[value];
 #endif
         return nullptr;
