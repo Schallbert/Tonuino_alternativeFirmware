@@ -85,6 +85,7 @@ TEST_F(LinkMenuTest, entered_abort_isActive_returnsFalse)
 
 TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_isComplete_returnsTrue)
 {
+    ON_CALL(m_nfcControlMock, writeFolderToTag(_)).WillByDefault(Return(true));
     // enter, select folderId1, saveFolderId
     linkMenu->confirm();
     linkMenu->selectNext();
@@ -97,7 +98,7 @@ TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_isComplete_returnsTrue)
 
 TEST_F(LinkMenuTest, menuComplete_writesConfigToCard)
 {
-    EXPECT_CALL(m_nfcControlMock, writeFolderToTag(_));
+    EXPECT_CALL(m_nfcControlMock, writeFolderToTag(_)).WillOnce(Return(true));
     // enter, select folderId1, saveFolderId
     linkMenu->confirm();
     linkMenu->selectNext();
@@ -108,8 +109,40 @@ TEST_F(LinkMenuTest, menuComplete_writesConfigToCard)
     ASSERT_TRUE(linkMenu->isComplete());
 }
 
+TEST_F(LinkMenuTest, menuComplete_writesConfigToCardFails_promptsError)
+{
+    ON_CALL(m_nfcControlMock, writeFolderToTag(_)).WillByDefault(Return(false));
+    // enter, select folderId1, saveFolderId
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+    linkMenu->selectNext();
+
+    VoicePrompt expect{};
+    expect.promptId = MSG_ERROR_CARDWRITE;
+    expect.allowSkip = true;
+
+    EXPECT_CALL(m_messageHandlerMock, promptMessage(identicalPrompt(expect)));
+    linkMenu->confirm();
+}
+
+TEST_F(LinkMenuTest, menuComplete_writesConfigToCardFails_abortsMenu)
+{
+    ON_CALL(m_nfcControlMock, writeFolderToTag(_)).WillByDefault(Return(false));
+    // enter, select folderId1, saveFolderId
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+    linkMenu->selectNext();
+    linkMenu->confirm();
+
+    EXPECT_FALSE(linkMenu->isActive());
+    EXPECT_FALSE(linkMenu->isComplete());
+}
+
 TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_isActive_returnsTrue)
 {
+    ON_CALL(m_nfcControlMock, writeFolderToTag(_)).WillByDefault(Return(true));
     // enter, select folderId1, saveFolderId
     linkMenu->confirm();
     linkMenu->selectNext();
@@ -136,6 +169,7 @@ TEST_F(LinkMenuTest, entered_setStatusLed_statusLedSetTolinkMenu)
 
 TEST_F(LinkMenuTest, menuComplete_setStatusLed_statusLedChangeRequested)
 {
+    ON_CALL(m_nfcControlMock, writeFolderToTag(_)).WillByDefault(Return(true));
     linkMenu->confirm(); // enter
     linkMenu->confirm(); // confirm folderId
     linkMenu->confirm(); // confirm playMode -->complete
@@ -187,6 +221,7 @@ TEST_F(LinkMenuTest, selectPlayMode_noSelection_getPrompt_PlayModeAndAllowSkip)
 
 TEST_F(LinkMenuTest, menuComplete_noSelection_getPrompt_TagConfigSuccess)
 {
+    ON_CALL(m_nfcControlMock, writeFolderToTag(_)).WillByDefault(Return(true));
     VoicePrompt expect{};
     expect.promptId = MSG_TAGCONFSUCCESS;
     expect.allowSkip = true;
@@ -201,6 +236,7 @@ TEST_F(LinkMenuTest, menuComplete_noSelection_getPrompt_TagConfigSuccess)
 
 TEST_F(LinkMenuTest, menuComplete_noSelection_confirmAgainAndGetPrompt_noPromptSet)
 {
+    ON_CALL(m_nfcControlMock, writeFolderToTag(_)).WillByDefault(Return(true));
     linkMenu->confirm();
     linkMenu->confirm();
     linkMenu->confirm();

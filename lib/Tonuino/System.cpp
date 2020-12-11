@@ -25,12 +25,6 @@ System::System()
                                             m_pMessageHandler);
     m_pPwrCtrl->requestKeepAlive();
     notifyStartup();
-
-    // Initialize objects if needed ------------------------ TODO: ???
-    //m_pUserInput = UserInput_Factory::getInstance(UserInput_Factory::THREE_BUTTONS);
-    //init UserInput
-    //m_pUserInput->set_input_pins(PINPLPS, PINPREV, PINNEXT);
-    //m_pUserInput->init();
 }
 
 System::~System()

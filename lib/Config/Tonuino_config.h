@@ -6,8 +6,8 @@
 #define DEBUGSERIAL_BAUDRATE 9600
 
 //Tonuino mp3 prompt IDs -----------------------
-#define MSG_ERROR 401 // NOT USED
-#define MSG_ERROR_CARDREAD 402 // NOT USED
+#define MSG_ERROR_CARDWRITE 401
+#define MSG_ERROR_CARDREAD 402
 #define MSG_ERROR_FOLDER 403
 #define MSG_STARTUP 500 
 #define MSG_SHUTDOWN 501

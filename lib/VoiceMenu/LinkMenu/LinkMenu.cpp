@@ -9,7 +9,18 @@ void LinkMenu::confirm()
 
     if (isComplete())
     {
-        m_pNfcControl->writeFolderToTag(m_menuState.getResult());
+        writeTag();
+    }
+}
+
+void LinkMenu::writeTag()
+{
+    if (!m_pNfcControl->writeFolderToTag(m_menuState.getResult()))
+    {
+        m_prompt.promptId = MSG_ERROR_CARDWRITE;
+        m_prompt.allowSkip = true;
+        playPrompt();
+        m_menuState.abort();
     }
 }
 
