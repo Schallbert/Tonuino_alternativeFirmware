@@ -26,7 +26,7 @@ public:
 
 public:
     void setStatusLed() override;
-    void setTagState(Nfc_interface::eTagState input) override;
+    void setTagState(NfcControl_interface::eTagState input) override;
     void handlePlayback() override;
 
     void confirm() override;
@@ -51,7 +51,7 @@ private:
     PowerManager_interface *m_pPowerManager{nullptr};
 
     DeleteMenu_StateManager m_menuState{};
-    Nfc_interface::eTagState m_tagState{Nfc_interface::NO_TAG};
+    NfcControl_interface::eTagState m_tagState{NfcControl_interface::NO_TAG};
 
     VoicePrompt m_prompt{};
     bool m_tagToDeleteDetected{false};

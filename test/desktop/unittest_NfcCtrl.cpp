@@ -157,21 +157,21 @@ TEST_F(NfcCtrlRead, Read_Successful_bufferSet_returnsCorrectFolderData)
 
 TEST_F(NfcCtrlTagPresence, noTag_returnsNoTag)
 {
-    Nfc_interface::eTagState tagPresence = Nfc_interface::NO_TAG;
+    NfcControl_interface::eTagState tagPresence = NfcControl_interface::NO_TAG;
     ON_CALL(m_nfcMock, getTagPresence()).WillByDefault(Return(tagPresence));
     ASSERT_EQ(tagPresence, m_pNfcControl->getTagPresence());
 }
 
 TEST_F(NfcCtrlTagPresence, activeTag_returnsActiveTag)
 {
-    Nfc_interface::eTagState tagPresence = Nfc_interface::ACTIVE_KNOWN_TAG;
+    NfcControl_interface::eTagState tagPresence = NfcControl_interface::ACTIVE_KNOWN_TAG;
     ON_CALL(m_nfcMock, getTagPresence()).WillByDefault(Return(tagPresence));
     ASSERT_EQ(tagPresence, m_pNfcControl->getTagPresence());
 }
 
 TEST_F(NfcCtrlTagPresence, newTag_simulateUnknown_returnsUnknownTag)
 {
-    Nfc_interface::eTagState tagPresence = Nfc_interface::NEW_UNKNOWN_TAG;
+    NfcControl_interface::eTagState tagPresence = NfcControl_interface::NEW_UNKNOWN_TAG;
     ON_CALL(m_nfcMock, getTagPresence()).WillByDefault(Return(tagPresence));
     ASSERT_EQ(tagPresence, m_pNfcControl->getTagPresence());
 }
@@ -179,15 +179,15 @@ TEST_F(NfcCtrlTagPresence, newTag_simulateUnknown_returnsUnknownTag)
 TEST_F(NfcCtrlTagPresence, newTag_simulateKnown_returnsKnownTag)
 {
     NfcControl myTest{&m_nfcMock, &m_messageHandlerMock};
-    Nfc_interface::eTagState tagPresence = Nfc_interface::NEW_UNKNOWN_TAG;
+    NfcControl_interface::eTagState tagPresence = NfcControl_interface::NEW_UNKNOWN_TAG;
     ON_CALL(m_nfcMock, getTagPresence()).WillByDefault(Return(tagPresence));
     m_nfcMock.DelegateToFake(); // will return known card cookie
-    ASSERT_EQ(Nfc_interface::NEW_REGISTERED_TAG, myTest.getTagPresence());
+    ASSERT_EQ(NfcControl_interface::NEW_REGISTERED_TAG, myTest.getTagPresence());
 }
 
 TEST_F(NfcCtrlTagPresence, OutOfRange_returnsOutOfRange)
 {
-    Nfc_interface::eTagState tagPresence = static_cast<Nfc_interface::eTagState>(static_cast<uint8_t>(Nfc_interface::NUMBER_OF_TAG_STATES) + 1);
+    NfcControl_interface::eTagState tagPresence = static_cast<NfcControl_interface::eTagState>(static_cast<uint8_t>(NfcControl_interface::NUMBER_OF_TAG_STATES) + 1);
     ON_CALL(m_nfcMock, getTagPresence()).WillByDefault(Return(tagPresence));
     ASSERT_EQ(tagPresence, m_pNfcControl->getTagPresence());
 }

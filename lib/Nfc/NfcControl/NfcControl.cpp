@@ -13,16 +13,16 @@ NfcControl::~NfcControl()
     delete[] m_pBuffer;
 }
 
-Nfc_interface::eTagState NfcControl::getTagPresence()
+NfcControl_interface::eTagState NfcControl::getTagPresence()
 {
     // Adds "known tag" information if a new tag has been placed.
     // Otherwise, just wrapper for layer down method.
-    Nfc_interface::eTagState tagPresence = m_pNfc->getTagPresence();
-    if (tagPresence == Nfc_interface::NEW_UNKNOWN_TAG)
+    NfcControl_interface::eTagState tagPresence = m_pNfc->getTagPresence();
+    if (tagPresence == NfcControl_interface::NEW_UNKNOWN_TAG)
     {
         if (is_known_card())
         {
-            tagPresence = Nfc_interface::NEW_REGISTERED_TAG;
+            tagPresence = NfcControl_interface::NEW_REGISTERED_TAG;
         }
     }
     m_pMessageHandler->printMessage(NfcControlNotify::toString(tagPresence));

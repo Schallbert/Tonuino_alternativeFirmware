@@ -9,7 +9,7 @@ public:
     virtual ~Menu_interface(){};
     // Handler
     virtual void setStatusLed() = 0;
-    virtual void setTagState(Nfc_interface::eTagState input) = 0;
+    virtual void setTagState(NfcControl_interface::eTagState input) = 0;
     virtual void handlePlayback() = 0;
 
     // Events

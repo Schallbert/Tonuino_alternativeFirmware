@@ -27,7 +27,7 @@ class Fake_Nfc : public Nfc_interface
 public:
     virtual ~Fake_Nfc(){}; // MUST BE DEFINED; ELSE VTABLE INCLUDE ERRORS
     void initNfc() override;
-    Nfc_interface::eTagState getTagPresence() override;
+    NfcControl_interface::eTagState getTagPresence() override;
     // returns true, simulating successful write
     bool writeTag(byte blockAddress, byte *dataToWrite) override;
     // copies fakeBufferData to "readResult", simulating read from NFC tag
@@ -76,7 +76,7 @@ public:
     // Method:  output name   input   overrides functionality of interface
     // IF THE METHOD IS INPUTS VOID; JUST WRITE () NEVER WRITE (void) !!!
     MOCK_METHOD(void, initNfc, (), (override));
-    MOCK_METHOD(Nfc_interface::eTagState, getTagPresence, (), (override));
+    MOCK_METHOD(NfcControl_interface::eTagState, getTagPresence, (), (override));
     MOCK_METHOD(bool, writeTag, (byte blockAddress, byte *dataToWrite), (override));
     MOCK_METHOD(bool, readTag, (byte blockAddress, byte *readResult), (override));
 

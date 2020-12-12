@@ -1,21 +1,21 @@
 #include "Nfc_implementation.h"
 
-Nfc_interface::eTagState Nfc_implementation::getTagPresence()
+NfcControl_interface::eTagState Nfc_implementation::getTagPresence()
 {
-    Nfc_interface::eTagState returnValue{NO_TAG};
+    NfcControl_interface::eTagState returnValue{NfcControl_interface::NO_TAG};
     if (m_pMfrc522->isCardPresent())
     {
         // A card is present!
         if (!m_pMfrc522->isNewCardPresent())
         {
-            returnValue = ACTIVE_KNOWN_TAG;
+            returnValue = NfcControl_interface::ACTIVE_KNOWN_TAG;
         }
         else
         {
             // New card detected: runs once as new card is automatically set to ActiveCard
             if (setTagOnline())
             {
-                returnValue = NEW_UNKNOWN_TAG; // assume tag is unknown
+                returnValue = NfcControl_interface::NEW_UNKNOWN_TAG; // assume tag is unknown
             }
         }
     }

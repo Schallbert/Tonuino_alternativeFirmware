@@ -44,14 +44,14 @@ TEST_F(Nfc_getTagPresence, init_callsReadersInit)
 TEST_F(Nfc_getTagPresence, noTag_returnsNO_TAG)
 {
     ON_CALL(m_mfrc, isCardPresent()).WillByDefault(Return(false));
-    ASSERT_EQ(Nfc_interface::NO_TAG, m_pNfc->getTagPresence());
+    ASSERT_EQ(NfcControl_interface::NO_TAG, m_pNfc->getTagPresence());
 }
 
 TEST_F(Nfc_getTagPresence, knownTag_returnsACTIVE_KNOWN_TAG)
 {
     ON_CALL(m_mfrc, isCardPresent()).WillByDefault(Return(true));
     ON_CALL(m_mfrc, isNewCardPresent()).WillByDefault(Return(false));
-    ASSERT_EQ(Nfc_interface::ACTIVE_KNOWN_TAG, m_pNfc->getTagPresence());
+    ASSERT_EQ(NfcControl_interface::ACTIVE_KNOWN_TAG, m_pNfc->getTagPresence());
 }
 
 TEST_F(Nfc_getTagPresence, newTag_returnsNEW_UNKNOWN_TAG)
@@ -59,7 +59,7 @@ TEST_F(Nfc_getTagPresence, newTag_returnsNEW_UNKNOWN_TAG)
     ON_CALL(m_mfrc, isCardPresent()).WillByDefault(Return(true));
     ON_CALL(m_mfrc, isNewCardPresent()).WillByDefault(Return(true));
     ON_CALL(m_mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
-    ASSERT_EQ(Nfc_interface::NEW_UNKNOWN_TAG, m_pNfc->getTagPresence());
+    ASSERT_EQ(NfcControl_interface::NEW_UNKNOWN_TAG, m_pNfc->getTagPresence());
 }
 
 TEST_F(Nfc_getTagPresence, canNotSetTagOnline_returnsERROR)

@@ -49,7 +49,7 @@ public:
 
 public:
     void initNfc() override;
-    Nfc_interface::eTagState getTagPresence(void) override;
+    NfcControl_interface::eTagState getTagPresence(void) override;
     bool writeTag(byte blockAddress, byte *dataToWrite) override;
     bool readTag(byte blockAddress, byte *readResult) override;
 

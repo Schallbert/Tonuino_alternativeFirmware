@@ -13,7 +13,7 @@ public:
 
 public:
     virtual void setUserInput(UserInput_interface::eUserRequest input) = 0;
-    virtual void setTagState(Nfc_interface::eTagState input) = 0;
+    virtual void setTagState(NfcControl_interface::eTagState input) = 0;
     virtual void setBlocked(bool isBlocked) = 0;
     // Call in main loop. Listens for DFminiMp3 replies & autoplays next song
     virtual void loop() = 0;

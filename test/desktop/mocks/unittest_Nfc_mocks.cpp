@@ -4,9 +4,9 @@ void Fake_Nfc::initNfc()
 {
     return;
 }
-Nfc_interface::eTagState Fake_Nfc::getTagPresence()
+NfcControl_interface::eTagState Fake_Nfc::getTagPresence()
 {
-    return Nfc_interface::ACTIVE_KNOWN_TAG;
+    return NfcControl_interface::ACTIVE_KNOWN_TAG;
 }
 bool Fake_Nfc::writeTag(byte blockAddress, byte *dataToWrite)
 {

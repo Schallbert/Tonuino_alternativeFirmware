@@ -22,7 +22,7 @@ void Mp3Control::setUserInput(UserInput_interface::eUserRequest input)
     m_userInput = input;
 }
 
-void Mp3Control::setTagState(Nfc_interface::eTagState input)
+void Mp3Control::setTagState(NfcControl_interface::eTagState input)
 {
     m_tagState = input;
 }
@@ -46,7 +46,7 @@ void Mp3Control::loop()
 
 void Mp3Control::handleCardInput()
 {
-    if (m_tagState == Nfc_interface::NEW_REGISTERED_TAG)
+    if (m_tagState == NfcControl_interface::NEW_REGISTERED_TAG)
     {
         Folder readFolder;
         if (m_pNfcControl->readFolderFromTag(readFolder))

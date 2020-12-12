@@ -91,7 +91,7 @@ TEST_F(DeleteMenuTest, enteredAbort_isActive_returnsFalse)
 TEST_F(DeleteMenuTest, menuComplete_isActive_returnsTrue)
 {
     ON_CALL(m_nfcControlMock, eraseTag()).WillByDefault(Return(true));
-    deleteMenu->setTagState(Nfc_interface::NEW_REGISTERED_TAG);
+    deleteMenu->setTagState(NfcControl_interface::NEW_REGISTERED_TAG);
     deleteMenu->confirm();        // enter
     deleteMenu->handlePlayback(); // detects tag to delete
     deleteMenu->confirm();        //confirms deletion
@@ -116,7 +116,7 @@ TEST_F(DeleteMenuTest, entered_setStatusLed_statusLedSetToDeleteMenu)
 TEST_F(DeleteMenuTest, menuComplete_setStatusLed_statusLedChangeRequested)
 {
     ON_CALL(m_nfcControlMock, eraseTag()).WillByDefault(Return(true));
-    deleteMenu->setTagState(Nfc_interface::NEW_REGISTERED_TAG);
+    deleteMenu->setTagState(NfcControl_interface::NEW_REGISTERED_TAG);
     deleteMenu->confirm();        // enter
     deleteMenu->handlePlayback(); // detects tag to delete
     deleteMenu->confirm();        //confirms deletion
@@ -130,14 +130,14 @@ TEST_F(DeleteMenuTest, menuComplete_callsEraseCard)
     EXPECT_CALL(m_nfcControlMock, eraseTag());
 
     deleteMenu->confirm();        // enter
-    deleteMenu->setTagState(Nfc_interface::NEW_REGISTERED_TAG);
+    deleteMenu->setTagState(NfcControl_interface::NEW_REGISTERED_TAG);
     deleteMenu->handlePlayback(); // detects tag to delete
     deleteMenu->confirm();        //confirms deletion
 }
 
 TEST_F(DeleteMenuTest, menuAbort_setStatusLed_noStatusLedChangeRequested)
 {
-    deleteMenu->setTagState(Nfc_interface::NEW_REGISTERED_TAG);
+    deleteMenu->setTagState(NfcControl_interface::NEW_REGISTERED_TAG);
     deleteMenu->confirm();        // enter
     deleteMenu->handlePlayback(); // detects tag to delete
     deleteMenu->abort();      
@@ -180,7 +180,7 @@ TEST_F(DeleteMenuTest, init2x_getPrompt_promptsDeleteTag)
 
 TEST_F(DeleteMenuTest, placedTagToDelete_getPrompt_promptsWaitForConfirm)
 {
-    deleteMenu->setTagState(Nfc_interface::NEW_REGISTERED_TAG);
+    deleteMenu->setTagState(NfcControl_interface::NEW_REGISTERED_TAG);
     VoicePrompt expect{};
     expect.promptId = MSG_CONFIRM_DELETION;
     expect.allowSkip = true;
@@ -194,7 +194,7 @@ TEST_F(DeleteMenuTest, placedTagToDelete_getPrompt_promptsWaitForConfirm)
 TEST_F(DeleteMenuTest, placedTagToDelete_confirmDeletion_promptsTagConfigurationComplete)
 {
     ON_CALL(m_nfcControlMock, eraseTag()).WillByDefault(Return(true));
-    deleteMenu->setTagState(Nfc_interface::NEW_REGISTERED_TAG);
+    deleteMenu->setTagState(NfcControl_interface::NEW_REGISTERED_TAG);
     VoicePrompt expect{};
     expect.promptId = MSG_TAGCONFSUCCESS;
     expect.allowSkip = true;
@@ -234,7 +234,7 @@ TEST_F(DeleteMenuTest, entered_abort_noPromptSet)
 
 TEST_F(DeleteMenuTest, tagToDeleteDetected_abort_noPromptSet)
 {
-    deleteMenu->setTagState(Nfc_interface::NEW_REGISTERED_TAG);
+    deleteMenu->setTagState(NfcControl_interface::NEW_REGISTERED_TAG);
     VoicePrompt expect{};
     expect.promptId = MSG_ABORTED;
     expect.allowSkip = true;
@@ -249,7 +249,7 @@ TEST_F(DeleteMenuTest, tagToDeleteDetected_abort_noPromptSet)
 
 TEST_F(DeleteMenuTest, menuComplete_abort_reentry_promptsDeleteTag)
 {
-    deleteMenu->setTagState(Nfc_interface::NEW_REGISTERED_TAG);
+    deleteMenu->setTagState(NfcControl_interface::NEW_REGISTERED_TAG);
 
     VoicePrompt expect{};
     expect.promptId = MSG_CONFIRM_DELETION;
@@ -269,7 +269,7 @@ TEST_F(DeleteMenuTest, menuComplete_abort_reentry_promptsDeleteTag)
 TEST_F(DeleteMenuTest, cardToDeleteDetected_cardPresent_playsPreview)
 {
     ON_CALL(m_nfcControlMock, readFolderFromTag(_)).WillByDefault(Return(true));
-    deleteMenu->setTagState(Nfc_interface::NEW_REGISTERED_TAG);
+    deleteMenu->setTagState(NfcControl_interface::NEW_REGISTERED_TAG);
     Folder expect; // did not delegate to fake so read method will not do anything
 
     deleteMenu->confirm();
@@ -281,7 +281,7 @@ TEST_F(DeleteMenuTest, cardToDeleteDetected_cardPresent_playsPreview)
 TEST_F(DeleteMenuTest, cardToDeleteDetected_noCard_noPreviewPlayed)
 {
     ON_CALL(m_nfcControlMock, readFolderFromTag(_)).WillByDefault(Return(false));
-    deleteMenu->setTagState(Nfc_interface::NEW_REGISTERED_TAG);
+    deleteMenu->setTagState(NfcControl_interface::NEW_REGISTERED_TAG);
 
     deleteMenu->confirm();
 

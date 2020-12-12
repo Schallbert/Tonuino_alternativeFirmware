@@ -3,6 +3,7 @@
 
 #include "Folder.h"
 #include "NfcControl_interface.h"
+#include "Nfc/Nfc_interface.h"
 #include "MessageHandler_interface.h"
 
 #include "Tonuino_config.h"
@@ -10,10 +11,10 @@
 class NfcControlNotify
 {
 public:
-    static const char *toString(Nfc_interface::eTagState value)
+    static const char *toString(NfcControl_interface::eTagState value)
     {
 #if DEBUGSERIAL
-        static const char *NOTIFY_STRING[Nfc_interface::NUMBER_OF_TAG_STATES] = {
+        static const char *NOTIFY_STRING[NfcControl_interface::NUMBER_OF_TAG_STATES] = {
             "No Tag",
             "active Tag",
             "new Tag",
@@ -35,7 +36,7 @@ public:
 
 public:
     // Returns tag state of presence to requesting entity.
-    Nfc_interface::eTagState getTagPresence();
+    NfcControl_interface::eTagState getTagPresence();
     // takes a reference to an existing folder and copies the card's saved data into that object
     // [cookie, folderId, playMode, trackCount]
     bool readFolderFromTag(Folder &targetFolder);

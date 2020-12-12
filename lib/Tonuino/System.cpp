@@ -118,7 +118,7 @@ void System::notifyShutdown()
 bool System::loop()
 {
     UserInput_interface::eUserRequest userRequest{m_pUserInput->getUserRequest()};
-    Nfc_interface::eTagState tagState{m_pNfcControl->getTagPresence()};
+    NfcControl_interface::eTagState tagState{m_pNfcControl->getTagPresence()};
 
     // Handle Voice Menu
     m_pVoiceMenu->setTagState(tagState);
