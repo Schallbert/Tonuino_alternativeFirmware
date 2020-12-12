@@ -47,6 +47,7 @@ void setup()
 // - cleanup #includes and move implementation includes to cpps DONE
 
 // - solve naming differences (underscores) of HAL with namespaces!
+// - create well-readable README.md
 // - solve all TODOS.
 
 // - Integration testing on device
@@ -60,7 +61,7 @@ void loop()
 {
     //LowPower.sleep(100);
     // SLEEP for 100ms to reduce power consumption?
-    
+
     if (pSys->isShutdownRequested())
     {
         pTimer1->detachInterrupt();
