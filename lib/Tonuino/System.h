@@ -1,24 +1,28 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
+///// INTERFACES
+
 // ARDUINO HAL
-#include "../Arduino/Arduino_DIcontainer.h"
+#include "../Arduino/Arduino_DIcontainer_interface.h"
 // NFC
-#include "../Nfc/MFRC522/MFRC522_implementation.h"
-#include "../Nfc/Nfc/Nfc_implementation.h"
-#include "../Nfc/NfcControl/NfcControl.h"
+#include "../Nfc/MFRC522/MFRC522_interface.h"
+#include "../Nfc/Nfc/Nfc_interface.h"
+#include "../Nfc/NfcControl/NfcControl_interface.h"
 // MP3
-#include "../Mp3/DFMiniMp3/DFMiniMp3_implementation.h"
-#include "../Mp3/Mp3Play/Mp3Play_implementation.h"
-#include "../Mp3/Mp3Control/Mp3Control_implementation.h"
+#include "../Mp3/DFMiniMp3/DFMiniMp3_interface.h"
+#include "../Mp3/Mp3Play/Mp3Play_interface.h"
+#include "../Mp3/Mp3Control/Mp3Control_interface.h"
 // USER INPUT
-#include "../UserInput/UserInput/UserInput_implementation.h"
-#include "../UserInput/ClickEncoder/ClickEncoder_implementation.h"
+#include "../UserInput/UserInput/UserInput_interface.h"
+#include "../UserInput/ClickEncoder/ClickEncoder_interface.h"
 // MISC
-#include "../PowerManager/PowerManager_implementation.h"
+#include "../PowerManager/PowerManager_interface.h"
+#include "../MessageHandler/MessageHandler_interface.h"
+
+///// IMPLEMENTATIONS
 #include "../VoiceMenu/VoiceMenu.h"
 #include "../Utilities/SimpleTimer/SimpleTimer.h"
-#include "../MessageHandler/MessageHandler_implementation.h"
 
 class Folder;
 
@@ -35,11 +39,8 @@ public:
     ~System();
 
 public:
-    // main loop. Read inputs, react and set outputs. Returns true while not requested to shut down.
-    bool loop();
-    // Timer1 routine called by 1ms interrupt.
+    bool loop(); // main loop. Read inputs, react and set outputs. Returns true while not requested to shut down.
     void timer1Task_1ms();
-    // Routine called every 1sec by timer1Task_1ms.
     void timer1Task_1sec();
 
 private:
@@ -47,54 +48,26 @@ private:
     void notifyShutdown();
 
 private:
-    // Dependency objects -------------------------------------
-    PowerManager *m_pPwrCtrl{nullptr};
     // Arduino Hardware Abstraction Layer
-    Arduino_DIcontainer *m_pArduinoHal{nullptr};
-    MessageHandler *m_pMessageHandler{nullptr};
+    Arduino_DIcontainer_interface *m_pArduinoHal{nullptr};
+    // PERIPHERY
+    UserInput_interface *m_pUserInput{nullptr};
+    // nfc
+    MFRC522_interface *m_pMfrc522{nullptr};
+    Nfc_interface *m_pNfc{nullptr};
+    NfcControl_interface *m_pNfcControl{nullptr};
+    // mp3
+    DfMiniMp3_interface *m_pDfMini{nullptr};
+    Mp3Play_interface *m_pMp3Play{nullptr};
+    Mp3Control_interface *m_pMp3Control{nullptr};
+    VoiceMenu *m_pVoiceMenu{nullptr};
+    // UTILITIES
+    PowerManager_interface *m_pPwrCtrl{nullptr};
+    MessageHander_interface *m_pMessageHandler{nullptr};
     // timer instances
     SimpleTimer *m_pMenuTimer{nullptr};
     SimpleTimer *m_pLullabyeTimer{nullptr};
     SimpleTimer *m_pIdleTimer{nullptr};
     SimpleTimer *m_pDfMiniPromptTimer{nullptr};
-    // PERIPHERY
-    // Init tag reader
-    MFRC522_implementation *m_pMfrc522{nullptr}; // concrete NFC HW
-    Nfc_interface *m_pNfc{nullptr};
-    NfcControl *m_pNfcControl{nullptr}; // Constructor injection of concrete reader
-    // DFPlayer Mini setup
-    DfMini *m_pDfMini{nullptr};
-    Mp3Play_implementation *m_pMp3Play{nullptr};
-
-// User Input
-#if USERINPUT_VARIANT == THREE_BUTTONS
-    ClickEncoder_implementation m_pinPlPs{ClickEncoder_implementation(PINPLPS, USERINPUTACTIVE_STATE)};
-    ClickEncoder_implementation m_pinNext{ClickEncoder_implementation(PINPREV, USERINPUTACTIVE_STATE)};
-    ClickEncoder_implementation m_pinPrev{ClickEncoder_implementation(PINNEXT, USERINPUTACTIVE_STATE)};
-    UserInput_3Buttons m_UserInput{
-        &m_pinPlPs,
-        &m_pinNext,
-        &m_pinPrev,
-        ENC_LONGPRESSREPEATINTERVAL};
-#elif USERINPUT_VARIANT == ONE_ENCODER
-    UserInput_ClickEncoder m_UserInput{
-        ClickEncoder_implementation(PINA,
-                                    PINB,
-                                    ENCSW,
-                                    ENC_STEPSPERNOTCH,
-                                    USERINPUTACTIVE_STATE)};
-    // #elif USERINPUT_VARIANT == FIVE_BUTTONS
-#endif
-
-    // Work member objects -----------------------
-    Mp3Control m_pMp3Control{Mp3Control(m_pDfMini,
-                                        m_pMp3Play,
-                                        m_pNfcControl,
-                                        m_pMessageHandler)};
-    VoiceMenu m_VoiceMenu{VoiceMenu(m_pMp3Play,
-                                    m_pNfcControl,
-                                    m_pMessageHandler,
-                                    m_pPwrCtrl,
-                                    m_pMenuTimer)};
 };
 #endif // SYSTEM_H
