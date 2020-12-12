@@ -1,5 +1,7 @@
 #include "Mp3Play_implementation.h"
 
+#include "Arduino_config.h"
+
 Mp3Play_implementation::Mp3Play_implementation(Arduino_DIcontainer_interface *pArduinoHal,
                                                DfMiniMp3_interface *pDfMini,
                                                SimpleTimer *pLullabyeTimer,

@@ -2,10 +2,10 @@
 #define MESSAGEHANDLER_IMPLEMENTATION_H
 
 #include "Arduino_DIcontainer_interface.h"
-#include "SimpleTimer/SimpleTimer.h"
 #include "DfMiniMp3/DFMiniMp3_interface.h"
 
 #include "MessageHandler_interface.h"
+class SimpleTimer;
 
 class MessageHandler : public MessageHander_interface
 {

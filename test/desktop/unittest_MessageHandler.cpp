@@ -4,6 +4,8 @@
 #include "mocks/unittest_ArduinoIf_mocks.h"
 #include "mocks/unittest_DfMiniMp3_mocks.h"
 
+#include "Tonuino_config.h"
+#include "SimpleTimer/SimpleTimer.h"
 #include "../MessageHandler/MessageHandler_implementation.h"
 
 using ::testing::_;
@@ -65,7 +67,7 @@ TEST_F(MessageHandlerTest, PromptMessage_noSkipNotPlaying_Timeout)
 {
     VoicePrompt prompt;
     prompt.allowSkip = false;
-    prompt.promptId = MSG_CONFIRMED;
+    prompt.promptId = MSG_HELP;
 
     ON_CALL(m_dfMiniMp3Mock, isPlaying()).WillByDefault(Return(false));                                                              // not playing
     ON_CALL(m_dfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_messageTimer, &SimpleTimer::timerTick));
@@ -91,7 +93,7 @@ TEST_F(MessageHandlerTest, PromptMessage_noSkipPlaying_onlyStartTimeout)
 {
     VoicePrompt prompt;
     prompt.allowSkip = false;
-    prompt.promptId = MSG_CONFIRMED;
+    prompt.promptId = MSG_STARTUP;
     // timeout not elapsing
     EXPECT_CALL(m_dfMiniMp3Mock, isPlaying())
         .Times(3)

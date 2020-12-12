@@ -116,6 +116,7 @@ TEST_F(Nfc_write, tagWriteSuccess_returnsSuccessNotification)
 {
     ON_CALL(m_mfrc, isCardPresent()).WillByDefault(Return(true));
     ON_CALL(m_mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
+    ON_CALL(m_mfrc, tagLogin(_)).WillByDefault(Return(true));
     ON_CALL(m_mfrc, tagWrite(_, _, _)).WillByDefault(Return(true));
     uint8_t dataToWrite[16] = {};
 
@@ -167,6 +168,7 @@ TEST_F(Nfc_read, tagReadSuccess_returnsSuccessNotification)
 {
     ON_CALL(m_mfrc, isCardPresent()).WillByDefault(Return(true));
     ON_CALL(m_mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
+    ON_CALL(m_mfrc, tagLogin(_)).WillByDefault(Return(true));
     ON_CALL(m_mfrc, tagRead(_, _, _)).WillByDefault(Return(true));
     uint8_t readData[16] = {};
 

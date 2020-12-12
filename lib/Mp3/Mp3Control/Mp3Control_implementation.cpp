@@ -1,5 +1,7 @@
 #include "Mp3Control/Mp3Control_implementation.h"
 
+#include "Tonuino_config.h"
+
 Mp3Control::Mp3Control(DfMiniMp3_interface *pDfMini,
                        Mp3Play_interface *pPlayer,
                        NfcControl_interface *pNfcControl,

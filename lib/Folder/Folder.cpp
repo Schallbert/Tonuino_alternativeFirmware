@@ -1,3 +1,5 @@
+#include "Arduino_config.h"
+
 #include "Folder.h"
 
 //Folders

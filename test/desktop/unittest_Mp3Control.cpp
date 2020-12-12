@@ -3,6 +3,7 @@
 
 #include "../UserInput/UserInput/UserInput_interface.h"
 #include "../Mp3/Mp3Control/Mp3Control_implementation.h"
+#include "Tonuino_config.h"
 
 #include "mocks/unittest_Mp3Play_mocks.h"
 #include "mocks/unittest_DfMiniMp3_mocks.h"

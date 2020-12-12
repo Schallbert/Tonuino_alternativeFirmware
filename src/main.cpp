@@ -76,4 +76,3 @@ void timer1Task_1ms()
         pSys->timer1Task_1ms();
     } 
 }
-#endif

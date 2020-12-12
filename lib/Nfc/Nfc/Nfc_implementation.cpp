@@ -35,7 +35,7 @@ bool Nfc_implementation::writeTag(byte blockAddress, byte *dataToWrite)
         status = m_pConcreteTag->writeTag(blockAddress, dataToWrite);
     }
     setTagOffline();
-    setNotification(status, NfcNotify::tagWriteSuccess, NfcNotify::tagWriteError);
+    printNotification(status, NfcNotify::tagWriteSuccess, NfcNotify::tagWriteError);
     return status;
 }
 
@@ -47,11 +47,11 @@ bool Nfc_implementation::readTag(byte blockAddress, byte *readResult)
         status = m_pConcreteTag->readTag(blockAddress, readResult);
     }
     setTagOffline();
-    setNotification(status, NfcNotify::tagReadSuccess, NfcNotify::tagReadError);
+    printNotification(status, NfcNotify::tagReadSuccess, NfcNotify::tagReadError);
     return status;
 }
 
-void Nfc_implementation::setNotification(bool status, NfcNotify::eNfcNotify successMessage, NfcNotify::eNfcNotify failureMessage)
+void Nfc_implementation::printNotification(bool status, NfcNotify::eNfcNotify successMessage, NfcNotify::eNfcNotify failureMessage)
 {
     static NfcNotify::eNfcNotify message{NfcNotify::noMessage};
     NfcNotify::eNfcNotify newMessage{NfcNotify::noMessage};
@@ -90,15 +90,16 @@ bool Nfc_implementation::setTagOnline()
 bool Nfc_implementation::getTag()
 {
     bool status{false};
-    if (m_pConcreteTag)
+    if (m_pConcreteTag != nullptr)
     {
         delete m_pConcreteTag; // make sure to delete earlier instances (mem leak)
+        m_pConcreteTag = nullptr;
     }
     m_pConcreteTag = NfcTag_factory::getInstance(m_pMfrc522);
-    if (m_pConcreteTag)
+    if (m_pConcreteTag != nullptr)
     {
         status = true; // returned non-null ptr, tag type implemented
     }
-    setNotification(status, NfcNotify::noMessage, NfcNotify::tagTypeNotImplementedError);
+    printNotification(status, NfcNotify::noMessage, NfcNotify::tagTypeNotImplementedError);
     return status;
 }

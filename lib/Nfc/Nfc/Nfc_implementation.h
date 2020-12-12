@@ -61,7 +61,7 @@ private:
     // gets concrete, fitting tag instance from factory
     bool getTag();
     // Helper method, for better readability: takes status of function and returns input Notification
-    void setNotification(bool status, NfcNotify::eNfcNotify sucessMessage, NfcNotify::eNfcNotify failureMessage);
+    void printNotification(bool status, NfcNotify::eNfcNotify sucessMessage, NfcNotify::eNfcNotify failureMessage);
 
 private:
     MFRC522_interface *m_pMfrc522{nullptr};
