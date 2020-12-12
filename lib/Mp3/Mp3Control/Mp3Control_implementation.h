@@ -57,7 +57,7 @@ public:
                NfcControl_interface *pNfcControl,
                MessageHander_interface *pMsgHandler);
 
-    void setUserInput(UserInput::eUserRequest input) override;
+    void setUserInput(UserInput_interface::eUserRequest input) override;
     void loop() override;
     void setTagState(Nfc_interface::eTagState input) override;
     void setBlocked(bool isBlocked) override;
@@ -88,7 +88,7 @@ private:
     NfcControl_interface *m_pNfcControl{nullptr};
     MessageHander_interface *m_pMessageHandler{nullptr};
 
-    UserInput::eUserRequest m_userInput{UserInput::NO_ACTION};
+    UserInput_interface::eUserRequest m_userInput{UserInput_interface::NO_ACTION};
     Nfc_interface::eTagState m_tagState{Nfc_interface::NO_TAG};
     bool m_blocked{false};
     typedef void (Mp3Control::*dispatcher)(); // table of function pointers

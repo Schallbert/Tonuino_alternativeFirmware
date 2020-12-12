@@ -5,17 +5,17 @@ void UserInput_ClickEncoder::userinputServiceIsr()
     m_pEncoder->service();
 }
 
-UserInput::eUserRequest UserInput_ClickEncoder::getUserRequest()
+UserInput_interface::eUserRequest UserInput_ClickEncoder::getUserRequest()
 {
     //Poll for current encoder position and button state
     userinputRefresh();
 
     if (buttonState == ClickEncoder_interface::DoubleClicked)
     {
-        UserInput::userInputLocked = !UserInput::userInputLocked; // Doubleclick: lock buttons
+        UserInput_interface::userInputLocked = !UserInput_interface::userInputLocked; // Doubleclick: lock buttons
     }
 
-    if (UserInput::userInputLocked)
+    if (UserInput_interface::userInputLocked)
     {
         return NO_ACTION;
     }
@@ -83,17 +83,17 @@ void UserInput_3Buttons::userinputServiceIsr()
     m_pPrevButton->service();
 }
 
-UserInput::eUserRequest UserInput_3Buttons::getUserRequest()
+UserInput_interface::eUserRequest UserInput_3Buttons::getUserRequest()
 {
     //Get current button's states
     userinputRefresh();
 
     if (buttonStates.plpsButton == Encoder_longPressRepeat::DoubleClicked)
     {
-        UserInput::userInputLocked = !UserInput::userInputLocked;
+        UserInput_interface::userInputLocked = !UserInput_interface::userInputLocked;
     }
 
-    if (UserInput::userInputLocked)
+    if (UserInput_interface::userInputLocked)
     {
         return NO_ACTION;
     }

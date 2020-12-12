@@ -8,7 +8,7 @@ VoiceMenu::~VoiceMenu()
     }
 }
 
-void VoiceMenu::setUserInput(UserInput::eUserRequest input)
+void VoiceMenu::setUserInput(UserInput_interface::eUserRequest input)
 {
     m_userInput = input;
 }
@@ -62,7 +62,7 @@ void VoiceMenu::checkEnterLinkMenu()
 void VoiceMenu::checkEnterDeleteMenu()
 {
     if ((m_tagState == Nfc_interface::ACTIVE_KNOWN_TAG) &&
-        (m_userInput == UserInput::PP_LONGPRESS))
+        (m_userInput == UserInput_interface::PP_LONGPRESS))
     {
         m_pMenuInstance = Menu_factory::getInstance(Menu_factory::DELETE_MENU,
                                                     m_pNfcControl,
@@ -97,7 +97,7 @@ bool VoiceMenu::isComplete()
 void VoiceMenu::dispatchInputs()
 {
     typedef VoiceMenu VM;
-    static const dispatcher dispatchTable[UserInput::NUMBER_OF_REQUESTS] =
+    static const dispatcher dispatchTable[UserInput_interface::NUMBER_OF_REQUESTS] =
         {
             //NOAC,     PL_PS,     PP_LP,     NEXT_,     PREV_,     INC_V,     DEC_V,
             &VM::none, &VM::conf, &VM::abrt, &VM::next, &VM::prev, &VM::none, &VM::none};

@@ -1,7 +1,5 @@
-#ifndef UNIT_TEST
-
 // Includes -------------------------
-#include <avr/sleep.h>
+//#include <avr/sleep.h>
 
 // project includes -------
 #include <TimerOne.h>
@@ -46,14 +44,16 @@ void setup()
 // - solve reset lullabye timer on button press DONE
 // - FEATURE: change Lullabye in a way that it's a configurable feature, not a playmode. DONE
 
-// - implement power save (arduino, nfc, etc.)
-
 // - solve naming differences (underscores) of HAL with namespaces!
 // - solve all TODOS.
+// - cleanup #includes and move implementation includes to cpps
 
 // - Integration testing on device
 
+// - FEATURE: implement power save (arduino, nfc, etc.)
 // - FEATURE: Card stays on system or can be removed while playing? Config?
+// - FEATURE: Configuring menu for items that currently require reprogramming
+// - FEAUTRE: Lullaybe time per Card (currently system level only)
 
 void loop()
 {
@@ -76,4 +76,4 @@ void timer1Task_1ms()
         pSys->timer1Task_1ms();
     } 
 }
-#endif //UNIT_TEST
+#endif

@@ -28,7 +28,7 @@ public:
     ~VoiceMenu();
 
 public:
-    void setUserInput(UserInput::eUserRequest input);
+    void setUserInput(UserInput_interface::eUserRequest input);
     void setTagState(Nfc_interface::eTagState input);
     bool isActive();
     void loop();
@@ -58,7 +58,7 @@ private:
 
     typedef void (VoiceMenu::*dispatcher)(); // table of function pointers
 
-    UserInput::eUserRequest m_userInput{UserInput::NO_ACTION};
+    UserInput_interface::eUserRequest m_userInput{UserInput_interface::NO_ACTION};
     Nfc_interface::eTagState m_tagState{Nfc_interface::NO_TAG};
 
     Menu_interface *m_pMenuInstance{nullptr};

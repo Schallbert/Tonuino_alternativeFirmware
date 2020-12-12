@@ -3,7 +3,7 @@
 
 #include "../Arduino/Arduino_types.h"
 
-class UserInput
+class UserInput_interface
 {
     //Interface class of UserInput implementation
     /*  UserInput gets the user's requests for device control,
@@ -29,6 +29,7 @@ protected:
     bool userInputLocked{false};
 
 public:
+    virtual ~UserInput_interface(){};
     virtual eUserRequest getUserRequest(void) = 0; // returns user's request to main program
     virtual void userinputServiceIsr(void) = 0;  // recurring task to poll UserInput's connected hardware
 

@@ -7,7 +7,7 @@
 #include "Tonuino_config.h"
 #include "Arduino_config.h"
 
-class UserInput_ClickEncoder : public UserInput
+class UserInput_ClickEncoder : public UserInput_interface
 {
     //Interface implementation for clickEncoder
     //  NO_ACTION = 0,
@@ -43,7 +43,7 @@ private:
     ClickEncoder_interface::eButtonState buttonState{ClickEncoder_interface::Open};
 }; // UserInput_ClickEncoder
 
-class UserInput_3Buttons : public UserInput
+class UserInput_3Buttons : public UserInput_interface
 {
     //Interface implementation for 3 buttons
     //  NO_ACTION = 0,
