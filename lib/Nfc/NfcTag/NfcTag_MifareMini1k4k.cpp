@@ -1,4 +1,6 @@
-#include "../Nfc/NfcTag/NfcTag_MifareMini1k4k.h"
+#include "Tonuino_config.h"
+
+#include "NfcTag_MifareMini1k4k.h"
 
 bool NfcTag_MifareMini1k4k::readTag(byte blockAddress, byte *readResult)
 {

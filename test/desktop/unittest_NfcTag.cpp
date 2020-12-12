@@ -1,7 +1,10 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include "Tonuino_config.h"
+
 #include "mocks/unittest_Nfc_mocks.h"
+
 #include "../Nfc/NfcTag/NfcTag_factory.h"
 
 // This file tests the Nfc implementation

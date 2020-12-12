@@ -2,8 +2,6 @@
 #define NFCTAG_INTERFACE_H
 
 #include "../Arduino/Arduino_types.h"
-#include "Tonuino_config.h"
-#include "../MFRC522/MFRC522_interface.h"
 
 class NfcTag_interface
 {

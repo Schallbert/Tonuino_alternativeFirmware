@@ -1,3 +1,5 @@
+#include "Arduino_config.h"
+#include "../NfcTag/NfcTag_factory.h"
 #include "Nfc_implementation.h"
 
 NfcControl_interface::eTagState Nfc_implementation::getTagPresence()

@@ -4,6 +4,7 @@
 #include <gmock/gmock.h>
 
 #include "../Nfc/NfcControl/NfcControl_interface.h"
+class Folder;
 
 using ::testing::NiceMock;
 using ::testing::_;

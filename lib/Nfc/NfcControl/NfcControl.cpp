@@ -1,3 +1,4 @@
+#include "Tonuino_config.h"
 #include "NfcControl.h"
 
 NfcControl::NfcControl(Nfc_interface *pNfc,

@@ -1,11 +1,11 @@
 #ifndef NFC_IMPLEMENTATION_H
 #define NFC_IMPLEMENTATION_H
 
-#include "Arduino_config.h"
-#include "../MFRC522/MFRC522_interface.h" // to access actual HW
-#include "../Nfc/Nfc_interface.h"
-#include "../NfcTag/NfcTag_factory.h"
+#include "../MFRC522/MFRC522_interface.h"
 #include "../MessageHandler/MessageHandler_interface.h"
+
+#include "NfcTag/NfcTag_interface.h"
+#include "../Nfc/Nfc_interface.h"
 
 class NfcNotify
 {

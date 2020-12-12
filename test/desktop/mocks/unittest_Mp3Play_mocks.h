@@ -3,8 +3,8 @@
 
 #include <gmock/gmock.h>
 
-#include "Folder.h"
 #include "../Mp3/Mp3Play/Mp3Play_interface.h"
+class Folder;
 
 class Mock_Mp3Play : public Mp3Play_interface
 {

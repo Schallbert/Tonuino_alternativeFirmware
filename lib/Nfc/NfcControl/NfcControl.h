@@ -1,12 +1,10 @@
 #ifndef NFCCONTROL_H
 #define NFCCONTROL_H
 
-#include "Folder.h"
 #include "NfcControl_interface.h"
 #include "Nfc/Nfc_interface.h"
 #include "MessageHandler_interface.h"
-
-#include "Tonuino_config.h"
+#include "Folder.h"
 
 class NfcControlNotify
 {

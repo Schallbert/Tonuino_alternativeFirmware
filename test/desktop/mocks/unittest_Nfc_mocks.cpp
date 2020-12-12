@@ -1,3 +1,6 @@
+#include "Tonuino_config.h"
+#include "Folder.h"
+
 #include "unittest_Nfc_mocks.h"
 
 void Fake_Nfc::initNfc()
