@@ -1,3 +1,6 @@
+#include "Tonuino_config.h"
+#include "Arduino_config.h"
+
 #include "UserInput_implementation.h"
 
 void UserInput_ClickEncoder::userinputServiceIsr()

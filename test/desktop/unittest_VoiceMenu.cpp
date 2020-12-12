@@ -6,8 +6,10 @@
 #include "mocks/unittest_PowerManager_Mocks.h"
 #include "mocks/unittest_MessageHandler_mocks.h"
 
-#include "../VoiceMenu/VoiceMenu.h"
-#include "../Utilities/SimpleTimer/SimpleTimer.h"
+#include "Folder.h"
+#include "Tonuino_config.h"
+#include "VoiceMenu.h"
+#include "SimpleTimer/SimpleTimer.h"
 
 using ::testing::_;
 using ::testing::NiceMock;

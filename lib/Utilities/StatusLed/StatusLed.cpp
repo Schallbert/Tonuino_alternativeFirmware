@@ -1,3 +1,5 @@
+#include "Arduino_interface.h"
+
 #include "StatusLed.h"
 
 StatusLed::StatusLed(Arduino_interface_pins *pPins,

@@ -1,3 +1,5 @@
+#include "../Config/Tonuino_config.h"
+#include "../Utilities/SimpleTimer/SimpleTimer.h"
 #include "PowerManager_implementation.h"
 
 void PowerManager::requestKeepAlive()

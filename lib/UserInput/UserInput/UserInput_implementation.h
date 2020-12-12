@@ -4,8 +4,6 @@
 #include "../UserInput/UserInput_interface.h"
 #include "../ClickEncoder/ClickEncoder_interface.h"
 #include "../UserInput/ClickEncoder/ClickEncoder_supportsLongPress.h"
-#include "Tonuino_config.h"
-#include "Arduino_config.h"
 
 class UserInput_ClickEncoder : public UserInput_interface
 {
@@ -100,30 +98,30 @@ private:
     ButtonStates buttonStates;
 }; // UserInput_3Buttons
 
-    //    This is the factory class, designed to create the right UserInput
-    //    object based on input parameter, handing a pointer to the requested object back
-    //    to the caller.
+//    This is the factory class, designed to create the right UserInput
+//    object based on input parameter, handing a pointer to the requested object back
+//    to the caller.
 
-    // -------------------------------------------------------------------
-    // Depending on UserInput config, behavior will be as follows:
-    // -------------------------------------------------------------------
-    // number 1,2,3... = Button/Encoder number
-    // short press = SP
-    // long press = LP
-    // turn right = TR
-    // turn left = TL
-    // turn left pressed = PTL
-    // turn right pressed = PTR
-    // long press both buttons = LPB
-    // place or remove Nfc Tag = TAG
-    // -------------------------------------------------------------------
-    // userinput action  ONE_ENCODER  ENCODER_2  BUTTONS_2  BUTTONS_3  BUTTONS_4  BUTTONS_5
-    // PLAY_PAUSE,       SP            SP1         TAG     SP2         TAG         SP3
-    // PP_LONGPRESS,     LP            SP1         LPB     LP2         LPB         LP3
-    // NEXT_TRACK,       TR            TR1         SP2     SP3         SP4         SP5
-    // PREV_TRACK,       TL            TL1         SP1     SP1         SP1         SP1
-    // INC_VOLUME,       PTR           TR2         LP2     LP3         SP3         SP4
-    // DEC_VOLUME,       PTL           TL2         LP1     LP1         SP2         SP2
-    // -------------------------------------------------------------------
+// -------------------------------------------------------------------
+// Depending on UserInput config, behavior will be as follows:
+// -------------------------------------------------------------------
+// number 1,2,3... = Button/Encoder number
+// short press = SP
+// long press = LP
+// turn right = TR
+// turn left = TL
+// turn left pressed = PTL
+// turn right pressed = PTR
+// long press both buttons = LPB
+// place or remove Nfc Tag = TAG
+// -------------------------------------------------------------------
+// userinput action  ONE_ENCODER  ENCODER_2  BUTTONS_2  BUTTONS_3  BUTTONS_4  BUTTONS_5
+// PLAY_PAUSE,       SP            SP1         TAG     SP2         TAG         SP3
+// PP_LONGPRESS,     LP            SP1         LPB     LP2         LPB         LP3
+// NEXT_TRACK,       TR            TR1         SP2     SP3         SP4         SP5
+// PREV_TRACK,       TL            TL1         SP1     SP1         SP1         SP1
+// INC_VOLUME,       PTR           TR2         LP2     LP3         SP3         SP4
+// DEC_VOLUME,       PTL           TL2         LP1     LP1         SP2         SP2
+// -------------------------------------------------------------------
 
 #endif // USERINPUT_IMPLEMENTATION_H

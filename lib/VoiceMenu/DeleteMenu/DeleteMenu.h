@@ -1,12 +1,10 @@
 #ifndef DELETEMENU_H
 #define DELETEMENU_H
 
-#include "Folder.h"
-#include "../Mp3/Mp3Play/Mp3Play_interface.h"
-#include "../Nfc/NfcControl/NfcControl_interface.h"
-#include "../PowerManager/PowerManager_interface.h"
+#include "Mp3Play/Mp3Play_interface.h"
+#include "NfcControl/NfcControl_interface.h"
+#include "PowerManager_interface.h"
 
-#include "Menu_interface.h"
 #include "DeleteMenu_StateManager.h"
 
 /* 

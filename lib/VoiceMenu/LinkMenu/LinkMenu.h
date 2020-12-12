@@ -1,13 +1,12 @@
 #ifndef LINKMENU_H
 #define LINKMENU_H
 
-#include "Folder.h"
 #include "../Mp3/Mp3Play/Mp3Play_interface.h"
 #include "../Nfc/NfcControl/NfcControl_interface.h"
 #include "../PowerManager/PowerManager_interface.h"
 
-#include "Menu_Factory.h"
 #include "LinkMenu_StateManager.h"
+#include "Menu_interface.h"
 /* 
 Once a new card is detected, It has to be linked to an existing folder on the SD card.
 */

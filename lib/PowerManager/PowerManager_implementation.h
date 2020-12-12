@@ -1,13 +1,13 @@
 #ifndef POWERMANAGER_IMPLEMENTATION_H
 #define POWERMANAGER_IMPLEMENTATION_H
 
-#include "../Utilities/StatusLed/StatusLed.h"
-#include "../Utilities/KeepAlive/KeepAlive.h"
+#include "../Config/Arduino_config.h"
 
 #include "../PowerManager/PowerManager_interface.h"
-#include "../Config/Arduino_config.h"
-#include "../Config/Tonuino_config.h"
-#include "../Utilities/SimpleTimer/SimpleTimer.h"
+
+#include "../Utilities/StatusLed/StatusLed.h"
+#include "../Utilities/KeepAlive/KeepAlive.h"
+class SimpleTimer;
 
 /*
 The PowerManager class controls both

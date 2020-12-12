@@ -1,3 +1,6 @@
+#include "Menu_interface.h"
+#include "Folder.h"
+
 #include "DeleteMenu.h"
 
 void DeleteMenu::confirm()

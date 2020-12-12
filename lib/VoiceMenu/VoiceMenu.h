@@ -1,14 +1,12 @@
 #ifndef VOICEMENU_H
 #define VOICEMENU_H
 
-#include "../UserInput/UserInput/UserInput_interface.h"
-#include "../Nfc/Nfc/Nfc_interface.h"
-#include "../Utilities/SimpleTimer/SimpleTimer.h"
+#include "UserInput/UserInput_interface.h"
+#include "Menu_interface.h"
 
-#include "Menu_factory.h"
-
-class NfcControl_interface;
 class Mp3Play_interface;
+class SimpleTimer;
+
 
 // Owns the concrete voice menu instance using a factory.
 // Handles creation, their instatiation and destruction.

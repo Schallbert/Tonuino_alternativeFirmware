@@ -1,3 +1,6 @@
+#include "LinkMenu/LinkMenu.h"
+#include "DeleteMenu/DeleteMenu.h"
+
 #include "Menu_factory.h"
 
 Menu_interface *Menu_factory::getInstance(eMenuType menuType,

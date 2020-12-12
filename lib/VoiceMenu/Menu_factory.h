@@ -3,11 +3,9 @@
 
 #include "Menu_interface.h"
 
-#include "LinkMenu/LinkMenu.h"
-#include "DeleteMenu/DeleteMenu.h"
-
-class NfcControl_interface;
 class Mp3Play_interface;
+class MessageHander_interface;
+class PowerManager_interface;
 
 class Menu_factory
 {

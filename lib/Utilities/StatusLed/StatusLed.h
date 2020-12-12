@@ -1,7 +1,7 @@
 #ifndef STATUSLED_H
 #define STATUSLED_H
 
-#include "../Arduino/Arduino_interface.h"
+class Arduino_interface_pins;
 
 class StatusLed
 {
@@ -19,7 +19,7 @@ public:
     // Constructor
     StatusLed(Arduino_interface_pins *pPins,
               uint8_t ledPinId,
-              bool pinActiveState = HIGH,
+              bool pinActiveState = true,
               uint16_t msFlashSlow = 500,
               uint16_t msFlashQuick = 100);
 

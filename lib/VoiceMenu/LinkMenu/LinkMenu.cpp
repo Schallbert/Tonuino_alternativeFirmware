@@ -1,4 +1,8 @@
+#include "Menu_Factory.h"
+#include "Folder.h"
+
 #include "LinkMenu.h"
+
 
 void LinkMenu::confirm()
 {

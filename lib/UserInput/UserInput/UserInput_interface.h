@@ -1,8 +1,6 @@
 #ifndef USERINPUT_INTERFACE_H
 #define USERINPUT_INTERFACE_H
 
-#include "../Arduino/Arduino_types.h"
-
 class UserInput_interface
 {
     //Interface class of UserInput implementation

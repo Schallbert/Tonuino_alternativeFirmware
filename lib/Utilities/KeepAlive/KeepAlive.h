@@ -1,7 +1,7 @@
 #ifndef KEEPALIVE_H //include guard
 #define KEEPALIVE_H
 
-#include "../Arduino/Arduino_interface.h"
+class Arduino_interface_pins;
 
 class KeepAlive
 {

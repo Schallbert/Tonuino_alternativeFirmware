@@ -1,3 +1,7 @@
+#include "Tonuino_config.h"
+#include "SimpleTimer/SimpleTimer.h"
+
+#include "Menu_factory.h"
 #include "VoiceMenu.h"
 
 VoiceMenu::~VoiceMenu()

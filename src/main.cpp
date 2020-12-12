@@ -3,7 +3,8 @@
 
 // project includes -------
 #include <TimerOne.h>
-#include "../Tonuino/System.h"
+#include "Tonuino_config.h"
+#include "System.h"
 
 void timer1Task_1ms();
 

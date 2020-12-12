@@ -4,7 +4,6 @@
 #include "../Arduino/Arduino_types.h"
 #include "../Config/Tonuino_config.h"
 
-
 class DeleteMenu_StateManager
 {
 public:

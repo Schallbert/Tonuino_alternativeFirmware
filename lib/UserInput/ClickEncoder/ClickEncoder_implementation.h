@@ -10,6 +10,7 @@ public:
     // button only
     ClickEncoder_implementation(uint8_t pinButton, bool buttonActiveState)
     {
+        // button use only, PinA and PinB not used
         m_pEncoder = new ClickEncoder(-1, -1, pinButton, 4, buttonActiveState);
     }
     // full ClickEncoder

@@ -6,6 +6,9 @@
 #include "mocks/unittest_PowerManager_Mocks.h"
 #include "mocks/unittest_MessageHandler_mocks.h"
 
+#include "Tonuino_config.h"
+#include "Folder.h"
+
 #include "Menu_factory.h"
 
 using ::testing::_;

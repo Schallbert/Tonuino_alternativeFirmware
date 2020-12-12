@@ -1,3 +1,5 @@
+#include "../Arduino/Arduino_interface.h"
+
 #include "KeepAlive.h"
 
 //Interface implementation for active low TTL/Relay logic
