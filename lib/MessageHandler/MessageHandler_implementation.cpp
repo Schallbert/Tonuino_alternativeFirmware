@@ -1,6 +1,7 @@
 #include "Tonuino_config.h"
-#include "MessageHandler_implementation.h"
 #include "SimpleTimer/SimpleTimer.h"
+
+#include "MessageHandler_implementation.h"
 
 void MessageHandler::printMessage(const char *message)
 {

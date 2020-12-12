@@ -1,6 +1,8 @@
 #include "Mp3Control/Mp3Control_implementation.h"
 
 #include "Tonuino_config.h"
+#include "../Utilities/SimpleTimer/SimpleTimer.h"
+#include "../Folder/Folder.h"
 
 Mp3Control::Mp3Control(DfMiniMp3_interface *pDfMini,
                        Mp3Play_interface *pPlayer,

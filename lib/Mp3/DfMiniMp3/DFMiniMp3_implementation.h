@@ -1,10 +1,12 @@
 #ifndef DFMINIMP3_IMPLEMENTATION_H
 #define DFMINIMP3_IMPLEMENTATION_H
-#include "DFMiniMp3.h"
 #include "../Mp3/DFMiniMp3/DFMiniMp3_interface.h"
 #include "../MessageHandler/MessageHandler_interface.h"
-#include <Arduino_config.h>
+#include "Arduino_config.h"
+
 #include <SoftwareSerial.h>
+
+#include "DFMiniMp3.h"
 
 class Mp3Notify
 {
