@@ -114,8 +114,7 @@ void System::notifyShutdown()
     m_pMessageHandler->promptMessage(shutdown);
 }
 
-// TODO: OUTSOURCE(?)
-bool System::loop()
+void System::loop()
 {
     UserInput_interface::eUserRequest userRequest{m_pUserInput->getUserRequest()};
     NfcControl_interface::eTagState tagState{m_pNfcControl->getTagPresence()};
@@ -130,8 +129,11 @@ bool System::loop()
     m_pMp3Control->setUserInput(userRequest);
     m_pMp3Control->setBlocked(m_pVoiceMenu->isActive()); // VoiceMenu overrules Playback
     m_pMp3Control->loop();
+}
 
-    return (!m_pPwrCtrl->isShutdownRequested()); // TODO: Code smell?!
+bool System::isShutdownRequested() const
+{
+    return (m_pPwrCtrl->isShutdownRequested()); 
 }
 
 void System::timer1Task_1ms()

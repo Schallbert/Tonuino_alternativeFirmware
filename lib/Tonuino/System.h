@@ -39,13 +39,16 @@ public:
     ~System();
 
 public:
-    bool loop(); // main loop. Read inputs, react and set outputs. Returns true while not requested to shut down.
+    void loop(); // main loop. Read inputs, react and set outputs.
     void timer1Task_1ms();
-    void timer1Task_1sec();
+
+    bool isShutdownRequested() const;
 
 private:
     void notifyStartup();
     void notifyShutdown();
+
+    void timer1Task_1sec();
 
 private:
     // Arduino Hardware Abstraction Layer

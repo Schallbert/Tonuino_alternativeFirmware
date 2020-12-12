@@ -44,10 +44,10 @@ void setup()
 // - Take NFC state decision on SYSTEM level DONE
 // - solve reset lullabye timer on button press DONE
 // - FEATURE: change Lullabye in a way that it's a configurable feature, not a playmode. DONE
+// - cleanup #includes and move implementation includes to cpps DONE
 
 // - solve naming differences (underscores) of HAL with namespaces!
 // - solve all TODOS.
-// - cleanup #includes and move implementation includes to cpps
 
 // - Integration testing on device
 
@@ -60,7 +60,8 @@ void loop()
 {
     //LowPower.sleep(100);
     // SLEEP for 100ms to reduce power consumption?
-    if (!pSys->loop()) // shutdown requested
+    
+    if (pSys->isShutdownRequested())
     {
         pTimer1->detachInterrupt();
         delete pTimer1;

@@ -29,7 +29,7 @@
 #define VOLUME_MAX 22                                          // Absolute max: 30
 #define VOLUME_MIN 2                                           // Absolute min: 0
 #define VOLUME_INIT 7                                          // Start volume. Anything between 0 and 30.
-#define DFMINI_EQ_SETTING DfMiniMp3_interface::DfMp3_Eq_Normal // TODO How to solve for enum belonging to foreign file?
+#define DFMINI_EQ_SETTING DfMiniMp3_interface::DfMp3_Eq_Normal
 
 //Timer1 interrupt task
 #define TIMERONE_TASK_INTERVAL_USEC 1000 // 1ms
