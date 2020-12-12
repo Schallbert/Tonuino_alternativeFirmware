@@ -46,7 +46,6 @@ void setup()
 // - FEATURE: change Lullabye in a way that it's a configurable feature, not a playmode. DONE
 // - cleanup #includes and move implementation includes to cpps DONE
 
-// - solve naming differences (underscores) of HAL with namespaces!
 // - create well-readable README.md
 // - solve all TODOS.
 
