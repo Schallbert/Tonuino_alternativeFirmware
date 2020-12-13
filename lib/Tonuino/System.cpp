@@ -100,6 +100,7 @@ System::~System()
 
 void System::notifyStartup()
 {
+    m_pMessageHandler->printMessage("Startup");
     VoicePrompt startup;
     startup.promptId = MSG_STARTUP;
     startup.allowSkip = false;
@@ -108,6 +109,7 @@ void System::notifyStartup()
 
 void System::notifyShutdown()
 {
+    m_pMessageHandler->printMessage("Shutdown");
     VoicePrompt shutdown;
     shutdown.promptId = MSG_SHUTDOWN;
     shutdown.allowSkip = false;

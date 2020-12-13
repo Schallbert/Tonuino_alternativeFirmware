@@ -8,8 +8,8 @@
 
 void timer1Task_1ms();
 
-System* pSys{nullptr};
-TimerOne* pTimer1{nullptr};
+System *pSys{nullptr};
+TimerOne *pTimer1{nullptr};
 
 void setup()
 {
@@ -61,7 +61,6 @@ void loop()
 {
     //LowPower.sleep(100);
     // SLEEP for 100ms to reduce power consumption?
-
     if (pSys->isShutdownRequested())
     {
         pTimer1->detachInterrupt();
@@ -74,8 +73,8 @@ void loop()
 
 void timer1Task_1ms()
 {
-    if(pSys != nullptr)
+    if (pSys != nullptr)
     {
         pSys->timer1Task_1ms();
-    } 
+    }
 }
