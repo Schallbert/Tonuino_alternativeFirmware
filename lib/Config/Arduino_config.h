@@ -48,7 +48,7 @@
 #define KEEPALIVE_PIN 16 //PB6 9 A0
 #define KEEPALIVE_ACTIVE_STATE LOW
 //Feedback LED
-#define LED_PIN 13 //for test purposes only, otherwise 16 //PC0 25
+#define LED_PIN 16 //PC0 25
 #define LED_ACTIVE_STATE HIGH
 
 #endif // ARDUINO_CONFIG_H

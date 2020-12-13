@@ -48,12 +48,13 @@ void setup()
 
 // - create well-readable README.md
 // - solve all TODOS.
+// - rename Folder to PlayList
 
-// - Integration testing on device
+// - BIG TASK: Integration testing on device
 
 // - FEATURE: implement power save (arduino, nfc, etc.)
 // - FEATURE: Card stays on system or can be removed while playing? Config?
-// - FEATURE: Configuring menu for items that currently require reprogramming
+// - FEATURE: VoiceMenu for configuration items that currently require reprogramming
 // - FEAUTRE: Lullaybe time per Card (currently system level only)
 
 void loop()
