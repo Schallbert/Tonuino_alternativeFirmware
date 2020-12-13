@@ -3,13 +3,24 @@
 
 #include "MessageHandler_implementation.h"
 
+MessageHandler::MessageHandler(Arduino_interface_com *pSerial,
+
+                               DfMiniMp3_interface *pDfMini,
+                               SimpleTimer *pDfMiniPromptTimer) : m_pSerial(pSerial),
+                                                                  m_pDfMiniMp3(pDfMini),
+                                                                  m_pDfMiniPromptTimer(pDfMiniPromptTimer)
+{
+    pSerial->com_begin(DEBUGSERIAL_BAUDRATE);
+};
+
 void MessageHandler::printMessage(const char *message)
 {
     if (message != nullptr)
     {
         if (*message != 0)
         {
-            m_pSerial->com_println(message);
+            //m_pSerial->com_println(message);
+            m_pSerial->com_print(42);
         }
     }
 }

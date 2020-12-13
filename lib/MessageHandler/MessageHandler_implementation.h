@@ -13,9 +13,7 @@ public:
     MessageHandler(Arduino_interface_com *pSerial,
 
                    DfMiniMp3_interface *pDfMini,
-                   SimpleTimer *pDfMiniPromptTimer) : m_pSerial(pSerial),
-                                                      m_pDfMiniMp3(pDfMini),
-                                                      m_pDfMiniPromptTimer(pDfMiniPromptTimer){};
+                   SimpleTimer *pDfMiniPromptTimer);
 
     virtual void printMessage(const char *message) override;
     virtual void promptMessage(const VoicePrompt &message) override;
