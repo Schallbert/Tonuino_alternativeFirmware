@@ -1,7 +1,7 @@
 #ifndef MP3CONTROL_INTERFACE_H
 #define MP3CONTROL_INTERFACE_H
 
-#include "../Arduino/Arduino_types.h"
+#include "../Arduino_HardwareAbstraction/Arduino_types.h"
 #include "../UserInput/UserInput/UserInput_interface.h"
 #include "../Nfc/Nfc/Nfc_interface.h"
 

@@ -1,4 +1,4 @@
-#include "../Arduino/Arduino_interface.h"
+#include "../Arduino_HardwareAbstraction/Arduino_interface.h"
 
 #include "KeepAlive.h"
 

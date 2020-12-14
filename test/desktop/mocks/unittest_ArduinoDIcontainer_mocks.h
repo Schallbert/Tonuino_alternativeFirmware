@@ -2,8 +2,8 @@
 #define UNITTEST_ARDUINODICONTAINER_MOCKS_H
 
 #include <gmock/gmock.h>
-#include "../Arduino/Arduino_DIcontainer_interface.h"
-#include "../Arduino/Arduino_interface.h"
+#include "../Arduino_HardwareAbstraction/Arduino_DIcontainer_interface.h"
+#include "../Arduino_HardwareAbstraction/Arduino_interface.h"
 
 #include "unittest_ArduinoIf_mocks.h"
 

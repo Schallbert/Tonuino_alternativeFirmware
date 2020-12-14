@@ -4,7 +4,7 @@
 ///// INTERFACES
 
 // ARDUINO HAL
-#include "../Arduino/Arduino_DIcontainer_interface.h"
+#include "../Arduino_HardwareAbstraction/Arduino_DIcontainer_interface.h"
 // NFC
 #include "../Nfc/MFRC522/MFRC522_interface.h"
 #include "../Nfc/Nfc/Nfc_interface.h"

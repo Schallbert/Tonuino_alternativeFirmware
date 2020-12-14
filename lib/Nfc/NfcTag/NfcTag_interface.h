@@ -1,7 +1,7 @@
 #ifndef NFCTAG_INTERFACE_H
 #define NFCTAG_INTERFACE_H
 
-#include "../Arduino/Arduino_types.h"
+#include "../Arduino_HardwareAbstraction/Arduino_types.h"
 
 class NfcTag_interface
 {

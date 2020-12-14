@@ -1,7 +1,7 @@
 #ifndef ARDUINO_IMPLEMENTATION_H
 #define ARDUINO_IMPLEMENTATION_H
 
-#include "../Arduino/Arduino_interface.h"
+#include "../Arduino_HardwareAbstraction/Arduino_interface.h"
 
 class Arduino_pins : public Arduino_interface_pins
 {

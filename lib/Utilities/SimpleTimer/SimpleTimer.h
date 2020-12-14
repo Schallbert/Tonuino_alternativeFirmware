@@ -1,7 +1,7 @@
 #ifndef SIMPLETIMER_H
 #define SIMPLETIMER_H
 
-#include "../Arduino/Arduino_types.h"
+#include "../Arduino_HardwareAbstraction/Arduino_types.h"
 
 /* Simple timer class that, if started, counts up to a timeout.
 If interrogated, will reveal if elapsed or not. 

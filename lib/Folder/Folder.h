@@ -1,7 +1,7 @@
 #ifndef FOLDER_H
 #define FOLDER_H
 
-#include "../Arduino/Arduino_DIcontainer_interface.h"
+#include "../Arduino_HardwareAbstraction/Arduino_DIcontainer_interface.h"
 #include "../MessageHandler/MessageHandler_interface.h"
 
 class Folder

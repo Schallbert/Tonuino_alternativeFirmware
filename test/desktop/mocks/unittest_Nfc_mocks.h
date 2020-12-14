@@ -2,7 +2,7 @@
 #define UNITTEST_NFCTAG_MOCKS_H
 
 #include "gmock/gmock.h"
-#include "../Arduino/Arduino_types.h"
+#include "../Arduino_HardwareAbstraction/Arduino_types.h"
 #include "../Nfc/Nfc/Nfc_interface.h"
 #include "../Nfc/NfcTag/NfcTag_interface.h"
 #include "../Nfc/MFRC522/MFRC522_interface.h"

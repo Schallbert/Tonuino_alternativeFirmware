@@ -1,7 +1,7 @@
 #ifndef CLICKENCODER_INTERFACE_H
 #define CLICKENCODER_INTERFACE_H
 
-#include "../Arduino/Arduino_types.h"
+#include "../Arduino_HardwareAbstraction/Arduino_types.h"
 
 class ClickEncoder_interface
 {

@@ -1,3 +1,6 @@
+#include "Arduino_DIcontainer_interface.h"
+#include "DfMiniMp3/DFMiniMp3_interface.h"
+
 #include "Tonuino_config.h"
 #include "SimpleTimer/SimpleTimer.h"
 
