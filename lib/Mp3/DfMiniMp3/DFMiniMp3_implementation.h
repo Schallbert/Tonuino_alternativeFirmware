@@ -1,7 +1,7 @@
 #ifndef DFMINIMP3_IMPLEMENTATION_H
 #define DFMINIMP3_IMPLEMENTATION_H
-#include "../Mp3/DFMiniMp3/DFMiniMp3_interface.h"
-#include "../MessageHandler/MessageHandler_interface.h"
+#include "DFMiniMp3_interface.h"
+#include "Arduino_interface.h"
 #include "Arduino_config.h"
 
 #include <SoftwareSerial.h>
@@ -93,8 +93,8 @@ class DfMini : public DfMiniMp3_interface
 {
 public:
     DfMini(Arduino_interface_pins *pArduinoPins,
-           MessageHander_interface *pMessageHandler) : m_pArduinoPins(pArduinoPins),
-                                                       m_pMessageHandler(pMessageHandler)
+           Arduino_interface_com *pSerial) : m_pArduinoPins(pArduinoPins),
+                                               m_pSerial(pSerial)
     {
         m_dfMiniMp3.begin(); // init serial and start DfMiniMp3 module
         m_dfMiniMp3.loop();
@@ -191,14 +191,14 @@ private:
         const char *newMessage = Mp3Notify::messageToString();
         if (message != newMessage)
         {
-            m_pMessageHandler->printMessage(message);
+            m_pSerial->com_println(message);
             message = newMessage;
         }
     }
 
 private:
     Arduino_interface_pins *m_pArduinoPins{nullptr};
-    MessageHander_interface *m_pMessageHandler{nullptr};
+    Arduino_interface_com *m_pSerial{nullptr};
     // Solution for constructor error found here:
     //https://stackoverflow.com/questions/35762196/expected-a-type-specifier-error-when-creating-an-object-of-a-class-inside-anot
     // Does not work with m_Mp3SwSerial(DFMINI_RX, DFMINI_TX)
