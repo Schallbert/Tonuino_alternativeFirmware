@@ -6,19 +6,38 @@
 #include "Tonuino_config.h"
 #include "System.h"
 
+System *tonuino{nullptr};
+TimerOne timer1;
+
 void timer1Task_1ms();
-
-System *pSys{nullptr};
-TimerOne *pTimer1{nullptr};
-
 void setup()
 {
-    pSys = new System();
-    pTimer1 = new TimerOne();
-    //Init Timer1 for timer tasks
-    pTimer1->initialize(TIMERONE_TASK_INTERVAL_USEC);
-    pTimer1->attachInterrupt(timer1Task_1ms); // only allowed for "free" functions, NO METHODS :/
-    pTimer1->start();
+    tonuino = new System();
+    
+    timer1.initialize(TIMERONE_TASK_INTERVAL_USEC);
+    timer1.attachInterrupt(timer1Task_1ms); // only allowed for "free" functions, NO METHODS :/
+
+    tonuino->notifyStartup();
+}
+
+void loop()
+{
+    //LowPower.sleep(100);
+    // SLEEP for 100ms to reduce power consumption?
+    tonuino->loop();
+    /*
+    if (tonuino->isShutdownRequested())
+    {
+        tonuino->notifyShutdown();
+        timer1.detachInterrupt();
+        tonuino->shutdown(); // shutdown system
+        return; // leave loop
+    }*/
+}
+
+void timer1Task_1ms()
+{
+    tonuino->timer1Task_1ms();
 }
 
 // TODO:::::::
@@ -56,25 +75,3 @@ void setup()
 // - FEATURE: Card stays on system or can be removed while playing? Config?
 // - FEATURE: VoiceMenu for configuration items that currently require reprogramming
 // - FEAUTRE: Lullaybe time per Card (currently system level only)
-
-void loop()
-{
-    //LowPower.sleep(100);
-    // SLEEP for 100ms to reduce power consumption?
-    if (pSys->isShutdownRequested())
-    {
-        pTimer1->detachInterrupt();
-        delete pTimer1;
-        delete pSys; // shutdown system
-        pSys = nullptr;
-        return; // leave loop
-    }
-}
-
-void timer1Task_1ms()
-{
-    if (pSys != nullptr)
-    {
-        pSys->timer1Task_1ms();
-    }
-}

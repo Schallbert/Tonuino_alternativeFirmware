@@ -11,6 +11,7 @@
 #include "../Mp3/Mp3Play/Mp3Play_implementation.h"
 #include "../Mp3/Mp3Control/Mp3Control_implementation.h"
 // USER INPUT
+// TODO: change to interface
 #include "../UserInput/UserInput/UserInput_implementation.h"
 #include "../UserInput/ClickEncoder/ClickEncoder_implementation.h"
 // MISC
@@ -26,16 +27,15 @@ System::System()
     m_pMenuTimer = new SimpleTimer();
     m_pLullabyeTimer = new SimpleTimer();
     m_pDfMiniPromptTimer = new SimpleTimer();
-    // Utilities
+    // Periphery
+    m_pDfMini = new DfMini(m_pArduinoHal->getPins(), m_pArduinoHal->getSerial());
     m_pMessageHandler = new MessageHandler(m_pArduinoHal->getSerial(),
                                            m_pDfMini,
                                            m_pDfMiniPromptTimer);
     m_pPwrCtrl = new PowerManager(m_pArduinoHal->getPins(), m_pIdleTimer);
-    // Periphery
     m_pMfrc522 = new MFRC522_implementation();
     m_pNfc = new Nfc_implementation(m_pMfrc522, m_pMessageHandler);
     m_pNfcControl = new NfcControl(m_pNfc, m_pMessageHandler);
-    m_pDfMini = new DfMini(m_pArduinoHal->getPins(), m_pMessageHandler);
     m_pMp3Play = new Mp3Play_implementation(m_pArduinoHal,
                                             m_pDfMini,
                                             m_pLullabyeTimer,
@@ -43,41 +43,22 @@ System::System()
     m_pMp3Control = new Mp3Control(m_pDfMini,
                                    m_pMp3Play,
                                    m_pNfcControl,
-                                   m_pMessageHandler);                             
+                                   m_pMessageHandler);
     m_pVoiceMenu = new VoiceMenu(m_pMp3Play,
                                  m_pNfcControl,
                                  m_pMessageHandler,
                                  m_pPwrCtrl,
                                  m_pMenuTimer);
 
-// User Input
-#if USERINPUT_VARIANT == THREE_BUTTONS
-    ClickEncoder_implementation m_pinPlPs{ClickEncoder_implementation(PINPLPS, USERINPUTACTIVE_STATE)};
-    ClickEncoder_implementation m_pinNext{ClickEncoder_implementation(PINPREV, USERINPUTACTIVE_STATE)};
-    ClickEncoder_implementation m_pinPrev{ClickEncoder_implementation(PINNEXT, USERINPUTACTIVE_STATE)};
-    UserInput_3Buttons m_pUserInput{
-        &m_pinPlPs,
-        &m_pinNext,
-        &m_pinPrev,
-        ENC_LONGPRESSREPEATINTERVAL};
-#elif USERINPUT_VARIANT == ONE_ENCODER
-    UserInput_ClickEncoder m_pUserInput{
-        ClickEncoder_implementation(PINA,
-                                    PINB,
-                                    ENCSW,
-                                    ENC_STEPSPERNOTCH,
-                                    USERINPUTACTIVE_STATE)};
-    // #elif USERINPUT_VARIANT == FIVE_BUTTONS
-#endif
+    m_pUserInputFactory = new UserInput_factory();
+    m_pUserInput = m_pUserInputFactory->getInstance(UserInput_factory::THREE_BUTTONS);
 
     m_pPwrCtrl->requestKeepAlive();
-    notifyStartup();
+    notifyCorrectlyInitialized();
 }
 
-System::~System()
+void System::shutdown()
 {
-    notifyShutdown();
-
     // delete dependency objects
     delete m_pMessageHandler;
     delete m_pMfrc522;
@@ -90,12 +71,31 @@ System::~System()
     delete m_pIdleTimer;
     delete m_pDfMiniPromptTimer;
     delete m_pVoiceMenu;
-    delete m_pUserInput;
+    delete m_pUserInputFactory;
 
     // finally shut down system
     m_pPwrCtrl->allowShutdown();
     delete m_pPwrCtrl;
     delete m_pArduinoHal;
+}
+
+void System::notifyCorrectlyInitialized()
+{
+    if (m_pArduinoHal && m_pDfMiniPromptTimer && m_pIdleTimer && m_pLullabyeTimer && m_pMenuTimer && m_pMessageHandler && m_pPwrCtrl 
+    && m_pMfrc522
+    && m_pNfc
+    && m_pNfcControl
+    && m_pMp3Play
+    && m_pMp3Control
+    && m_pVoiceMenu
+    && m_pUserInput)
+    {
+        m_pMessageHandler->printMessage("Init OK");
+    }
+    else
+    {
+        m_pMessageHandler->printMessage("Init ERROR!");
+    }
 }
 
 void System::notifyStartup()
@@ -135,7 +135,7 @@ void System::loop()
 
 bool System::isShutdownRequested() const
 {
-    return (m_pPwrCtrl->isShutdownRequested()); 
+    return (m_pPwrCtrl->isShutdownRequested());
 }
 
 void System::timer1Task_1ms()

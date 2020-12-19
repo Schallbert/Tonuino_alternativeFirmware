@@ -14,8 +14,8 @@
 #include "../Mp3/Mp3Play/Mp3Play_interface.h"
 #include "../Mp3/Mp3Control/Mp3Control_interface.h"
 // USER INPUT
+#include "UserInput/UserInput_factory.h"
 #include "../UserInput/UserInput/UserInput_interface.h"
-#include "../UserInput/ClickEncoder/ClickEncoder_interface.h"
 // MISC
 #include "../PowerManager/PowerManager_interface.h"
 #include "../MessageHandler/MessageHandler_interface.h"
@@ -36,24 +36,25 @@ class System
 {
 public:
     System();
-    ~System();
 
 public:
     void loop(); // main loop. Read inputs, react and set outputs.
+    void notifyStartup();
+    void notifyShutdown();
     void timer1Task_1ms();
+    void shutdown();
 
     bool isShutdownRequested() const;
 
 private:
-    void notifyStartup();
-    void notifyShutdown();
-
+    void notifyCorrectlyInitialized();
     void timer1Task_1sec();
 
 private:
     // Arduino Hardware Abstraction Layer
     Arduino_DIcontainer_interface *m_pArduinoHal{nullptr};
     // PERIPHERY
+    UserInput_factory *m_pUserInputFactory{nullptr};
     UserInput_interface *m_pUserInput{nullptr};
     // nfc
     MFRC522_interface *m_pMfrc522{nullptr};
