@@ -11,18 +11,13 @@
 #define RST_PIN 9 // PB1 15
 #define SS_PIN 10 // PB2 16
 //MP3
-#define DFMINI_PIN_ISIDLE 4 // PD4 6
-#define DFMINI_RX 2   // PD2 4
-#define DFMINI_TX 3   // PD3 5
+#define DFMINI_PIN_ISIDLE 4 // PD4 7
+#define DFMINI_RX 2   // PD2 5
+#define DFMINI_TX 3   // PD3 6
 //Serial
 // RX 0  PD0 2
 // TX 1  PD1 3
 //HMI inputs
-
-//User Input variants
-#define THREE_BUTTONS 0
-#define ONE_ENCODER 1
-#define FIVE_BUTTONS 2
 
 // This is the selector of input variants.
 // Change it to your preferred variant

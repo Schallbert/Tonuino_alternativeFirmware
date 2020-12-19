@@ -9,7 +9,7 @@ Menu_interface *Menu_factory::getInstance(eMenuType menuType,
                                           MessageHander_interface *pMessageHandler,
                                           PowerManager_interface *pPowerMgr)
 {
-    Menu_interface *instance;
+    static Menu_interface *instance;
     switch (menuType)
     {
     case DELETE_MENU:
