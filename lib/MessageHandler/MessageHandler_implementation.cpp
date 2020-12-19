@@ -6,6 +6,8 @@
 
 #include "MessageHandler_implementation.h"
 
+const char* messageTimeout = "Prompt timeout";
+
 MessageHandler::MessageHandler(Arduino_interface_com *pSerial,
 
                                DfMiniMp3_interface *pDfMini,
@@ -22,8 +24,7 @@ void MessageHandler::printMessage(const char *message)
     {
         if (*message != 0)
         {
-            //m_pSerial->com_println(message);
-            m_pSerial->com_print(42);
+            m_pSerial->com_println(message);
         }
     }
 }
@@ -54,22 +55,32 @@ bool MessageHandler::isNewPrompt(const VoicePrompt &message)
     return (result);
 }
 
-void MessageHandler::waitForPromptToStart() const
+void MessageHandler::waitForPromptToStart()
 {
     m_pDfMiniPromptTimer->start(WAIT_DFMINI_READY);
-    while (!m_pDfMiniMp3->isPlaying() && !(m_pDfMiniPromptTimer->isElapsed()))
-    {
-        m_pDfMiniMp3->loop(); //wait for track to start (until timeout kicks in)
-    }
+    while (!m_pDfMiniMp3->isPlaying())
+        {
+            m_pDfMiniMp3->loop(); //wait for track to start (until timeout kicks in)
+            if (m_pDfMiniPromptTimer->isElapsed())
+            {
+                printMessage(messageTimeout);
+                break;
+            }
+        }
     m_pDfMiniPromptTimer->stop();
 }
 
-void MessageHandler::waitForPromptToFinish() const
+void MessageHandler::waitForPromptToFinish()
 {
     m_pDfMiniPromptTimer->start(TIMEOUT_PROMPT_PLAYED);
-    while (m_pDfMiniMp3->isPlaying() && !(m_pDfMiniPromptTimer->isElapsed()))
+    while (m_pDfMiniMp3->isPlaying())
     {
         m_pDfMiniMp3->loop(); //wait for track to finish
+        if (m_pDfMiniPromptTimer->isElapsed())
+        {
+            printMessage(messageTimeout);
+            break;
+        }
     }
     m_pDfMiniPromptTimer->stop();
 }

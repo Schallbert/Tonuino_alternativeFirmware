@@ -23,8 +23,8 @@ public:
 
 private:
     bool isNewPrompt(const VoicePrompt &message);
-    void waitForPromptToStart() const;
-    void waitForPromptToFinish() const;
+    void waitForPromptToStart();
+    void waitForPromptToFinish();
 
 private:
     Arduino_interface_com *m_pSerial{nullptr};
