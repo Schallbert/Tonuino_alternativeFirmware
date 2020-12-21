@@ -6,25 +6,23 @@
 #include "Tonuino_config.h"
 #include "System.h"
 
-System *tonuino{nullptr};
+System tonuino;
 TimerOne timer1;
 
 void timer1Task_1ms();
 void setup()
-{
-    tonuino = new System();
-    
+{   
     timer1.initialize(TIMERONE_TASK_INTERVAL_USEC);
     timer1.attachInterrupt(timer1Task_1ms); // only allowed for "free" functions, NO METHODS :/
-
-    tonuino->notifyStartup();
+    
+    tonuino.notifyStartup();
 }
 
 void loop()
 {
     //LowPower.sleep(100);
     // SLEEP for 100ms to reduce power consumption?
-    tonuino->loop();
+    tonuino.loop();
     /*
     if (tonuino->isShutdownRequested())
     {
@@ -37,7 +35,7 @@ void loop()
 
 void timer1Task_1ms()
 {
-    tonuino->timer1Task_1ms();
+    tonuino.timer1Task_1ms();
 }
 
 // TODO:::::::

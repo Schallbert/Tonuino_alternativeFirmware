@@ -15,6 +15,10 @@ Mp3Control::Mp3Control(DfMiniMp3_interface *pDfMini,
 
     // Init communication with module and setup
     m_pDfMiniMp3->setVolume(VOLUME_INIT);
+    if(m_pDfMiniMp3->getVolume() == VOLUME_INIT)
+    {
+        m_pMessageHandler->printMessage("DFMini COM established. Volume set.");
+    }
 }
 
 void Mp3Control::setUserInput(UserInput_interface::eUserRequest input)

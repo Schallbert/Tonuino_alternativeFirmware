@@ -13,10 +13,7 @@ MessageHandler::MessageHandler(Arduino_interface_com *pSerial,
                                DfMiniMp3_interface *pDfMini,
                                SimpleTimer *pDfMiniPromptTimer) : m_pSerial(pSerial),
                                                                   m_pDfMiniMp3(pDfMini),
-                                                                  m_pDfMiniPromptTimer(pDfMiniPromptTimer)
-{
-    pSerial->com_begin(DEBUGSERIAL_BAUDRATE);
-};
+                                                                  m_pDfMiniPromptTimer(pDfMiniPromptTimer){};
 
 void MessageHandler::printMessage(const char *message)
 {
@@ -35,7 +32,7 @@ void MessageHandler::promptMessage(const VoicePrompt &message)
 
     if (isNewPrompt(message))
     {
-        m_pDfMiniMp3->playAdvertisement(message.promptId);
+        m_pDfMiniMp3->playMp3FolderTrack(message.promptId);
         waitForPromptToStart();
 
         if (!message.allowSkip)
@@ -43,6 +40,7 @@ void MessageHandler::promptMessage(const VoicePrompt &message)
             waitForPromptToFinish();
         }
     }
+    m_pDfMiniMp3->loop();
 }
 
 bool MessageHandler::isNewPrompt(const VoicePrompt &message)

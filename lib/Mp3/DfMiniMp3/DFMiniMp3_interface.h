@@ -34,7 +34,7 @@ public:
     // plays specified track on sd:/<folder_number>
     virtual void playFolderTrack(uint8_t folderId, uint8_t trackId) = 0;
     // plays specified file on sd:/advert/####fileId
-    virtual void playAdvertisement(uint16_t trackId) = 0;
+    virtual void playMp3FolderTrack(uint16_t trackId) = 0;
     virtual uint8_t getFolderTrackCount(uint8_t folderId) = 0;
 
     virtual bool isTrackFinished() const = 0;

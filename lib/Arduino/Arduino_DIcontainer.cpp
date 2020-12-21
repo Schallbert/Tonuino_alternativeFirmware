@@ -1,4 +1,5 @@
 #include "Arduino_implementation.h"
+#include "Tonuino_config.h"
 
 #include "Arduino_DIcontainer.h"
 
@@ -10,6 +11,8 @@ Arduino_DIcontainer::Arduino_DIcontainer()
     m_pSerial = new Arduino_com();
     m_pRandom = new Arduino_random();
     m_pEeprom = new Arduino_eeprom();
+
+    m_pSerial->com_begin(DEBUGSERIAL_BAUDRATE);
 }
 
 Arduino_DIcontainer::~Arduino_DIcontainer()

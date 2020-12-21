@@ -7,6 +7,7 @@ NfcControl_interface::eTagState Nfc_implementation::getTagPresence()
     NfcControl_interface::eTagState returnValue{NfcControl_interface::NO_TAG};
     if (m_pMfrc522->isCardPresent())
     {
+        m_pMessageHandler->printMessage("DEBUG:TagDetected!");
         // A card is present!
         if (!m_pMfrc522->isNewCardPresent())
         {
@@ -27,6 +28,7 @@ NfcControl_interface::eTagState Nfc_implementation::getTagPresence()
 void Nfc_implementation::initNfc()
 {
     m_pMfrc522->init(); // Init MFRC522
+    m_pMessageHandler->printMessage(NfcNotify::toString(NfcNotify::tagReaderInit));
 }
 
 bool Nfc_implementation::writeTag(byte blockAddress, byte *dataToWrite)

@@ -1,26 +1,23 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
-///// INTERFACES
-
 // ARDUINO HAL
-#include "../Arduino_HardwareAbstraction/Arduino_DIcontainer_interface.h"
+#include "Arduino.h"
+#include "../Arduino/Arduino_DIcontainer.h"
 // NFC
-#include "../Nfc/MFRC522/MFRC522_interface.h"
-#include "../Nfc/Nfc/Nfc_interface.h"
-#include "../Nfc/NfcControl/NfcControl_interface.h"
+#include "../Nfc/MFRC522/MFRC522_implementation.h"
+#include "../Nfc/Nfc/Nfc_implementation.h"
+#include "../Nfc/NfcControl/NfcControl.h"
 // MP3
-#include "../Mp3/DFMiniMp3/DFMiniMp3_interface.h"
-#include "../Mp3/Mp3Play/Mp3Play_interface.h"
-#include "../Mp3/Mp3Control/Mp3Control_interface.h"
+#include "../Mp3/DFMiniMp3/DFMiniMp3_implementation.h"
+#include "../Mp3/Mp3Play/Mp3Play_implementation.h"
+#include "../Mp3/Mp3Control/Mp3Control_implementation.h"
 // USER INPUT
 #include "UserInput/UserInput_factory.h"
-#include "../UserInput/UserInput/UserInput_interface.h"
 // MISC
-#include "../PowerManager/PowerManager_interface.h"
-#include "../MessageHandler/MessageHandler_interface.h"
+#include "../PowerManager/PowerManager_implementation.h"
+#include "../MessageHandler/MessageHandler_implementation.h"
 
-///// IMPLEMENTATIONS
 #include "../VoiceMenu/VoiceMenu.h"
 #include "../Utilities/SimpleTimer/SimpleTimer.h"
 
@@ -36,6 +33,7 @@ class System
 {
 public:
     System();
+    ~System() = default;
 
 public:
     void loop(); // main loop. Read inputs, react and set outputs.
@@ -44,34 +42,48 @@ public:
     void timer1Task_1ms();
     void shutdown();
 
-    bool isShutdownRequested() const;
+    bool isShutdownRequested();
 
 private:
-    void notifyCorrectlyInitialized();
     void timer1Task_1sec();
 
 private:
     // Arduino Hardware Abstraction Layer
-    Arduino_DIcontainer_interface *m_pArduinoHal{nullptr};
-    // PERIPHERY
-    UserInput_factory *m_pUserInputFactory{nullptr};
-    UserInput_interface *m_pUserInput{nullptr};
-    // nfc
-    MFRC522_interface *m_pMfrc522{nullptr};
-    Nfc_interface *m_pNfc{nullptr};
-    NfcControl_interface *m_pNfcControl{nullptr};
-    // mp3
-    DfMiniMp3_interface *m_pDfMini{nullptr};
-    Mp3Play_interface *m_pMp3Play{nullptr};
-    Mp3Control_interface *m_pMp3Control{nullptr};
-    VoiceMenu *m_pVoiceMenu{nullptr};
-    // UTILITIES
-    PowerManager_interface *m_pPwrCtrl{nullptr};
-    MessageHander_interface *m_pMessageHandler{nullptr};
+    Arduino_DIcontainer m_ArduinoHal{Arduino_DIcontainer()};
     // timer instances
-    SimpleTimer *m_pMenuTimer{nullptr};
-    SimpleTimer *m_pLullabyeTimer{nullptr};
-    SimpleTimer *m_pIdleTimer{nullptr};
-    SimpleTimer *m_pDfMiniPromptTimer{nullptr};
+    SimpleTimer m_MenuTimer{SimpleTimer()};
+    SimpleTimer m_LullabyeTimer{SimpleTimer()};
+    SimpleTimer m_IdleTimer{SimpleTimer()};
+    SimpleTimer m_DfMiniPromptTimer{SimpleTimer()};
+
+    DfMini m_DfMini{DfMini(m_ArduinoHal.getPins(), m_ArduinoHal.getSerial())};
+    // UTILITIES
+    PowerManager m_PwrCtrl{PowerManager(m_ArduinoHal.getPins(), &m_IdleTimer)};
+    MessageHandler m_MessageHandler{MessageHandler(m_ArduinoHal.getSerial(),
+                                                   &m_DfMini,
+                                                   &m_DfMiniPromptTimer)};
+    // PERIPHERY
+    /*
+    // nfc
+    MFRC522_implementation m_Mfrc522{MFRC522_implementation()};
+    Nfc_implementation m_Nfc{Nfc_implementation(&m_Mfrc522, &m_MessageHandler)};
+    NfcControl m_NfcControl{NfcControl(&m_Nfc, &m_MessageHandler)};
+    // mp3
+    Mp3Play_implementation m_Mp3Play{Mp3Play_implementation(&m_ArduinoHal,
+                                                            &m_DfMini,
+                                                            &m_LullabyeTimer,
+                                                            &m_MessageHandler)};
+    Mp3Control m_Mp3Control{Mp3Control(&m_DfMini,
+                                                 &m_Mp3Play,
+                                                 &m_NfcControl,
+                                                 &m_MessageHandler)};
+    VoiceMenu m_VoiceMenu{VoiceMenu(&m_Mp3Play,
+                                    &m_NfcControl,
+                                    &m_MessageHandler,
+                                    &m_PwrCtrl,
+                                    &m_MenuTimer)};
+    // userInput
+    UserInput_interface *m_pUserInput{nullptr};
+    */
 };
 #endif // SYSTEM_H

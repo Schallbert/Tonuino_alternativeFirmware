@@ -162,10 +162,10 @@ public:
         m_dfMiniMp3.loop();
     };
 
-    void playAdvertisement(uint16_t trackId)
+    void playMp3FolderTrack(uint16_t trackId)
     {
-        m_dfMiniMp3.playAdvertisement(trackId);
         m_dfMiniMp3.loop();
+        m_dfMiniMp3.playMp3FolderTrack(trackId);
     };
 
     uint8_t getFolderTrackCount(uint8_t folderId)

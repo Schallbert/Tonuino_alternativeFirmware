@@ -13,6 +13,7 @@ public:
     enum eNfcNotify
     {
         noMessage = 0,
+        tagReaderInit,
         tagWriteSuccess,
         tagReadSuccess,
         tagWriteError,
@@ -25,6 +26,7 @@ public:
 #if DEBUGSERIAL
         static const char *NOTIFY_STRING[] = {
             nullptr,
+            "Tag Reader Init",
             "Tag Write Success",
             "Tag Read Success",
             "Tag write Error",
