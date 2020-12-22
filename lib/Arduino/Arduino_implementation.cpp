@@ -57,6 +57,8 @@ void Arduino_delay::delay_us(unsigned int us)
 void Arduino_com::com_begin(unsigned long baudrate)
 {
     Serial.begin(baudrate);
+    Serial.print("Init serial @");
+    Serial.println(baudrate);
 }
 
 void Arduino_com::com_print(uint8_t i)

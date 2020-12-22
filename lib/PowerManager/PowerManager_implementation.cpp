@@ -29,33 +29,33 @@ void PowerManager::setPlayback(bool isPlaying)
     if (isPlaying)
     {
         m_led.set_led_behavior(StatusLed::solid);
-        m_pIdleTimer->stop();
+        m_rIdleTimer.stop();
     }
     else
     {
-        m_pIdleTimer->start(IDLE_TIMEOUT_SECS);
+        m_rIdleTimer.start(IDLE_TIMEOUT_SECS);
         m_led.set_led_behavior(StatusLed::flash_slow);
     }
 }
 
 void PowerManager::setDeleteMenu()
 {
-    m_pIdleTimer->stop();
+    m_rIdleTimer.stop();
     m_led.set_led_behavior(StatusLed::flash_quick); // Delete Menu
 }
 
 void PowerManager::setLinkMenu()
 {
-    m_pIdleTimer->stop();
+    m_rIdleTimer.stop();
     m_led.set_led_behavior(StatusLed::flash_slow); // Link Menu
 }
 
 void PowerManager::notifyTimerTick()
 {
-    m_pIdleTimer->timerTick(); // won't increment if stopped
-    if (m_pIdleTimer->isElapsed())
+    m_rIdleTimer.timerTick(); // won't increment if stopped
+    if (m_rIdleTimer.isElapsed())
     {
-        m_pIdleTimer->stop();
+        m_rIdleTimer.stop();
         requestShutdown();
     }
     m_led.led_service();

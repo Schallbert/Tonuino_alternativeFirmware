@@ -18,9 +18,9 @@ The PowerManager class controls both
 class PowerManager : public PowerManager_interface
 {
 public:
-    PowerManager(Arduino_interface_pins *pPinCtrl,
-                 SimpleTimer *pIdleTimer) : m_pPinControl(pPinCtrl),
-                                            m_pIdleTimer(pIdleTimer){};
+    PowerManager(Arduino_interface_pins &rPinCtrl,
+                 SimpleTimer &rIdleTimer) : m_rPinControl(rPinCtrl),
+                                            m_rIdleTimer(rIdleTimer){};
     ~PowerManager(){};
 
 public:
@@ -38,11 +38,11 @@ public:
     void notifyTimerTick() override;
 
 private:
-    Arduino_interface_pins *m_pPinControl{nullptr};
-    SimpleTimer *m_pIdleTimer{nullptr};
+    Arduino_interface_pins &m_rPinControl;
+    SimpleTimer &m_rIdleTimer;
     // Member objects
-    StatusLed m_led{StatusLed(m_pPinControl, LED_PIN, FLASHSLOWMS, FLASHQUICKMS, LED_ACTIVE_STATE)};
-    KeepAlive m_keepAlive{KeepAlive(m_pPinControl, KEEPALIVE_PIN, KEEPALIVE_ACTIVE_STATE)};
+    StatusLed m_led{StatusLed(m_rPinControl, LED_PIN, FLASHSLOWMS, FLASHQUICKMS, LED_ACTIVE_STATE)};
+    KeepAlive m_keepAlive{KeepAlive(m_rPinControl, KEEPALIVE_PIN, KEEPALIVE_ACTIVE_STATE)};
 };
 
 #endif // POWERMANAGER_IMPLEMENTATION_H

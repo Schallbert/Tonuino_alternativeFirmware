@@ -13,11 +13,11 @@ using ::testing::Return;
 class Mock_ArduinoDIcontainer : public Arduino_DIcontainer_interface
 {
 public:
-    MOCK_METHOD(Arduino_interface_pins *, getPins, (), (override));
-    MOCK_METHOD(Arduino_interface_delay *, getDelay, (), (override));
-    MOCK_METHOD(Arduino_interface_com *, getSerial, (), (override));
-    MOCK_METHOD(Arduino_interface_random *, getRandom, (), (override));
-    MOCK_METHOD(Arduino_interface_eeprom *, getEeprom, (), (override));
+    MOCK_METHOD(Arduino_interface_pins &, getPins, (), (override));
+    MOCK_METHOD(Arduino_interface_delay &, getDelay, (), (override));
+    MOCK_METHOD(Arduino_interface_com &, getSerial, (), (override));
+    MOCK_METHOD(Arduino_interface_random &, getRandom, (), (override));
+    MOCK_METHOD(Arduino_interface_eeprom &, getEeprom, (), (override));
 
     // "Tunnels" DIcontainer.
     // Returns a mock instance of any of the corresponding parent methods.

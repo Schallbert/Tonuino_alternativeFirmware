@@ -8,12 +8,11 @@
 
 const char* messageTimeout = "Prompt timeout";
 
-MessageHandler::MessageHandler(Arduino_interface_com *pSerial,
-
-                               DfMiniMp3_interface *pDfMini,
-                               SimpleTimer *pDfMiniPromptTimer) : m_pSerial(pSerial),
-                                                                  m_pDfMiniMp3(pDfMini),
-                                                                  m_pDfMiniPromptTimer(pDfMiniPromptTimer){};
+MessageHandler::MessageHandler(Arduino_interface_com &rSerial,
+                               DfMiniMp3_interface &rDfMini,
+                               SimpleTimer &rDfMiniPromptTimer) : m_rSerial(rSerial),
+                                                                  m_rDfMiniMp3(rDfMini),
+                                                                  m_rDfMiniPromptTimer(rDfMiniPromptTimer){};
 
 void MessageHandler::printMessage(const char *message)
 {
@@ -21,18 +20,16 @@ void MessageHandler::printMessage(const char *message)
     {
         if (*message != 0)
         {
-            m_pSerial->com_println(message);
+            m_rSerial.com_println(message);
         }
     }
 }
 
 void MessageHandler::promptMessage(const VoicePrompt &message)
 {
-    m_pDfMiniMp3->stop();
-
     if (isNewPrompt(message))
     {
-        m_pDfMiniMp3->playMp3FolderTrack(message.promptId);
+        m_rDfMiniMp3.playMp3FolderTrack(message.promptId);
         waitForPromptToStart();
 
         if (!message.allowSkip)
@@ -40,7 +37,6 @@ void MessageHandler::promptMessage(const VoicePrompt &message)
             waitForPromptToFinish();
         }
     }
-    m_pDfMiniMp3->loop();
 }
 
 bool MessageHandler::isNewPrompt(const VoicePrompt &message)
@@ -55,30 +51,30 @@ bool MessageHandler::isNewPrompt(const VoicePrompt &message)
 
 void MessageHandler::waitForPromptToStart()
 {
-    m_pDfMiniPromptTimer->start(WAIT_DFMINI_READY);
-    while (!m_pDfMiniMp3->isPlaying())
+    m_rDfMiniPromptTimer.start(WAIT_DFMINI_READY);
+    while (!m_rDfMiniMp3.isPlaying())
         {
-            m_pDfMiniMp3->loop(); //wait for track to start (until timeout kicks in)
-            if (m_pDfMiniPromptTimer->isElapsed())
+            m_rDfMiniMp3.loop(); //wait for track to start (until timeout kicks in)
+            if (m_rDfMiniPromptTimer.isElapsed())
             {
                 printMessage(messageTimeout);
                 break;
             }
         }
-    m_pDfMiniPromptTimer->stop();
+    m_rDfMiniPromptTimer.stop();
 }
 
 void MessageHandler::waitForPromptToFinish()
 {
-    m_pDfMiniPromptTimer->start(TIMEOUT_PROMPT_PLAYED);
-    while (m_pDfMiniMp3->isPlaying())
+    m_rDfMiniPromptTimer.start(TIMEOUT_PROMPT_PLAYED);
+    while (m_rDfMiniMp3.isPlaying())
     {
-        m_pDfMiniMp3->loop(); //wait for track to finish
-        if (m_pDfMiniPromptTimer->isElapsed())
+        m_rDfMiniMp3.loop(); //wait for track to finish
+        if (m_rDfMiniPromptTimer.isElapsed())
         {
             printMessage(messageTimeout);
             break;
         }
     }
-    m_pDfMiniPromptTimer->stop();
+    m_rDfMiniPromptTimer.stop();
 }

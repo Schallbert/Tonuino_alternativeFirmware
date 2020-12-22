@@ -58,10 +58,10 @@ private:
 
     DfMini m_DfMini{DfMini(m_ArduinoHal.getPins(), m_ArduinoHal.getSerial())};
     // UTILITIES
-    PowerManager m_PwrCtrl{PowerManager(m_ArduinoHal.getPins(), &m_IdleTimer)};
+    PowerManager m_PwrCtrl{PowerManager(m_ArduinoHal.getPins(), m_IdleTimer)};
     MessageHandler m_MessageHandler{MessageHandler(m_ArduinoHal.getSerial(),
-                                                   &m_DfMini,
-                                                   &m_DfMiniPromptTimer)};
+                                                   m_DfMini,
+                                                   m_DfMiniPromptTimer)};
     // PERIPHERY
     /*
     // nfc

@@ -87,17 +87,6 @@ bool Folder::isInitiated() const
 
 bool Folder::is_dependency_set()
 {
-    // Dependencies only strictly necessary for certain playmodes
-    /*if (m_ePlayMode == Folder::SAVEPROGRESS)
-    {
-        return (m_pArduinoHal != nullptr);
-    }
-    else if (m_ePlayMode == Folder::RANDOM)
-    {
-        return (m_pArduinoHal != nullptr);
-    }
-    else
-        return true; // no dependencies needed*/
     return (m_pArduinoHal != nullptr && m_pMessageHandler != nullptr);
 }
 
@@ -151,7 +140,7 @@ uint8_t Folder::getNextTrack()
     }
     if (m_ePlayMode == ePlayMode::SAVEPROGRESS)
     {
-        m_pArduinoHal->getEeprom()->eeprom_write(m_ui8FolderId, m_pTrackQueue[m_ui8CurrentQueueEntry]);
+        m_pArduinoHal->getEeprom().eeprom_write(m_ui8FolderId, m_pTrackQueue[m_ui8CurrentQueueEntry]);
     }
     return m_pTrackQueue[m_ui8CurrentQueueEntry];
 }
@@ -173,7 +162,7 @@ uint8_t Folder::getPrevTrack()
     }
     if (m_ePlayMode == ePlayMode::SAVEPROGRESS)
     {
-        m_pArduinoHal->getEeprom()->eeprom_write(m_ui8FolderId, m_pTrackQueue[m_ui8CurrentQueueEntry]);
+        m_pArduinoHal->getEeprom().eeprom_write(m_ui8FolderId, m_pTrackQueue[m_ui8CurrentQueueEntry]);
     }
     return m_pTrackQueue[m_ui8CurrentQueueEntry];
 }
@@ -203,12 +192,12 @@ void Folder::setup_track_queue()
     }
     case ePlayMode::SAVEPROGRESS:
         init_sorted_queue();
-        m_ui8CurrentQueueEntry = m_pArduinoHal->getEeprom()->eeprom_read(m_ui8FolderId);
+        m_ui8CurrentQueueEntry = m_pArduinoHal->getEeprom().eeprom_read(m_ui8FolderId);
         if (m_ui8CurrentQueueEntry > m_ui8TrackCount || m_ui8CurrentQueueEntry == 0)
         {
-            //  m_pArduinoHal->getEeprom() has never been written, contains some unknown value
+            //  m_pArduinoHal.getEeprom() has never been written, contains some unknown value
             m_ui8CurrentQueueEntry = 1; // set to first track
-            m_pArduinoHal->getEeprom()->eeprom_write(m_ui8FolderId, m_ui8CurrentQueueEntry);
+            m_pArduinoHal->getEeprom().eeprom_write(m_ui8FolderId, m_ui8CurrentQueueEntry);
         }
         break;
 
@@ -235,8 +224,8 @@ void Folder::shuffle_queue()
     uint8_t i = 1; // start at queue[1], queue[0] is always 0!
     uint8_t j = 1;
     uint8_t rnd = 0;
-    Arduino_interface_random *pRnd = m_pArduinoHal->getRandom();
-    pRnd->random_generateSeed(PINANALOG_RNDMGEN);
+    Arduino_interface_random &rRnd = m_pArduinoHal->getRandom();
+    rRnd.random_generateSeed(PINANALOG_RNDMGEN);
     bool alreadyInQueue = false;
     // Fill queue with non-repeating, random contents.
     while (i <= m_ui8TrackCount)
@@ -245,7 +234,7 @@ void Folder::shuffle_queue()
         // Number between 1 and m_ui8TrackCount is acceptable
         while (true)
         {
-            rnd = pRnd->random_generateUi8();
+            rnd = rRnd.random_generateUi8();
             if ((rnd > 0) && (rnd <= m_ui8TrackCount))
             {
                 break;

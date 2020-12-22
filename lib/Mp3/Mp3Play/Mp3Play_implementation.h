@@ -42,10 +42,10 @@ class Mp3Play_implementation : public Mp3Play_interface
 {
 
 public:
-    Mp3Play_implementation(Arduino_DIcontainer_interface *pArduinoHal,
-                           DfMiniMp3_interface *pDfMini,
-                           SimpleTimer *pLullabyeTimer,
-                           MessageHander_interface *pMsgHandler);
+    Mp3Play_implementation(Arduino_DIcontainer_interface &rArduinoHal,
+                           DfMiniMp3_interface &rDfMini,
+                           SimpleTimer &rLullabyeTimer,
+                           MessageHander_interface &rMsgHandler);
 
     void playFolder(Folder &folder) override;
 
@@ -63,10 +63,10 @@ private:
     uint8_t getTrackCountOfFolderOnSdCard(const Folder &folder) const;
 
 private:
-    Arduino_DIcontainer_interface *m_pArduinoHal{nullptr};
-    DfMiniMp3_interface *m_pDfMiniMp3{nullptr};
-    SimpleTimer *m_pLullabyeTimer{nullptr};
-    MessageHander_interface *m_pMessageHandler{nullptr};
+    Arduino_DIcontainer_interface &m_rArduinoHal;
+    DfMiniMp3_interface &m_rDfMiniMp3;
+    SimpleTimer &m_rLullabyeTimer;
+    MessageHander_interface &m_rMessageHandler;
 
     Folder m_currentFolder{};
 };

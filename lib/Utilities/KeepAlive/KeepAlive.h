@@ -18,7 +18,7 @@ class KeepAlive
     */
 public:
     //Note: For usage of a bistable relay, active must be inverted!
-    KeepAlive(Arduino_interface_pins *pPinCtrl, uint8_t ui8PinID, bool bActiveState);
+    KeepAlive(Arduino_interface_pins &rPinCtrl, uint8_t ui8PinID, bool bActiveState);
 
     // Physically keeps system powered (depending on external cirtuitry)
     void keep_alive();
@@ -30,7 +30,7 @@ public:
     void allowShutdown();
 
 private:
-    Arduino_interface_pins *m_pPinCtrl{nullptr};
+    Arduino_interface_pins &m_rPinCtrl;
     uint8_t m_ui8PinID;
     bool m_bPinActiveState{true};
 

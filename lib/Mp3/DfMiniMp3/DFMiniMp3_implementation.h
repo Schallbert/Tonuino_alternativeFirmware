@@ -92,9 +92,9 @@ public:
 class DfMini : public DfMiniMp3_interface
 {
 public:
-    DfMini(Arduino_interface_pins *pArduinoPins,
-           Arduino_interface_com *pSerial) : m_pArduinoPins(pArduinoPins),
-                                               m_pSerial(pSerial)
+    DfMini(Arduino_interface_pins &rArduinoPins,
+           Arduino_interface_com &rSerial) : m_rArduinoPins(rArduinoPins),
+                                               m_rSerial(rSerial)
     {
         m_dfMiniMp3.begin(); // init serial and start DfMiniMp3 module
         m_dfMiniMp3.loop();
@@ -181,7 +181,7 @@ public:
 
     bool isPlaying() const override
     {
-        return !(m_pArduinoPins->digital_read(DFMINI_PIN_ISIDLE));
+        return !(m_rArduinoPins.digital_read(DFMINI_PIN_ISIDLE));
     }
 
 private:
@@ -191,14 +191,14 @@ private:
         const char *newMessage = Mp3Notify::messageToString();
         if (message != newMessage)
         {
-            m_pSerial->com_println(message);
+            m_rSerial.com_println(message);
             message = newMessage;
         }
     }
 
 private:
-    Arduino_interface_pins *m_pArduinoPins{nullptr};
-    Arduino_interface_com *m_pSerial{nullptr};
+    Arduino_interface_pins &m_rArduinoPins;
+    Arduino_interface_com &m_rSerial;
     // Solution for constructor error found here:
     //https://stackoverflow.com/questions/35762196/expected-a-type-specifier-error-when-creating-an-object-of-a-class-inside-anot
     // Does not work with m_Mp3SwSerial(DFMINI_RX, DFMINI_TX)

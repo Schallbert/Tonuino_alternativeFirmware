@@ -2,17 +2,17 @@
 
 #include "StatusLed.h"
 
-StatusLed::StatusLed(Arduino_interface_pins *pPins,
+StatusLed::StatusLed(Arduino_interface_pins &rPins,
                      uint8_t ledPinId,
                      bool pinActiveState,
                      uint16_t msFlashSlow,
-                     uint16_t msFlashQuick) : m_pPinControl(pPins),
+                     uint16_t msFlashQuick) : m_rPinControl(rPins),
                                               m_ui8LedPinId(ledPinId),
                                               m_bPinAciveState(pinActiveState),
                                               m_ui16MsFlashSlow(msFlashSlow),
                                               m_ui16MsFlashQuick(msFlashQuick)
 {
-    m_pPinControl->pin_mode(m_ui8LedPinId, OUTPUT);
+    m_rPinControl.pin_mode(m_ui8LedPinId, OUTPUT);
     this->perform = &StatusLed::led_off; //Set default behavior of function pointer: LED off
     led_off();                           //init state is off
 }
@@ -50,12 +50,12 @@ void StatusLed::set_led_behavior(eLedState ledState)
 
 void StatusLed::led_off()
 {
-    m_pPinControl->digital_write(m_ui8LedPinId, !m_bPinAciveState);
+    m_rPinControl.digital_write(m_ui8LedPinId, !m_bPinAciveState);
 }
 
 void StatusLed::led_solid()
 {
-    m_pPinControl->digital_write(m_ui8LedPinId, m_bPinAciveState);
+    m_rPinControl.digital_write(m_ui8LedPinId, m_bPinAciveState);
 }
 
 void StatusLed::led_flash_slow()
@@ -73,7 +73,7 @@ void StatusLed::led_flash(uint16_t msFlashInterval)
     if (m_ui16TickInternal >= msFlashInterval)
     {
         m_ui16TickInternal = 0;
-        m_pPinControl->digital_write(m_ui8LedPinId, !(m_pPinControl->digital_read(m_ui8LedPinId)));
+        m_rPinControl.digital_write(m_ui8LedPinId, !(m_rPinControl.digital_read(m_ui8LedPinId)));
     }
 }
 
@@ -83,5 +83,5 @@ void StatusLed::led_dim()
     // takes pinActiveState into account
     bool dim = (m_ui16TickInternal >> 3) & 0x01; // only true on every 8th increment of TickInterval
     dim ^= (!m_bPinAciveState); // Will invert value according to PinActiveState
-    m_pPinControl->digital_write(m_ui8LedPinId, dim); 
+    m_rPinControl.digital_write(m_ui8LedPinId, dim); 
 }

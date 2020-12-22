@@ -2,18 +2,18 @@
 
 #include "Arduino_config.h"
 
-Mp3Play_implementation::Mp3Play_implementation(Arduino_DIcontainer_interface *pArduinoHal,
-                                               DfMiniMp3_interface *pDfMini,
-                                               SimpleTimer *pLullabyeTimer,
-                                               MessageHander_interface *pMessage) : m_pArduinoHal(pArduinoHal),
-                                                                                    m_pDfMiniMp3(pDfMini),
-                                                                                    m_pLullabyeTimer(pLullabyeTimer),
-                                                                                    m_pMessageHandler(pMessage)
+Mp3Play_implementation::Mp3Play_implementation(Arduino_DIcontainer_interface &rArduinoHal,
+                                               DfMiniMp3_interface &rDfMini,
+                                               SimpleTimer &rLullabyeTimer,
+                                               MessageHander_interface &rMessage) : m_rArduinoHal(rArduinoHal),
+                                                                                    m_rDfMiniMp3(rDfMini),
+                                                                                    m_rLullabyeTimer(rLullabyeTimer),
+                                                                                    m_rMessageHandler(rMessage)
 {
 
     // Init communication with module and setup
-    (m_pArduinoHal->getPins())->pin_mode(DFMINI_PIN_ISIDLE, INPUT);
-    m_pDfMiniMp3->setEq(DFMINI_EQ_SETTING);
+    m_rArduinoHal.getPins().pin_mode(DFMINI_PIN_ISIDLE, INPUT);
+    m_rDfMiniMp3.setEq(DFMINI_EQ_SETTING);
 }
 
 void Mp3Play_implementation::playFolder(Folder &folder)
@@ -21,17 +21,17 @@ void Mp3Play_implementation::playFolder(Folder &folder)
     if (prepareFolderToPlay(folder))
     {
         // Start playing folder: first track of current folder.
-        m_pDfMiniMp3->playFolderTrack(m_currentFolder.getFolderId(),
+        m_rDfMiniMp3.playFolderTrack(m_currentFolder.getFolderId(),
                                       m_currentFolder.getCurrentTrack());
-        m_pMessageHandler->printMessage(Mp3PlayNotify::toString(Mp3PlayNotify::playFolder));
+        m_rMessageHandler.printMessage(Mp3PlayNotify::toString(Mp3PlayNotify::playFolder));
     }
     restartLullabyeTimer();
 }
 
 void Mp3Play_implementation::restartLullabyeTimer()
 {
-    m_pLullabyeTimer->stop();
-    m_pLullabyeTimer->start(LULLABYE_TIMEOUT_SECS);
+    m_rLullabyeTimer.stop();
+    m_rLullabyeTimer.start(LULLABYE_TIMEOUT_SECS);
 }
 
 bool Mp3Play_implementation::prepareFolderToPlay(Folder &folder)
@@ -39,7 +39,7 @@ bool Mp3Play_implementation::prepareFolderToPlay(Folder &folder)
     bool check{true};
     check &= isFolderNew(folder);
 
-    folder.setupDependencies(m_pArduinoHal, m_pMessageHandler);
+    folder.setupDependencies(&m_rArduinoHal, &m_rMessageHandler);
     folder.setTrackCount(getTrackCountOfFolderOnSdCard(folder));
 
     check &= isFolderValid(folder);
@@ -53,7 +53,7 @@ bool Mp3Play_implementation::isFolderNew(const Folder &folder) const
 
 uint8_t Mp3Play_implementation::getTrackCountOfFolderOnSdCard(const Folder &folder) const
 {
-    return m_pDfMiniMp3->getFolderTrackCount(folder.getFolderId());
+    return m_rDfMiniMp3.getFolderTrackCount(folder.getFolderId());
 }
 
 bool Mp3Play_implementation::isFolderValid(Folder &folder)
@@ -68,8 +68,8 @@ bool Mp3Play_implementation::isFolderValid(Folder &folder)
         VoicePrompt folderError;
         folderError.promptId = MSG_ERROR_FOLDER;
         folderError.allowSkip = false;
-        m_pMessageHandler->printMessage(Mp3PlayNotify::toString(Mp3PlayNotify::noFolder));
-        m_pMessageHandler->promptMessage(folderError);
+        m_rMessageHandler.printMessage(Mp3PlayNotify::toString(Mp3PlayNotify::noFolder));
+        m_rMessageHandler.promptMessage(folderError);
         result = false;
     }
     return result;
@@ -77,17 +77,17 @@ bool Mp3Play_implementation::isFolderValid(Folder &folder)
 
 void Mp3Play_implementation::autoplay()
 {
-    if (m_pDfMiniMp3->isTrackFinished())
+    if (m_rDfMiniMp3.isTrackFinished())
     {
         if (shouldPlaybackStop())
         {
-            m_pMessageHandler->printMessage(Mp3PlayNotify::toString(Mp3PlayNotify::autoplayStop));
-            m_pDfMiniMp3->stop();
+            m_rMessageHandler.printMessage(Mp3PlayNotify::toString(Mp3PlayNotify::autoplayStop));
+            m_rDfMiniMp3.stop();
             restartLullabyeTimer();
         }
         else
         {
-            m_pMessageHandler->printMessage(Mp3PlayNotify::toString(Mp3PlayNotify::autoplayNext));
+            m_rMessageHandler.printMessage(Mp3PlayNotify::toString(Mp3PlayNotify::autoplayNext));
             playNext();
         }
     }
@@ -97,7 +97,7 @@ bool Mp3Play_implementation::shouldPlaybackStop() const
 {
     Folder::ePlayMode mode = m_currentFolder.getPlayMode();
     bool shouldStop{false};
-    if (LULLABYE_TIMEOUT_ACTIVE && m_pLullabyeTimer->isElapsed())
+    if (LULLABYE_TIMEOUT_ACTIVE && m_rLullabyeTimer.isElapsed())
     {
         shouldStop = true;
     }
@@ -112,7 +112,7 @@ void Mp3Play_implementation::playNext()
 {
     if (isFolderValid(m_currentFolder))
     {
-        m_pDfMiniMp3->playFolderTrack(m_currentFolder.getFolderId(),
+        m_rDfMiniMp3.playFolderTrack(m_currentFolder.getFolderId(),
                                       m_currentFolder.getNextTrack());
     }
 }
@@ -121,7 +121,7 @@ void Mp3Play_implementation::playPrev()
 {
     if (isFolderValid(m_currentFolder))
     {
-        m_pDfMiniMp3->playFolderTrack(m_currentFolder.getFolderId(),
+        m_rDfMiniMp3.playFolderTrack(m_currentFolder.getFolderId(),
                                       m_currentFolder.getPrevTrack());
     }
 }

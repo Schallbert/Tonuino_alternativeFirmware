@@ -13,10 +13,9 @@ class SimpleTimer;
 class MessageHandler : public MessageHander_interface
 {
 public:
-    MessageHandler(Arduino_interface_com *pSerial,
-
-                   DfMiniMp3_interface *pDfMini,
-                   SimpleTimer *pDfMiniPromptTimer);
+    MessageHandler(Arduino_interface_com &rSerial,
+                   DfMiniMp3_interface &rDfMini,
+                   SimpleTimer &rDfMiniPromptTimer);
 
     virtual void printMessage(const char *message) override;
     virtual void promptMessage(const VoicePrompt &message) override;
@@ -27,9 +26,9 @@ private:
     void waitForPromptToFinish();
 
 private:
-    Arduino_interface_com *m_pSerial{nullptr};
-    DfMiniMp3_interface *m_pDfMiniMp3{nullptr};
-    SimpleTimer *m_pDfMiniPromptTimer{nullptr};
+    Arduino_interface_com &m_rSerial;
+    DfMiniMp3_interface &m_rDfMiniMp3;
+    SimpleTimer &m_rDfMiniPromptTimer;
 
     VoicePrompt m_lastPrompt;
 };

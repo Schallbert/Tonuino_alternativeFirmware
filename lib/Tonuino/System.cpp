@@ -12,19 +12,12 @@ System::System()
 
 void System::notifyStartup()
 {
-    if (m_DfMini.getVolume() == VOLUME_INIT)
-    {
-        m_MessageHandler.printMessage("Volume still fine2!");
-    }
+    m_ArduinoHal.getSerial().com_begin(DEBUGSERIAL_BAUDRATE);
     m_MessageHandler.printMessage("Startup");
     VoicePrompt startup;
     startup.promptId = MSG_STARTUP;
     startup.allowSkip = false;
     m_MessageHandler.promptMessage(startup);
-    if (m_DfMini.getVolume() == VOLUME_INIT)
-    {
-        m_MessageHandler.printMessage("Volume still fine3!");
-    }
 }
 
 void System::notifyShutdown()
@@ -38,8 +31,8 @@ void System::notifyShutdown()
 
 void System::shutdown()
 {
-    m_MessageHandler.printMessage("Deleting objects");
-    m_PwrCtrl.allowShutdown();
+    //m_MessageHandler.printMessage("Deleting objects");
+    //m_PwrCtrl.allowShutdown();
 }
 
 void System::loop()
@@ -64,7 +57,8 @@ void System::loop()
 
 bool System::isShutdownRequested()
 {
-    return (m_PwrCtrl.isShutdownRequested());
+    //return (m_PwrCtrl.isShutdownRequested());
+    return false;
 }
 
 void System::timer1Task_1ms()
