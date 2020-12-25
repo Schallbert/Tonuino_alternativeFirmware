@@ -5,6 +5,7 @@
 #include "Nfc/Nfc_interface.h"
 #include "MessageHandler_interface.h"
 #include "Folder.h"
+#include "Tonuino_config.h"
 
 class NfcControlNotify
 {
@@ -28,9 +29,9 @@ class NfcControl : public NfcControl_interface
 {
 public:
     // Create NfcControl object with dependency-injected NfcReader object
-    NfcControl(Nfc_interface *pNfc,
-               MessageHander_interface *pMessageHandler);
-    ~NfcControl();
+    NfcControl(Nfc_interface &rNfc,
+               MessageHander_interface &rMessageHandler);
+    ~NfcControl(){};
 
 public:
     // Returns tag state of presence to requesting entity.
@@ -58,12 +59,12 @@ private:
 public:
     static const uint32_t cui32MagicCookie{0x1337b437}; // Magic Id to tag all cards
 private:
-    Nfc_interface *m_pNfc{nullptr}; // NfcReader object to interact with
-    MessageHander_interface *m_pMessageHandler{nullptr};
+    Nfc_interface &m_rNfc; // NfcReader object to interact with
+    MessageHander_interface &m_rMessageHandler;
 
     uint32_t m_ui32CardCookie{0};                    //Cookie read from card to compare against magic ID
     static const uint8_t blockAddressToReadWrite{4}; // sector 1 block 0 for Mini1k4k, page 4-7 for UltraLight
-    uint8_t *m_pBuffer{nullptr};                     // Buffer to read/write from/to tag reader
+    uint8_t m_pBuffer[NFCTAG_MEMORY_TO_OCCUPY];     // Buffer to read/write from/to tag reader
     Folder m_oFolder{};                              //Uninitialized!
 };
 

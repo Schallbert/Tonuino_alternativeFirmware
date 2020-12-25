@@ -7,7 +7,7 @@
 class NfcTag_MifareMini1k4k : public NfcTag_interface
 {
 public:
-    NfcTag_MifareMini1k4k(MFRC522_interface *pMfrc522) : m_pMfrc522(pMfrc522) {}
+    NfcTag_MifareMini1k4k(MFRC522_interface &rMfrc522) : m_rMfrc522(rMfrc522) {}
 
 public:
     bool readTag(byte blockAddress, byte *readResult) override;
@@ -17,7 +17,7 @@ private:
     void checkAndRectifyBlockAddress(byte &blockAddress) override;
 
 private:
-    MFRC522_interface *m_pMfrc522{nullptr};
+    MFRC522_interface &m_rMfrc522;
     static const byte SECTORSTRAILERBLOCKMINI1K4K{3};
     byte m_ui8SectorMini1k4k = {0};
     byte m_ui8TrailerBlockMini1k4k{3};

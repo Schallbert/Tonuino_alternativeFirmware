@@ -1,24 +1,17 @@
-#include "Tonuino_config.h"
 #include "NfcControl.h"
 
-NfcControl::NfcControl(Nfc_interface *pNfc,
-                       MessageHander_interface *pMessageHandler) : m_pNfc(pNfc),
-                                                                   m_pMessageHandler(pMessageHandler)
+NfcControl::NfcControl(Nfc_interface &rNfc,
+                       MessageHander_interface &rMessageHandler) : m_rNfc(rNfc),
+                                                                   m_rMessageHandler(rMessageHandler)
 {
-    m_pNfc->initNfc();
-    m_pBuffer = new uint8_t[NFCTAG_MEMORY_TO_OCCUPY]();
-}
-
-NfcControl::~NfcControl()
-{
-    delete[] m_pBuffer;
+    m_rNfc.initNfc();
 }
 
 NfcControl_interface::eTagState NfcControl::getTagPresence()
 {
     // Adds "known tag" information if a new tag has been placed.
     // Otherwise, just wrapper for layer down method.
-    NfcControl_interface::eTagState tagPresence = m_pNfc->getTagPresence();
+    NfcControl_interface::eTagState tagPresence = m_rNfc.getTagPresence();
     if (tagPresence == NfcControl_interface::NEW_UNKNOWN_TAG)
     {
         if (is_known_card())
@@ -26,7 +19,7 @@ NfcControl_interface::eTagState NfcControl::getTagPresence()
             tagPresence = NfcControl_interface::NEW_REGISTERED_TAG;
         }
     }
-    m_pMessageHandler->printMessage(NfcControlNotify::toString(tagPresence));
+    m_rMessageHandler.printMessage(NfcControlNotify::toString(tagPresence));
     return tagPresence;
 }
 
@@ -40,7 +33,7 @@ bool NfcControl::writeFolderToTag(const Folder &sourceFolder)
     }
     folder_to_buffer(); // Set buffer according to local folder data
     // Get card online and authenticate
-    return m_pNfc->writeTag(blockAddressToReadWrite, m_pBuffer);
+    return m_rNfc.writeTag(blockAddressToReadWrite, m_pBuffer);
 }
 
 bool NfcControl::eraseTag()
@@ -49,13 +42,13 @@ bool NfcControl::eraseTag()
     {
         m_pBuffer[i] = 0x00;
     }
-    return m_pNfc->writeTag(blockAddressToReadWrite, m_pBuffer);
+    return m_rNfc.writeTag(blockAddressToReadWrite, m_pBuffer);
 }
 
 bool NfcControl::readFolderFromTag(Folder &targetFolder)
 {
     bool status{false}; //unknown or corrupted card
-    if (m_pNfc->readTag(blockAddressToReadWrite, m_pBuffer))
+    if (m_rNfc.readTag(blockAddressToReadWrite, m_pBuffer))
     {
         buffer_to_folder();
         if (m_oFolder.isInitiated())

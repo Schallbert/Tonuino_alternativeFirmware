@@ -5,11 +5,11 @@
 NfcControl_interface::eTagState Nfc_implementation::getTagPresence()
 {
     NfcControl_interface::eTagState returnValue{NfcControl_interface::NO_TAG};
-    if (m_pMfrc522->isCardPresent())
+    if (m_rMfrc522.isCardPresent())
     {
-        m_pMessageHandler->printMessage("DEBUG:TagDetected!");
+        m_rMessageHandler.printMessage("DEBUG:TagDetected!"); // TODO: remove!
         // A card is present!
-        if (!m_pMfrc522->isNewCardPresent())
+        if (!m_rMfrc522.isNewCardPresent())
         {
             returnValue = NfcControl_interface::ACTIVE_KNOWN_TAG;
         }
@@ -27,8 +27,8 @@ NfcControl_interface::eTagState Nfc_implementation::getTagPresence()
 
 void Nfc_implementation::initNfc()
 {
-    m_pMfrc522->init(); // Init MFRC522
-    m_pMessageHandler->printMessage(NfcNotify::toString(NfcNotify::tagReaderInit));
+    m_rMfrc522.init(); // Init MFRC522
+    m_rMessageHandler.printMessage(NfcNotify::toString(NfcNotify::tagReaderInit));
 }
 
 bool Nfc_implementation::writeTag(byte blockAddress, byte *dataToWrite)
@@ -71,39 +71,22 @@ void Nfc_implementation::printNotification(bool status, NfcNotify::eNfcNotify su
     if (newMessage != NfcNotify::noMessage &&
         newMessage != message)
     {
-        m_pMessageHandler->printMessage(NfcNotify::toString(newMessage));
+        m_rMessageHandler.printMessage(NfcNotify::toString(newMessage));
     }
     message = newMessage;
 }
 
 void Nfc_implementation::setTagOffline()
 {
-    m_pMfrc522->tagHalt();
-    m_pMfrc522->tagLogoff();
+    m_rMfrc522.tagHalt();
+    m_rMfrc522.tagLogoff();
 }
 
 bool Nfc_implementation::setTagOnline()
 {
     bool status{false};
     // Try reading card
-    status = m_pMfrc522->isCardPresent();
-    status &= getTag();
-    return status;
-}
-
-bool Nfc_implementation::getTag()
-{
-    bool status{false};
-    if (m_pConcreteTag != nullptr)
-    {
-        delete m_pConcreteTag; // make sure to delete earlier instances (mem leak)
-        m_pConcreteTag = nullptr;
-    }
-    m_pConcreteTag = NfcTag_factory::getInstance(m_pMfrc522);
-    if (m_pConcreteTag != nullptr)
-    {
-        status = true; // returned non-null ptr, tag type implemented
-    }
-    printNotification(status, NfcNotify::noMessage, NfcNotify::tagTypeNotImplementedError);
+    status = m_rMfrc522.isCardPresent();
+    m_pConcreteTag = &NfcTag_factory::getInstance(m_rMfrc522);
     return status;
 }

@@ -9,7 +9,6 @@ System::System()
     //m_pUserInput = m_pUserInputFactory.getInstance(UserInput_factory::THREE_BUTTONS);
 }
 
-
 void System::notifyStartup()
 {
     m_ArduinoHal.getSerial().com_begin(DEBUGSERIAL_BAUDRATE);

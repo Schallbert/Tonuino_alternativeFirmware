@@ -7,7 +7,7 @@
 class NfcTag_MifareUltralight : public NfcTag_interface
 {
 public:
-    NfcTag_MifareUltralight(MFRC522_interface *pMfrc522) : m_pMfrc522(pMfrc522) {}
+    NfcTag_MifareUltralight(MFRC522_interface &rMfrc522) : m_rMfrc522(rMfrc522) {}
 
 public:
     bool readTag(byte blockAddress, byte *readResult) override;
@@ -22,7 +22,7 @@ public:
     static const byte ULTRALIGHTSTOPPAGE{11};
 
 private:
-    MFRC522_interface *m_pMfrc522{nullptr};
+    MFRC522_interface &m_rMfrc522;
 };
 
 #endif // NFCTAG_MIFAREULTRALIGHT_H

@@ -6,19 +6,19 @@ bool NfcTag_MifareMini1k4k::readTag(byte blockAddress, byte *readResult)
 {
     bool status{false};
     checkAndRectifyBlockAddress(blockAddress);
-    if (!m_pMfrc522->tagLogin(m_ui8TrailerBlockMini1k4k))
+    if (!m_rMfrc522.tagLogin(m_ui8TrailerBlockMini1k4k))
     {
         return status;
     }
     byte ui8_bufSize = NFCTAG_MEMORY_TO_OCCUPY + 2; // Account for checksum
     byte buffer[ui8_bufSize] = {};
     // NFC read procedure for certain types of Tag/Cards: Block of 18 bytes incl. checksum
-    status = m_pMfrc522->tagRead(blockAddress, buffer, ui8_bufSize);
+    status = m_rMfrc522.tagRead(blockAddress, buffer, ui8_bufSize);
     if (status)
     {
         NfcTag_interface::copyArray(readResult, buffer, NFCTAG_MEMORY_TO_OCCUPY); // ignores checksum bytes
     }
-    m_pMfrc522->tagHalt();
+    m_rMfrc522.tagHalt();
     return (status);
 }
 
@@ -26,12 +26,12 @@ bool NfcTag_MifareMini1k4k::writeTag(byte blockAddress, byte *dataToWrite)
 {
     bool status{false};
     checkAndRectifyBlockAddress(blockAddress);
-    if (!m_pMfrc522->tagLogin(m_ui8TrailerBlockMini1k4k))
+    if (!m_rMfrc522.tagLogin(m_ui8TrailerBlockMini1k4k))
     {
         return status;
     }
-    status = m_pMfrc522->tagWrite(blockAddress, dataToWrite, NFCTAG_MEMORY_TO_OCCUPY);
-    m_pMfrc522->tagHalt();
+    status = m_rMfrc522.tagWrite(blockAddress, dataToWrite, NFCTAG_MEMORY_TO_OCCUPY);
+    m_rMfrc522.tagHalt();
     return status;
 }
 

@@ -44,9 +44,9 @@ public:
 class Nfc_implementation : public Nfc_interface
 {
 public:
-    Nfc_implementation(MFRC522_interface *pMfrc522,
-                       MessageHander_interface *pMessageHandler) : m_pMfrc522(pMfrc522),
-                                                                   m_pMessageHandler(pMessageHandler){};
+    Nfc_implementation(MFRC522_interface &rMfrc522,
+                       MessageHander_interface &rMessageHandler) : m_rMfrc522(rMfrc522),
+                                                                   m_rMessageHandler(rMessageHandler){};
     ~Nfc_implementation(){};
 
 public:
@@ -60,14 +60,12 @@ private:
     void setTagOffline();
     // Returns true if communications to a card is successfully established
     bool setTagOnline();
-    // gets concrete, fitting tag instance from factory
-    bool getTag();
     // Helper method, for better readability: takes status of function and returns input Notification
     void printNotification(bool status, NfcNotify::eNfcNotify sucessMessage, NfcNotify::eNfcNotify failureMessage);
 
 private:
-    MFRC522_interface *m_pMfrc522{nullptr};
-    MessageHander_interface *m_pMessageHandler{nullptr};
+    MFRC522_interface &m_rMfrc522;
+    MessageHander_interface &m_rMessageHandler;
 
     NfcTag_interface *m_pConcreteTag{nullptr};
 };

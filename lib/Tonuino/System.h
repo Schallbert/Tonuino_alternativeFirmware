@@ -63,16 +63,17 @@ private:
                                                    m_DfMini,
                                                    m_DfMiniPromptTimer)};
     // PERIPHERY
-    /*
     // nfc
+    
     MFRC522_implementation m_Mfrc522{MFRC522_implementation()};
-    Nfc_implementation m_Nfc{Nfc_implementation(&m_Mfrc522, &m_MessageHandler)};
-    NfcControl m_NfcControl{NfcControl(&m_Nfc, &m_MessageHandler)};
+    Nfc_implementation m_Nfc{Nfc_implementation(m_Mfrc522, m_MessageHandler)};
+    NfcControl m_NfcControl{NfcControl(m_Nfc, m_MessageHandler)};
+    /*
     // mp3
-    Mp3Play_implementation m_Mp3Play{Mp3Play_implementation(&m_ArduinoHal,
-                                                            &m_DfMini,
-                                                            &m_LullabyeTimer,
-                                                            &m_MessageHandler)};
+    Mp3Play_implementation m_Mp3Play{Mp3Play_implementation(m_ArduinoHal,
+                                                            m_DfMini,
+                                                            m_LullabyeTimer,
+                                                            m_MessageHandler)};
     Mp3Control m_Mp3Control{Mp3Control(&m_DfMini,
                                                  &m_Mp3Play,
                                                  &m_NfcControl,
@@ -83,7 +84,6 @@ private:
                                     &m_PwrCtrl,
                                     &m_MenuTimer)};
     // userInput
-    UserInput_interface *m_pUserInput{nullptr};
-    */
+    UserInput_interface *m_pUserInput{nullptr}; */
 };
 #endif // SYSTEM_H
