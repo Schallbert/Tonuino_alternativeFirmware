@@ -4,14 +4,6 @@
 #include "Menu_factory.h"
 #include "VoiceMenu.h"
 
-VoiceMenu::~VoiceMenu()
-{
-    if (m_pMenuInstance)
-    {
-        delete m_pMenuInstance;
-    }
-}
-
 void VoiceMenu::setUserInput(UserInput_interface::eUserRequest input)
 {
     m_userInput = input;
@@ -54,12 +46,12 @@ void VoiceMenu::checkEnterLinkMenu()
     if (m_tagState == NfcControl_interface::NEW_UNKNOWN_TAG)
     {
         m_pMenuInstance = Menu_factory::getInstance(Menu_factory::LINK_MENU,
-                                                    m_pNfcControl,
-                                                    m_pMp3Play,
-                                                    m_pMessageHandler,
-                                                    m_pPowerManager);
+                                                    m_rNfcControl,
+                                                    m_rMp3Play,
+                                                    m_rMessageHandler,
+                                                    m_rPowerManager);
         m_pMenuInstance->confirm();
-        m_pMenuTimer->start(MENU_TIMEOUT_SECS);
+        m_rMenuTimer.start(MENU_TIMEOUT_SECS);
     }
 }
 
@@ -69,12 +61,12 @@ void VoiceMenu::checkEnterDeleteMenu()
         (m_userInput == UserInput_interface::PP_LONGPRESS))
     {
         m_pMenuInstance = Menu_factory::getInstance(Menu_factory::DELETE_MENU,
-                                                    m_pNfcControl,
-                                                    m_pMp3Play,
-                                                    m_pMessageHandler,
-                                                    m_pPowerManager);
+                                                    m_rNfcControl,
+                                                    m_rMp3Play,
+                                                    m_rMessageHandler,
+                                                    m_rPowerManager);
         m_pMenuInstance->confirm();
-        m_pMenuTimer->start(MENU_TIMEOUT_SECS);
+        m_rMenuTimer.start(MENU_TIMEOUT_SECS);
     }
 }
 
@@ -111,7 +103,7 @@ void VoiceMenu::dispatchInputs()
 
 void VoiceMenu::checkTimerElapsed()
 {
-    if (m_pMenuTimer->isElapsed())
+    if (m_rMenuTimer.isElapsed())
     {
         abrt();
     }

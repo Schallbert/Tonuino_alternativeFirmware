@@ -14,16 +14,16 @@ class SimpleTimer;
 class VoiceMenu
 {
 public:
-    VoiceMenu(Mp3Play_interface *pMp3Play,
-              NfcControl_interface *pNfcCtrl,
-              MessageHander_interface *pMessageHandler,
-              PowerManager_interface *pPowerMgr,
-              SimpleTimer *pMenuTimer) : m_pMp3Play(pMp3Play),
-                                         m_pNfcControl(pNfcCtrl),
-                                         m_pMessageHandler(pMessageHandler),
-                                         m_pPowerManager(pPowerMgr),
-                                         m_pMenuTimer(pMenuTimer){};
-    ~VoiceMenu();
+    VoiceMenu(Mp3Play_interface &rMp3Play,
+              NfcControl_interface &rNfcCtrl,
+              MessageHander_interface &rMessageHandler,
+              PowerManager_interface &rPowerMgr,
+              SimpleTimer &rMenuTimer) : m_rMp3Play(rMp3Play),
+                                         m_rNfcControl(rNfcCtrl),
+                                         m_rMessageHandler(rMessageHandler),
+                                         m_rPowerManager(rPowerMgr),
+                                         m_rMenuTimer(rMenuTimer){};
+    ~VoiceMenu(){};
 
 public:
     void setUserInput(UserInput_interface::eUserRequest input);
@@ -48,11 +48,11 @@ private:
     void prev() { m_pMenuInstance->selectPrev(); };
 
 private:
-    Mp3Play_interface *m_pMp3Play{nullptr};
-    NfcControl_interface *m_pNfcControl{nullptr};
-    MessageHander_interface *m_pMessageHandler{nullptr};
-    PowerManager_interface *m_pPowerManager{nullptr};
-    SimpleTimer *m_pMenuTimer{nullptr};
+    Mp3Play_interface &m_rMp3Play;
+    NfcControl_interface &m_rNfcControl;
+    MessageHander_interface &m_rMessageHandler;
+    PowerManager_interface &m_rPowerManager;
+    SimpleTimer &m_rMenuTimer;
 
     typedef void (VoiceMenu::*dispatcher)(); // table of function pointers
 

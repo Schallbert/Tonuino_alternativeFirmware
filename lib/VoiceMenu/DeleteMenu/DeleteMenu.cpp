@@ -14,7 +14,7 @@ void DeleteMenu::confirm()
 
 void DeleteMenu::eraseTag()
 {
-    bool status = m_pNfcControl->eraseTag();
+    bool status = m_rNfcControl.eraseTag();
     m_prompt.allowSkip = false;
     if (!status)
     {
@@ -46,7 +46,7 @@ void DeleteMenu::setStatusLed()
 {
     if (isActive())
     {
-        m_pPowerManager->setDeleteMenu();
+        m_rPowerManager.setDeleteMenu();
     }
 }
 
@@ -79,7 +79,7 @@ void DeleteMenu::playPrompt()
 {
     m_prompt.promptId = m_menuState.getMenuStateMessage();
     m_prompt.allowSkip = true;
-    m_pMessageHandler->promptMessage(m_prompt);
+    m_rMessageHandler.promptMessage(m_prompt);
 }
 
 void DeleteMenu::playPreview()
@@ -87,9 +87,9 @@ void DeleteMenu::playPreview()
     if (m_menuState.isPendingConfirmDelete())
     {
         Folder preview;
-        if (m_pNfcControl->readFolderFromTag(preview))
+        if (m_rNfcControl.readFolderFromTag(preview))
         {
-            m_pMp3Play->playFolder(preview);
+            m_rMp3Play.playFolder(preview);
         }
     }
 }

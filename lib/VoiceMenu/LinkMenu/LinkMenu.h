@@ -14,13 +14,13 @@ class LinkMenu : public Menu_interface
 {
 
 public:
-    LinkMenu(NfcControl_interface *pNfcCtrl,
-             Mp3Play_interface *pMp3Play,
-             MessageHander_interface *pMessageHandler,
-             PowerManager_interface *pPowerMgr) : m_pNfcControl(pNfcCtrl),
-                                                  m_pMp3Play(pMp3Play),
-                                                  m_pMessageHandler(pMessageHandler),
-                                                  m_pPowerManager(pPowerMgr){};
+    LinkMenu(NfcControl_interface &rNfcCtrl,
+             Mp3Play_interface &rMp3Play,
+             MessageHander_interface &rMessageHandler,
+             PowerManager_interface &rPowerMgr) : m_rNfcControl(rNfcCtrl),
+                                                  m_rMp3Play(rMp3Play),
+                                                  m_rMessageHandler(rMessageHandler),
+                                                  m_rPowerManager(rPowerMgr){};
 
 public:
     void setStatusLed() override;
@@ -42,10 +42,10 @@ private:
     void writeTag();
 
 private:
-    NfcControl_interface *m_pNfcControl{nullptr};
-    Mp3Play_interface *m_pMp3Play{nullptr};
-    MessageHander_interface *m_pMessageHandler{nullptr};
-    PowerManager_interface *m_pPowerManager{nullptr};
+    NfcControl_interface &m_rNfcControl;
+    Mp3Play_interface &m_rMp3Play;
+    MessageHander_interface &m_rMessageHandler;
+    PowerManager_interface &m_rPowerManager;
 
     LinkMenu_StateManager m_menuState{};
     NfcControl_interface::eTagState m_tagState{NfcControl_interface::NO_TAG};

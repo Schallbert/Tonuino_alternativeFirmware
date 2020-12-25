@@ -19,7 +19,7 @@ void LinkMenu::confirm()
 
 void LinkMenu::writeTag()
 {
-    if (!m_pNfcControl->writeFolderToTag(m_menuState.getResult()))
+    if (!m_rNfcControl.writeFolderToTag(m_menuState.getResult()))
     {
         m_prompt.promptId = MSG_ERROR_CARDWRITE;
         m_prompt.allowSkip = true;
@@ -61,7 +61,7 @@ void LinkMenu::setStatusLed()
 {
     if (isActive())
     {
-        m_pPowerManager->setLinkMenu();
+        m_rPowerManager.setLinkMenu();
     }
 }
 
@@ -78,7 +78,7 @@ bool LinkMenu::isActive()
 
 void LinkMenu::playPrompt()
 {
-    m_pMessageHandler->promptMessage(m_prompt);
+    m_rMessageHandler.promptMessage(m_prompt);
 }
 
 void LinkMenu::playPreview()
@@ -86,6 +86,6 @@ void LinkMenu::playPreview()
     Folder preview = m_menuState.getPreview();
     if (preview.isInitiated())
     {
-        m_pMp3Play->playFolder(preview);
+        m_rMp3Play.playFolder(preview);
     }
 }

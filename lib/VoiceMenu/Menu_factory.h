@@ -18,10 +18,10 @@ public:
 
 public:
     static Menu_interface *getInstance(eMenuType menuType,
-                                       NfcControl_interface *pNfcCtrl,
-                                       Mp3Play_interface *pMp3Play,
-                                       MessageHander_interface *pMessageHandler,
-                                       PowerManager_interface *pPowerMgr);
+                                       NfcControl_interface &rNfcCtrl,
+                                       Mp3Play_interface &rMp3Play,
+                                       MessageHander_interface &rMessageHandler,
+                                       PowerManager_interface &rPowerMgr);
 };
 
 #endif // MENU_IMPLEMENTATION_H

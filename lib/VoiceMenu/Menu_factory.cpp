@@ -4,19 +4,19 @@
 #include "Menu_factory.h"
 
 Menu_interface *Menu_factory::getInstance(eMenuType menuType,
-                                          NfcControl_interface *pNfcCtrl,
-                                          Mp3Play_interface *pMp3Play,
-                                          MessageHander_interface *pMessageHandler,
-                                          PowerManager_interface *pPowerMgr)
+                                          NfcControl_interface &rNfcCtrl,
+                                          Mp3Play_interface &rMp3Play,
+                                          MessageHander_interface &rMessageHandler,
+                                          PowerManager_interface &rPowerMgr)
 {
     static Menu_interface *instance;
     switch (menuType)
     {
     case DELETE_MENU:
-        instance = new DeleteMenu(pNfcCtrl, pMp3Play, pMessageHandler, pPowerMgr);
+        instance = new DeleteMenu(rNfcCtrl, rMp3Play, rMessageHandler, rPowerMgr);
         break;
     case LINK_MENU:
-        instance = new LinkMenu(pNfcCtrl, pMp3Play, pMessageHandler, pPowerMgr);
+        instance = new LinkMenu(rNfcCtrl, rMp3Play, rMessageHandler, rPowerMgr);
         break;
     }
     return instance;
