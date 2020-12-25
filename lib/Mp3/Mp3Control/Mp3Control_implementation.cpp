@@ -4,20 +4,20 @@
 #include "../Utilities/SimpleTimer/SimpleTimer.h"
 #include "../Folder/Folder.h"
 
-Mp3Control::Mp3Control(DfMiniMp3_interface *pDfMini,
-                       Mp3Play_interface *pPlayer,
-                       NfcControl_interface *pNfcControl,
-                       MessageHander_interface *pMsgHandler) : m_pDfMiniMp3(pDfMini),
-                                                               m_pMp3Player(pPlayer),
-                                                               m_pNfcControl(pNfcControl),
-                                                               m_pMessageHandler(pMsgHandler)
+Mp3Control::Mp3Control(DfMiniMp3_interface &rDfMini,
+                       Mp3Play_interface &rPlayer,
+                       NfcControl_interface &rNfcControl,
+                       MessageHander_interface &rMsgHandler) : m_rDfMiniMp3(rDfMini),
+                                                               m_rMp3Player(rPlayer),
+                                                               m_rNfcControl(rNfcControl),
+                                                               m_rMessageHandler(rMsgHandler)
 {
 
     // Init communication with module and setup
-    m_pDfMiniMp3->setVolume(VOLUME_INIT);
-    if(m_pDfMiniMp3->getVolume() == VOLUME_INIT)
+    m_rDfMiniMp3.setVolume(VOLUME_INIT);
+    if(m_rDfMiniMp3.getVolume() == VOLUME_INIT)
     {
-        m_pMessageHandler->printMessage("DFMini COM established. Volume set.");
+        m_rMessageHandler.printMessage("DFMini COM established. Volume set.");
     }
 }
 
@@ -45,7 +45,7 @@ void Mp3Control::loop()
 
     handleCardInput();
     handleUserInput();
-    m_pMp3Player->autoplay();
+    m_rMp3Player.autoplay();
 }
 
 void Mp3Control::handleCardInput()
@@ -53,9 +53,9 @@ void Mp3Control::handleCardInput()
     if (m_tagState == NfcControl_interface::NEW_REGISTERED_TAG)
     {
         Folder readFolder;
-        if (m_pNfcControl->readFolderFromTag(readFolder))
+        if (m_rNfcControl.readFolderFromTag(readFolder))
         {
-            m_pMp3Player->playFolder(readFolder);
+            m_rMp3Player.playFolder(readFolder);
         }
     }
 }
@@ -75,7 +75,7 @@ void Mp3Control::handleUserInput()
 
 void Mp3Control::plPs()
 {
-    if (m_pDfMiniMp3->isPlaying())
+    if (m_rDfMiniMp3.isPlaying())
     {
         pause();
     }
@@ -87,43 +87,43 @@ void Mp3Control::plPs()
 
 void Mp3Control::play()
 {
-    m_pDfMiniMp3->start(); // Only successful if a track is entered.
-    m_pMessageHandler->printMessage(Mp3ControlNotify::toString(Mp3ControlNotify::play));
+    m_rDfMiniMp3.start(); // Only successful if a track is entered.
+    m_rMessageHandler.printMessage(Mp3ControlNotify::toString(Mp3ControlNotify::play));
 }
 
 void Mp3Control::pause()
 {
-    m_pDfMiniMp3->pause();
-    m_pMessageHandler->printMessage(Mp3ControlNotify::toString(Mp3ControlNotify::pause));
+    m_rDfMiniMp3.pause();
+    m_rMessageHandler.printMessage(Mp3ControlNotify::toString(Mp3ControlNotify::pause));
 }
 
 void Mp3Control::next()
 {
-    m_pMp3Player->playNext();
-    m_pMessageHandler->printMessage(Mp3ControlNotify::toString(Mp3ControlNotify::next));
+    m_rMp3Player.playNext();
+    m_rMessageHandler.printMessage(Mp3ControlNotify::toString(Mp3ControlNotify::next));
 }
 
 void Mp3Control::prev()
 {
-    m_pMp3Player->playPrev();
-    m_pMessageHandler->printMessage(Mp3ControlNotify::toString(Mp3ControlNotify::prev));
+    m_rMp3Player.playPrev();
+    m_rMessageHandler.printMessage(Mp3ControlNotify::toString(Mp3ControlNotify::prev));
 }
 
 void Mp3Control::incV()
 {
-    if (m_pDfMiniMp3->getVolume() < VOLUME_MAX)
+    if (m_rDfMiniMp3.getVolume() < VOLUME_MAX)
     {
-        m_pDfMiniMp3->increaseVolume();
-        m_pMessageHandler->printMessage(Mp3ControlNotify::toString(Mp3ControlNotify::volumeUp));
+        m_rDfMiniMp3.increaseVolume();
+        m_rMessageHandler.printMessage(Mp3ControlNotify::toString(Mp3ControlNotify::volumeUp));
     }
 }
 
 void Mp3Control::decV()
 {
-    if (m_pDfMiniMp3->getVolume() > VOLUME_MIN)
+    if (m_rDfMiniMp3.getVolume() > VOLUME_MIN)
     {
-        m_pDfMiniMp3->decreaseVolume();
-        m_pMessageHandler->printMessage(Mp3ControlNotify::toString(Mp3ControlNotify::volumeDown));
+        m_rDfMiniMp3.decreaseVolume();
+        m_rMessageHandler.printMessage(Mp3ControlNotify::toString(Mp3ControlNotify::volumeDown));
     }
 }
 
@@ -132,5 +132,5 @@ void Mp3Control::help()
     VoicePrompt helpMessage;
     helpMessage.promptId = MSG_HELP;
     helpMessage.allowSkip = true;
-    m_pMessageHandler->promptMessage(helpMessage);
+    m_rMessageHandler.promptMessage(helpMessage);
 }

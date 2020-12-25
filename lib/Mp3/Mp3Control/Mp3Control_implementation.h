@@ -47,10 +47,10 @@ public:
 class Mp3Control : public Mp3Control_interface
 {
 public:
-    Mp3Control(DfMiniMp3_interface *pDfMini,
-               Mp3Play_interface *pPlayer,
-               NfcControl_interface *pNfcControl,
-               MessageHander_interface *pMsgHandler);
+    Mp3Control(DfMiniMp3_interface &rDfMini,
+               Mp3Play_interface &rPlayer,
+               NfcControl_interface &rNfcControl,
+               MessageHander_interface &rMsgHandler);
 
     void setUserInput(UserInput_interface::eUserRequest input) override;
     void loop() override;
@@ -75,13 +75,10 @@ private:
     void help();
 
 private:
-    // Solution for constructor error found here: https://stackoverflow.com/questions/35762196/expected-a-type-specifier-error-when-creating-an-object-of-a-class-inside-anot
-    //SoftwareSerial m_Mp3SwSerial{SoftwareSerial(DFMINI_RX, DFMINI_TX)}; // Does not work with m_Mp3SwSerial(DFMINI_RX, DFMINI_TX) because compiler interprets this as a class method call
-    //DFMiniMp3<SoftwareSerial, Mp3Notify> m_dfMiniMp3{DFMiniMp3<SoftwareSerial, Mp3Notify>(m_Mp3SwSerial)};
-    DfMiniMp3_interface *m_pDfMiniMp3{nullptr};
-    Mp3Play_interface *m_pMp3Player{nullptr};
-    NfcControl_interface *m_pNfcControl{nullptr};
-    MessageHander_interface *m_pMessageHandler{nullptr};
+    DfMiniMp3_interface &m_rDfMiniMp3;
+    Mp3Play_interface &m_rMp3Player;
+    NfcControl_interface &m_rNfcControl;
+    MessageHander_interface &m_rMessageHandler;
 
     UserInput_interface::eUserRequest m_userInput{UserInput_interface::NO_ACTION};
     NfcControl_interface::eTagState m_tagState{NfcControl_interface::NO_TAG};
