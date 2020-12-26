@@ -2,8 +2,8 @@
 #define USERINPUT_IMPLEMENTATION_H
 
 #include "../UserInput/UserInput_interface.h"
-#include "../ClickEncoder/ClickEncoder_interface.h"
-#include "../UserInput/ClickEncoder/ClickEncoder_supportsLongPress.h"
+#include "ClickEncoder_Abstraction/ClickEncoder_interface.h"
+#include "ClickEncoder_Abstraction/ClickEncoder_supportsLongPress.h"
 
 class UserInput_ClickEncoder : public UserInput_interface
 {

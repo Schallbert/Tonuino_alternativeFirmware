@@ -1,7 +1,7 @@
 #ifndef CLICKENCODER_IMPLEMENTATION_H
 #define CLICKENCODER_IMPLEMENTATION_H
 
-#include "../UserInput/ClickEncoder/ClickEncoder_interface.h"
+#include "ClickEncoder_Abstraction/ClickEncoder_interface.h"
 #include "ClickEncoder.h"
 
 class ClickEncoder_implementation : public ClickEncoder_interface

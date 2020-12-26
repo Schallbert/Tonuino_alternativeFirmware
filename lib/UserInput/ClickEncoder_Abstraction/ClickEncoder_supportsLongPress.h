@@ -1,7 +1,7 @@
 #ifndef CLICKENCODER_SUPPORTSLONGPRESS_H
 #define CLICKENCODER_SUPPORTSLONGPRESS_H
 
-#include "../UserInput/ClickEncoder/ClickEncoder_interface.h"
+#include "ClickEncoder_interface.h"
 
 /* This class enhances ClickEncoder by a longPress and longPressRepeat detection
     LongPressRepeat will periodically be set to enable button quick increment behavior
