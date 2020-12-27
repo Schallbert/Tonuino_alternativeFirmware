@@ -17,7 +17,7 @@ class Nfc_getTagPresence : public ::testing::Test
 protected:
     virtual void SetUp()
     {
-        m_pNfc = new Nfc_implementation(&m_mfrc, &m_messageHandler);
+        m_pNfc = new Nfc_implementation(m_mfrc, m_messageHandler);
     }
 
     virtual void TearDown()

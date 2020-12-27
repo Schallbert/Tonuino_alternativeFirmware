@@ -23,10 +23,10 @@ protected:
     // Arrange
     virtual void SetUp()
     {
-        m_pMp3Control = new Mp3Control(&m_dfMiniMock,
-                                       &m_mp3PlayMock,
-                                       &m_nfcControlMock,
-                                       &m_messageHandlerMock);
+        m_pMp3Control = new Mp3Control(m_dfMiniMock,
+                                       m_mp3PlayMock,
+                                       m_nfcControlMock,
+                                       m_messageHandlerMock);
     }
 
     virtual void TearDown()
@@ -46,7 +46,7 @@ protected:
 TEST_F(Mp3ControlTest, ClassConstructorMethodsCalled)
 {
     EXPECT_CALL(m_dfMiniMock, setVolume(VOLUME_INIT));
-    Mp3Control myMp3(&m_dfMiniMock, &m_mp3PlayMock, &m_nfcControlMock, &m_messageHandlerMock);
+    Mp3Control myMp3(m_dfMiniMock, m_mp3PlayMock, m_nfcControlMock, m_messageHandlerMock);
 }
 
 TEST_F(Mp3ControlTest, loop_blocked_wontDoAnything)

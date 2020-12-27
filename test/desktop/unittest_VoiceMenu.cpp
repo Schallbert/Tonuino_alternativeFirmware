@@ -23,12 +23,11 @@ protected:
     virtual void SetUp()
     {
         m_pMenuTimer = new SimpleTimer{};
-
-        m_pVoiceMenu = new VoiceMenu(&m_Mp3PlayMock,
-                                     &m_nfcControlMock,
-                                     &m_messageHandlerMock,
-                                     &m_powerManagerMock,
-                                     m_pMenuTimer);
+        m_pVoiceMenu = new VoiceMenu(m_Mp3PlayMock,
+                                     m_nfcControlMock,
+                                     m_messageHandlerMock,
+                                     m_powerManagerMock,
+                                     *m_pMenuTimer);
     }
 
     virtual void TearDown()
@@ -46,7 +45,6 @@ protected:
     NiceMock<Mock_MessageHandler> m_messageHandlerMock{};
     NiceMock<Mock_PowerManager> m_powerManagerMock{};
     SimpleTimer *m_pMenuTimer{nullptr};
-
     VoiceMenu *m_pVoiceMenu{nullptr};
 };
 

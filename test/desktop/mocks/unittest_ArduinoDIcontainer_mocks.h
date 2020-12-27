@@ -8,7 +8,7 @@
 #include "unittest_ArduinoIf_mocks.h"
 
 using ::testing::NiceMock;
-using ::testing::Return;
+using ::testing::ReturnPointee;
 
 class Mock_ArduinoDIcontainer : public Arduino_DIcontainer_interface
 {
@@ -24,27 +24,27 @@ public:
     void DelegateToMockPins(Mock_pinCtrl *pins)
     {
         m_pPins = pins;
-        ON_CALL(*this, getPins).WillByDefault(Return(m_pPins));
+        ON_CALL(*this, getPins).WillByDefault(ReturnPointee(m_pPins));
     };
     void DelegateToMockDelay(Mock_delay *delay)
     {
         m_pDelay = delay;
-        ON_CALL(*this, getDelay).WillByDefault(Return(m_pDelay));
+        ON_CALL(*this, getDelay).WillByDefault(ReturnPointee(m_pDelay));
     };
     void DelegateToMockSerial(Mock_serial *serial)
     {
         m_pSerial = serial;
-        ON_CALL(*this, getSerial).WillByDefault(Return(m_pSerial));
+        ON_CALL(*this, getSerial).WillByDefault(ReturnPointee(m_pSerial));
     };
     void DelegateToMockRandom(Mock_random *random)
     {
         m_pRandom = random;
-        ON_CALL(*this, getRandom).WillByDefault(Return(m_pRandom));
+        ON_CALL(*this, getRandom).WillByDefault(ReturnPointee(m_pRandom));
     };
     void DelegateToMockEeprom(Mock_eeprom *eeprom)
     {
         m_pEeprom = eeprom;
-        ON_CALL(*this, getEeprom).WillByDefault(Return(m_pEeprom));
+        ON_CALL(*this, getEeprom).WillByDefault(ReturnPointee(m_pEeprom));
     };
 
 private:

@@ -19,9 +19,9 @@ class MessageHandlerTest : public ::testing::Test
 protected:
     virtual void SetUp()
     {
-        m_pMessageHandler = new MessageHandler(&m_serialMock,
-                                               &m_dfMiniMp3Mock,
-                                               &m_messageTimer);
+        m_pMessageHandler = new MessageHandler(m_serialMock,
+                                               m_dfMiniMp3Mock,
+                                               m_messageTimer);
     }
 
     virtual void TearDown()
@@ -59,7 +59,7 @@ TEST_F(MessageHandlerTest, PrintMessage_Valid_WillPrint)
 TEST_F(MessageHandlerTest, PromptMessage_Undefined_WillNotPrompt)
 {
     VoicePrompt undefined;
-    EXPECT_CALL(m_dfMiniMp3Mock, playAdvertisement(_)).Times(0);
+    EXPECT_CALL(m_dfMiniMp3Mock, playMp3FolderTrack(_)).Times(0);
     m_pMessageHandler->promptMessage(undefined);
 }
 
@@ -111,7 +111,7 @@ TEST_F(MessageHandlerTest, PromptMessage_playStarts_willCallPrompt)
     prompt.promptId = MSG_HELP;
 
     ON_CALL(m_dfMiniMp3Mock, isPlaying()).WillByDefault(Return(true));   
-    EXPECT_CALL(m_dfMiniMp3Mock, playAdvertisement(_));
+    EXPECT_CALL(m_dfMiniMp3Mock, playMp3FolderTrack(_));
     m_pMessageHandler->promptMessage(prompt);
 }
 
@@ -122,7 +122,7 @@ TEST_F(MessageHandlerTest, PromptMessage_callTwice_wontPlayAgain)
     prompt.promptId = MSG_ABORTED;
 
     ON_CALL(m_dfMiniMp3Mock, isPlaying()).WillByDefault(Return(true));   
-    EXPECT_CALL(m_dfMiniMp3Mock, playAdvertisement(_)).Times(1);
+    EXPECT_CALL(m_dfMiniMp3Mock, playMp3FolderTrack(_)).Times(1);
     m_pMessageHandler->promptMessage(prompt);
     m_pMessageHandler->promptMessage(prompt);
 }

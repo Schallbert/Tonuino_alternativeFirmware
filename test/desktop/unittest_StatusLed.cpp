@@ -14,7 +14,7 @@ class StatusLedTest : public ::testing::Test
 protected:
     virtual void SetUp()
     {
-        pLed = new StatusLed(&pinCtrl,
+        pLed = new StatusLed(pinCtrl,
                              ledPinId,
                              pinActiveState,
                              msFlashSlow,
@@ -40,7 +40,7 @@ TEST_F(StatusLedTest, Constructor_InitLedStateIsOff)
     InSequence seq;
     EXPECT_CALL(pinCtrl, pin_mode(ledPinId, OUTPUT));
     EXPECT_CALL(pinCtrl, digital_write(ledPinId, !pinActiveState));
-    StatusLed testStatusLed(&pinCtrl,
+    StatusLed testStatusLed(pinCtrl,
                             ledPinId,
                             pinActiveState,
                             msFlashSlow,

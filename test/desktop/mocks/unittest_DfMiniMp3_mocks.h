@@ -19,7 +19,7 @@ public:
     MOCK_METHOD(void, start, (), (override));
     MOCK_METHOD(void, stop, (), (override));
     MOCK_METHOD(void, playFolderTrack, (uint8_t folderId, uint8_t trackId), (override));
-    MOCK_METHOD(void, playAdvertisement, (uint16_t trackId), (override));
+    MOCK_METHOD(void, playMp3FolderTrack, (uint16_t trackId), (override));
     MOCK_METHOD(uint8_t, getFolderTrackCount, (uint8_t folderId), (override));
     MOCK_METHOD(bool, isTrackFinished, (), (const, override));
     MOCK_METHOD(bool, isPlaying, (), (const, override));

@@ -21,7 +21,7 @@ protected:
     // Arrange
     virtual void SetUp()
     {
-        m_pNfcControl = new NfcControl(&m_nfcMock, &m_messageHandlerMock);
+        m_pNfcControl = new NfcControl(m_nfcMock, m_messageHandlerMock);
         m_pTestFolder = new Folder(fakeBufferData[4],
                                    (Folder::ePlayMode)fakeBufferData[5]);
         m_pTestFolder->setTrackCount(fakeBufferData[6]);
@@ -57,7 +57,7 @@ TEST_F(NfcCtrlWrite, initNfc_IsCalledOnConstruction)
 {
     Mock_Nfc nfc;
     EXPECT_CALL(nfc, initNfc()).Times(1);
-    NfcControl m_pNfcControl(&nfc, &m_messageHandlerMock);
+    NfcControl m_pNfcControl(nfc, m_messageHandlerMock);
 }
 
 TEST_F(NfcCtrlWrite, invalidFolder_ReturnsFalse)
@@ -182,7 +182,7 @@ TEST_F(NfcCtrlTagPresence, newTag_simulateUnknown_returnsUnknownTag)
 
 TEST_F(NfcCtrlTagPresence, newTag_simulateKnown_returnsKnownTag)
 {
-    NfcControl myTest{&m_nfcMock, &m_messageHandlerMock};
+    NfcControl myTest{m_nfcMock, m_messageHandlerMock};
     NfcControl_interface::eTagState tagPresence = NfcControl_interface::NEW_UNKNOWN_TAG;
     ON_CALL(m_nfcMock, getTagPresence()).WillByDefault(Return(tagPresence));
     m_nfcMock.DelegateToFake(); // will return known card cookie

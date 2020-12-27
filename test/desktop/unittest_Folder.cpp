@@ -15,8 +15,8 @@ using ::testing::Return;
 class folderInvalid : public ::testing::Test
 {
 protected:
-    NiceMock<Mock_ArduinoDIcontainer> m_arduinoHalMock;
-    NiceMock<Mock_MessageHandler> m_messageHandlerMock;
+    NiceMock<Mock_ArduinoDIcontainer> m_arduinoHalMock{};
+    NiceMock<Mock_MessageHandler> m_messageHandlerMock{};
 };
 
 // This fixture will return Mock_eeprom dependency
@@ -26,18 +26,16 @@ protected:
     virtual void SetUp()
     {
         folderInvalid::SetUp();
-        m_pEeprom = new NiceMock<Mock_eeprom>;
-        folderInvalid::m_arduinoHalMock.DelegateToMockEeprom(m_pEeprom);
+        folderInvalid::m_arduinoHalMock.DelegateToMockEeprom(&m_Eeprom);
     }
 
     virtual void TearDown()
     {
-        delete m_pEeprom;
         folderInvalid::TearDown();
     }
 
 protected:
-    NiceMock<Mock_eeprom> *m_pEeprom{nullptr};
+    NiceMock<Mock_eeprom> m_Eeprom{};
 };
 
 // This fixture will return Mock_eeprom dependency
@@ -71,18 +69,16 @@ protected:
     virtual void SetUp()
     {
         folderMethods::SetUp();
-        m_pRandom = new NiceMock<Mock_random>;
-        folderMethods::m_arduinoHalMock.DelegateToMockRandom(m_pRandom);
+        folderMethods::m_arduinoHalMock.DelegateToMockRandom(&m_Random);
     }
 
     virtual void TearDown()
     {
-        delete m_pRandom;
         folderMethods::TearDown();
     }
 
 protected:
-    NiceMock<Mock_random> *m_pRandom{nullptr};
+    NiceMock<Mock_random> m_Random{};
 };
 
 // TESTS
@@ -171,7 +167,7 @@ TEST_F(folderInvalid, folderIdIs0_isValidReturnsFalse)
 TEST_F(folderMethods, copyConstructor_workingOK)
 {
     // Arrange
-    ON_CALL(*m_pEeprom, eeprom_read(254)).WillByDefault(Return(13));
+    ON_CALL(m_Eeprom, eeprom_read(254)).WillByDefault(Return(13));
     Folder testFolder(254, Folder::SAVEPROGRESS);
     testFolder.setTrackCount(1);
     testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
@@ -195,7 +191,7 @@ TEST_F(folderMethods, copyConstructor_dependencyIsNullptr_isAlsoCopied)
 
 TEST_F(folderMethods, copyConstructor_valuesOK)
 {
-    ON_CALL(*m_pEeprom, eeprom_read(254)).WillByDefault(Return(13));
+    ON_CALL(m_Eeprom, eeprom_read(254)).WillByDefault(Return(13));
     Folder testFolder(254, Folder::SAVEPROGRESS);
     testFolder.setTrackCount(14);
     testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
@@ -322,7 +318,7 @@ TEST_F(folderDependencies, RANDOM_trackCountIs10_trackQueueLoopComplete)
     Folder testFolder(1, Folder::RANDOM);
     testFolder.setTrackCount(10);
     // fake response, so shouldn't lock up in while loop
-    EXPECT_CALL(*m_pRandom, random_generateUi8)
+    EXPECT_CALL(m_Random, random_generateUi8)
         .WillOnce(Return(1))
         .WillOnce(Return(10))
         .WillOnce(Return(2))
@@ -345,7 +341,7 @@ TEST_F(folderDependencies, RANDOM_trackCountIs10_willNotAllowSameTrackMultipleTi
     Folder testFolder(1, Folder::RANDOM);
     testFolder.setTrackCount(10);
     // fake response, so shouldn't lock up in while loop
-    EXPECT_CALL(*m_pRandom, random_generateUi8)
+    EXPECT_CALL(m_Random, random_generateUi8)
         .WillOnce(Return(1))
         .WillOnce(Return(10))
         .WillOnce(Return(10)) // Duplicate
@@ -370,7 +366,7 @@ TEST_F(folderDependencies, RANDOM_trackCountIs10_willNotAllowTrackNumber0)
     Folder testFolder(1, Folder::RANDOM);
     testFolder.setTrackCount(10);
     // fake response, so shouldn't lock up in while loop
-    EXPECT_CALL(*m_pRandom, random_generateUi8)
+    EXPECT_CALL(m_Random, random_generateUi8)
         .WillOnce(Return(1))
         .WillOnce(Return(0)) // Not allowed
         .WillOnce(Return(10))
@@ -394,7 +390,7 @@ TEST_F(folderDependencies, RANDOM_trackCountIs10_willNotAllowTrackNumberOutOfRan
     Folder testFolder(1, Folder::RANDOM);
     testFolder.setTrackCount(10);
     // fake response, so shouldn't lock up in while loop
-    EXPECT_CALL(*m_pRandom, random_generateUi8)
+    EXPECT_CALL(m_Random, random_generateUi8)
         .WillOnce(Return(1))
         .WillOnce(Return(28)) // Not allowed
         .WillOnce(Return(10))
@@ -417,7 +413,7 @@ TEST_F(folderDependencies, SAVEPROGRESS_trackLoadIsWorking)
 {
     Folder testFolder(99, Folder::SAVEPROGRESS);
     testFolder.setTrackCount(16);
-    ON_CALL(*m_pEeprom, eeprom_read(_)).WillByDefault(Return(13));
+    ON_CALL(m_Eeprom, eeprom_read(_)).WillByDefault(Return(13));
     testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
 
     EXPECT_EQ(13, testFolder.getCurrentTrack());
@@ -427,7 +423,7 @@ TEST_F(folderDependencies, SAVEPROGRESS_trackLoadValueIsCorrupt_ReturnsTrack1)
 {
     Folder testFolder(99, Folder::SAVEPROGRESS);
     testFolder.setTrackCount(10);
-    ON_CALL(*m_pEeprom, eeprom_read(_)).WillByDefault(Return(13));
+    ON_CALL(m_Eeprom, eeprom_read(_)).WillByDefault(Return(13));
     testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
 
     EXPECT_EQ(1, testFolder.getCurrentTrack());
@@ -437,9 +433,9 @@ TEST_F(folderDependencies, SAVEPROGRESS_trackSaveIsWorking)
 {
     Folder testFolder(99, Folder::SAVEPROGRESS);
     testFolder.setTrackCount(16);
-    ON_CALL(*m_pEeprom, eeprom_read(_)).WillByDefault(Return(13));
+    ON_CALL(m_Eeprom, eeprom_read(_)).WillByDefault(Return(13));
 
-    EXPECT_CALL(*m_pEeprom, eeprom_write(99, 14));
+    EXPECT_CALL(m_Eeprom, eeprom_write(99, 14));
     testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     EXPECT_EQ(14, testFolder.getNextTrack());
 }
@@ -448,7 +444,7 @@ TEST_F(folderDependencies, SAVEPROGRESS_EepromRead0_currentTrackDefaultsTo1)
 {
     Folder testFolder(99, Folder::SAVEPROGRESS);
     testFolder.setTrackCount(16);
-    ON_CALL(*m_pEeprom, eeprom_read(_)).WillByDefault(Return(0));
+    ON_CALL(m_Eeprom, eeprom_read(_)).WillByDefault(Return(0));
 
     testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     EXPECT_EQ(1, testFolder.getCurrentTrack());
@@ -457,7 +453,7 @@ TEST_F(folderDependencies, SAVEPROGRESS_EepromReadOutOfRange_currentTrackDefault
 {
     Folder testFolder(99, Folder::SAVEPROGRESS);
     testFolder.setTrackCount(16);
-    ON_CALL(*m_pEeprom, eeprom_read(_)).WillByDefault(Return(17));
+    ON_CALL(m_Eeprom, eeprom_read(_)).WillByDefault(Return(17));
 
     testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     EXPECT_EQ(1, testFolder.getCurrentTrack());

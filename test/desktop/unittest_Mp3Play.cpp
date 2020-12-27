@@ -22,10 +22,10 @@ protected:
     {
         m_arduinoHalMock.DelegateToMockPins(&pinControlMock);
         m_arduinoHalMock.DelegateToMockEeprom(&eepromMock);
-        m_pMp3Play = new Mp3Play_implementation(&m_arduinoHalMock,
-                                                &m_dfMiniMock,
-                                                &m_lullabyeTimer,
-                                                &m_messageHandlerMock);
+        m_pMp3Play = new Mp3Play_implementation(m_arduinoHalMock,
+                                                m_dfMiniMock,
+                                                m_lullabyeTimer,
+                                                m_messageHandlerMock);
     }
 
     virtual void TearDown()

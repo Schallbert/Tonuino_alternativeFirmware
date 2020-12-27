@@ -17,10 +17,10 @@ protected:
     virtual void SetUp()
     {
         linkMenu = Menu_factory::getInstance(Menu_factory::LINK_MENU,
-                                             &m_nfcControlMock,
-                                             &m_mp3PlayMock,
-                                             &m_messageHandlerMock,
-                                             &m_powerManagerMock);
+                                             m_nfcControlMock,
+                                             m_mp3PlayMock,
+                                             m_messageHandlerMock,
+                                             m_powerManagerMock);
     }
 
     virtual void TearDown()

@@ -21,10 +21,10 @@ protected:
     virtual void SetUp()
     {
         deleteMenu = Menu_factory::getInstance(Menu_factory::DELETE_MENU,
-                                               &m_nfcControlMock,
-                                               &m_mp3PlayMock,
-                                               &m_messageHandlerMock,
-                                               &m_powerManagerMock);
+                                               m_nfcControlMock,
+                                               m_mp3PlayMock,
+                                               m_messageHandlerMock,
+                                               m_powerManagerMock);
     }
 
     virtual void TearDown()

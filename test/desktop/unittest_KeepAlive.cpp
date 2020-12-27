@@ -14,7 +14,7 @@ class KeepAliveTest : public ::testing::Test
 protected:
     virtual void SetUp()
     {
-        kA = new KeepAlive(&pinCtrl, keepAlivePinId, pinActiveState);
+        kA = new KeepAlive(pinCtrl, keepAlivePinId, pinActiveState);
     }
 
     virtual void TearDown()
@@ -34,7 +34,7 @@ TEST_F(KeepAliveTest, Constructor_ActivatesSelfKeepingPowerSupply)
     Sequence seq;
     EXPECT_CALL(pinCtrl, pin_mode(keepAlivePinId, OUTPUT));
     EXPECT_CALL(pinCtrl, digital_write(keepAlivePinId, pinActiveState));
-    KeepAlive testSpecificKa(&pinCtrl, keepAlivePinId, pinActiveState);
+    KeepAlive testSpecificKa(pinCtrl, keepAlivePinId, pinActiveState);
 }
 
 TEST_F(KeepAliveTest, keepAlive_writesActiveState_False_Correctly)
@@ -46,7 +46,7 @@ TEST_F(KeepAliveTest, keepAlive_writesActiveState_False_Correctly)
 TEST_F(KeepAliveTest, keepAlive_writesActiveState_True_Correctly)
 {
     bool testSpecificPinActiveState = true;
-    KeepAlive testSpecificKa(&pinCtrl, keepAlivePinId, testSpecificPinActiveState);
+    KeepAlive testSpecificKa(pinCtrl, keepAlivePinId, testSpecificPinActiveState);
     EXPECT_CALL(pinCtrl, digital_write(keepAlivePinId, testSpecificPinActiveState));
     testSpecificKa.keep_alive();
 }
