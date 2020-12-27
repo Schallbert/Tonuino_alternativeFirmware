@@ -97,10 +97,10 @@ TEST_F(MessageHandlerTest, PromptMessage_noSkipPlaying_onlyStartTimeout)
     // timeout not elapsing
     EXPECT_CALL(m_dfMiniMp3Mock, isPlaying())
         .Times(3)
-        .WillOnce(Return(true))
-        .WillOnce(Return(true))
-        .WillRepeatedly(Return(false));
-    EXPECT_CALL(m_dfMiniMp3Mock, loop()).Times(WAIT_DFMINI_READY); //called once before isplaying returns true
+        .WillOnce(Return(true)) // Called by WaitForPromptToStart()
+        .WillOnce(Return(true)) // All following(s) called by WaitForPromptToFinish();
+        .WillRepeatedly(Return(false)); // Finishing before timeout
+    EXPECT_CALL(m_dfMiniMp3Mock, loop()).Times(1); //called once before isplaying returns true
     m_pMessageHandler->promptMessage(prompt);
 }
 
