@@ -84,9 +84,11 @@ void Nfc_implementation::setTagOffline()
 
 bool Nfc_implementation::setTagOnline()
 {
-    bool status{false};
+    bool status{true};
     // Try reading card
-    status = m_rMfrc522.isCardPresent();
-    m_pConcreteTag = &NfcTag_factory::getInstance(m_rMfrc522);
+    status &= m_rMfrc522.isCardPresent();
+    m_pConcreteTag = NfcTag_factory::getInstance(m_rMfrc522);
+    status &= (m_pConcreteTag != nullptr); // Not implemented if factory cannot respond OK
+    printNotification(status, NfcNotify::noMessage, NfcNotify::tagTypeNotImplementedError);
     return status;
 }
