@@ -5,8 +5,8 @@
 
 System::System()
 {
-    //UserInput_factory m_pUserInputFactory{};
-    //m_pUserInput = m_pUserInputFactory.getInstance(UserInput_factory::THREE_BUTTONS);
+    UserInput_factory m_pUserInputFactory{};
+    m_pUserInput = m_pUserInputFactory.getInstance();
 }
 
 void System::notifyStartup()

@@ -8,50 +8,48 @@ class ClickEncoder_implementation : public ClickEncoder_interface
 {
 public:
     // button only
-    ClickEncoder_implementation(uint8_t pinButton, bool buttonActiveState)
-    {
-        // button use only, PinA and PinB not used
-        m_pEncoder = new ClickEncoder(-1, -1, pinButton, 4, buttonActiveState);
-    }
+    ClickEncoder_implementation(uint8_t pinButton,
+                                bool buttonActiveState) : m_rEncoder(ClickEncoder(-1, -1, pinButton, 4, buttonActiveState)){};
+
     // full ClickEncoder
-    ClickEncoder_implementation(uint8_t pinA, uint8_t pinB, uint8_t pinButton, uint8_t stepsPerNotch, bool buttonActiveState)
-    {
-        m_pEncoder = new ClickEncoder(pinA, pinB, pinButton, stepsPerNotch, buttonActiveState);
-    };
-    ~ClickEncoder_implementation()
-    {
-        delete m_pEncoder;
-    };
+    ClickEncoder_implementation(uint8_t pinA,
+                                uint8_t pinB,
+                                uint8_t pinButton,
+                                uint8_t stepsPerNotch,
+                                bool buttonActiveState) : m_rEncoder(ClickEncoder(pinA,
+                                                                                  pinB,
+                                                                                  pinButton,
+                                                                                  stepsPerNotch,
+                                                                                  buttonActiveState)){};
 
 public:
     void service() override
     {
-        m_pEncoder->service();
+        m_rEncoder.service();
     }
 
     int16_t getValue() override
     {
-        return m_pEncoder->getValue();
+        return m_rEncoder.getValue();
     }
-   
+
     eButtonState getButton() override
     {
-        return static_cast<eButtonState>(m_pEncoder->getButton());
+        return static_cast<eButtonState>(m_rEncoder.getButton());
     }
-     
+
     void setAccelerationEnabled(const bool &enabled) override
     {
-        m_pEncoder->setAccelerationEnabled(enabled);
+        m_rEncoder.setAccelerationEnabled(enabled);
     }
 
     void setDoubleClickEnabled(const bool &enabled) override
     {
-        m_pEncoder->setDoubleClickEnabled(enabled);
+        m_rEncoder.setDoubleClickEnabled(enabled);
     }
 
-
 private:
-    ClickEncoder *m_pEncoder{nullptr};
+    ClickEncoder m_rEncoder;
 };
 
 #endif // CLICKENCODER_IMPLEMENTATION_H

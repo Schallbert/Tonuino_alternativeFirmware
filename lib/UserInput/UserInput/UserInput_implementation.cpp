@@ -5,7 +5,7 @@
 
 void UserInput_ClickEncoder::userinputServiceIsr()
 {
-    m_pEncoder->service();
+    m_Encoder.service();
 }
 
 UserInput_interface::eUserRequest UserInput_ClickEncoder::getUserRequest()
@@ -69,9 +69,9 @@ void UserInput_ClickEncoder::userinputRefresh()
 {
 
     //Get values from encoder
-    encoderDiff = m_pEncoder->getValue(); // diff to last "getValue" call
+    encoderDiff = m_Encoder.getValue(); // diff to last "getValue" call
     encoderPosition += encoderDiff;
-    buttonState = m_pEncoder->getButton();
+    buttonState = m_Encoder.getButton();
 }
 
 // USERINPUT___CLICKENCODER ---------------------------------------------------------------
@@ -81,9 +81,9 @@ void UserInput_ClickEncoder::userinputRefresh()
 
 void UserInput_3Buttons::userinputServiceIsr()
 {
-    m_pPlpsButton->service();
-    m_pNextButton->service();
-    m_pPrevButton->service();
+    m_PlpsButton.service();
+    m_NextButton.service();
+    m_PrevButton.service();
 }
 
 UserInput_interface::eUserRequest UserInput_3Buttons::getUserRequest()
@@ -136,9 +136,9 @@ UserInput_interface::eUserRequest UserInput_3Buttons::getUserRequest()
 
 void UserInput_3Buttons::userinputRefresh()
 {
-    buttonStates.plpsButton = m_pPlpsButton->getButton();
-    buttonStates.nextButton = m_pNextButton->getButton();
-    buttonStates.prevButton = m_pPrevButton->getButton();
+    buttonStates.plpsButton = m_PlpsButton.getButton();
+    buttonStates.nextButton = m_NextButton.getButton();
+    buttonStates.prevButton = m_PrevButton.getButton();
 }
 
 // USERINPUT___3BUTTONS     ---------------------------------------------------------------

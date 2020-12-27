@@ -19,11 +19,6 @@
 // TX 1  PD1 3
 //HMI inputs
 
-// This is the selector of input variants.
-// Change it to your preferred variant
-// and make sure the pin selection below is
-// according to your wishes.
-#define USERINPUT_VARIANT THREE_BUTTONS
 // USERINPUT VARIANT : CLICK_ENCODER
   #define ENCA 18 // PC5 27
   #define ENCB 17 // PC4 26

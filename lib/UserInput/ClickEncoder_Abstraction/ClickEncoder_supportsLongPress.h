@@ -22,16 +22,16 @@ public:
     };
 
 public:
-    Encoder_longPressRepeat(ClickEncoder_interface *pEncoder,
-                            const uint16_t &ui16longPressRepeatInterval) : m_pEncoder(pEncoder),
+    Encoder_longPressRepeat(ClickEncoder_interface &rEncoder,
+                            const uint16_t &ui16longPressRepeatInterval) : m_rEncoder(rEncoder),
                                                                            m_ui16longPressRepeatInterval(ui16longPressRepeatInterval){};
     ~Encoder_longPressRepeat() = default;
 
 public:
     void service(void)
     {
-        m_pEncoder->service();
-        if (m_pEncoder->getButton() == ClickEncoder_interface::Held)
+        m_rEncoder.service();
+        if (m_rEncoder.getButton() == ClickEncoder_interface::Held)
         {
             ++m_ui16ButtonHeldTicks;
         }
@@ -44,7 +44,7 @@ public:
     eButtonState getButton()
     {
         eButtonState buttonState = Open;
-        buttonState = static_cast<eButtonState>(m_pEncoder->getButton());
+        buttonState = static_cast<eButtonState>(m_rEncoder.getButton());
         if (buttonState == Held &&
             m_ui16longPressRepeatInterval > 0)
         {
@@ -59,22 +59,22 @@ public:
 
     int16_t getValue()
     {
-        return m_pEncoder->getValue();
+        return m_rEncoder.getValue();
     }
 
     void setAccelerationEnabled(const bool &enabled)
     {
-        m_pEncoder->setAccelerationEnabled(enabled);
+        m_rEncoder.setAccelerationEnabled(enabled);
     }
 
     void setDoubleClickEnabled(const bool &enabled)
     {
-        m_pEncoder->setDoubleClickEnabled(enabled);
+        m_rEncoder.setDoubleClickEnabled(enabled);
     }
 
 private:
-    ClickEncoder_interface *m_pEncoder{nullptr};
-    uint16_t m_ui16longPressRepeatInterval{0};  // tick level to detect long press repeat
+    ClickEncoder_interface &m_rEncoder;
+    const uint16_t &m_ui16longPressRepeatInterval;  // tick level to detect long press repeat
     volatile uint16_t m_ui16ButtonHeldTicks{0}; // tick counter for long press and repeat long press detection
 };
 

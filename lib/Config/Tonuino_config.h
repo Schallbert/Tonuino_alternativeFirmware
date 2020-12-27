@@ -5,6 +5,14 @@
 #define DEBUGSERIAL true
 #define DEBUGSERIAL_BAUDRATE 9600
 
+// This is the selector of input variants.
+// Change it to your preferred variant
+// and make sure the pin selection below is
+// according to your wishes.
+#define USERINPUT_VARIANT three_buttons
+#define three_buttons 0
+#define one_encoder 1
+
 //Tonuino mp3 prompt IDs -----------------------
 #define MSG_ERROR_CARDWRITE 410
 #define MSG_ERROR_CARDREAD 411

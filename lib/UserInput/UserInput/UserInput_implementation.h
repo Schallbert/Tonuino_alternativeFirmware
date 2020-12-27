@@ -18,15 +18,13 @@ class UserInput_ClickEncoder : public UserInput_interface
 
 public:
     // pinA, pinB, pinButton are the pins of the encoder that are connected to the uC.
-    UserInput_ClickEncoder(ClickEncoder_interface *pEncoder) : m_pEncoder(pEncoder)
+    UserInput_ClickEncoder(ClickEncoder_interface &Encoder) : m_Encoder(Encoder)
     {
-        m_pEncoder->setAccelerationEnabled(false);
-        m_pEncoder->setDoubleClickEnabled(true);
+        m_Encoder.setAccelerationEnabled(false);
+        m_Encoder.setDoubleClickEnabled(true);
     };
-
     ~UserInput_ClickEncoder() = default;
 
-public:
     void userinputServiceIsr() override;
     eUserRequest getUserRequest() override;
 
@@ -34,12 +32,13 @@ private:
     void userinputRefresh() override;
 
 private:
-    ClickEncoder_interface *m_pEncoder;
+    ClickEncoder_interface &m_Encoder;
 
     volatile int16_t encoderPosition{0};
     volatile int16_t encoderDiff{0};
     ClickEncoder_interface::eButtonState buttonState{ClickEncoder_interface::Open};
 }; // UserInput_ClickEncoder
+
 
 class UserInput_3Buttons : public UserInput_interface
 {
@@ -61,29 +60,22 @@ private:
     };
 
 public:
-    UserInput_3Buttons(ClickEncoder_interface *pPlPsButton,
-                       ClickEncoder_interface *pNextButton,
-                       ClickEncoder_interface *pPrevButton,
-                       const uint16_t &longPressRepeatInterval)
+    UserInput_3Buttons(ClickEncoder_interface &PlPsButton,
+                       ClickEncoder_interface &NextButton,
+                       ClickEncoder_interface &PrevButton,
+                       const uint16_t &longPressRepeatInterval) : m_PlpsButton{Encoder_longPressRepeat(PlPsButton, longPressRepeatInterval)},
+                                                                  m_NextButton{Encoder_longPressRepeat(NextButton, longPressRepeatInterval)},
+                                                                  m_PrevButton{Encoder_longPressRepeat(PrevButton, longPressRepeatInterval)}
     {
-        m_pPlpsButton = new Encoder_longPressRepeat(pPlPsButton, longPressRepeatInterval);
-        m_pPlpsButton->setAccelerationEnabled(false);
-        m_pPlpsButton->setDoubleClickEnabled(true);
-        m_pNextButton = new Encoder_longPressRepeat(pNextButton, longPressRepeatInterval);
-        m_pNextButton->setAccelerationEnabled(false);
-        m_pNextButton->setDoubleClickEnabled(true);
-        m_pPrevButton = new Encoder_longPressRepeat(pPrevButton, longPressRepeatInterval);
-        m_pPrevButton->setAccelerationEnabled(false);
-        m_pPrevButton->setDoubleClickEnabled(true);
+        m_PlpsButton.setAccelerationEnabled(false);
+        m_PlpsButton.setDoubleClickEnabled(true);
+        m_NextButton.setAccelerationEnabled(false);
+        m_NextButton.setDoubleClickEnabled(true);
+        m_PrevButton.setAccelerationEnabled(false);
+        m_PrevButton.setDoubleClickEnabled(true);
     };
-    ~UserInput_3Buttons()
-    {
-        delete m_pPlpsButton;
-        delete m_pNextButton;
-        delete m_pPrevButton;
-    };
+    ~UserInput_3Buttons() = default;
 
-public:
     void userinputServiceIsr(void) override;
     eUserRequest getUserRequest() override;
 
@@ -91,10 +83,9 @@ private:
     void userinputRefresh() override;
 
 private:
-    //OBJECTS
-    Encoder_longPressRepeat *m_pPrevButton;
-    Encoder_longPressRepeat *m_pPlpsButton;
-    Encoder_longPressRepeat *m_pNextButton;
+    Encoder_longPressRepeat m_PlpsButton;
+    Encoder_longPressRepeat m_NextButton;
+    Encoder_longPressRepeat m_PrevButton;
     ButtonStates buttonStates;
 }; // UserInput_3Buttons
 
