@@ -26,7 +26,6 @@ class NfcTag_writeTag : public NfcTag_getInstance
 {
     virtual void SetUp()
     {
-        NfcTag_getInstance::SetUp();
         // get around constness
         for (uint8_t i = 0; i < 16; ++i)
         {

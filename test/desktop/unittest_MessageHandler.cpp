@@ -17,42 +17,31 @@ using ::testing::Return;
 class MessageHandlerTest : public ::testing::Test
 {
 protected:
-    virtual void SetUp()
-    {
-        m_pMessageHandler = new MessageHandler(m_serialMock,
-                                               m_dfMiniMp3Mock,
-                                               m_messageTimer);
-    }
-
-    virtual void TearDown()
-    {
-        delete m_pMessageHandler;
-    }
-
-protected:
     NiceMock<Mock_serial> m_serialMock{};
     NiceMock<Mock_DfMiniMp3> m_dfMiniMp3Mock{};
     SimpleTimer m_messageTimer{};
 
-    MessageHandler *m_pMessageHandler{nullptr};
+    MessageHandler m_MessageHandler{MessageHandler(m_serialMock,
+                                               m_dfMiniMp3Mock,
+                                               m_messageTimer)};
 };
 
 TEST_F(MessageHandlerTest, PrintMessage_nullptr_WontPrint)
 {
     EXPECT_CALL(m_serialMock, com_println(_)).Times(0);
-    m_pMessageHandler->printMessage(nullptr);
+    m_MessageHandler.printMessage(nullptr);
 }
 
 TEST_F(MessageHandlerTest, PrintMessage_emptyString_WontPrint)
 {
     EXPECT_CALL(m_serialMock, com_println(_)).Times(0);
-    m_pMessageHandler->printMessage("");
+    m_MessageHandler.printMessage("");
 }
 
 TEST_F(MessageHandlerTest, PrintMessage_Valid_WillPrint)
 {
     EXPECT_CALL(m_serialMock, com_println(_));
-    m_pMessageHandler->printMessage("Test");
+    m_MessageHandler.printMessage("Test");
 }
 
 // PLAY PROMPT ////////////////////////////////////////////////////////////
@@ -60,7 +49,7 @@ TEST_F(MessageHandlerTest, PromptMessage_Undefined_WillNotPrompt)
 {
     VoicePrompt undefined;
     EXPECT_CALL(m_dfMiniMp3Mock, playMp3FolderTrack(_)).Times(0);
-    m_pMessageHandler->promptMessage(undefined);
+    m_MessageHandler.promptMessage(undefined);
 }
 
 TEST_F(MessageHandlerTest, PromptMessage_noSkipNotPlaying_Timeout)
@@ -73,7 +62,7 @@ TEST_F(MessageHandlerTest, PromptMessage_noSkipNotPlaying_Timeout)
     ON_CALL(m_dfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_messageTimer, &SimpleTimer::timerTick));
 
     EXPECT_CALL(m_dfMiniMp3Mock, loop()).Times(WAIT_DFMINI_READY); // timeout kicks in. to wait system calls MP3's loop
-    m_pMessageHandler->promptMessage(prompt);
+    m_MessageHandler.promptMessage(prompt);
 }
 
 TEST_F(MessageHandlerTest, PromptMessage_noSkipNotFinishing_Timeout)
@@ -86,7 +75,7 @@ TEST_F(MessageHandlerTest, PromptMessage_noSkipNotFinishing_Timeout)
     ON_CALL(m_dfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_messageTimer, &SimpleTimer::timerTick));
 
     EXPECT_CALL(m_dfMiniMp3Mock, loop()).Times(TIMEOUT_PROMPT_PLAYED); // timeout kicks in. to wait system calls MP3's loop
-    m_pMessageHandler->promptMessage(prompt);
+    m_MessageHandler.promptMessage(prompt);
 }
 
 TEST_F(MessageHandlerTest, PromptMessage_noSkipPlaying_onlyStartTimeout)
@@ -101,7 +90,7 @@ TEST_F(MessageHandlerTest, PromptMessage_noSkipPlaying_onlyStartTimeout)
         .WillOnce(Return(true)) // All following(s) called by WaitForPromptToFinish();
         .WillRepeatedly(Return(false)); // Finishing before timeout
     EXPECT_CALL(m_dfMiniMp3Mock, loop()).Times(1); //called once before isplaying returns true
-    m_pMessageHandler->promptMessage(prompt);
+    m_MessageHandler.promptMessage(prompt);
 }
 
 TEST_F(MessageHandlerTest, PromptMessage_playStarts_willCallPrompt)
@@ -112,7 +101,7 @@ TEST_F(MessageHandlerTest, PromptMessage_playStarts_willCallPrompt)
 
     ON_CALL(m_dfMiniMp3Mock, isPlaying()).WillByDefault(Return(true));   
     EXPECT_CALL(m_dfMiniMp3Mock, playMp3FolderTrack(_));
-    m_pMessageHandler->promptMessage(prompt);
+    m_MessageHandler.promptMessage(prompt);
 }
 
 TEST_F(MessageHandlerTest, PromptMessage_callTwice_wontPlayAgain)
@@ -123,6 +112,6 @@ TEST_F(MessageHandlerTest, PromptMessage_callTwice_wontPlayAgain)
 
     ON_CALL(m_dfMiniMp3Mock, isPlaying()).WillByDefault(Return(true));   
     EXPECT_CALL(m_dfMiniMp3Mock, playMp3FolderTrack(_)).Times(1);
-    m_pMessageHandler->promptMessage(prompt);
-    m_pMessageHandler->promptMessage(prompt);
+    m_MessageHandler.promptMessage(prompt);
+    m_MessageHandler.promptMessage(prompt);
 }

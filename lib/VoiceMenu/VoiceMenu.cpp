@@ -75,7 +75,6 @@ void VoiceMenu::checkLeaveMenu()
     // Could be completed or aborted
     if (isComplete() || !isActive())
     {
-        delete m_pMenuInstance;
         m_pMenuInstance = nullptr;
     }
 }

@@ -22,6 +22,8 @@ protected:
     {
         m_arduinoHalMock.DelegateToMockPins(&pinControlMock);
         m_arduinoHalMock.DelegateToMockEeprom(&eepromMock);
+        // This MUST be dynamic allocation, otherwise the Mp3Play Constructor
+        //  will try calling getPins() which won't be delegated then
         m_pMp3Play = new Mp3Play_implementation(m_arduinoHalMock,
                                                 m_dfMiniMock,
                                                 m_lullabyeTimer,

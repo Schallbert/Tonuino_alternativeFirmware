@@ -46,19 +46,17 @@ protected:
     virtual void SetUp()
     {
         folderMethods::SetUp();
-        pValidFolder = new Folder(2, Folder::ALBUM);
-        pValidFolder->setTrackCount(10);
-        pValidFolder->setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
+        m_ValidFolder.setTrackCount(10);
+        m_ValidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     }
 
     virtual void TearDown()
     {
-        delete pValidFolder;
         folderMethods::TearDown();
     }
 
 protected:
-    Folder *pValidFolder{nullptr};
+    Folder m_ValidFolder{Folder(2, Folder::ALBUM)};
 };
 
 // This fixture will both return a Mock_eeprom and Mock_Random
@@ -256,59 +254,59 @@ TEST_F(folderMethods, validFolder_createsQueue_callsNotification)
 
 TEST_F(folderAlbum, folder_ALBUM_valid)
 {
-    ASSERT_TRUE(pValidFolder->isValid());
+    ASSERT_TRUE(m_ValidFolder.isValid());
 }
 
 TEST_F(folderAlbum, ALBUM_idIs2)
 {
-    ASSERT_EQ(2, pValidFolder->getFolderId());
+    ASSERT_EQ(2, m_ValidFolder.getFolderId());
 }
 
 TEST_F(folderAlbum, playModeIsALBUM)
 {
-    ASSERT_EQ(Folder::ALBUM, pValidFolder->getPlayMode());
+    ASSERT_EQ(Folder::ALBUM, m_ValidFolder.getPlayMode());
 }
 
 TEST_F(folderAlbum, trackCountIs10)
 {
-    ASSERT_EQ(10, pValidFolder->getTrackCount());
+    ASSERT_EQ(10, m_ValidFolder.getTrackCount());
 }
 
 TEST_F(folderAlbum, currentTrackIs1)
 {
-    ASSERT_EQ(1, pValidFolder->getCurrentTrack());
+    ASSERT_EQ(1, m_ValidFolder.getCurrentTrack());
 }
 
 TEST_F(folderAlbum, nextTrackIs2)
 {
-    ASSERT_EQ(2, pValidFolder->getNextTrack());
+    ASSERT_EQ(2, m_ValidFolder.getNextTrack());
 }
 
 TEST_F(folderAlbum, ChooseNextTrack_currentTrackIs2)
 {
-    pValidFolder->getNextTrack();
-    ASSERT_EQ(2, pValidFolder->getCurrentTrack());
+    m_ValidFolder.getNextTrack();
+    ASSERT_EQ(2, m_ValidFolder.getCurrentTrack());
 }
 
 TEST_F(folderAlbum, trackCount10_CallPrevTrack_returns10)
 {
     // Tests rollover track count
-    ASSERT_EQ(10, pValidFolder->getPrevTrack());
+    ASSERT_EQ(10, m_ValidFolder.getPrevTrack());
 }
 
 TEST_F(folderAlbum, trackCount10_CallPrevTrack_GetCurrentTrackReturns10)
 {
     // Tests rollover track count
-    pValidFolder->getPrevTrack();
-    ASSERT_EQ(10, pValidFolder->getCurrentTrack());
+    m_ValidFolder.getPrevTrack();
+    ASSERT_EQ(10, m_ValidFolder.getCurrentTrack());
 }
 
 TEST_F(folderAlbum, trackCountIs10_AllTracksAreInQueue)
 {
-    uint8_t trackSum = pValidFolder->getCurrentTrack();
-    for (int i = 2; i <= pValidFolder->getTrackCount(); ++i)
+    uint8_t trackSum = m_ValidFolder.getCurrentTrack();
+    for (int i = 2; i <= m_ValidFolder.getTrackCount(); ++i)
     {
-        trackSum += pValidFolder->getNextTrack();
+        trackSum += m_ValidFolder.getNextTrack();
     }
     ASSERT_EQ(55, trackSum);
 }

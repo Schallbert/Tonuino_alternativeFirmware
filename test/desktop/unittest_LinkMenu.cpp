@@ -23,11 +23,6 @@ protected:
                                              m_powerManagerMock);
     }
 
-    virtual void TearDown()
-    {
-        delete linkMenu;
-    }
-
 protected:
     Menu_interface *linkMenu{nullptr};
     NiceMock<Mock_NfcControl> m_nfcControlMock{};

@@ -13,7 +13,7 @@ Menu_interface *Menu_factory::getInstance(eMenuType menuType,
     switch (menuType)
     {
     case DELETE_MENU:
-        instance = new DeleteMenu(rNfcCtrl, rMp3Play, rMessageHandler, rPowerMgr);
+        instance = new DeleteMenu(rNfcCtrl, rMp3Play, rMessageHandler, rPowerMgr); // TODO
         break;
     case LINK_MENU:
         instance = new LinkMenu(rNfcCtrl, rMp3Play, rMessageHandler, rPowerMgr);

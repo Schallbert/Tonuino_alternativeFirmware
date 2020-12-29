@@ -27,11 +27,6 @@ protected:
                                                m_powerManagerMock);
     }
 
-    virtual void TearDown()
-    {
-        delete deleteMenu;
-    }
-
 protected:
     NiceMock<Mock_NfcControl> m_nfcControlMock{};
     NiceMock<Mock_Mp3Play> m_mp3PlayMock{};

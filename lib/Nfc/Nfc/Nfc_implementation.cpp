@@ -7,7 +7,7 @@ NfcControl_interface::eTagState Nfc_implementation::getTagPresence()
     NfcControl_interface::eTagState returnValue{NfcControl_interface::NO_TAG};
     if (m_rMfrc522.isCardPresent())
     {
-        m_rMessageHandler.printMessage("DEBUG:TagDetected!"); // TODO: remove!
+        //m_rMessageHandler.printMessage("DEBUG:TagDetected!"); // TODO: remove!
         // A card is present!
         if (!m_rMfrc522.isNewCardPresent())
         {

@@ -11,22 +11,12 @@ using ::testing::Sequence;
 
 class KeepAliveTest : public ::testing::Test
 {
-protected:
-    virtual void SetUp()
-    {
-        kA = new KeepAlive(pinCtrl, keepAlivePinId, pinActiveState);
-    }
-
-    virtual void TearDown()
-    {
-        delete kA;
-    }
 
 protected:
     NiceMock<Mock_pinCtrl> pinCtrl{}; 
     uint8_t keepAlivePinId{7};
     bool pinActiveState{true};
-    KeepAlive *kA{nullptr};
+    KeepAlive m_keepAlive{KeepAlive(pinCtrl, keepAlivePinId, pinActiveState)};
 };
 
 TEST_F(KeepAliveTest, Constructor_ActivatesSelfKeepingPowerSupply)
@@ -40,7 +30,7 @@ TEST_F(KeepAliveTest, Constructor_ActivatesSelfKeepingPowerSupply)
 TEST_F(KeepAliveTest, keepAlive_writesActiveState_False_Correctly)
 {
     EXPECT_CALL(pinCtrl, digital_write(keepAlivePinId, pinActiveState));
-    kA->keep_alive();
+    m_keepAlive.keep_alive();
 }
 
 TEST_F(KeepAliveTest, keepAlive_writesActiveState_True_Correctly)
@@ -53,24 +43,24 @@ TEST_F(KeepAliveTest, keepAlive_writesActiveState_True_Correctly)
 
 TEST_F(KeepAliveTest, getShutdownRequest_returnsFalseByDefault)
 {
-    EXPECT_FALSE(kA->isShutdownRequested());
+    EXPECT_FALSE(m_keepAlive.isShutdownRequested());
 }
 
 TEST_F(KeepAliveTest, getShutdownRequest_returnsTrueWhenRequested)
 {
-    kA->requestShutdown();
-    EXPECT_TRUE(kA->isShutdownRequested());
+    m_keepAlive.requestShutdown();
+    EXPECT_TRUE(m_keepAlive.isShutdownRequested());
 }
 
 TEST_F(KeepAliveTest, allowShutdown_notRequested_willNotShutdown)
 {
     EXPECT_CALL(pinCtrl, digital_write(keepAlivePinId, !pinActiveState)).Times(0);
-    kA->allowShutdown();
+    m_keepAlive.allowShutdown();
 }
 
 TEST_F(KeepAliveTest, allowShutdown_Requested_willShutdown)
 {
-    kA->requestShutdown();
+    m_keepAlive.requestShutdown();
     EXPECT_CALL(pinCtrl, digital_write(keepAlivePinId, !pinActiveState));
-    kA->allowShutdown();
+    m_keepAlive.allowShutdown();
 }
