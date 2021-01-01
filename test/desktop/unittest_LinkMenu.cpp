@@ -16,7 +16,7 @@ class LinkMenuTest : public ::testing::Test
 protected:
     virtual void SetUp()
     {
-        linkMenu = Menu_factory::getInstance(Menu_factory::LINK_MENU,
+        linkMenu = m_MenuFactory.getInstance(Menu_factory::LINK_MENU,
                                              m_nfcControlMock,
                                              m_mp3PlayMock,
                                              m_messageHandlerMock,
@@ -29,6 +29,8 @@ protected:
     NiceMock<Mock_Mp3Play> m_mp3PlayMock{};
     NiceMock<Mock_MessageHandler> m_messageHandlerMock{};
     NiceMock<Mock_PowerManager> m_powerManagerMock{};
+
+    Menu_factory m_MenuFactory;
 };
 
 MATCHER(invalidPrompt, "")

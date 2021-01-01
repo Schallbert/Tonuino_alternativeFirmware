@@ -3,7 +3,6 @@
 
 #include "LinkMenu.h"
 
-
 void LinkMenu::confirm()
 {
     m_menuState.confirm();

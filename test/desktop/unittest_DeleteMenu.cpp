@@ -20,7 +20,7 @@ class DeleteMenuTest : public ::testing::Test
 protected:
     virtual void SetUp()
     {
-        deleteMenu = Menu_factory::getInstance(Menu_factory::DELETE_MENU,
+        deleteMenu = m_MenuFactory.getInstance(Menu_factory::DELETE_MENU,
                                                m_nfcControlMock,
                                                m_mp3PlayMock,
                                                m_messageHandlerMock,
@@ -32,6 +32,7 @@ protected:
     NiceMock<Mock_Mp3Play> m_mp3PlayMock{};
     NiceMock<Mock_PowerManager> m_powerManagerMock{};
     NiceMock<Mock_MessageHandler> m_messageHandlerMock{};
+    Menu_factory m_MenuFactory;
     Menu_interface *deleteMenu{nullptr};
 };
 

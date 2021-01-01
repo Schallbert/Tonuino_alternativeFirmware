@@ -42,6 +42,12 @@ TEST_F(VoiceMenuTest, noInit_isTimerRunning_returnsFalse)
     ASSERT_FALSE(m_MenuTimer.isRunning());
 }
 
+TEST_F(VoiceMenuTest, noInit_loop_isActiveReturnsFalse)
+{
+    m_VoiceMenu.loop();
+    ASSERT_FALSE(m_VoiceMenu.isActive());
+}
+
 TEST_F(VoiceMenuTest, init_isTimerRunning_returnsTrue)
 {
     m_VoiceMenu.setTagState(NfcControl_interface::NEW_UNKNOWN_TAG);
@@ -68,7 +74,6 @@ TEST_F(VoiceMenuTest, timerElapes_isActive_returnFalse)
 TEST_F(VoiceMenuTest, initLinkMenu_isActive_returnsTrue)
 {
     m_VoiceMenu.setTagState(NfcControl_interface::NEW_UNKNOWN_TAG);
-
     m_VoiceMenu.loop(); // entry conditions for Link menu met
 
     ASSERT_TRUE(m_VoiceMenu.isActive());
