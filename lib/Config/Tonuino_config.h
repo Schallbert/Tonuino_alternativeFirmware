@@ -33,6 +33,7 @@
 
 //Folder specific data
 #define MAXFOLDERCOUNT 99 // up to 255 supported by player
+#define MAXTRACKSPERFOLDER 99 // up to 255 supported by player BUT limited due to RAM constraints!
 
 #define VOLUME_MAX 22                                          // Absolute max: 30
 #define VOLUME_MIN 2                                           // Absolute min: 0

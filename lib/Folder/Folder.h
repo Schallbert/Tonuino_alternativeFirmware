@@ -1,6 +1,8 @@
 #ifndef FOLDER_H
 #define FOLDER_H
 
+#include "Tonuino_config.h"
+
 #include "../Arduino_HardwareAbstraction/Arduino_DIcontainer_interface.h"
 #include "../MessageHandler/MessageHandler_interface.h"
 
@@ -18,11 +20,10 @@ public:
     };
 
 public:
-    Folder(){};
+    Folder() = default;
     Folder(uint8_t ui8FolderId, ePlayMode ePlayMode);
     Folder(const Folder &cpySrcFolder);
     Folder &operator=(const Folder &cpySrcFolder); // = operator
-    ~Folder();
 
 public:
     // Returns current track in queue
@@ -54,13 +55,15 @@ private:
     // Creates a sorted play queue (1= first track, 2= second track etc.)
     void init_sorted_queue();
     // Creates a 1:1 copy of the input track queue and saves in member variable
-    void deep_copy_queue(uint8_t *pTrackQueue);
+    void deep_copy_queue(const uint8_t *pTrackQueue);
     // Creates a Pseudo random queue, each track only once in queue
     void shuffle_queue();
     // Returns true if folder is bound to necessary external dependencies (eeprom, random seed)
     bool is_dependency_set();
     // Returns true if folder's track queue has been initialized
     bool is_trackQueue_set();
+    // 
+    void saveProgressIfRequired();
 
 private:
     uint8_t m_ui8FolderId{0};
@@ -70,7 +73,7 @@ private:
     Arduino_DIcontainer_interface *m_pArduinoHal{nullptr};
     MessageHander_interface *m_pMessageHandler{nullptr};
 
-    uint8_t *m_pTrackQueue{nullptr};
+    uint8_t m_TrackQueue[MAXTRACKSPERFOLDER + 1]{0}; 
     uint8_t m_ui8CurrentQueueEntry{0};
 };
 
