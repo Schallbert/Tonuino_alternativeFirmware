@@ -4,7 +4,7 @@
 #include "../MFRC522/MFRC522_interface.h"
 #include "../MessageHandler/MessageHandler_interface.h"
 
-#include "NfcTag/NfcTag_interface.h"
+#include "../NfcTag/NfcTag_factory.h"
 #include "../Nfc/Nfc_interface.h"
 
 class NfcNotify
@@ -67,6 +67,7 @@ private:
     MFRC522_interface &m_rMfrc522;
     MessageHander_interface &m_rMessageHandler;
 
+    NfcTag_factory m_NfcTagFactory;
     NfcTag_interface *m_pConcreteTag{nullptr};
 };
 #endif // NFC_IMPLEMENTATION_H

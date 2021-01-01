@@ -7,33 +7,19 @@
 
 class NfcTag_factory
 {
-private:
-    NfcTag_factory(){}; //cannot be instantiated from externally
+public:
+    NfcTag_factory() = default;
+    ~NfcTag_factory();
+
 public:
     // Returns a de-facto singleton of correct tag-Type
-    static NfcTag_interface *getInstance(MFRC522_interface &rMfrc522)
-    {
-        static NfcTag_MifareUltralight nfcUltralight{NfcTag_MifareUltralight(rMfrc522)};
-        static NfcTag_MifareMini1k4k nfcNormal{NfcTag_MifareMini1k4k(rMfrc522)};
-        MFRC522_interface::eTagType tagType = rMfrc522.getTagType();
-        switch (tagType)
-        {
-        case MFRC522_interface::PICC_TYPE_MIFARE_MINI:
-            return &nfcNormal;
-            break;
-        case MFRC522_interface::PICC_TYPE_MIFARE_1K:
-            return &nfcNormal;
-            break;
-        case MFRC522_interface::PICC_TYPE_MIFARE_4K:
-            return &nfcNormal;
-            break;
-        case MFRC522_interface::PICC_TYPE_MIFARE_UL:
-            return &nfcUltralight;
-            break;
-        default:
-            return nullptr;
-        }
-    };
+    NfcTag_interface *getInstance(MFRC522_interface &pMfrc522);
+
+private:
+    void removeInstance();
+
+private:
+    NfcTag_interface *m_instance{nullptr};
 };
 
 #endif //NFCTAG_FACTORY_H

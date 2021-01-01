@@ -1,7 +1,6 @@
 #include "Tonuino_config.h"
 #include "SimpleTimer/SimpleTimer.h"
 
-#include "Menu_factory.h"
 #include "VoiceMenu.h"
 
 void VoiceMenu::setUserInput(UserInput_interface::eUserRequest input)
@@ -22,7 +21,7 @@ void VoiceMenu::loop()
         m_pMenuInstance->setTagState(m_tagState);
         m_pMenuInstance->handlePlayback();
         checkTimerElapsed();
-        checkLeaveMenu();        
+        checkLeaveMenu();
     }
     else
     {
@@ -45,11 +44,19 @@ void VoiceMenu::checkEnterLinkMenu()
 {
     if (m_tagState == NfcControl_interface::NEW_UNKNOWN_TAG)
     {
-        m_pMenuInstance = Menu_factory::getInstance(Menu_factory::LINK_MENU,
+        m_pMenuInstance = m_MenuFactory.getInstance(Menu_factory::LINK_MENU,
                                                     m_rNfcControl,
                                                     m_rMp3Play,
                                                     m_rMessageHandler,
                                                     m_rPowerManager);
+        enterMenu();
+    }
+}
+
+void VoiceMenu::enterMenu()
+{
+    if (m_pMenuInstance != nullptr)
+    {
         m_pMenuInstance->confirm();
         m_rMenuTimer.start(MENU_TIMEOUT_SECS);
     }
@@ -60,13 +67,12 @@ void VoiceMenu::checkEnterDeleteMenu()
     if ((m_tagState == NfcControl_interface::ACTIVE_KNOWN_TAG) &&
         (m_userInput == UserInput_interface::PP_LONGPRESS))
     {
-        m_pMenuInstance = Menu_factory::getInstance(Menu_factory::DELETE_MENU,
+        m_pMenuInstance = m_MenuFactory.getInstance(Menu_factory::DELETE_MENU,
                                                     m_rNfcControl,
                                                     m_rMp3Play,
                                                     m_rMessageHandler,
                                                     m_rPowerManager);
-        m_pMenuInstance->confirm();
-        m_rMenuTimer.start(MENU_TIMEOUT_SECS);
+        enterMenu();
     }
 }
 
@@ -107,4 +113,3 @@ void VoiceMenu::checkTimerElapsed()
         abrt();
     }
 }
-

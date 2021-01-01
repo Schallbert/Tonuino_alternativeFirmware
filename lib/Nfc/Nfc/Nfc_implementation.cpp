@@ -1,5 +1,4 @@
 #include "Arduino_config.h"
-#include "../NfcTag/NfcTag_factory.h"
 #include "Nfc_implementation.h"
 
 NfcControl_interface::eTagState Nfc_implementation::getTagPresence()
@@ -87,7 +86,7 @@ bool Nfc_implementation::setTagOnline()
     bool status{true};
     // Try reading card
     status &= m_rMfrc522.isCardPresent();
-    m_pConcreteTag = NfcTag_factory::getInstance(m_rMfrc522);
+    m_pConcreteTag = m_NfcTagFactory.getInstance(m_rMfrc522);
     status &= (m_pConcreteTag != nullptr); // Not implemented if factory cannot respond OK
     printNotification(status, NfcNotify::noMessage, NfcNotify::tagTypeNotImplementedError);
     return status;

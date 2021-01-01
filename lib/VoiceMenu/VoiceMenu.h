@@ -2,6 +2,7 @@
 #define VOICEMENU_H
 
 #include "UserInput/UserInput_interface.h"
+#include "Menu_factory.h"
 #include "Menu_interface.h"
 
 class Mp3Play_interface;
@@ -34,6 +35,7 @@ public:
 private:
     void checkEnterLinkMenu();
     void checkEnterDeleteMenu();
+    void enterMenu();
     void checkLeaveMenu();
     void checkTimerElapsed();
 
@@ -59,6 +61,7 @@ private:
     UserInput_interface::eUserRequest m_userInput{UserInput_interface::NO_ACTION};
     NfcControl_interface::eTagState m_tagState{NfcControl_interface::NO_TAG};
 
+    Menu_factory m_MenuFactory;
     Menu_interface *m_pMenuInstance{nullptr};
 };
 
