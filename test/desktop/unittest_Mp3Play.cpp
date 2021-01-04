@@ -79,7 +79,9 @@ TEST_F(Mp3Play, playFolder_folderValid_notifiesPlaying)
     Folder validFolder(1, Folder::ALBUM);
     ON_CALL(m_dfMiniMock, getFolderTrackCount(_)).WillByDefault(Return(1));
 
-    EXPECT_CALL(m_messageHandlerMock, printMessage(_)).Times(2); // once for PlayMode, once for playing
+    // 1. for Folder's PlayMode on Folder Verification 
+    // 2. for playFolder's PlayStatus
+    EXPECT_CALL(m_messageHandlerMock, printMessage(_)).Times(2); 
     m_pMp3Play->playFolder(validFolder);
 }
 

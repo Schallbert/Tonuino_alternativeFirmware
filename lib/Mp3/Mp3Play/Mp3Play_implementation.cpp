@@ -28,12 +28,6 @@ void Mp3Play_implementation::playFolder(Folder &folder)
     restartLullabyeTimer();
 }
 
-void Mp3Play_implementation::restartLullabyeTimer()
-{
-    m_rLullabyeTimer.stop();
-    m_rLullabyeTimer.start(LULLABYE_TIMEOUT_SECS);
-}
-
 bool Mp3Play_implementation::prepareFolderToPlay(Folder &folder)
 {
     bool check{true};
@@ -54,6 +48,12 @@ bool Mp3Play_implementation::isFolderNew(const Folder &folder) const
 uint8_t Mp3Play_implementation::getTrackCountOfFolderOnSdCard(const Folder &folder) const
 {
     return m_rDfMiniMp3.getFolderTrackCount(folder.getFolderId());
+}
+
+void Mp3Play_implementation::restartLullabyeTimer()
+{
+    m_rLullabyeTimer.stop();
+    m_rLullabyeTimer.start(LULLABYE_TIMEOUT_SECS);
 }
 
 bool Mp3Play_implementation::isFolderValid(Folder &folder)

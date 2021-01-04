@@ -61,7 +61,7 @@ private:
     // Returns true if folder is bound to necessary external dependencies (eeprom, random seed)
     bool is_dependency_set();
     // Returns true if folder's track queue has been initialized
-    bool is_trackQueue_set();
+    bool isTrackQueueSet();
     // 
     void saveProgressIfRequired();
 

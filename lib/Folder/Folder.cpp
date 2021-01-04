@@ -14,7 +14,7 @@ Folder::Folder(const Folder &cpySrcFolder) : m_ui8FolderId(cpySrcFolder.m_ui8Fol
                                              m_pArduinoHal(cpySrcFolder.m_pArduinoHal),
                                              m_pMessageHandler(cpySrcFolder.m_pMessageHandler)
 {
-    if (cpySrcFolder.m_TrackQueue[0] != 0)
+    if (cpySrcFolder.m_TrackQueue[1] != 0)
     {
         deep_copy_queue(cpySrcFolder.m_TrackQueue);
         m_ui8CurrentQueueEntry = cpySrcFolder.m_ui8CurrentQueueEntry;
@@ -33,7 +33,7 @@ Folder &Folder::operator=(const Folder &cpySrcFolder)
     m_ui8TrackCount = cpySrcFolder.m_ui8TrackCount;
     m_pArduinoHal = cpySrcFolder.m_pArduinoHal;
     m_pMessageHandler = cpySrcFolder.m_pMessageHandler;
-    if (cpySrcFolder.m_TrackQueue[0] != 0)
+    if (cpySrcFolder.m_TrackQueue[1] != 0)
     {
         deep_copy_queue(cpySrcFolder.m_TrackQueue);
         m_ui8CurrentQueueEntry = cpySrcFolder.m_ui8CurrentQueueEntry;
@@ -50,16 +50,11 @@ void Folder::deep_copy_queue(const uint8_t *pTrackQueue)
     }
 }
 
-bool Folder::is_trackQueue_set()
-{
-    return (m_TrackQueue[1] != 0); // first track is track 1
-}
-
 bool Folder::isValid()
 {
     if (isInitiated() && m_ui8TrackCount)
     {
-        if (is_trackQueue_set())
+        if (isTrackQueueSet())
         {
             return true;
         }
@@ -70,6 +65,11 @@ bool Folder::isValid()
         }
     }
     return false;
+}
+
+bool Folder::isTrackQueueSet()
+{
+    return (m_TrackQueue[1] != 0); // first track is track 1
 }
 
 bool Folder::isInitiated() const
@@ -145,7 +145,7 @@ void Folder::setTrackCount(uint8_t trackCount)
 {
     if (trackCount > MAXTRACKSPERFOLDER)
     {
-        m_pMessageHandler->printMessage("ERROR: cannot set TrackCount");
+        m_pMessageHandler->printMessage("TrackCount ERROR"); // TODO: Add test for this!
         return;
     }
     m_ui8TrackCount = trackCount;
@@ -158,6 +158,7 @@ uint8_t Folder::getNextTrack()
     {
         return 0; //Error: folder not initialized
     }
+    
     if (m_ui8CurrentQueueEntry < m_ui8TrackCount)
     {
         ++m_ui8CurrentQueueEntry;
