@@ -145,7 +145,6 @@ void Folder::setTrackCount(uint8_t trackCount)
 {
     if (trackCount > MAXTRACKSPERFOLDER)
     {
-        m_pMessageHandler->printMessage("TrackCount ERROR"); // TODO: Add test for this!
         return;
     }
     m_ui8TrackCount = trackCount;
@@ -158,7 +157,7 @@ uint8_t Folder::getNextTrack()
     {
         return 0; //Error: folder not initialized
     }
-    
+
     if (m_ui8CurrentQueueEntry < m_ui8TrackCount)
     {
         ++m_ui8CurrentQueueEntry;

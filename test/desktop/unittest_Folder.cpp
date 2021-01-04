@@ -162,6 +162,22 @@ TEST_F(folderInvalid, folderIdIs0_isValidReturnsFalse)
     ASSERT_FALSE(invalidFolder.isValid());
 }
 
+TEST_F(folderInvalid, trackCountIsTooHigh_isValidReturnsFalse)
+{
+    Folder invalidFolder(1, Folder::ALBUM);
+    invalidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
+    invalidFolder.setTrackCount(MAXTRACKSPERFOLDER + 1);
+    ASSERT_FALSE(invalidFolder.isValid());
+}
+
+TEST_F(folderInvalid, trackCount0_isValidReturnsFalse)
+{
+    Folder invalidFolder(1, Folder::ALBUM);
+    invalidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
+    invalidFolder.setTrackCount(0);
+    ASSERT_FALSE(invalidFolder.isValid());
+}
+
 TEST_F(folderMethods, copyConstructor_workingOK)
 {
     // Arrange
