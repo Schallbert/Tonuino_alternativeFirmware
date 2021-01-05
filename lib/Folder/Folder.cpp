@@ -132,7 +132,7 @@ void Folder::saveProgressIfRequired()
     {
         m_pArduinoHal->getEeprom().eeprom_write(m_ui8FolderId, m_TrackQueue[m_ui8CurrentQueueEntry]);
     }
-} 
+}
 
 void Folder::setupDependencies(Arduino_DIcontainer_interface *pArduinoHal, MessageHander_interface *pMessageHandler)
 {
@@ -145,7 +145,14 @@ void Folder::setTrackCount(uint8_t trackCount)
 {
     if (trackCount > MAXTRACKSPERFOLDER)
     {
-        return;
+        if (is_dependency_set())
+        {
+            VoicePrompt tooManyTracks;
+            tooManyTracks.promptId = MSG_ERROR_TOOMANYTRACKS;
+            tooManyTracks.allowSkip = true;
+            m_pMessageHandler->promptMessage(tooManyTracks);
+        }
+        trackCount = MAXTRACKSPERFOLDER;
     }
     m_ui8TrackCount = trackCount;
     isValid(); // Call to setup play queue in case dependencies are correctly linked
