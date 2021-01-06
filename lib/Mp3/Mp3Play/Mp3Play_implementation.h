@@ -45,10 +45,14 @@ public:
     Mp3Play_implementation(Arduino_DIcontainer_interface &rArduinoHal,
                            DfMiniMp3_interface &rDfMini,
                            SimpleTimer &rLullabyeTimer,
-                           MessageHander_interface &rMsgHandler);
+                           MessageHander_interface &rMessage) : m_rArduinoHal(rArduinoHal),
+                                                                m_rDfMiniMp3(rDfMini),
+                                                                m_rLullabyeTimer(rLullabyeTimer),
+                                                                m_rMessageHandler(rMessage){};
+    ~Mp3Play_implementation() = default;
 
+    void init();
     void playFolder(Folder &folder) override;
-
     void playPrev() override;
     void playNext() override;
     void autoplay() override;

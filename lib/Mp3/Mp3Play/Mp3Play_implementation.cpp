@@ -2,18 +2,19 @@
 
 #include "Arduino_config.h"
 
-Mp3Play_implementation::Mp3Play_implementation(Arduino_DIcontainer_interface &rArduinoHal,
-                                               DfMiniMp3_interface &rDfMini,
-                                               SimpleTimer &rLullabyeTimer,
-                                               MessageHander_interface &rMessage) : m_rArduinoHal(rArduinoHal),
-                                                                                    m_rDfMiniMp3(rDfMini),
-                                                                                    m_rLullabyeTimer(rLullabyeTimer),
-                                                                                    m_rMessageHandler(rMessage)
+void Mp3Play_implementation::init()
 {
-
     // Init communication with module and setup
     m_rArduinoHal.getPins().pin_mode(DFMINI_PIN_ISIDLE, INPUT);
     m_rDfMiniMp3.setEq(DFMINI_EQ_SETTING);
+    m_rDfMiniMp3.setVolume(VOLUME_INIT);
+    if(m_rDfMiniMp3.getVolume() == VOLUME_INIT)
+    {
+        m_rMessageHandler.printMessage("Mp3 player: Volume & EQ set.");
+    }
+    else{
+        m_rMessageHandler.printMessage("Mp3 player: Com ERROR");
+    }
 }
 
 void Mp3Play_implementation::playFolder(Folder &folder)

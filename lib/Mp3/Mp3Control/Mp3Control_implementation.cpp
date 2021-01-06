@@ -3,24 +3,7 @@
 #include "Tonuino_config.h"
 #include "../Utilities/SimpleTimer/SimpleTimer.h"
 #include "../Folder/Folder.h"
-
-Mp3Control::Mp3Control(DfMiniMp3_interface &rDfMini,
-                       Mp3Play_interface &rPlayer,
-                       NfcControl_interface &rNfcControl,
-                       MessageHander_interface &rMsgHandler) : m_rDfMiniMp3(rDfMini),
-                                                               m_rMp3Player(rPlayer),
-                                                               m_rNfcControl(rNfcControl),
-                                                               m_rMessageHandler(rMsgHandler)
-{
-
-    // Init communication with module and setup
-    m_rDfMiniMp3.setVolume(VOLUME_INIT);
-    if(m_rDfMiniMp3.getVolume() == VOLUME_INIT)
-    {
-        m_rMessageHandler.printMessage("DFMini COM established. Volume set.");
-    }
-}
-
+    
 void Mp3Control::setUserInput(UserInput_interface::eUserRequest input)
 {
     m_userInput = input;

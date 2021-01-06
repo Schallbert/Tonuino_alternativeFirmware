@@ -50,7 +50,11 @@ public:
     Mp3Control(DfMiniMp3_interface &rDfMini,
                Mp3Play_interface &rPlayer,
                NfcControl_interface &rNfcControl,
-               MessageHander_interface &rMsgHandler);
+               MessageHander_interface &rMsgHandler) : m_rDfMiniMp3(rDfMini),
+                                                       m_rMp3Player(rPlayer),
+                                                       m_rNfcControl(rNfcControl),
+                                                       m_rMessageHandler(rMsgHandler){};
+    ~Mp3Control() = default;
 
     void setUserInput(UserInput_interface::eUserRequest input) override;
     void loop() override;

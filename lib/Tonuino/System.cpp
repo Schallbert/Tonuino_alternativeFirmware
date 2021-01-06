@@ -7,6 +7,7 @@ void System::init()
 {
     m_ArduinoHal.getSerial().com_begin(DEBUGSERIAL_BAUDRATE);
     m_NfcControl.init();
+    m_Mp3Play.init();
     //UserInput_factory m_pUserInputFactory{};
     //m_pUserInput = m_pUserInputFactory.getInstance();
     notifyStartup();
@@ -20,7 +21,7 @@ void System::notifyStartup()
     VoicePrompt startup;
     startup.promptId = MSG_STARTUP;
     startup.allowSkip = false;
-    //m_MessageHandler.promptMessage(startup); TODO: Reactivate!
+    m_MessageHandler.promptMessage(startup);
 }
 
 void System::shutdown()
