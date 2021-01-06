@@ -51,9 +51,11 @@ void System::loop()
     NfcControl_interface::eTagState tagState{m_NfcControl.getTagPresence()};
 
     // Handle Voice Menu
+    /*
     m_VoiceMenu.setTagState(tagState);
     m_VoiceMenu.setUserInput(userRequest);
     m_VoiceMenu.loop();
+    */
 
     // Handle Mp3 Playback
     m_Mp3Control.setTagState(tagState);
