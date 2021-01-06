@@ -77,8 +77,7 @@ private:
     Mp3Control m_Mp3Control{Mp3Control(m_DfMini,
                                                  m_Mp3Play,
                                                  m_NfcControl,
-                                                 m_MessageHandler)};   
-                                                 /*     
+                                                 m_MessageHandler)};          
     VoiceMenu m_VoiceMenu{VoiceMenu(m_Mp3Play,
                                     m_NfcControl,
                                     m_MessageHandler,
@@ -86,6 +85,5 @@ private:
                                     m_MenuTimer)};
     // userInput
     UserInput_interface *m_pUserInput{nullptr};
-    */
 };
 #endif // SYSTEM_H

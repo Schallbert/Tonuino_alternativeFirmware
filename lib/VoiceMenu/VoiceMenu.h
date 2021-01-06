@@ -24,7 +24,7 @@ public:
                                          m_rMessageHandler(rMessageHandler),
                                          m_rPowerManager(rPowerMgr),
                                          m_rMenuTimer(rMenuTimer){};
-    ~VoiceMenu(){};
+    ~VoiceMenu() = default;
 
 public:
     void setUserInput(UserInput_interface::eUserRequest input);

@@ -8,8 +8,8 @@ void System::init()
     m_ArduinoHal.getSerial().com_begin(DEBUGSERIAL_BAUDRATE);
     m_NfcControl.init();
     m_Mp3Play.init();
-    //UserInput_factory m_pUserInputFactory{};
-    //m_pUserInput = m_pUserInputFactory.getInstance();
+    UserInput_factory m_pUserInputFactory{};
+    m_pUserInput = m_pUserInputFactory.getInstance();
     notifyStartup();
 }
 
@@ -46,21 +46,20 @@ void System::notifyShutdown()
 void System::loop()
 {
     m_DfMini.loop();
-    /*
-    UserInput_interface::eUserRequest userRequest{m_pUserInput->getxxx};
-    NfcControl_interface::eTagState tagState{m_pNfcControl->getTagPresence()};
+
+    UserInput_interface::eUserRequest userRequest{m_pUserInput->getUserRequest()};
+    NfcControl_interface::eTagState tagState{m_NfcControl.getTagPresence()};
 
     // Handle Voice Menu
-    m_pVoiceMenu->setTagState(tagState);
-    m_pVoiceMenu->setUserInput(userRequest);
-    m_pVoiceMenu->loop();
+    m_VoiceMenu.setTagState(tagState);
+    m_VoiceMenu.setUserInput(userRequest);
+    m_VoiceMenu.loop();
 
     // Handle Mp3 Playback
-    m_pMp3Control->setTagState(tagState);
-    m_pMp3Control->setUserInput(userRequest);
-    m_pMp3Control->setBlocked(m_pVoiceMenu->isActive()); // VoiceMenu overrules Playback
-    m_pMp3Control->loop();
-    */
+    m_Mp3Control.setTagState(tagState);
+    m_Mp3Control.setUserInput(userRequest);
+    m_Mp3Control.setBlocked(m_VoiceMenu.isActive()); // VoiceMenu overrules Playback
+    m_Mp3Control.loop();
 }
 
 bool System::isShutdownRequested()
