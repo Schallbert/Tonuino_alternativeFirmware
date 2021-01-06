@@ -20,6 +20,7 @@ public:
     virtual ~NfcControl_interface(){};
 
 public:
+    virtual void init() = 0;
     virtual NfcControl_interface::eTagState getTagPresence() = 0;
     virtual bool readFolderFromTag(Folder &targetFolder) = 0;
     virtual bool writeFolderToTag(const Folder &sourceFolder) = 0;

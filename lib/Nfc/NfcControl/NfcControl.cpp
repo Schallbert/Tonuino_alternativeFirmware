@@ -1,8 +1,6 @@
 #include "NfcControl.h"
 
-NfcControl::NfcControl(Nfc_interface &rNfc,
-                       MessageHander_interface &rMessageHandler) : m_rNfc(rNfc),
-                                                                   m_rMessageHandler(rMessageHandler)
+void NfcControl::init()
 {
     m_rNfc.initNfc();
 }

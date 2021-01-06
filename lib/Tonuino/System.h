@@ -32,13 +32,12 @@ class Folder;
 class System
 {
 public:
-    System();
+    System() = default;
     ~System() = default;
 
 public:
+    void init();
     void loop(); // main loop. Read inputs, react and set outputs.
-    void notifyStartup();
-    void notifyShutdown();
     void timer1Task_1ms();
     void shutdown();
 
@@ -46,6 +45,8 @@ public:
 
 private:
     void timer1Task_1sec();
+    void notifyStartup();
+    void notifyShutdown();
 
 private:
     // Arduino Hardware Abstraction Layer
@@ -66,7 +67,7 @@ private:
     // nfc
     MFRC522_implementation m_Mfrc522{MFRC522_implementation()};
     Nfc_implementation m_Nfc{Nfc_implementation(m_Mfrc522, m_MessageHandler)};
-    /*
+
     NfcControl m_NfcControl{NfcControl(m_Nfc, m_MessageHandler)};
     // mp3
     Mp3Play_implementation m_Mp3Play{Mp3Play_implementation(m_ArduinoHal,
@@ -76,7 +77,8 @@ private:
     Mp3Control m_Mp3Control{Mp3Control(m_DfMini,
                                                  m_Mp3Play,
                                                  m_NfcControl,
-                                                 m_MessageHandler)};        
+                                                 m_MessageHandler)};   
+                                                 /*     
     VoiceMenu m_VoiceMenu{VoiceMenu(m_Mp3Play,
                                     m_NfcControl,
                                     m_MessageHandler,

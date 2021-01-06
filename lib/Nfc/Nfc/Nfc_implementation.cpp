@@ -1,6 +1,12 @@
 #include "Arduino_config.h"
 #include "Nfc_implementation.h"
 
+void Nfc_implementation::initNfc()
+{
+    m_rMfrc522.init(); // Init MFRC522
+    m_rMessageHandler.printMessage(NfcNotify::toString(NfcNotify::tagReaderInit));
+}
+
 NfcControl_interface::eTagState Nfc_implementation::getTagPresence()
 {
     NfcControl_interface::eTagState returnValue{NfcControl_interface::NO_TAG};
@@ -22,12 +28,6 @@ NfcControl_interface::eTagState Nfc_implementation::getTagPresence()
         }
     }
     return returnValue;
-}
-
-void Nfc_implementation::initNfc()
-{
-    m_rMfrc522.init(); // Init MFRC522
-    m_rMessageHandler.printMessage(NfcNotify::toString(NfcNotify::tagReaderInit));
 }
 
 bool Nfc_implementation::writeTag(byte blockAddress, byte *dataToWrite)

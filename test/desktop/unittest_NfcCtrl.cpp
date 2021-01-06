@@ -46,9 +46,8 @@ class NfcCtrlDebugOutput : public NfcCtrlWrite
 // TESTS
 TEST_F(NfcCtrlWrite, initNfc_IsCalledOnConstruction)
 {
-    Mock_Nfc nfc;
-    EXPECT_CALL(nfc, initNfc()).Times(1);
-    NfcControl nfcControl(nfc, m_messageHandlerMock);
+    EXPECT_CALL(m_nfcMock, initNfc());
+    m_NfcControl.init();
 }
 
 TEST_F(NfcCtrlWrite, invalidFolder_ReturnsFalse)

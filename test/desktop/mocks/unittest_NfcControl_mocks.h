@@ -14,6 +14,7 @@ using ::testing::Return;
 class Mock_NfcControl : public NfcControl_interface
 {
 public:
+    MOCK_METHOD(void,  init, (), (override));
     MOCK_METHOD(NfcControl_interface::eTagState,  getTagPresence, (), (override));
     MOCK_METHOD(bool, readFolderFromTag, (Folder &targetFolder), (override));
     MOCK_METHOD(bool, writeFolderToTag, (const Folder &sourceFolder), (override));

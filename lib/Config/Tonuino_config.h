@@ -1,7 +1,7 @@
 #ifndef TONUINO_CONFIG_H
 #define TONUINO_CONFIG_H
 
-//DEBUG OUTPUT [just write "false" to disable debug output on serial]
+//DEBUG OUTPUT [just write "true" to disable debug output on serial]
 #define DEBUGSERIAL true
 #define DEBUGSERIAL_BAUDRATE 9600
 
@@ -34,7 +34,7 @@
 
 //Folder specific data
 #define MAXFOLDERCOUNT 99 // up to 255 supported by player
-#define MAXTRACKSPERFOLDER 99 // up to 255 supported by player BUT limited due to RAM constraints!
+#define MAXTRACKSPERFOLDER 63 // up to 255 supported by player BUT limited due to RAM constraints!
 
 #define VOLUME_MAX 22                                          // Absolute max: 30
 #define VOLUME_MIN 2                                           // Absolute min: 0

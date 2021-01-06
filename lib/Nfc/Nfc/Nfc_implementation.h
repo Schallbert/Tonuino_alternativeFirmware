@@ -3,6 +3,7 @@
 
 #include "../MFRC522/MFRC522_interface.h"
 #include "../MessageHandler/MessageHandler_interface.h"
+#include "Tonuino_config.h"
 
 #include "../NfcTag/NfcTag_factory.h"
 #include "../Nfc/Nfc_interface.h"
@@ -33,7 +34,7 @@ public:
             "Tag read Error",
             "Tag type unknown/not implemented"
             };
-        return NOTIFY_STRING[value];
+        return NOTIFY_STRING[static_cast<uint8_t>(value)];
 #endif
         return nullptr;
     }

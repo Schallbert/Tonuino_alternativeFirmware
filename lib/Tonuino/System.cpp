@@ -3,35 +3,43 @@
 #include "../UserInput/UserInput/UserInput_implementation.h"
 #include "../UserInput/ClickEncoder/ClickEncoder_implementation.h"
 
-System::System()
+void System::init()
 {
+    m_ArduinoHal.getSerial().com_begin(DEBUGSERIAL_BAUDRATE);
+    m_NfcControl.init();
     //UserInput_factory m_pUserInputFactory{};
     //m_pUserInput = m_pUserInputFactory.getInstance();
+    notifyStartup();
 }
 
 void System::notifyStartup()
 {
-    m_ArduinoHal.getSerial().com_begin(DEBUGSERIAL_BAUDRATE);
-    m_MessageHandler.printMessage("Startup");
+#if DEBUGSERIAL
+    m_MessageHandler.printMessage("Started");
+#endif
     VoicePrompt startup;
     startup.promptId = MSG_STARTUP;
     startup.allowSkip = false;
-    m_MessageHandler.promptMessage(startup);
-}
-
-void System::notifyShutdown()
-{
-    m_MessageHandler.printMessage("Shutdown");
-    VoicePrompt shutdown;
-    shutdown.promptId = MSG_SHUTDOWN;
-    shutdown.allowSkip = false;
-    m_MessageHandler.promptMessage(shutdown);
+    //m_MessageHandler.promptMessage(startup); TODO: Reactivate!
 }
 
 void System::shutdown()
 {
+    // TODO: shutdown should be delayed somehow? As otherwise timers cannot be stopped on time?!
     //m_MessageHandler.printMessage("Deleting objects");
     //m_PwrCtrl.allowShutdown();
+    //notifyShutdown();
+}
+
+void System::notifyShutdown()
+{
+#if DEBUGSERIAL
+    m_MessageHandler.printMessage("Shutdown");
+#endif
+    VoicePrompt shutdown;
+    shutdown.promptId = MSG_SHUTDOWN;
+    shutdown.allowSkip = false;
+    m_MessageHandler.promptMessage(shutdown);
 }
 
 void System::loop()

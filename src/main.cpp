@@ -14,8 +14,7 @@ void setup()
 {   
     timer1.initialize(TIMERONE_TASK_INTERVAL_USEC);
     timer1.attachInterrupt(timer1Task_1ms); // only allowed for "free" functions, NO METHODS :/
-    
-    tonuino.notifyStartup();
+    tonuino.init();
 }
 
 void loop()
@@ -26,9 +25,8 @@ void loop()
     /*
     if (tonuino->isShutdownRequested())
     {
-        tonuino->notifyShutdown();
-        timer1.detachInterrupt();
         tonuino->shutdown(); // shutdown system
+        timer1.detachInterrupt();
         return; // leave loop
     }*/
 }
@@ -66,6 +64,7 @@ void timer1Task_1ms()
 // - create well-readable README.md
 // - solve all TODOS.
 // - rename Folder to PlayList
+// - all debugserial string output should go in one file
 
 // - BIG TASK: Integration testing on device
 
