@@ -5,8 +5,9 @@
 #include "SimpleTimer/SimpleTimer.h"
 
 #include "MessageHandler_implementation.h"
+#include "messages.h"
 
-const char* messageTimeout = "Prompt timeout";
+const char *messageTimeout = "Prompt timeout";
 
 MessageHandler::MessageHandler(Arduino_interface_com &rSerial,
                                DfMiniMp3_interface &rDfMini,
@@ -14,15 +15,28 @@ MessageHandler::MessageHandler(Arduino_interface_com &rSerial,
                                                                   m_rDfMiniMp3(rDfMini),
                                                                   m_rDfMiniPromptTimer(rDfMiniPromptTimer){};
 
-void MessageHandler::printMessage(const char *message)
+void MessageHandler::printMessage(const Message &message)
 {
-    if (message != nullptr)
+    if (isNewMessage(message))
     {
-        if (*message != 0)
+        MessageToString toString;
+        char *buffer = toString.getStringFromMessage(message);
+        if (buffer != nullptr)
         {
-            m_rSerial.com_println(message);
+            m_rSerial.com_println(buffer);
         }
     }
+}
+
+bool MessageHandler::isNewMessage(const Message &message)
+{
+    bool status{false};
+    if (m_lastMessage[message.m_group] != message.m_contents)
+    {
+        status = true;
+    }
+    m_lastMessage[message.m_group] = message.m_contents;
+    return status;
 }
 
 void MessageHandler::promptMessage(const VoicePrompt &message)
@@ -53,14 +67,14 @@ void MessageHandler::waitForPromptToStart()
 {
     m_rDfMiniPromptTimer.start(WAIT_DFMINI_READY);
     while (!m_rDfMiniMp3.isPlaying())
+    {
+        m_rDfMiniMp3.loop(); //wait for track to start (until timeout kicks in)
+        if (m_rDfMiniPromptTimer.isElapsed())
         {
-            m_rDfMiniMp3.loop(); //wait for track to start (until timeout kicks in)
-            if (m_rDfMiniPromptTimer.isElapsed())
-            {
-                printMessage(messageTimeout);
-                break;
-            }
+            printMessage(messageTimeout);
+            break;
         }
+    }
     m_rDfMiniPromptTimer.stop();
 }
 

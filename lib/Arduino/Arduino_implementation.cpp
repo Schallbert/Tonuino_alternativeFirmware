@@ -57,7 +57,8 @@ void Arduino_delay::delay_us(unsigned int us)
 void Arduino_com::com_begin(unsigned long baudrate)
 {
     Serial.begin(baudrate);
-    Serial.print("Init serial @");
+    while (!Serial); // wait for Serial to be initiated
+    Serial.print("Serial @");
     Serial.println(baudrate);
 }
 

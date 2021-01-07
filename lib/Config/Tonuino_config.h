@@ -4,6 +4,7 @@
 //DEBUG OUTPUT [just write "true" to disable debug output on serial]
 #define DEBUGSERIAL true
 #define DEBUGSERIAL_BAUDRATE 9600
+#define DEBUG_MAXMESSAGELENGTH 42 // max number of characters in a message
 
 // This is the selector of input variants.
 // Change it to your preferred variant

@@ -17,11 +17,12 @@ public:
                    DfMiniMp3_interface &rDfMini,
                    SimpleTimer &rDfMiniPromptTimer);
 
-    virtual void printMessage(const char *message) override;
+    virtual void printMessage(const Message &message) override;
     virtual void promptMessage(const VoicePrompt &message) override;
 
 private:
     bool isNewPrompt(const VoicePrompt &message);
+    bool isNewMessage(const Message &message);
     void waitForPromptToStart();
     void waitForPromptToFinish();
 
@@ -31,6 +32,7 @@ private:
     SimpleTimer &m_rDfMiniPromptTimer;
 
     VoicePrompt m_lastPrompt;
+    eMessageContent m_lastMessage[groupCount]{};
 };
 
 #endif // MESSAGEHANDLER_IMPLEMENTATION_H
