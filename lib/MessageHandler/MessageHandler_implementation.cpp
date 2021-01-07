@@ -7,8 +7,6 @@
 #include "MessageHandler_implementation.h"
 #include "messages.h"
 
-const char *messageTimeout = "Prompt timeout";
-
 MessageHandler::MessageHandler(Arduino_interface_com &rSerial,
                                DfMiniMp3_interface &rDfMini,
                                SimpleTimer &rDfMiniPromptTimer) : m_rSerial(rSerial),
@@ -34,8 +32,8 @@ bool MessageHandler::isNewMessage(const Message &message)
     if (m_lastMessage[message.m_group] != message.m_contents)
     {
         status = true;
+        m_lastMessage[message.m_group] = message.m_contents;
     }
-    m_lastMessage[message.m_group] = message.m_contents;
     return status;
 }
 
@@ -71,7 +69,8 @@ void MessageHandler::waitForPromptToStart()
         m_rDfMiniMp3.loop(); //wait for track to start (until timeout kicks in)
         if (m_rDfMiniPromptTimer.isElapsed())
         {
-            printMessage(messageTimeout);
+            Message timeout{Message(eMessageGroup::system, eMessageContent::promptTimeout)};
+            printMessage(timeout);
             break;
         }
     }
@@ -86,7 +85,8 @@ void MessageHandler::waitForPromptToFinish()
         m_rDfMiniMp3.loop(); //wait for track to finish
         if (m_rDfMiniPromptTimer.isElapsed())
         {
-            printMessage(messageTimeout);
+            Message timeout{Message(eMessageGroup::system, eMessageContent::promptTimeout)};
+            printMessage(timeout);
             break;
         }
     }

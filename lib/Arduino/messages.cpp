@@ -17,7 +17,7 @@ const char s_group6[] PROGMEM = "Playlist";
 
 const char s_content0[] PROGMEM = "Started";
 const char s_content1[] PROGMEM = "Shutdown";
-const char s_content2[] PROGMEM = "Sleep";
+const char s_content2[] PROGMEM = "Prompt timeout";
 const char s_content3[] PROGMEM = "Volume up";
 const char s_content4[] PROGMEM = "Volume down";
 const char s_content5[] PROGMEM = "Next track";

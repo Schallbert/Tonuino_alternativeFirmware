@@ -21,7 +21,7 @@ enum eMessageContent
 {
     up = 0,
     halt,
-    sleep,
+    promptTimeout,
     volUp,
     volDn,
     next,
