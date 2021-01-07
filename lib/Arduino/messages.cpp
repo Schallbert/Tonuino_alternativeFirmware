@@ -18,31 +18,37 @@ const char s_group6[] PROGMEM = "Playlist";
 const char s_content0[] PROGMEM = "Started";
 const char s_content1[] PROGMEM = "Shutdown";
 const char s_content2[] PROGMEM = "Prompt timeout";
+
 const char s_content3[] PROGMEM = "Volume up";
 const char s_content4[] PROGMEM = "Volume down";
 const char s_content5[] PROGMEM = "Next track";
 const char s_content6[] PROGMEM = "Previous track";
 const char s_content7[] PROGMEM = "Play";
 const char s_content8[] PROGMEM = "Pause";
+
 const char s_content9[] PROGMEM = "Error: folder invalid!";
 const char s_content10[] PROGMEM = "Folder detected. Play";
 const char s_content11[] PROGMEM = "Autoplay complete. Pause";
 const char s_content12[] PROGMEM = "Autoplay next";
+
 const char s_content13[] PROGMEM = "Finished playing track";
 const char s_content14[] PROGMEM = "SD card online";
 const char s_content15[] PROGMEM = "SD card inserted";
 const char s_content16[] PROGMEM = "SD Card removed";
 const char s_content17[] PROGMEM = "Com Error";
+
 const char s_content18[] PROGMEM = "No Tag";
 const char s_content19[] PROGMEM = "Active Tag";
 const char s_content20[] PROGMEM = "New Tag";
 const char s_content21[] PROGMEM = "Unknown Tag";
+
 const char s_content22[] PROGMEM = "Tag Reader Init";
 const char s_content23[] PROGMEM = "Tag Write Success";
 const char s_content24[] PROGMEM = "Tag Read Success";
 const char s_content25[] PROGMEM = "Tag write Error";
 const char s_content26[] PROGMEM = "Tag read Error";
 const char s_content27[] PROGMEM = "Tag type not implemented";
+
 const char s_content28[] PROGMEM = "Mode Lullabye";
 const char s_content29[] PROGMEM = "Mode Album";
 const char s_content30[] PROGMEM = "Mode Random";

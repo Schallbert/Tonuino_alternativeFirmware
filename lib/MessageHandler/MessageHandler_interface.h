@@ -3,17 +3,17 @@
 
 #include "../Mp3/Mp3Play/Mp3Play_interface.h"
 
-// MUST be kept synchronized with s_group of messages.cpp
+// MUST be kept synchronized with s_group of messages.cpp, numbers are the offsets of eMessageContent
 enum eMessageGroup
 {
     system = 0,
-    mp3Control,
-    mp3Playback,
-    mp3Player,
-    nfcControl,
-    nfcReader,
-    playlist,
-    groupCount
+    mp3Control = 3,
+    mp3Playback = 9,
+    mp3Player = 13,
+    nfcControl = 18,
+    nfcReader = 22,
+    playlist = 28,
+    groupCount = 7
 };
 
 // MUST be kept synchronized with s_content of messages.cpp
@@ -57,6 +57,7 @@ enum eMessageContent
 struct Message
 {
     Message(eMessageGroup group, eMessageContent contents) : m_group(group), m_contents(contents){};
+    Message(eMessageGroup group, uint8_t offset) : m_group(group), m_contents(static_cast<eMessageContent>(static_cast<uint8_t>(group) + offset)){};
     ~Message() = default;
 
     eMessageGroup m_group{};
