@@ -4,7 +4,8 @@
 void Nfc_implementation::initNfc()
 {
     m_rMfrc522.init(); // Init MFRC522
-    m_rMessageHandler.printMessage(NfcNotify::toString(NfcNotify::tagReaderInit));
+    Message init{Message(eMessageGroup::nfcReader, eMessageContent::rdrInit)};
+    m_rMessageHandler.printMessage(init);
 }
 
 NfcControl_interface::eTagState Nfc_implementation::getTagPresence()
@@ -12,7 +13,6 @@ NfcControl_interface::eTagState Nfc_implementation::getTagPresence()
     NfcControl_interface::eTagState returnValue{NfcControl_interface::NO_TAG};
     if (m_rMfrc522.isCardPresent())
     {
-        //m_rMessageHandler.printMessage("DEBUG:TagDetected!"); // TODO: remove!
         // A card is present!
         if (!m_rMfrc522.isNewCardPresent())
         {

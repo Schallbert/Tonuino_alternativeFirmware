@@ -8,12 +8,14 @@ void Mp3Play_implementation::init()
     m_rArduinoHal.getPins().pin_mode(DFMINI_PIN_ISIDLE, INPUT);
     m_rDfMiniMp3.setEq(DFMINI_EQ_SETTING);
     m_rDfMiniMp3.setVolume(VOLUME_INIT);
+    Message message{Message(eMessageGroup::mp3Player, eMessageContent::comErr)};
     if(m_rDfMiniMp3.getVolume() == VOLUME_INIT)
     {
-        m_rMessageHandler.printMessage("Mp3 player: Volume & EQ set.");
+        message.m_contents = eMessageContent::up;
+        m_rMessageHandler.printMessage(message);
     }
     else{
-        m_rMessageHandler.printMessage("Mp3 player: Com ERROR");
+        m_rMessageHandler.printMessage(message);
     }
 }
 
@@ -24,7 +26,8 @@ void Mp3Play_implementation::playFolder(Folder &folder)
         // Start playing folder: first track of current folder.
         m_rDfMiniMp3.playFolderTrack(m_currentFolder.getFolderId(),
                                       m_currentFolder.getCurrentTrack());
-        m_rMessageHandler.printMessage(Mp3PlayNotify::toString(Mp3PlayNotify::playFolder));
+        Message playInfo{Message(eMessageGroup::mp3Player, eMessageContent::folderOk)};
+        m_rMessageHandler.printMessage(playInfo);
     }
     restartLullabyeTimer();
 }
@@ -69,7 +72,8 @@ bool Mp3Play_implementation::isFolderValid(Folder &folder)
         VoicePrompt folderError;
         folderError.promptId = MSG_ERROR_FOLDER;
         folderError.allowSkip = false;
-        m_rMessageHandler.printMessage(Mp3PlayNotify::toString(Mp3PlayNotify::noFolder));
+        Message folderError{Message(eMessageGroup::mp3Player, eMessageContent::folderErr)};
+        m_rMessageHandler.printMessage(folderError);
         m_rMessageHandler.promptMessage(folderError);
         result = false;
     }
@@ -80,15 +84,17 @@ void Mp3Play_implementation::autoplay()
 {
     if (m_rDfMiniMp3.isTrackFinished())
     {
+        Message autoplayInfo{Message(eMessageGroup::mp3Player, eMessageContent::autoPause)};
         if (shouldPlaybackStop())
         {
-            m_rMessageHandler.printMessage(Mp3PlayNotify::toString(Mp3PlayNotify::autoplayStop));
+            m_rMessageHandler.printMessage(autoplayInfo);
             m_rDfMiniMp3.stop();
             restartLullabyeTimer();
         }
         else
         {
-            m_rMessageHandler.printMessage(Mp3PlayNotify::toString(Mp3PlayNotify::autoplayNext));
+            autoplayInfo.m_contents = eMessageContent::autoNext;
+            m_rMessageHandler.printMessage(autoplayInfo);
             playNext();
         }
     }

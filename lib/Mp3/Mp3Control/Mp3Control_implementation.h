@@ -9,37 +9,6 @@
 #include "Mp3Play/Mp3Play_interface.h"
 #include "DfMiniMp3/DFMiniMp3_interface.h"
 
-class Mp3ControlNotify
-{
-public:
-    enum eDebugMessage
-    {
-        noMessage = 0,
-        volumeUp,
-        volumeDown,
-        next,
-        prev,
-        play,
-        pause
-    };
-
-    static const char *toString(eDebugMessage message)
-    {
-#if DEBUGSERIAL
-        static const char *NOTIFY_STRING[] = {
-            nullptr,
-            "volume up",
-            "volume down",
-            "next track",
-            "previous track",
-            "play"
-            "pause"};
-        return NOTIFY_STRING[message];
-#endif
-        return nullptr;
-    }
-};
-
 // Implementation of Player controller interface.
 // Uses Software Serial to communicate with DfMiniMp3 player.
 // Dependencies use interfaces themselves for
