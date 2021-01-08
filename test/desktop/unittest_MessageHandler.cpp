@@ -26,25 +26,27 @@ protected:
                                                m_messageTimer)};
 };
 
-TEST_F(MessageHandlerTest, PrintMessage_nullptr_WontPrint)
-{
-    EXPECT_CALL(m_serialMock, com_println(_)).Times(0);
-    m_MessageHandler.printMessage(nullptr);
-}
-
-TEST_F(MessageHandlerTest, PrintMessage_emptyString_WontPrint)
-{
-    EXPECT_CALL(m_serialMock, com_println(_)).Times(0);
-    m_MessageHandler.printMessage("");
-}
-
-TEST_F(MessageHandlerTest, PrintMessage_Valid_WillPrint)
+// TODO: all tests
+// PRINT MESSAGE ///////////////////////////////////////////////////////////////
+TEST_F(MessageHandlerTest, PrintMessage_normal_willPrint)
 {
     EXPECT_CALL(m_serialMock, com_println(_));
-    m_MessageHandler.printMessage("Test");
+    m_MessageHandler.printMessage(Message{eMessageGroup::system, eMessageContent::up});
 }
 
-// PLAY PROMPT ////////////////////////////////////////////////////////////
+TEST_F(MessageHandlerTest, PrintMessage_offset_WillPrint)
+{
+    EXPECT_CALL(m_serialMock, com_println(_));
+    m_MessageHandler.printMessage(Message{eMessageGroup::system, 0}); // refers to eMessagecontent::up
+}
+
+TEST_F(MessageHandlerTest, PrintMessage_offset_printsCorrectMessage)
+{
+    EXPECT_CALL(m_serialMock, com_println("Shutdown"));
+    m_MessageHandler.printMessage(Message{eMessageGroup::system, 1}); // refers to eMessagecontent::shutdown
+}
+
+// PROMPT MESSAGE ////////////////////////////////////////////////////////////
 TEST_F(MessageHandlerTest, PromptMessage_Undefined_WillNotPrompt)
 {
     VoicePrompt undefined;

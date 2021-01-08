@@ -42,7 +42,7 @@ enum eMessageContent
     newTag,
     unknTag,
     rdrInit,
-    writeOK,
+    writeOk,
     readOk,
     writeErr,
     readErr,
