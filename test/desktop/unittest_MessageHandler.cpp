@@ -20,7 +20,7 @@ class MessageHandlerTest : public ::testing::Test
 protected:
     NiceMock<Mock_serial> m_serialMock{};
     NiceMock<Mock_DfMiniMp3> m_dfMiniMp3Mock{};
-    NiceMock<Mock_Messages> m_messagesMock{};
+    NiceMock<Mock_MessageToString> m_messagesMock{};
     SimpleTimer m_messageTimer{};
 
     MessageHandler m_MessageHandler{MessageHandler(m_serialMock,
@@ -39,16 +39,38 @@ TEST_F(MessageHandlerTest, PrintMessage_normal_willParseToString)
 
 TEST_F(MessageHandlerTest, PrintMessage_normal_willPrint)
 {
-    //ON_CALL(m_messagesMock, getStringFromMessage(_)).WillByDefault(Return("a"));
     EXPECT_CALL(m_serialMock, com_println(_));
     m_MessageHandler.printMessage(Message{Messages_interface::SYSTEM, Messages_interface::STARTUP});
 }
 
-// also test newmessage
+TEST_F(MessageHandlerTest, PrintMessage_sameMessagetwice_wontPrintAgain)
+{
+    EXPECT_CALL(m_serialMock, com_println(_)).Times(1);
+    Message testMessage{Message(Messages_interface::SYSTEM, Messages_interface::STARTUP)};
+    m_MessageHandler.printMessage(testMessage);
+    m_MessageHandler.printMessage(testMessage);
+}
+
+TEST_F(MessageHandlerTest, PrintMessage_differentMessages_willPrintBoth)
+{
+    EXPECT_CALL(m_serialMock, com_println(_)).Times(1);
+    Message testMessage{Message(Messages_interface::SYSTEM, Messages_interface::STARTUP)};
+    Message testMessage2{Message(Messages_interface::SYSTEM, Messages_interface::HALT)};
+    m_MessageHandler.printMessage(testMessage);
+    m_MessageHandler.printMessage(testMessage2);
+}
+
+TEST_F(MessageHandlerTest, PrintMessage_MessagesofDifferentGroups_willPrintBoth)
+{
+    EXPECT_CALL(m_serialMock, com_println(_)).Times(1);
+    Message testMessage{Message(Messages_interface::SYSTEM,0)};
+    Message testMessage2{Message(Messages_interface::NFCREADER, 0)};
+    m_MessageHandler.printMessage(testMessage);
+    m_MessageHandler.printMessage(testMessage2);
+}
 
 TEST_F(MessageHandlerTest, PrintMessage_offset_WillPrint)
 {
-    //ON_CALL(m_messagesMock, getStringFromMessage(_)).WillByDefault(Return("a"));
     EXPECT_CALL(m_serialMock, com_println(_));
     m_MessageHandler.printMessage(Message{Messages_interface::SYSTEM, 0}); // refers to Messages_interface::up
 }

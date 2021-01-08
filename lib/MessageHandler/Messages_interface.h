@@ -1,12 +1,9 @@
 #ifndef MESSAGES_INTERFACE_H
 #define MESSAGES_INTERFACE_H
 
-struct Message;
-
-class Messages_interface
+// MUST be kept synchronized with s_group of messages.cpp, numbers are the offsets of eMessageContent
+namespace Messages_interface
 {
-public:
-    // MUST be kept synchronized with s_group of messages.cpp, numbers are the offsets of eMessageContent
     enum eMessageGroup
     {
         SYSTEM = 0,
@@ -56,18 +53,23 @@ public:
         MODESAVEPROGRESS,
         MODEONETRACKONLY
     };
-
-    virtual char *getStringFromMessage(const Message &message) = 0;
-};
+} // namespace Messages_interface
 
 struct Message
-    {
-        Message(Messages_interface::eMessageGroup group, Messages_interface::eMessageContent contents) : m_group(group), m_contents(contents){};
-        Message(Messages_interface::eMessageGroup group, uint8_t offset) : m_group(group), m_contents(static_cast<Messages_interface::eMessageContent>(static_cast<uint8_t>(group) + offset)){};
-        ~Message() = default;
+{
+    Message(Messages_interface::eMessageGroup group, Messages_interface::eMessageContent contents) : m_group(group), m_contents(contents){};
+    Message(Messages_interface::eMessageGroup group, uint8_t offset) : m_group(group), m_contents(static_cast<Messages_interface::eMessageContent>(static_cast<uint8_t>(group) + offset)){};
+    ~Message() = default;
 
-        Messages_interface::eMessageGroup m_group{};
-        Messages_interface::eMessageContent m_contents{};
-    };
+    Messages_interface::eMessageGroup m_group{};
+    Messages_interface::eMessageContent m_contents{};
+};
+
+class Message_String
+{
+public:
+    virtual ~Message_String(){};
+    virtual char *getStringFromMessage(const Message &message) = 0;
+};
 
 #endif // MESSAGES_INTERFACE_H

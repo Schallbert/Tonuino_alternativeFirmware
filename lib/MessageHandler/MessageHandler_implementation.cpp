@@ -11,8 +11,7 @@ void MessageHandler::printMessage(const Message &message)
 {
     if (isNewMessage(message))
     {
-        MessageToString toString;
-        char *buffer = toString.getStringFromMessage(message);
+        char *buffer = m_rMessages.getStringFromMessage(message);
         if (buffer != nullptr)
         {
             m_rSerial.com_println(buffer);

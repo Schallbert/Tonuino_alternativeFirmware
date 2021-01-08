@@ -2,9 +2,9 @@
 #define MESSAGES_H
 
 #include "Tonuino_config.h"
-#include "Messages_interface.h"
+#include "../MessageHandler/Messages_interface.h"
 
-class MessageToString : public Messages_interface
+class MessageToString : public Message_String
 {
 public:
     MessageToString() = default;
