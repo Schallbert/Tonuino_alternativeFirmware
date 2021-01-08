@@ -5,6 +5,7 @@
 //#include "DfMiniMp3/DFMiniMp3_interface.h"
 
 #include "MessageHandler_interface.h"
+#include "Messages_interface.h"
 
 class Arduino_interface_com;
 class DfMiniMp3_interface;
@@ -14,8 +15,12 @@ class MessageHandler : public MessageHander_interface
 {
 public:
     MessageHandler(Arduino_interface_com &rSerial,
+                   Messages_interface &rMessages,
                    DfMiniMp3_interface &rDfMini,
-                   SimpleTimer &rDfMiniPromptTimer);
+                   SimpleTimer &rDfMiniPromptTimer) : m_rSerial(rSerial),
+                                                      m_rMessages(rMessages),
+                                                      m_rDfMiniMp3(rDfMini),
+                                                      m_rDfMiniPromptTimer(rDfMiniPromptTimer){};
 
     virtual void printMessage(const Message &message) override;
     virtual void promptMessage(const VoicePrompt &message) override;
@@ -28,11 +33,12 @@ private:
 
 private:
     Arduino_interface_com &m_rSerial;
+    Messages_interface &m_rMessages;
     DfMiniMp3_interface &m_rDfMiniMp3;
     SimpleTimer &m_rDfMiniPromptTimer;
 
     VoicePrompt m_lastPrompt;
-    eMessageContent m_lastMessage[groupCount]{};
+    Messages_interface::eMessageContent m_lastMessage[Messages_interface::GROUPCOUNT]{};
 };
 
 #endif // MESSAGEHANDLER_IMPLEMENTATION_H

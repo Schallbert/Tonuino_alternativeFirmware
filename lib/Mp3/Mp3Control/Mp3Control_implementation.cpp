@@ -3,6 +3,7 @@
 #include "Tonuino_config.h"
 #include "../Utilities/SimpleTimer/SimpleTimer.h"
 #include "../Folder/Folder.h"
+#include "Messages_interface.h"
     
 void Mp3Control::setUserInput(UserInput_interface::eUserRequest input)
 {
@@ -71,25 +72,25 @@ void Mp3Control::plPs()
 void Mp3Control::play()
 {
     m_rDfMiniMp3.start(); // Only successful if a track is entered.
-    m_rMessageHandler.printMessage(Message(eMessageGroup::mp3Control, eMessageContent::play));
+    m_rMessageHandler.printMessage(Message(Messages_interface::MP3CONTROL, Messages_interface::PLAY));
 }
 
 void Mp3Control::pause()
 {
     m_rDfMiniMp3.pause();
-    m_rMessageHandler.printMessage(Message(eMessageGroup::mp3Control, eMessageContent::pause));
+    m_rMessageHandler.printMessage(Message(Messages_interface::MP3CONTROL, Messages_interface::PAUSE));
 }
 
 void Mp3Control::next()
 {
     m_rMp3Player.playNext();
-    m_rMessageHandler.printMessage(Message(eMessageGroup::mp3Control, eMessageContent::next));
+    m_rMessageHandler.printMessage(Message(Messages_interface::MP3CONTROL, Messages_interface::NEXT));
 }
 
 void Mp3Control::prev()
 {
     m_rMp3Player.playPrev();
-    m_rMessageHandler.printMessage(Message(eMessageGroup::mp3Control, eMessageContent::prev));
+    m_rMessageHandler.printMessage(Message(Messages_interface::MP3CONTROL, Messages_interface::PREV));
 }
 
 void Mp3Control::incV()
@@ -97,7 +98,7 @@ void Mp3Control::incV()
     if (m_rDfMiniMp3.getVolume() < VOLUME_MAX)
     {
         m_rDfMiniMp3.increaseVolume();
-        m_rMessageHandler.printMessage(Message(eMessageGroup::mp3Control, eMessageContent::volUp));
+        m_rMessageHandler.printMessage(Message(Messages_interface::MP3CONTROL, Messages_interface::VOLUP));
     }
 }
 
@@ -106,7 +107,7 @@ void Mp3Control::decV()
     if (m_rDfMiniMp3.getVolume() > VOLUME_MIN)
     {
         m_rDfMiniMp3.decreaseVolume();
-        m_rMessageHandler.printMessage(Message(eMessageGroup::mp3Control, eMessageContent::volDn));
+        m_rMessageHandler.printMessage(Message(Messages_interface::MP3CONTROL, Messages_interface::VOLDN));
     }
 }
 

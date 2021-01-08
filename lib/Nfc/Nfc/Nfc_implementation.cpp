@@ -1,10 +1,11 @@
 #include "Arduino_config.h"
 #include "Nfc_implementation.h"
+#include "Messages_interface.h"
 
 void Nfc_implementation::initNfc()
 {
     m_rMfrc522.init(); // Init MFRC522
-    Message init{Message(eMessageGroup::nfcReader, eMessageContent::rdrInit)};
+    Message init{Message(Messages_interface::NFCREADER, Messages_interface::READERINIT)};
     m_rMessageHandler.printMessage(init);
 }
 
@@ -38,7 +39,7 @@ bool Nfc_implementation::writeTag(byte blockAddress, byte *dataToWrite)
         status = m_pConcreteTag->writeTag(blockAddress, dataToWrite);
     }
     setTagOffline();
-    printNotification(status, eMessageContent::writeOk, eMessageContent::writeErr);
+    printNotification(status, Messages_interface::WRITEOK, Messages_interface::ERRORWRITE);
     return status;
 }
 
@@ -50,13 +51,13 @@ bool Nfc_implementation::readTag(byte blockAddress, byte *readResult)
         status = m_pConcreteTag->readTag(blockAddress, readResult);
     }
     setTagOffline();
-    printNotification(status, eMessageContent::readOk, eMessageContent::readErr);
+    printNotification(status, Messages_interface::READOK, Messages_interface::ERRORREAD);
     return status;
 }
 
-void Nfc_implementation::printNotification(bool status, eMessageContent successMessage, eMessageContent failureMessage)
+void Nfc_implementation::printNotification(bool status, Messages_interface::eMessageContent successMessage, Messages_interface::eMessageContent failureMessage)
 {
-    Message message{Message(eMessageGroup::nfcReader, typeErr)};
+    Message message{Message(Messages_interface::NFCREADER, Messages_interface::ERRORTYPE)};
     if (status)
     {
         message.m_contents = successMessage;
@@ -81,6 +82,6 @@ bool Nfc_implementation::setTagOnline()
     status &= m_rMfrc522.isCardPresent();
     m_pConcreteTag = m_NfcTagFactory.getInstance(m_rMfrc522);
     status &= (m_pConcreteTag != nullptr); // Not implemented if factory cannot respond OK
-    printNotification(status, eMessageContent::readOk, eMessageContent::typeErr);
+    printNotification(status, Messages_interface::READOK, Messages_interface::ERRORTYPE);
     return status;
 }

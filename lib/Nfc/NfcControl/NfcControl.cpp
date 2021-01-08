@@ -1,4 +1,6 @@
 #include "NfcControl.h"
+#include "Messages_interface.h"
+
 
 void NfcControl::init()
 {
@@ -17,7 +19,7 @@ NfcControl_interface::eTagState NfcControl::getTagPresence()
             tagPresence = NfcControl_interface::NEW_REGISTERED_TAG;
         }
     }
-    Message ctrlStatus{Message(eMessageGroup::nfcControl, static_cast<uint8_t>(tagPresence))};
+    Message ctrlStatus{Message(Messages_interface::NFCCONTROL, static_cast<uint8_t>(tagPresence))};
     m_rMessageHandler.printMessage(ctrlStatus);
     return tagPresence;
 }

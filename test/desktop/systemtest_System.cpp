@@ -257,7 +257,7 @@ TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_writesInfoToCard)
     m_pOutputManager->dispatchInputs();    // should log playmode and complete linkMenu
 }
 
-MATCHER_P3(folderOk, expFolderId, expPlayMode, expTrackCnt, "")
+MATCHER_P3(FOLDEROK, expFolderId, expPlayMode, expTrackCnt, "")
 {
     return ((arg->getFolderId() == expFolderId) &&
             (arg->getPlayMode() == expPlayMode) &&
@@ -278,7 +278,7 @@ TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_startsPlaybackWithCorrectSet
     m_pOutputManager->setTagState(NfcControl_interface::NEW_UNKNOWN_TAG, UserInput_interface::NEXT_TRACK);
     m_pOutputManager->dispatchInputs(); // should set link menu to playmode ALBUM
     m_pOutputManager->setTagState(NfcControl_interface::NEW_UNKNOWN_TAG, UserInput_interface::PLAY_PAUSE);
-    EXPECT_CALL(*m_pMp3Control, play_folder(folderOk(1, Folder::ALBUM, 8)));
+    EXPECT_CALL(*m_pMp3Control, play_folder(FOLDEROK(1, Folder::ALBUM, 8)));
     m_pOutputManager->dispatchInputs(); // should log playmode and complete linkMenu
 }
 

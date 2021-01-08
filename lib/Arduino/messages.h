@@ -2,16 +2,15 @@
 #define MESSAGES_H
 
 #include "Tonuino_config.h"
+#include "Messages_interface.h"
 
-struct Message;
-
-class MessageToString
+class MessageToString : public Messages_interface
 {
 public:
     MessageToString() = default;
     ~MessageToString() = default;
 
-    char *getStringFromMessage(const Message &message);
+    char *getStringFromMessage(const Message &message) override;
 
 private:
     char m_completeMessage[DEBUG_MAXMESSAGELENGTH]{};

@@ -84,7 +84,7 @@ bool Folder::is_dependency_set()
 
 void Folder::setup_track_queue()
 {
-    Message message{Message(eMessageGroup::playlist, static_cast<unit8_t>(m_ePlayMode))};
+    Message message{Message(eMessageGroup::PLAYLIST, static_cast<unit8_t>(m_ePlayMode))};
     m_pMessageHandler->printMessage(message);
     m_ui8CurrentQueueEntry = 1;
 
