@@ -7,23 +7,6 @@
 #include "Folder.h"
 #include "Tonuino_config.h"
 
-class NfcControlNotify
-{
-public:
-    static const char *toString(NfcControl_interface::eTagState value)
-    {
-#if DEBUGSERIAL
-        static const char *NOTIFY_STRING[NfcControl_interface::NUMBER_OF_TAG_STATES] = {
-            "No Tag",
-            "active Tag",
-            "new Tag",
-            "unknown Tag"};
-        return NOTIFY_STRING[value];
-#endif
-        return nullptr;
-    }
-};
-
 // this object stores nfc tag data
 class NfcControl : public NfcControl_interface
 {

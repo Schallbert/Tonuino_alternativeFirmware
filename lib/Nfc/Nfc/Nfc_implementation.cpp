@@ -38,7 +38,7 @@ bool Nfc_implementation::writeTag(byte blockAddress, byte *dataToWrite)
         status = m_pConcreteTag->writeTag(blockAddress, dataToWrite);
     }
     setTagOffline();
-    printNotification(status, NfcNotify::tagWriteSuccess, NfcNotify::tagWriteError);
+    printNotification(status, eMessageContent::writeOk, eMessageContent::writeErr);
     return status;
 }
 
@@ -50,29 +50,22 @@ bool Nfc_implementation::readTag(byte blockAddress, byte *readResult)
         status = m_pConcreteTag->readTag(blockAddress, readResult);
     }
     setTagOffline();
-    printNotification(status, NfcNotify::tagReadSuccess, NfcNotify::tagReadError);
+    printNotification(status, eMessageContent::readOk, eMessageContent::readErr);
     return status;
 }
 
-void Nfc_implementation::printNotification(bool status, NfcNotify::eNfcNotify successMessage, NfcNotify::eNfcNotify failureMessage)
+void Nfc_implementation::printNotification(bool status, eMessageContent successMessage, eMessageContent failureMessage)
 {
-    static NfcNotify::eNfcNotify message{NfcNotify::noMessage};
-    NfcNotify::eNfcNotify newMessage{NfcNotify::noMessage};
+    Message message{Message(eMessageGroup::nfcReader, typeErr)};
     if (status)
     {
-        newMessage = successMessage;
+        message.m_contents = successMessage;
     }
     else
     {
-        newMessage = failureMessage;
+        message.m_contents = failureMessage;
     }
-
-    if (newMessage != NfcNotify::noMessage &&
-        newMessage != message)
-    {
-        m_rMessageHandler.printMessage(NfcNotify::toString(newMessage));
-    }
-    message = newMessage;
+    m_rMessageHandler.printMessage(message);
 }
 
 void Nfc_implementation::setTagOffline()
@@ -88,6 +81,6 @@ bool Nfc_implementation::setTagOnline()
     status &= m_rMfrc522.isCardPresent();
     m_pConcreteTag = m_NfcTagFactory.getInstance(m_rMfrc522);
     status &= (m_pConcreteTag != nullptr); // Not implemented if factory cannot respond OK
-    printNotification(status, NfcNotify::noMessage, NfcNotify::tagTypeNotImplementedError);
+    printNotification(status, eMessageContent::readOk, eMessageContent::typeErr);
     return status;
 }

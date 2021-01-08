@@ -8,38 +8,6 @@
 #include "../NfcTag/NfcTag_factory.h"
 #include "../Nfc/Nfc_interface.h"
 
-class NfcNotify
-{
-public:
-    enum eNfcNotify
-    {
-        noMessage = 0,
-        tagReaderInit,
-        tagWriteSuccess,
-        tagReadSuccess,
-        tagWriteError,
-        tagReadError,
-        tagTypeNotImplementedError
-    };
-
-    static const char *toString(eNfcNotify value)
-    {
-#if DEBUGSERIAL
-        static const char *NOTIFY_STRING[] = {
-            nullptr,
-            "Tag Reader Init",
-            "Tag Write Success",
-            "Tag Read Success",
-            "Tag write Error",
-            "Tag read Error",
-            "Tag type unknown/not implemented"
-            };
-        return NOTIFY_STRING[static_cast<uint8_t>(value)];
-#endif
-        return nullptr;
-    }
-};
-
 // forwards power up etc. directly to MFRC interface
 // channels read/write requests to downstream NfcTag objects.
 class Nfc_implementation : public Nfc_interface
@@ -62,7 +30,7 @@ private:
     // Returns true if communications to a card is successfully established
     bool setTagOnline();
     // Helper method, for better readability: takes status of function and returns input Notification
-    void printNotification(bool status, NfcNotify::eNfcNotify sucessMessage, NfcNotify::eNfcNotify failureMessage);
+    void printNotification(bool status, eMessageContent sucessMessage, eMessageContent failureMessage);
 
 private:
     MFRC522_interface &m_rMfrc522;

@@ -15,9 +15,7 @@ void System::init()
 
 void System::notifyStartup()
 {
-#if DEBUGSERIAL
-    m_MessageHandler.printMessage("Started");
-#endif
+    m_MessageHandler.printMessage(Message{eMessageGroup::system, eMessageContent::up});
     VoicePrompt startup;
     startup.promptId = MSG_STARTUP;
     startup.allowSkip = false;
@@ -27,16 +25,13 @@ void System::notifyStartup()
 void System::shutdown()
 {
     // TODO: shutdown should be delayed somehow? As otherwise timers cannot be stopped on time?!
-    //m_MessageHandler.printMessage("Deleting objects");
-    //m_PwrCtrl.allowShutdown();
     //notifyShutdown();
+    //m_PwrCtrl.allowShutdown();
 }
 
 void System::notifyShutdown()
 {
-#if DEBUGSERIAL
-    m_MessageHandler.printMessage("Shutdown");
-#endif
+    m_MessageHandler.printMessage(Message{eMessageGroup::system, eMessageContent::halt});
     VoicePrompt shutdown;
     shutdown.promptId = MSG_SHUTDOWN;
     shutdown.allowSkip = false;
