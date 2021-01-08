@@ -3,8 +3,7 @@
 #include "Tonuino_config.h"
 #include "../Utilities/SimpleTimer/SimpleTimer.h"
 #include "../Folder/Folder.h"
-#include "Messages_interface.h"
-    
+#include "Messages_interface.h"    
 void Mp3Control::setUserInput(UserInput_interface::eUserRequest input)
 {
     m_userInput = input;

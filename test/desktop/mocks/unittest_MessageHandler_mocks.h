@@ -4,7 +4,6 @@
 #include <gmock/gmock.h>
 
 #include "../MessageHandler/MessageHandler_interface.h"
-#include "Messages_interface.h"
 
 class Mock_MessageHandler : public MessageHander_interface
 {
@@ -15,8 +14,15 @@ public:
 
 class Mock_Messages : public Messages_interface
 {
-    public:
-    MOCK_METHOD(char*, getStringFromMessage, (const Message &message), override));
+public:
+    MOCK_METHOD(char*, getStringFromMessage, (const Message &message), (override));
 };
+
+MATCHER_P(identicalMessage, comp, "")
+{
+    return (
+        (arg.m_group == comp.m_group) &&
+        (arg.m_contents == comp.m_contents));
+}
 
 #endif // MESSAGEHANDLER_MOCKS_H

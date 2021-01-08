@@ -29,39 +29,34 @@ protected:
                                                    m_messageTimer)};
 };
 
-MATCHER_P(identicalMessage, comp, "")
-{
-    return (
-        (arg.m_group == comp.m_group) &&
-        (arg.m_contentsp == comp.m_contents));
-}
-
 // TODO: all tests
 // PRINT MESSAGE ///////////////////////////////////////////////////////////////
 TEST_F(MessageHandlerTest, PrintMessage_normal_willParseToString)
 {
     EXPECT_CALL(m_messagesMock, getStringFromMessage(_));
-    m_MessageHandler.printMessage(Message{eMessageGroup::SYSTEM, Messages_interface::STARTUP});
+    m_MessageHandler.printMessage(Message{Messages_interface::SYSTEM, Messages_interface::STARTUP});
 }
 
 TEST_F(MessageHandlerTest, PrintMessage_normal_willPrint)
 {
-    ON_CALL(m_messagesMock, getStringFromMessage(_)).WillByDefault(Return("a"));
+    //ON_CALL(m_messagesMock, getStringFromMessage(_)).WillByDefault(Return("a"));
     EXPECT_CALL(m_serialMock, com_println(_));
-    m_MessageHandler.printMessage(Message{eMessageGroup::SYSTEM, Messages_interface::STARTUP});
+    m_MessageHandler.printMessage(Message{Messages_interface::SYSTEM, Messages_interface::STARTUP});
 }
+
+// also test newmessage
 
 TEST_F(MessageHandlerTest, PrintMessage_offset_WillPrint)
 {
-    ON_CALL(m_messagesMock, getStringFromMessage(_)).WillByDefault(Return("a"));
+    //ON_CALL(m_messagesMock, getStringFromMessage(_)).WillByDefault(Return("a"));
     EXPECT_CALL(m_serialMock, com_println(_));
-    m_MessageHandler.printMessage(Message{eMessageGroup::SYSTEM, 0}); // refers to Messages_interface::up
+    m_MessageHandler.printMessage(Message{Messages_interface::SYSTEM, 0}); // refers to Messages_interface::up
 }
 
 TEST_F(MessageHandlerTest, PrintMessage_offset_ParsesCorrectMessage)
 {
-    Message testOffset{Message{eMessageGroup::system, 1}};
-    EXPECT_CALL(m_messagesMock, getStringFromMessage(identicalMessage(testOffset))).WillByDefault(ReturnPointee(test));
+    const Message testOffset{Message(Messages_interface::SYSTEM, 1)};
+    EXPECT_CALL(m_messagesMock, getStringFromMessage(identicalMessage(testOffset)));
     m_MessageHandler.printMessage(testOffset);
 }
 

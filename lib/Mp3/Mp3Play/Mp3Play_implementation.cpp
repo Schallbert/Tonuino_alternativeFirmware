@@ -8,10 +8,10 @@ void Mp3Play_implementation::init()
     m_rArduinoHal.getPins().pin_mode(DFMINI_PIN_ISIDLE, INPUT);
     m_rDfMiniMp3.setEq(DFMINI_EQ_SETTING);
     m_rDfMiniMp3.setVolume(VOLUME_INIT);
-    Message message{Message(eMessageGroup::MP3PLAYER, Messages_interface::ERRORCOM)};
+    Message message{Message(Messages_interface::MP3PLAYER, Messages_interface::ERRORCOM)};
     if(m_rDfMiniMp3.getVolume() == VOLUME_INIT)
     {
-        message.m_contents = Messages_interface::up;
+        message.m_contents = Messages_interface::STARTUP;
         m_rMessageHandler.printMessage(message);
     }
     else{
@@ -26,7 +26,7 @@ void Mp3Play_implementation::playFolder(Folder &folder)
         // Start playing folder: first track of current folder.
         m_rDfMiniMp3.playFolderTrack(m_currentFolder.getFolderId(),
                                       m_currentFolder.getCurrentTrack());
-        Message playInfo{Message(eMessageGroup::MP3PLAYER, Messages_interface::FOLDEROK)};
+        Message playInfo{Message(Messages_interface::MP3PLAYER, Messages_interface::FOLDEROK)};
         m_rMessageHandler.printMessage(playInfo);
     }
     restartLullabyeTimer();
@@ -70,9 +70,9 @@ bool Mp3Play_implementation::isFolderValid(Folder &folder)
     else
     {
         VoicePrompt folderErrorPrompt;
-        folderErroPrompt.promptId = MSG_ERROR_FOLDER;
+        folderErrorPrompt.promptId = MSG_ERROR_FOLDER;
         folderErrorPrompt.allowSkip = false;
-        Message folderErrorPrint{Message(eMessageGroup::MP3PLAYER, Messages_interface::ERRORFOLDER)};
+        Message folderErrorPrint{Message(Messages_interface::MP3PLAYER, Messages_interface::ERRORFOLDER)};
         m_rMessageHandler.printMessage(folderErrorPrint);
         m_rMessageHandler.promptMessage(folderErrorPrompt);
         result = false;
@@ -84,7 +84,7 @@ void Mp3Play_implementation::autoplay()
 {
     if (m_rDfMiniMp3.isTrackFinished())
     {
-        Message autoplayInfo{Message(eMessageGroup::MP3PLAYER, Messages_interface::AUTOPLAYPAUSE)};
+        Message autoplayInfo{Message(Messages_interface::MP3PLAYER, Messages_interface::AUTOPLAYPAUSE)};
         if (shouldPlaybackStop())
         {
             m_rMessageHandler.printMessage(autoplayInfo);

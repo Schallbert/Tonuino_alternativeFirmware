@@ -5,7 +5,6 @@
 //#include "DfMiniMp3/DFMiniMp3_interface.h"
 
 #include "MessageHandler_interface.h"
-#include "Messages_interface.h"
 
 class Arduino_interface_com;
 class DfMiniMp3_interface;

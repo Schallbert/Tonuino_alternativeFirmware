@@ -10,34 +10,6 @@
 #include "Tonuino_config.h"
 #include "Mp3Play_interface.h"
 
-class Mp3PlayNotify
-{
-public:
-    enum eDebugMessage
-    {
-        noMessage = 0,
-        noFolder,
-        playFolder,
-        autoplayStop,
-        autoplayNext,
-    };
-
-    static const char *toString(eDebugMessage message)
-    {
-#if DEBUGSERIAL
-        static const char *NOTIFY_STRING[] = {
-            nullptr,
-            "Error: folder invalid!",
-            "Folder detected. Play"
-            "autoplay complete. Pause",
-            "autoplay next"};
-
-        return NOTIFY_STRING[message];
-#endif
-        return nullptr;
-    };
-};
-
 class Mp3Play_implementation : public Mp3Play_interface
 {
 

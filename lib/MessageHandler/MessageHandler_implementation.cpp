@@ -5,7 +5,7 @@
 #include "SimpleTimer/SimpleTimer.h"
 
 #include "MessageHandler_implementation.h"
-#include "messages.h"
+#include "../Arduino/messages.h"
 
 void MessageHandler::printMessage(const Message &message)
 {

@@ -1,6 +1,5 @@
 #include "Arduino_config.h"
 #include "Nfc_implementation.h"
-#include "Messages_interface.h"
 
 void Nfc_implementation::initNfc()
 {

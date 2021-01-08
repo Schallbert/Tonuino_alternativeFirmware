@@ -2,7 +2,7 @@
 #define MESSAGEHANDLER_INTERFACE_H
 
 #include "../Mp3/Mp3Play/Mp3Play_interface.h"
-struct Message;
+#include "Messages_interface.h"
 
 struct VoicePrompt
 {

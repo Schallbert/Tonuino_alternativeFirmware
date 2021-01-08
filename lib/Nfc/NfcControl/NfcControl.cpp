@@ -1,5 +1,4 @@
 #include "NfcControl.h"
-#include "Messages_interface.h"
 
 
 void NfcControl::init()
