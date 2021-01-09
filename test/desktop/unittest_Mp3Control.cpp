@@ -31,12 +31,6 @@ protected:
                                        m_messageHandlerMock)};
 };
 
-TEST_F(Mp3ControlTest, ClassConstructorMethodsCalled)
-{
-    EXPECT_CALL(m_dfMiniMock, setVolume(VOLUME_INIT));
-    Mp3Control myMp3(m_dfMiniMock, m_mp3PlayMock, m_nfcControlMock, m_messageHandlerMock);
-}
-
 TEST_F(Mp3ControlTest, loop_blocked_wontDoAnything)
 {
     m_Mp3Control.setBlocked(true);

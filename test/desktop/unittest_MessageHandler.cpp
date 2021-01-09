@@ -40,7 +40,7 @@ TEST_F(MessageHandlerTest, PrintMessage_normal_willParseToString)
 TEST_F(MessageHandlerTest, PrintMessage_normal_willPrint)
 {
     EXPECT_CALL(m_serialMock, com_println(_));
-    m_MessageHandler.printMessage(Message{Messages_interface::SYSTEM, Messages_interface::STARTUP});
+    m_MessageHandler.printMessage(Message{Messages_interface::SYSTEM, Messages_interface::HALT});
 }
 
 TEST_F(MessageHandlerTest, PrintMessage_sameMessagetwice_wontPrintAgain)
@@ -54,8 +54,8 @@ TEST_F(MessageHandlerTest, PrintMessage_sameMessagetwice_wontPrintAgain)
 TEST_F(MessageHandlerTest, PrintMessage_differentMessages_willPrintBoth)
 {
     EXPECT_CALL(m_serialMock, com_println(_)).Times(1);
-    Message testMessage{Message(Messages_interface::SYSTEM, Messages_interface::STARTUP)};
-    Message testMessage2{Message(Messages_interface::SYSTEM, Messages_interface::HALT)};
+    Message testMessage{Message(Messages_interface::MP3CONTROL, Messages_interface::PAUSE)};
+    Message testMessage2{Message(Messages_interface::MP3CONTROL, Messages_interface::PLAY)};
     m_MessageHandler.printMessage(testMessage);
     m_MessageHandler.printMessage(testMessage2);
 }
@@ -63,8 +63,8 @@ TEST_F(MessageHandlerTest, PrintMessage_differentMessages_willPrintBoth)
 TEST_F(MessageHandlerTest, PrintMessage_MessagesofDifferentGroups_willPrintBoth)
 {
     EXPECT_CALL(m_serialMock, com_println(_)).Times(1);
-    Message testMessage{Message(Messages_interface::SYSTEM,0)};
-    Message testMessage2{Message(Messages_interface::NFCREADER, 0)};
+    Message testMessage{Message(Messages_interface::SYSTEM,3)};
+    Message testMessage2{Message(Messages_interface::NFCREADER, 3)};
     m_MessageHandler.printMessage(testMessage);
     m_MessageHandler.printMessage(testMessage2);
 }
@@ -72,12 +72,12 @@ TEST_F(MessageHandlerTest, PrintMessage_MessagesofDifferentGroups_willPrintBoth)
 TEST_F(MessageHandlerTest, PrintMessage_offset_WillPrint)
 {
     EXPECT_CALL(m_serialMock, com_println(_));
-    m_MessageHandler.printMessage(Message{Messages_interface::SYSTEM, 0}); // refers to Messages_interface::up
+    m_MessageHandler.printMessage(Message{Messages_interface::SYSTEM, 4});
 }
 
 TEST_F(MessageHandlerTest, PrintMessage_offset_ParsesCorrectMessage)
 {
-    const Message testOffset{Message(Messages_interface::SYSTEM, 1)};
+    const Message testOffset{Message(Messages_interface::SYSTEM, 2)};
     EXPECT_CALL(m_messagesMock, getStringFromMessage(identicalMessage(testOffset)));
     m_MessageHandler.printMessage(testOffset);
 }

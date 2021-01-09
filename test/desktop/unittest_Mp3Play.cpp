@@ -47,6 +47,25 @@ protected:
     Mp3Play_implementation *m_pMp3Play{nullptr};
 };
 
+// INIT ////////////////////////////////////////////////////////////
+TEST_F(Mp3Play, init_ComError_printsError)
+{
+    Message message{Message(Messages_interface::MP3PLAYER, Messages_interface::ERRORCOM)};
+    ON_CALL(m_dfMiniMock, getVolume()).WillByDefault(Return(VOLUME_MAX)); // wrong value
+    
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(message)));
+    m_pMp3Play->init();
+}
+
+TEST_F(Mp3Play, init_ComOK_printsStartup)
+{
+    Message message{Message(Messages_interface::MP3PLAYER, Messages_interface::STARTUP)};
+    ON_CALL(m_dfMiniMock, getVolume()).WillByDefault(Return(VOLUME_INIT));
+    
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(message)));
+    m_pMp3Play->init();
+}
+
 // PLAY FOLDER ////////////////////////////////////////////////////////////
 TEST_F(Mp3Play, playFolder_notInitialized_setsFolderError)
 {
