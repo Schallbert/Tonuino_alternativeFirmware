@@ -34,19 +34,19 @@ protected:
 TEST_F(MessageHandlerTest, PrintMessage_normal_willParseToString)
 {
     EXPECT_CALL(m_messagesMock, getStringFromMessage(_));
-    m_MessageHandler.printMessage(Message{Messages_interface::SYSTEM, Messages_interface::STARTUP});
+    m_MessageHandler.printMessage(Message{Messages_interface::STARTUP});
 }
 
 TEST_F(MessageHandlerTest, PrintMessage_normal_willPrint)
 {
     EXPECT_CALL(m_serialMock, com_println(_));
-    m_MessageHandler.printMessage(Message{Messages_interface::SYSTEM, Messages_interface::HALT});
+    m_MessageHandler.printMessage(Message{Messages_interface::HALT});
 }
 
 TEST_F(MessageHandlerTest, PrintMessage_sameMessagetwice_wontPrintAgain)
 {
     EXPECT_CALL(m_serialMock, com_println(_)).Times(1);
-    Message testMessage{Message(Messages_interface::SYSTEM, Messages_interface::STARTUP)};
+    Message testMessage{Message(Messages_interface::STARTUP)};
     m_MessageHandler.printMessage(testMessage);
     m_MessageHandler.printMessage(testMessage);
 }
@@ -54,8 +54,8 @@ TEST_F(MessageHandlerTest, PrintMessage_sameMessagetwice_wontPrintAgain)
 TEST_F(MessageHandlerTest, PrintMessage_differentMessages_willPrintBoth)
 {
     EXPECT_CALL(m_serialMock, com_println(_)).Times(1);
-    Message testMessage{Message(Messages_interface::MP3CONTROL, Messages_interface::PAUSE)};
-    Message testMessage2{Message(Messages_interface::MP3CONTROL, Messages_interface::PLAY)};
+    Message testMessage{Message(Messages_interface::PAUSE)};
+    Message testMessage2{Message(Messages_interface::PLAY)};
     m_MessageHandler.printMessage(testMessage);
     m_MessageHandler.printMessage(testMessage2);
 }
@@ -72,12 +72,12 @@ TEST_F(MessageHandlerTest, PrintMessage_MessagesofDifferentGroups_willPrintBoth)
 TEST_F(MessageHandlerTest, PrintMessage_offset_WillPrint)
 {
     EXPECT_CALL(m_serialMock, com_println(_));
-    m_MessageHandler.printMessage(Message{Messages_interface::SYSTEM, 4});
+    m_MessageHandler.printMessage(Message{Messages_interface::MP3PLAYBACK, 4});
 }
 
 TEST_F(MessageHandlerTest, PrintMessage_offset_ParsesCorrectMessage)
 {
-    const Message testOffset{Message(Messages_interface::SYSTEM, 2)};
+    const Message testOffset{Message(Messages_interface::MP3PLAYBACK, 2)};
     EXPECT_CALL(m_messagesMock, getStringFromMessage(identicalMessage(testOffset)));
     m_MessageHandler.printMessage(testOffset);
 }

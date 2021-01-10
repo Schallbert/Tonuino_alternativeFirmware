@@ -50,7 +50,7 @@ protected:
 // INIT ////////////////////////////////////////////////////////////
 TEST_F(Mp3Play, init_ComError_printsError)
 {
-    Message message{Message(Messages_interface::MP3PLAYER, Messages_interface::ERRORCOM)};
+    Message message{Message(Messages_interface::ERRORCOM)};
     ON_CALL(m_dfMiniMock, getVolume()).WillByDefault(Return(VOLUME_MAX)); // wrong value
     
     EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(message)));
@@ -59,7 +59,7 @@ TEST_F(Mp3Play, init_ComError_printsError)
 
 TEST_F(Mp3Play, init_ComOK_printsStartup)
 {
-    Message message{Message(Messages_interface::MP3PLAYER, Messages_interface::STARTUP)};
+    Message message{Message(Messages_interface::STARTUP)};
     ON_CALL(m_dfMiniMock, getVolume()).WillByDefault(Return(VOLUME_INIT));
     
     EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(message)));

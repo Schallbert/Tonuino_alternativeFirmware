@@ -37,7 +37,7 @@ private:
     SimpleTimer &m_rDfMiniPromptTimer;
 
     VoicePrompt m_lastPrompt;
-    Messages_interface::eMessageContent m_lastMessage[Messages_interface::GROUPCOUNT]{};
+   uint8_t m_lastMessage[Messages_interface::GROUPCOUNT]{};
 };
 
 #endif // MESSAGEHANDLER_IMPLEMENTATION_H

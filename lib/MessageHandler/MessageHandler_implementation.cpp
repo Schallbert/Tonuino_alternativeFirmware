@@ -62,7 +62,7 @@ void MessageHandler::waitForPromptToStart()
         m_rDfMiniMp3.loop(); //wait for track to start (until timeout kicks in)
         if (m_rDfMiniPromptTimer.isElapsed())
         {
-            Message timeout{Message(Messages_interface::SYSTEM, Messages_interface::PROMPTTIMEOUT)};
+            Message timeout{Message(Messages_interface::PROMPTTIMEOUT)};
             printMessage(timeout);
             break;
         }
@@ -78,7 +78,7 @@ void MessageHandler::waitForPromptToFinish()
         m_rDfMiniMp3.loop(); //wait for track to finish
         if (m_rDfMiniPromptTimer.isElapsed())
         {
-            Message timeout{Message(Messages_interface::SYSTEM, Messages_interface::PROMPTTIMEOUT)};
+            Message timeout{Message(Messages_interface::PROMPTTIMEOUT)};
             printMessage(timeout);
             break;
         }

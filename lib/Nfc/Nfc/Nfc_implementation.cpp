@@ -4,7 +4,7 @@
 void Nfc_implementation::initNfc()
 {
     m_rMfrc522.init(); // Init MFRC522
-    Message init{Message(Messages_interface::NFCREADER, Messages_interface::READERINIT)};
+    Message init{Message(Messages_interface::READERINIT)};
     m_rMessageHandler.printMessage(init);
 }
 
@@ -56,7 +56,7 @@ bool Nfc_implementation::readTag(byte blockAddress, byte *readResult)
 
 void Nfc_implementation::printNotification(bool status, Messages_interface::eMessageContent successMessage, Messages_interface::eMessageContent failureMessage)
 {
-    Message message{Message(Messages_interface::NFCREADER, Messages_interface::ERRORTYPE)};
+    Message message{Message(Messages_interface::ERRORTYPE)};
     if (status)
     {
         message.m_contents = successMessage;
