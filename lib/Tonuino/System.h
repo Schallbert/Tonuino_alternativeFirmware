@@ -16,6 +16,7 @@
 #include "UserInput/UserInput_factory.h"
 // MISC
 #include "../PowerManager/PowerManager_implementation.h"
+#include "../Arduino/messages.h"
 #include "../MessageHandler/MessageHandler_implementation.h"
 
 #include "../VoiceMenu/VoiceMenu.h"
@@ -60,7 +61,9 @@ private:
     DfMini m_DfMini{DfMini(m_ArduinoHal.getPins(), m_ArduinoHal.getSerial())};
     // UTILITIES
     PowerManager m_PwrCtrl{PowerManager(m_ArduinoHal.getPins(), m_IdleTimer)};
+    MessageToString m_Stringifier{MessageToString()};
     MessageHandler m_MessageHandler{MessageHandler(m_ArduinoHal.getSerial(),
+                                                   m_Stringifier,
                                                    m_DfMini,
                                                    m_DfMiniPromptTimer)};
     // PERIPHERY
@@ -75,9 +78,9 @@ private:
                                                             m_LullabyeTimer,
                                                             m_MessageHandler)};
     Mp3Control m_Mp3Control{Mp3Control(m_DfMini,
-                                                 m_Mp3Play,
-                                                 m_NfcControl,
-                                                 m_MessageHandler)};          
+                                       m_Mp3Play,
+                                       m_NfcControl,
+                                       m_MessageHandler)};
     VoiceMenu m_VoiceMenu{VoiceMenu(m_Mp3Play,
                                     m_NfcControl,
                                     m_MessageHandler,
