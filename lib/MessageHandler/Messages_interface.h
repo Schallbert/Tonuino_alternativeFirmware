@@ -82,10 +82,10 @@ private:
     uint8_t m_contents{};
 };
 
-class Message_String
+class MessageToString_interface
 {
 public:
-    virtual ~Message_String(){};
+    virtual ~MessageToString_interface(){};
     virtual char *getStringFromMessage(const Message &message) = 0;
 };
 

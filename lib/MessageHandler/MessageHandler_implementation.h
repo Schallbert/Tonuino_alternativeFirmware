@@ -14,7 +14,7 @@ class MessageHandler : public MessageHander_interface
 {
 public:
     MessageHandler(Arduino_interface_com &rSerial,
-                   Message_String &rMessages,
+                   MessageToString_interface &rMessages,
                    DfMiniMp3_interface &rDfMini,
                    SimpleTimer &rDfMiniPromptTimer) : m_rSerial(rSerial),
                                                       m_rMessages(rMessages),
@@ -32,7 +32,7 @@ private:
 
 private:
     Arduino_interface_com &m_rSerial;
-    Message_String &m_rMessages;
+    MessageToString_interface &m_rMessages;
     DfMiniMp3_interface &m_rDfMiniMp3;
     SimpleTimer &m_rDfMiniPromptTimer;
 

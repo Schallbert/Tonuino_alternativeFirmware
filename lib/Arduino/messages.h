@@ -4,7 +4,7 @@
 #include "Tonuino_config.h"
 #include "../MessageHandler/Messages_interface.h"
 
-class MessageToString : public Message_String
+class MessageToString : public MessageToString_interface
 {
 public:
     MessageToString() = default;

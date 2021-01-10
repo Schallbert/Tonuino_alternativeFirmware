@@ -71,9 +71,10 @@ char *MessageToString::getStringFromMessage(const Message &message)
     strcat_P(m_completeMessage, ": ");
     strcat_P(m_completeMessage, (char *)(pgm_read_word(&(s_contentTable[message.getContents()]))));
     return m_completeMessage;
+    
 }
 #else
-char *MessageToString::getStringFromMessage(Message message)
+char *MessageToString::getStringFromMessage(const Message &message)
 {
     return nullptr;
 }

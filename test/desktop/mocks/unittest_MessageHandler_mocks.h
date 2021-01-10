@@ -12,7 +12,7 @@ public:
     MOCK_METHOD(void, promptMessage, (const VoicePrompt &message), (override));
 };
 
-class Mock_MessageToString : public Message_String
+class Mock_MessageToString : public MessageToString_interface
 {
 public:
     MOCK_METHOD(char*, getStringFromMessage, (const Message &message), (override));
