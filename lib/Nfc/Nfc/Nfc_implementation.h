@@ -30,7 +30,7 @@ private:
     // Returns true if communications to a card is successfully established
     bool setTagOnline();
     // Helper method, for better readability: takes status of function and returns input Notification
-    void printNotification(bool status, Messages_interface::eMessageContent sucessMessage, Messages_interface::eMessageContent failureMessage);
+    void printNotification(bool status, Message::eMessageContent sucessMessage, Message::eMessageContent failureMessage);
 
 private:
     MFRC522_interface &m_rMfrc522;

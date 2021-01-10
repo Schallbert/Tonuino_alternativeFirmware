@@ -58,7 +58,7 @@ TEST_F(Nfc_getTagPresence, newTag_returnsNEW_UNKNOWN_TAG)
 
 TEST_F(Nfc_getTagPresence, canNotSetTagOnline_returnsERROR)
 {
-    Message tagTypeNotImplemented{Message(Messages_interface::ERRORTYPE)};
+    Message tagTypeNotImplemented{Message(Message::ERRORTYPE)};
     ON_CALL(m_mfrc, isCardPresent()).WillByDefault(Return(true));
     ON_CALL(m_mfrc, isNewCardPresent()).WillByDefault(Return(true));
     ON_CALL(m_mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_NOT_COMPLETE));
@@ -98,7 +98,7 @@ TEST_F(Nfc_write, mfrcWriteSucceeds_returnsTrue)
 
 TEST_F(Nfc_write, tagWriteError_returnsError)
 {
-    Message tagWriteError{Message(Messages_interface::ERRORWRITE)};
+    Message tagWriteError{Message(Message::ERRORWRITE)};
     ON_CALL(m_mfrc, isCardPresent()).WillByDefault(Return(true));
     ON_CALL(m_mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     ON_CALL(m_mfrc, tagWrite(_, _, _)).WillByDefault(Return(false));
@@ -106,14 +106,14 @@ TEST_F(Nfc_write, tagWriteError_returnsError)
 
     // setOnline will return READOK, tagWrite will fail with ERRORWRITE
     Sequence seq;
-    EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(Message(Messages_interface::READOK))));
+    EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(Message(Message::READOK))));
     EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(tagWriteError)));
     m_Nfc.writeTag(4, dataToWrite);
 }
 
 TEST_F(Nfc_write, tagWriteSuccess_returnsSuccessNotification)
 {
-    Message tagWriteSuccess{Message(Messages_interface::WRITEOK)};
+    Message tagWriteSuccess{Message(Message::WRITEOK)};
     ON_CALL(m_mfrc, isCardPresent()).WillByDefault(Return(true));
     ON_CALL(m_mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     ON_CALL(m_mfrc, tagLogin(_)).WillByDefault(Return(true));
@@ -121,7 +121,7 @@ TEST_F(Nfc_write, tagWriteSuccess_returnsSuccessNotification)
     uint8_t dataToWrite[16] = {};
 
     Sequence seq;
-    EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(Message(Messages_interface::READOK))));
+    EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(Message(Message::READOK))));
     EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(tagWriteSuccess)));
     m_Nfc.writeTag(4, dataToWrite);
 }
@@ -157,7 +157,7 @@ TEST_F(Nfc_read, mfrcReadSucceeds_returnsTrue)
 
 TEST_F(Nfc_read, tagReadError_returnsError)
 {
-    Message tagReadError{Message(Messages_interface::ERRORREAD)};
+    Message tagReadError{Message(Message::ERRORREAD)};
     ON_CALL(m_mfrc, isCardPresent()).WillByDefault(Return(true));
     ON_CALL(m_mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     ON_CALL(m_mfrc, tagRead(_, _, _)).WillByDefault(Return(false));
@@ -165,14 +165,14 @@ TEST_F(Nfc_read, tagReadError_returnsError)
 
     // setOnline will return READOK, tagRead will fail with ERRORREAD
     Sequence seq;
-    EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(Message(Messages_interface::READOK))));
+    EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(Message(Message::READOK))));
     EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(tagReadError)));
     m_Nfc.readTag(4, readData);
 }
 
 TEST_F(Nfc_read, tagReadSuccess_returnsSuccessNotification)
 {
-    Message tagReadSuccess{Message(Messages_interface::READOK)};
+    Message tagReadSuccess{Message(Message::READOK)};
     ON_CALL(m_mfrc, isCardPresent()).WillByDefault(Return(true));
     ON_CALL(m_mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     ON_CALL(m_mfrc, tagLogin(_)).WillByDefault(Return(true));

@@ -15,7 +15,7 @@ void System::init()
 
 void System::notifyStartup()
 {
-    m_MessageHandler.printMessage(Message{Messages_interface::SYSTEM, Messages_interface::STARTUP});
+    m_MessageHandler.printMessage(Message{Message::SYSTEM, Message::STARTUP});
     VoicePrompt startup;
     startup.promptId = MSG_STARTUP;
     startup.allowSkip = false;
@@ -31,7 +31,7 @@ void System::shutdown()
 
 void System::notifyShutdown()
 {
-    m_MessageHandler.printMessage(Message{eMessageGroup::SYSTEM, Messages_interface::HALT});
+    m_MessageHandler.printMessage(Message{eMessageGroup::SYSTEM, Message::HALT});
     VoicePrompt shutdown;
     shutdown.promptId = MSG_SHUTDOWN;
     shutdown.allowSkip = false;

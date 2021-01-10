@@ -4,7 +4,7 @@
 void Nfc_implementation::initNfc()
 {
     m_rMfrc522.init(); // Init MFRC522
-    Message init{Message(Messages_interface::READERINIT)};
+    Message init{Message(Message::READERINIT)};
     m_rMessageHandler.printMessage(init);
 }
 
@@ -38,7 +38,7 @@ bool Nfc_implementation::writeTag(byte blockAddress, byte *dataToWrite)
         status = m_pConcreteTag->writeTag(blockAddress, dataToWrite);
     }
     setTagOffline();
-    printNotification(status, Messages_interface::WRITEOK, Messages_interface::ERRORWRITE);
+    printNotification(status, Message::WRITEOK, Message::ERRORWRITE);
     return status;
 }
 
@@ -50,13 +50,13 @@ bool Nfc_implementation::readTag(byte blockAddress, byte *readResult)
         status = m_pConcreteTag->readTag(blockAddress, readResult);
     }
     setTagOffline();
-    printNotification(status, Messages_interface::READOK, Messages_interface::ERRORREAD);
+    printNotification(status, Message::READOK, Message::ERRORREAD);
     return status;
 }
 
-void Nfc_implementation::printNotification(bool status, Messages_interface::eMessageContent successMessage, Messages_interface::eMessageContent failureMessage)
+void Nfc_implementation::printNotification(bool status, Message::eMessageContent successMessage, Message::eMessageContent failureMessage)
 {
-    Message message{Message(Messages_interface::ERRORTYPE)};
+    Message message{Message(Message::ERRORTYPE)};
     if (status)
     {
         message.m_contents = successMessage;
@@ -81,6 +81,6 @@ bool Nfc_implementation::setTagOnline()
     status &= m_rMfrc522.isCardPresent();
     m_pConcreteTag = m_NfcTagFactory.getInstance(m_rMfrc522);
     status &= (m_pConcreteTag != nullptr); // Not implemented if factory cannot respond OK
-    printNotification(status, Messages_interface::READOK, Messages_interface::ERRORTYPE);
+    printNotification(status, Message::READOK, Message::ERRORTYPE);
     return status;
 }

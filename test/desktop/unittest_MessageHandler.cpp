@@ -46,21 +46,21 @@ protected:
 TEST_F(MessageHandlerTest, PrintMessage_normal_willParseToString)
 {
     EXPECT_CALL(m_messagesMock, getStringFromMessage(_));
-    m_pMessageHandler->printMessage(Message{Messages_interface::STARTUP});
+    m_pMessageHandler->printMessage(Message{Message::STARTUP});
 }
 
 TEST_F(MessageHandlerTest, PrintMessage_normal_willPrint)
 {
     ON_CALL(m_messagesMock, getStringFromMessage(_)).WillByDefault(Return(m_testString));
     EXPECT_CALL(m_serialMock, com_println(_));
-    m_pMessageHandler->printMessage(Message{Messages_interface::STARTUP});
+    m_pMessageHandler->printMessage(Message{Message::STARTUP});
 }
 
 TEST_F(MessageHandlerTest, PrintMessage_sameMessagetwice_wontPrintAgain)
 {
     ON_CALL(m_messagesMock, getStringFromMessage(_)).WillByDefault(Return(m_testString));
     EXPECT_CALL(m_serialMock, com_println(_)).Times(1);
-    const Message testMessage{Message(Messages_interface::STARTUP)};
+    const Message testMessage{Message(Message::STARTUP)};
     m_pMessageHandler->printMessage(testMessage);
     m_pMessageHandler->printMessage(testMessage);
 }
@@ -69,8 +69,8 @@ TEST_F(MessageHandlerTest, PrintMessage_differentMessages_willPrintBoth)
 {
     ON_CALL(m_messagesMock, getStringFromMessage(_)).WillByDefault(Return(m_testString));
     EXPECT_CALL(m_serialMock, com_println(_)).Times(2);
-    const Message testMessage{Message(Messages_interface::PAUSE)};
-    const Message testMessage2{Message(Messages_interface::PLAY)};
+    const Message testMessage{Message(Message::PAUSE)};
+    const Message testMessage2{Message(Message::PLAY)};
     m_pMessageHandler->printMessage(testMessage);
     m_pMessageHandler->printMessage(testMessage2);
 }
@@ -79,8 +79,8 @@ TEST_F(MessageHandlerTest, PrintMessage_MessagesofDifferentGroups_willPrintBoth)
 {
     ON_CALL(m_messagesMock, getStringFromMessage(_)).WillByDefault(Return(m_testString));
     EXPECT_CALL(m_serialMock, com_println(_)).Times(2);
-    const Message testMessage{Message(Messages_interface::SYSTEM, 3)};
-    const Message testMessage2{Message(Messages_interface::NFCREADER, 3)};
+    const Message testMessage{Message(Message::SYSTEM, 3)};
+    const Message testMessage2{Message(Message::NFCREADER, 3)};
     m_pMessageHandler->printMessage(testMessage);
     m_pMessageHandler->printMessage(testMessage2);
 }
@@ -89,12 +89,12 @@ TEST_F(MessageHandlerTest, PrintMessage_offset_WillPrint)
 {
     ON_CALL(m_messagesMock, getStringFromMessage(_)).WillByDefault(Return(m_testString));
     EXPECT_CALL(m_serialMock, com_println(_));
-    m_pMessageHandler->printMessage(Message{Messages_interface::MP3PLAYBACK, 2});
+    m_pMessageHandler->printMessage(Message{Message::MP3PLAYBACK, 2});
 }
 
 TEST_F(MessageHandlerTest, PrintMessage_offset_ParsesCorrectMessage)
 {
-    const Message testOffset{Message(Messages_interface::MP3PLAYBACK, 2)};
+    const Message testOffset{Message(Message::MP3PLAYBACK, 2)};
     EXPECT_CALL(m_messagesMock, getStringFromMessage(identicalMessage(testOffset)));
     m_pMessageHandler->printMessage(testOffset);
 }

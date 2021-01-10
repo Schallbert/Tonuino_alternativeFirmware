@@ -1,10 +1,10 @@
 #ifndef MESSAGES_INTERFACE_H
 #define MESSAGES_INTERFACE_H
 
-// 16 groups (First nibble 0xX0), 16 possible messages per group (second nibble 0x0X)
-namespace Messages_interface
+struct Message
 {
-    enum eMessageGroup
+    // 16 groups (First nibble 0xX0), 16 possible messages per group (second nibble 0x0X)
+        enum eMessageGroup
     {
         SYSTEM = 0x00,
         MP3CONTROL = 0x10,
@@ -54,14 +54,10 @@ namespace Messages_interface
         MODESAVEPROGRESS = 0x63,
         MODEONETRACKONLY = 0x64
     };
-} // namespace Message_interface
-
-struct Message
-{
     // Constructors convert bitcoded types into base values: Groups 0x00 - 0x0F, Messages 0x00 - 0xFF
-    Message(Messages_interface::eMessageContent contents) : m_group(static_cast<uint8_t>(contents) / 0x10),
+    Message(eMessageContent contents) : m_group(static_cast<uint8_t>(contents) / 0x10),
                                                             m_contents(static_cast<uint8_t>(contents)){};
-    Message(Messages_interface::eMessageGroup group, uint8_t offset) : m_group(static_cast<uint8_t>(group) / 0x10),
+    Message(eMessageGroup group, uint8_t offset) : m_group(static_cast<uint8_t>(group) / 0x10),
                                                                        m_contents(static_cast<uint8_t>(group) | offset){};
     ~Message() = default;
 

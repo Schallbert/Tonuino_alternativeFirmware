@@ -18,7 +18,7 @@ NfcControl_interface::eTagState NfcControl::getTagPresence()
             tagPresence = NfcControl_interface::NEW_REGISTERED_TAG;
         }
     }
-    Message ctrlStatus{Message(Messages_interface::NFCCONTROL, static_cast<uint8_t>(tagPresence))};
+    Message ctrlStatus{Message(Message::NFCCONTROL, static_cast<uint8_t>(tagPresence))};
     m_rMessageHandler.printMessage(ctrlStatus);
     return tagPresence;
 }

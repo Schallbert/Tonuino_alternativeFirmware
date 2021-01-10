@@ -8,10 +8,10 @@ void Mp3Play_implementation::init()
     m_rArduinoHal.getPins().pin_mode(DFMINI_PIN_ISIDLE, INPUT);
     m_rDfMiniMp3.setEq(DFMINI_EQ_SETTING);
     m_rDfMiniMp3.setVolume(VOLUME_INIT);
-    Message message{Message(Messages_interface::ERRORCOM)};
+    Message message{Message(Message::ERRORCOM)};
     if(m_rDfMiniMp3.getVolume() == VOLUME_INIT)
     {
-        message.m_contents = Messages_interface::SDONLINE;
+        message.m_contents = Message::SDONLINE;
         m_rMessageHandler.printMessage(message);
     }
     else{
@@ -26,7 +26,7 @@ void Mp3Play_implementation::playFolder(Folder &folder)
         // Start playing folder: first track of current folder.
         m_rDfMiniMp3.playFolderTrack(m_currentFolder.getFolderId(),
                                       m_currentFolder.getCurrentTrack());
-        Message playInfo{Message(Messages_interface::FOLDEROK)};
+        Message playInfo{Message(Message::FOLDEROK)};
         m_rMessageHandler.printMessage(playInfo);
     }
     restartLullabyeTimer();
@@ -72,7 +72,7 @@ bool Mp3Play_implementation::isFolderValid(Folder &folder)
         VoicePrompt folderErrorPrompt;
         folderErrorPrompt.promptId = MSG_ERROR_FOLDER;
         folderErrorPrompt.allowSkip = false;
-        Message folderErrorPrint{Message(Messages_interface::ERRORFOLDER)};
+        Message folderErrorPrint{Message(Message::ERRORFOLDER)};
         m_rMessageHandler.printMessage(folderErrorPrint);
         m_rMessageHandler.promptMessage(folderErrorPrompt);
         result = false;
@@ -84,7 +84,7 @@ void Mp3Play_implementation::autoplay()
 {
     if (m_rDfMiniMp3.isTrackFinished())
     {
-        Message autoplayInfo{Message(Messages_interface::AUTOPLAYPAUSE)};
+        Message autoplayInfo{Message(Message::AUTOPLAYPAUSE)};
         if (shouldPlaybackStop())
         {
             m_rMessageHandler.printMessage(autoplayInfo);
@@ -93,7 +93,7 @@ void Mp3Play_implementation::autoplay()
         }
         else
         {
-            autoplayInfo.m_contents = Messages_interface::AUTOPLAYNEXT;
+            autoplayInfo.m_contents = Message::AUTOPLAYNEXT;
             m_rMessageHandler.printMessage(autoplayInfo);
             playNext();
         }
