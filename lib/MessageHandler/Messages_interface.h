@@ -1,10 +1,11 @@
 #ifndef MESSAGES_INTERFACE_H
 #define MESSAGES_INTERFACE_H
 
-struct Message
+class Message
 {
+public:
     // 16 groups (First nibble 0xX0), 16 possible messages per group (second nibble 0x0X)
-        enum eMessageGroup
+    enum eMessageGroup
     {
         SYSTEM = 0x00,
         MP3CONTROL = 0x10,
@@ -54,13 +55,29 @@ struct Message
         MODESAVEPROGRESS = 0x63,
         MODEONETRACKONLY = 0x64
     };
+
+public:
     // Constructors convert bitcoded types into base values: Groups 0x00 - 0x0F, Messages 0x00 - 0xFF
     Message(eMessageContent contents) : m_group(static_cast<uint8_t>(contents) / 0x10),
-                                                            m_contents(static_cast<uint8_t>(contents)){};
+                                        m_contents(static_cast<uint8_t>(contents)){};
     Message(eMessageGroup group, uint8_t offset) : m_group(static_cast<uint8_t>(group) / 0x10),
-                                                                       m_contents(static_cast<uint8_t>(group) | offset){};
+                                                   m_contents(static_cast<uint8_t>(group) | offset){};
     ~Message() = default;
+    bool operator==(Message const &message) const
+    {
+        return ((message.getContents() == m_contents) && (message.m_group == m_group));
+    }
 
+    void setContents(eMessageContent contents)
+    {
+        m_group = static_cast<uint8_t>(contents) / 0x10;
+        m_contents = static_cast<uint8_t>(contents);
+    }
+
+    uint8_t getGroup() const { return m_group; }
+    uint8_t getContents() const { return m_contents; }
+
+private:
     uint8_t m_group{};
     uint8_t m_contents{};
 };

@@ -67,9 +67,9 @@ const char *const s_contentTable[] PROGMEM = {s_content0, s_content1, s_content2
 char *MessageToString::getStringFromMessage(const Message &message)
 {
     m_completeMessage[0] = 0; //delete string
-    strcpy_P(m_completeMessage, (char *)(pgm_read_word(&(s_groupTable[message.m_group]))));
+    strcpy_P(m_completeMessage, (char *)(pgm_read_word(&(s_groupTable[message.getGroup()]))));
     strcat_P(m_completeMessage, ": ");
-    strcat_P(m_completeMessage, (char *)(pgm_read_word(&(s_contentTable[message.m_contents]))));
+    strcat_P(m_completeMessage, (char *)(pgm_read_word(&(s_contentTable[message.getContents()]))));
     return m_completeMessage;
 }
 #else

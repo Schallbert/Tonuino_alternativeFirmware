@@ -20,9 +20,7 @@ public:
 
 MATCHER_P(identicalMessage, comp, "")
 {
-    return (
-        (arg.m_group == comp.m_group) &&
-        (arg.m_contents == comp.m_contents));
+    return arg == comp;
 }
 
 #endif // MESSAGEHANDLER_MOCKS_H

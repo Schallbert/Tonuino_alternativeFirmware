@@ -59,11 +59,11 @@ void Nfc_implementation::printNotification(bool status, Message::eMessageContent
     Message message{Message(Message::ERRORTYPE)};
     if (status)
     {
-        message.m_contents = successMessage;
+        message.setContents(successMessage);
     }
     else
     {
-        message.m_contents = failureMessage;
+        message.setContents(failureMessage);
     }
     m_rMessageHandler.printMessage(message);
 }

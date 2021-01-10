@@ -22,10 +22,10 @@ void MessageHandler::printMessage(const Message &message)
 bool MessageHandler::isNewMessage(const Message &message)
 {
     bool status{false};
-    if (m_lastMessage[message.m_group] != message.m_contents)
+    if (m_lastMessage[message.getGroup()] != message.getContents())
     {
         status = true;
-        m_lastMessage[message.m_group] = message.m_contents;
+        m_lastMessage[message.getGroup()] = message.getContents();
     }
     return status;
 }

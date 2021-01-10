@@ -11,7 +11,7 @@ void Mp3Play_implementation::init()
     Message message{Message(Message::ERRORCOM)};
     if(m_rDfMiniMp3.getVolume() == VOLUME_INIT)
     {
-        message.m_contents = Message::SDONLINE;
+        message.setContents(Message::SDONLINE);
         m_rMessageHandler.printMessage(message);
     }
     else{
@@ -93,7 +93,7 @@ void Mp3Play_implementation::autoplay()
         }
         else
         {
-            autoplayInfo.m_contents = Message::AUTOPLAYNEXT;
+            autoplayInfo.setContents(Message::AUTOPLAYNEXT);
             m_rMessageHandler.printMessage(autoplayInfo);
             playNext();
         }
