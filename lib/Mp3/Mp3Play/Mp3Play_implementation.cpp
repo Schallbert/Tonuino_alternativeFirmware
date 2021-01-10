@@ -11,7 +11,7 @@ void Mp3Play_implementation::init()
     Message message{Message(Messages_interface::ERRORCOM)};
     if(m_rDfMiniMp3.getVolume() == VOLUME_INIT)
     {
-        message.m_contents = Messages_interface::STARTUP;
+        message.m_contents = Messages_interface::SDONLINE;
         m_rMessageHandler.printMessage(message);
     }
     else{

@@ -57,9 +57,9 @@ TEST_F(Mp3Play, init_ComError_printsError)
     m_pMp3Play->init();
 }
 
-TEST_F(Mp3Play, init_ComOK_printsStartup)
+TEST_F(Mp3Play, init_ComOK_printsSdOnline)
 {
-    Message message{Message(Messages_interface::STARTUP)};
+    Message message{Message(Messages_interface::SDONLINE)};
     ON_CALL(m_dfMiniMock, getVolume()).WillByDefault(Return(VOLUME_INIT));
     
     EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(message)));
