@@ -53,7 +53,8 @@ public:
         MODEALBUM = 0x61,
         MODERANDOM = 0x62,
         MODESAVEPROGRESS = 0x63,
-        MODEONETRACKONLY = 0x64
+        MODEONETRACKONLY = 0x64,
+        LASTVALIDMESSAGE = 0x6F
     };
 
 public:

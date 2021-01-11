@@ -12,7 +12,7 @@ void MessageHandler::printMessage(const Message &message)
     if (isNewMessage(message))
     {
         char *buffer = m_rMessages.getStringFromMessage(message);
-        if (buffer != nullptr)
+        if (buffer)
         {
             m_rSerial.com_println(buffer);
         }

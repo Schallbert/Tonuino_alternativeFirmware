@@ -4,74 +4,88 @@
 #include "messages.h"
 
 // WARNING:
-// Custom Message s_group + ": " + s_content may not count
+// Custom Message s_gr + ": " + s_ctt may not count
 // more letters than DEBUG_MAXMESSAGELENGTH -1 or there will be SEGFAULTs!
 #if DEBUGSERIAL
-const char s_group0[] PROGMEM = "System";
-const char s_group1[] PROGMEM = "Mp3Control";
-const char s_group2[] PROGMEM = "Mp3Playback";
-const char s_group3[] PROGMEM = "Mp3Player";
-const char s_group4[] PROGMEM = "NfcControl";
-const char s_group5[] PROGMEM = "NfcReader";
-const char s_group6[] PROGMEM = "Playlist";
+const char s_gr0[] PROGMEM = "System";
+const char s_gr1[] PROGMEM = "Mp3Control";
+const char s_gr2[] PROGMEM = "Mp3Playback";
+const char s_gr3[] PROGMEM = "Mp3Player";
+const char s_gr4[] PROGMEM = "NfcControl";
+const char s_gr5[] PROGMEM = "NfcReader";
+const char s_gr6[] PROGMEM = "Playlist";
 
-const char s_content0[] PROGMEM = "Started";
-const char s_content1[] PROGMEM = "Shutdown";
-const char s_content2[] PROGMEM = "Prompt timeout";
+const char s_ctt00[] PROGMEM = "Started";
+const char s_ctt01[] PROGMEM = "Shutdown";
+const char s_ctt02[] PROGMEM = "Prompt timeout";
 
-const char s_content3[] PROGMEM = "Volume up";
-const char s_content4[] PROGMEM = "Volume down";
-const char s_content5[] PROGMEM = "Next track";
-const char s_content6[] PROGMEM = "Previous track";
-const char s_content7[] PROGMEM = "Play";
-const char s_content8[] PROGMEM = "Pause";
+const char s_ctt10[] PROGMEM = "Volume up";
+const char s_ctt11[] PROGMEM = "Volume down";
+const char s_ctt12[] PROGMEM = "Next track";
+const char s_ctt13[] PROGMEM = "Previous track";
+const char s_ctt14[] PROGMEM = "Play";
+const char s_ctt15[] PROGMEM = "Pause";
 
-const char s_content9[] PROGMEM = "Error: folder invalid!";
-const char s_content10[] PROGMEM = "Folder detected. Play";
-const char s_content11[] PROGMEM = "Autoplay complete. Pause";
-const char s_content12[] PROGMEM = "Autoplay next";
+const char s_ctt20[] PROGMEM = "Error: folder invalid!";
+const char s_ctt21[] PROGMEM = "Folder detected. Play";
+const char s_ctt22[] PROGMEM = "Autoplay complete. Pause";
+const char s_ctt23[] PROGMEM = "Autoplay next";
 
-const char s_content13[] PROGMEM = "Finished playing track";
-const char s_content14[] PROGMEM = "SD card online";
-const char s_content15[] PROGMEM = "SD card inserted";
-const char s_content16[] PROGMEM = "SD Card removed";
-const char s_content17[] PROGMEM = "Com Error";
+const char s_ctt30[] PROGMEM = "Finished playing track";
+const char s_ctt31[] PROGMEM = "SD card online";
+const char s_ctt32[] PROGMEM = "SD card inserted";
+const char s_ctt33[] PROGMEM = "SD Card removed";
+const char s_ctt34[] PROGMEM = "Com Error";
 
-const char s_content18[] PROGMEM = "No Tag";
-const char s_content19[] PROGMEM = "Active Tag";
-const char s_content20[] PROGMEM = "New Tag";
-const char s_content21[] PROGMEM = "Unknown Tag";
+const char s_ctt40[] PROGMEM = "No Tag";
+const char s_ctt41[] PROGMEM = "Active Tag";
+const char s_ctt42[] PROGMEM = "New Tag";
+const char s_ctt43[] PROGMEM = "Unknown Tag";
 
-const char s_content22[] PROGMEM = "Tag Reader Init";
-const char s_content23[] PROGMEM = "Tag Write Success";
-const char s_content24[] PROGMEM = "Tag Read Success";
-const char s_content25[] PROGMEM = "Tag write Error";
-const char s_content26[] PROGMEM = "Tag read Error";
-const char s_content27[] PROGMEM = "Tag type not implemented";
+const char s_ctt50[] PROGMEM = "Tag Reader Init";
+const char s_ctt51[] PROGMEM = "Tag Write Success";
+const char s_ctt52[] PROGMEM = "Tag Read Success";
+const char s_ctt53[] PROGMEM = "Tag write Error";
+const char s_ctt54[] PROGMEM = "Tag read Error";
+const char s_ctt55[] PROGMEM = "Tag type not implemented";
 
-const char s_content28[] PROGMEM = "Mode Lullabye";
-const char s_content29[] PROGMEM = "Mode Album";
-const char s_content30[] PROGMEM = "Mode Random";
-const char s_content31[] PROGMEM = "Mode SaveProgress";
-const char s_content32[] PROGMEM = "Mode OneLargeTrack";
+const char s_ctt60[] PROGMEM = "Mode Lullabye";
+const char s_ctt61[] PROGMEM = "Mode Album";
+const char s_ctt62[] PROGMEM = "Mode Random";
+const char s_ctt63[] PROGMEM = "Mode SaveProgress";
+const char s_ctt64[] PROGMEM = "Mode OneLargeTrack";
 
-const char *const s_groupTable[] PROGMEM = {s_group0, s_group1, s_group2, s_group3, s_group4, s_group5, s_group6};
-const char *const s_contentTable[] PROGMEM = {s_content0, s_content1, s_content2, s_content3, s_content4,
-                                              s_content5, s_content6, s_content7, s_content8, s_content9,
-                                              s_content10, s_content11, s_content12, s_content13, s_content14,
-                                              s_content15, s_content16, s_content17, s_content18, s_content19,
-                                              s_content20, s_content21, s_content22, s_content23, s_content24,
-                                              s_content25, s_content26, s_content27, s_content28, s_content29,
-                                              s_content30, s_content31, s_content32};
+const char s_sep[] PROGMEM = ": ";
+
+const char *const s_grTable[] PROGMEM = {s_gr0, s_gr1, s_gr2, s_gr3, s_gr4, s_gr5, s_gr6};
+const char *const s_cttTable[] PROGMEM = {
+    nullptr, s_ctt00, s_ctt01, s_ctt02, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    s_ctt10, s_ctt11, s_ctt12, s_ctt13, s_ctt14, s_ctt15, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    s_ctt20, s_ctt21, s_ctt22, s_ctt23, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    s_ctt30, s_ctt31, s_ctt32, s_ctt33, s_ctt34, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    s_ctt40, s_ctt41, s_ctt42, s_ctt43, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    s_ctt50, s_ctt51, s_ctt52, s_ctt53, s_ctt54, s_ctt55, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    s_ctt60, s_ctt61, s_ctt62, s_ctt63, s_ctt64, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 
 char *MessageToString::getStringFromMessage(const Message &message)
 {
+    // SUCCESS: procen that the two guards prevent segfault when called with nonexistant content.
+    // TODO: Acceptance test case for this behavior. 
+    if(message.getContents() > Message::LASTVALIDMESSAGE)
+    {
+        return nullptr;
+    }
+
+    if(!(char *)(pgm_read_word(&(s_cttTable[message.getContents()]))))
+    {
+        return nullptr;
+    }
+
     m_completeMessage[0] = 0; //delete string
-    strcpy_P(m_completeMessage, (char *)(pgm_read_word(&(s_groupTable[message.getGroup()]))));
-    strcat_P(m_completeMessage, ": ");
-    strcat_P(m_completeMessage, (char *)(pgm_read_word(&(s_contentTable[message.getContents()]))));
+    strcpy_P(m_completeMessage, (char *)(pgm_read_word(&(s_grTable[message.getGroup()]))));
+    strcat_P(m_completeMessage, s_sep);
+    strcat_P(m_completeMessage, (char *)(pgm_read_word(&(s_cttTable[message.getContents()]))));
     return m_completeMessage;
-    
 }
 #else
 char *MessageToString::getStringFromMessage(const Message &message)
