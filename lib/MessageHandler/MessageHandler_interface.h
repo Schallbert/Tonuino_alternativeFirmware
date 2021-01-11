@@ -3,7 +3,7 @@
 
 #include "../Mp3/Mp3Play/Mp3Play_interface.h"
 #include "Messages_interface.h"
-#include "Prompts.h"
+#include "VoicePrompt.h"
 
 class MessageHander_interface
 {

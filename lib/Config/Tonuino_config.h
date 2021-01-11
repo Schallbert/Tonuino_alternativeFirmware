@@ -4,7 +4,7 @@
 //DEBUG OUTPUT [just write "true" to disable debug output on serial]
 #define DEBUGSERIAL true
 #define DEBUGSERIAL_BAUDRATE 9600
-#define DEBUG_MAXMESSAGELENGTH 42 // max number of characters in a message
+#define DEBUG_MAXMESSAGELENGTH 38 // max number of characters in a message
 
 // This is the selector of input variants.
 // Change it to your preferred variant
@@ -20,7 +20,7 @@
 
 //Folder specific data
 #define MAXFOLDERCOUNT 99 // up to 255 supported by player
-#define MAXTRACKSPERFOLDER 17 // up to 255 supported by player BUT limited due to RAM constraints!
+#define MAXTRACKSPERFOLDER 32 // up to 255 supported by player BUT limited due to RAM constraints!
 
 #define VOLUME_MAX 22                                          // Absolute max: 30
 #define VOLUME_MIN 2                                           // Absolute min: 0

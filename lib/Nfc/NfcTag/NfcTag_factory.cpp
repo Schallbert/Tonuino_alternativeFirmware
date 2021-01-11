@@ -23,6 +23,8 @@ NfcTag_interface *NfcTag_factory::getInstance(MFRC522_interface &pMfrc522)
     case MFRC522_interface::PICC_TYPE_MIFARE_UL:
         m_instance = new NfcTag_MifareUltralight(pMfrc522);
         break;
+    default:
+        m_instance = nullptr;
     }
     return m_instance;
 };

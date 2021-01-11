@@ -60,11 +60,13 @@ void timer1Task_1ms()
 // - solve reset lullabye timer on button press DONE
 // - FEATURE: change Lullabye in a way that it's a configurable feature, not a playmode. DONE
 // - cleanup #includes and move implementation includes to cpps DONE
+// - all debugserial string output should go in one file and be PROGMEMs DONE
+// - restructure VoicePrompts to an own class DONE
 
 // - create well-readable README.md
 // - solve all TODOS.
 // - rename Folder to PlayList
-// - all debugserial string output should go in one file
+
 
 // - BIG TASK: Integration testing on device
 
