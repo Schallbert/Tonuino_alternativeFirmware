@@ -3,6 +3,7 @@
 
 #include "../Arduino_HardwareAbstraction/Arduino_types.h"
 #include "../Config/Tonuino_config.h"
+#include "../MessageHandler/Prompts.h"
 
 #include "../Folder/Folder.h"
 
@@ -27,14 +28,14 @@ private:
 
 private:
     static const uint16_t START_OPTION_FOLDERID = 0;
-    static const uint16_t START_OPTION_PLAYMODE = MSG_SELECT_PLAYMODE;
+    static const uint16_t START_OPTION_PLAYMODE = VoicePrompt::MSG_SELECT_PLAYMODE;
 
     enum eMenuState
     {
         NO_MENU = 0,
-        FOLDERID_SELECT = MSG_SELECT_FOLDERID,
-        PLAYMODE_SELECT = MSG_SELECT_PLAYMODE,
-        COMPLETE = MSG_TAGCONFSUCCESS
+        FOLDERID_SELECT = VoicePrompt::MSG_SELECT_FOLDERID,
+        PLAYMODE_SELECT = VoicePrompt::MSG_SELECT_PLAYMODE,
+        COMPLETE = VoicePrompt::MSG_TAGCONFSUCCESS
     };
 
     class MenuOptions

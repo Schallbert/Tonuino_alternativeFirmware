@@ -112,8 +112,6 @@ void Mp3Control::decV()
 
 void Mp3Control::help()
 {
-    VoicePrompt helpMessage;
-    helpMessage.promptId = MSG_HELP;
-    helpMessage.allowSkip = true;
+    VoicePrompt helpMessage{VoicePrompt(VoicePrompt::MSG_HELP, true)};
     m_rMessageHandler.promptMessage(helpMessage);
 }

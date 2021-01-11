@@ -22,10 +22,10 @@ public:
                                                       m_rDfMiniPromptTimer(rDfMiniPromptTimer){};
 
     virtual void printMessage(const Message &message) override;
-    virtual void promptMessage(const VoicePrompt &message) override;
+    virtual void promptMessage(const VoicePrompt &prompt) override;
 
 private:
-    bool isNewPrompt(const VoicePrompt &message);
+    bool isNewPrompt(const VoicePrompt &prompt);
     bool isNewMessage(const Message &message);
     void waitForPromptToStart();
     void waitForPromptToFinish();

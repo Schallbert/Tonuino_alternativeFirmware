@@ -30,28 +30,34 @@ bool MessageHandler::isNewMessage(const Message &message)
     return status;
 }
 
-void MessageHandler::promptMessage(const VoicePrompt &message)
+void MessageHandler::promptMessage(const VoicePrompt &prompt)
 {
-    if (isNewPrompt(message))
+    if (isNewPrompt(prompt))
     {
-        m_rDfMiniMp3.playMp3FolderTrack(message.promptId);
+        m_rDfMiniMp3.playMp3FolderTrack(prompt.getId());
         waitForPromptToStart();
 
-        if (!message.allowSkip)
+        if (!prompt.getSkip())
         {
             waitForPromptToFinish();
         }
     }
 }
 
-bool MessageHandler::isNewPrompt(const VoicePrompt &message)
+bool MessageHandler::isNewPrompt(const VoicePrompt &prompt)
 {
-    bool result{(message.promptId != 0 &&
-                 message.promptId != m_lastPrompt.promptId)};
-    m_lastPrompt.promptId = message.promptId;
-    m_lastPrompt.allowSkip = message.allowSkip;
+    bool result{false};
+    if (prompt.getId() == 0)
+    {
+        return result;
+    }
 
-    return (result);
+    if (m_lastPrompt != prompt)
+    {
+        m_lastPrompt = prompt;
+        result = true;
+    }
+    return result;
 }
 
 void MessageHandler::waitForPromptToStart()

@@ -14,21 +14,6 @@
 #define three_buttons 0
 #define one_encoder 1
 
-//Tonuino mp3 prompt IDs -----------------------
-#define MSG_ERROR_CARDWRITE 410
-#define MSG_ERROR_CARDREAD 411
-#define MSG_ERROR_FOLDER 412
-#define MSG_ERROR_TOOMANYTRACKS 413
-#define MSG_STARTUP 500 
-#define MSG_SHUTDOWN 501
-#define MSG_SELECT_FOLDERID 300
-#define MSG_SELECT_PLAYMODE 400
-#define MSG_HELP 420 // TODO HOW TO SELECT UserINput variant?
-#define MSG_TAGCONFSUCCESS 702
-#define MSG_DELETETAG 700
-#define MSG_CONFIRM_DELETION 701
-#define MSG_ABORTED 802
-
 //StatusLEDs interaction outputs
 #define FLASHSLOWMS 500
 #define FLASHQUICKMS 200

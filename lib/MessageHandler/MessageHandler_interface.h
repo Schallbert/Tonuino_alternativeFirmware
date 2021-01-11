@@ -3,12 +3,7 @@
 
 #include "../Mp3/Mp3Play/Mp3Play_interface.h"
 #include "Messages_interface.h"
-
-struct VoicePrompt
-{
-    uint16_t promptId{0};
-    bool allowSkip{true};
-};
+#include "Prompts.h"
 
 class MessageHander_interface
 {

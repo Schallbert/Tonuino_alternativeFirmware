@@ -5,6 +5,7 @@
 #include "mocks/unittest_Mp3Play_mocks.h"
 #include "mocks/unittest_PowerManager_Mocks.h"
 #include "mocks/unittest_MessageHandler_mocks.h"
+#include "mocks/unittest_VoiceMenu.h"
 
 #include "Tonuino_config.h"
 #include "Folder.h"
@@ -32,35 +33,6 @@ protected:
 
     Menu_factory m_MenuFactory;
 };
-
-MATCHER(invalidPrompt, "")
-{
-    return (arg.promptId == 0);
-}
-
-MATCHER_P(identicalPrompt, comp, "")
-{
-    return (
-        (arg.promptId == comp.promptId) &&
-        (arg.allowSkip == comp.allowSkip));
-}
-
-MATCHER(invalidFolder, "")
-{
-    return (!arg.isInitiated());
-}
-
-MATCHER(validFolder, "")
-{
-    return (arg.isInitiated());
-}
-
-MATCHER_P(identicalFolder, comp, "")
-{
-    return ((arg.getFolderId() == comp.getFolderId()) &&
-            (arg.getPlayMode() == comp.getPlayMode()) &&
-            (arg.getTrackCount() == comp.getTrackCount()));
-}
 
 // INIT() ------------------------------------------------------
 TEST_F(LinkMenuTest, noInit_isActive_returnsFalse)
@@ -118,9 +90,7 @@ TEST_F(LinkMenuTest, menuComplete_writesConfigToCardFails_promptsError)
     linkMenu->confirm();
     linkMenu->selectNext();
 
-    VoicePrompt expect{};
-    expect.promptId = MSG_ERROR_CARDWRITE;
-    expect.allowSkip = true;
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ERROR_CARDWRITE, true)};
 
     EXPECT_CALL(m_messageHandlerMock, promptMessage(identicalPrompt(expect)));
     linkMenu->confirm();
@@ -180,8 +150,8 @@ TEST_F(LinkMenuTest, menuComplete_setStatusLed_statusLedChangeRequested)
 
 TEST_F(LinkMenuTest, menuAbort_setStatusLed_noStatusLedChangeRequested)
 {
-    linkMenu->confirm();   
-    linkMenu->abort();      
+    linkMenu->confirm();
+    linkMenu->abort();
 
     EXPECT_CALL(m_powerManagerMock, setLinkMenu()).Times(0);
     linkMenu->setStatusLed();
@@ -196,9 +166,7 @@ TEST_F(LinkMenuTest, noInit_noPromptSet)
 
 TEST_F(LinkMenuTest, selectFolderId_noSelection_getPrompt_FolderIdAndAllowSkip)
 {
-    VoicePrompt expect{};
-    expect.promptId = MSG_SELECT_FOLDERID;
-    expect.allowSkip = true;
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_SELECT_FOLDERID, true)};
 
     linkMenu->confirm();
 
@@ -208,9 +176,7 @@ TEST_F(LinkMenuTest, selectFolderId_noSelection_getPrompt_FolderIdAndAllowSkip)
 
 TEST_F(LinkMenuTest, selectPlayMode_noSelection_getPrompt_PlayModeAndAllowSkip)
 {
-    VoicePrompt expect{};
-    expect.promptId = MSG_SELECT_PLAYMODE;
-    expect.allowSkip = true;
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_SELECT_PLAYMODE, true)};
 
     linkMenu->confirm();
     linkMenu->confirm();
@@ -222,9 +188,7 @@ TEST_F(LinkMenuTest, selectPlayMode_noSelection_getPrompt_PlayModeAndAllowSkip)
 TEST_F(LinkMenuTest, menuComplete_noSelection_getPrompt_TagConfigSuccess)
 {
     ON_CALL(m_nfcControlMock, writeFolderToTag(_)).WillByDefault(Return(true));
-    VoicePrompt expect{};
-    expect.promptId = MSG_TAGCONFSUCCESS;
-    expect.allowSkip = true;
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_TAGCONFSUCCESS, true)};
 
     linkMenu->confirm();
     linkMenu->confirm();
@@ -248,9 +212,7 @@ TEST_F(LinkMenuTest, menuComplete_noSelection_confirmAgainAndGetPrompt_noPromptS
 
 TEST_F(LinkMenuTest, selectFolderId1_getPrompt_returns1)
 {
-    VoicePrompt expect{};
-    expect.promptId = 1;
-    expect.allowSkip = false;
+    VoicePrompt expect{VoicePrompt(1, false)};
 
     linkMenu->confirm();
     linkMenu->selectNext();
@@ -261,9 +223,7 @@ TEST_F(LinkMenuTest, selectFolderId1_getPrompt_returns1)
 
 TEST_F(LinkMenuTest, selectFolderIdMAX_getPrompt_returnsMAX)
 {
-    VoicePrompt expect{};
-    expect.promptId = MAXFOLDERCOUNT;
-    expect.allowSkip = false;
+    VoicePrompt expect{VoicePrompt(MAXFOLDERCOUNT, false)};
 
     linkMenu->confirm();
     linkMenu->selectPrev();
@@ -274,9 +234,9 @@ TEST_F(LinkMenuTest, selectFolderIdMAX_getPrompt_returnsMAX)
 
 TEST_F(LinkMenuTest, selectPlayMode1_getPrompt_returnsALBUM)
 {
-    VoicePrompt expect{};
-    expect.promptId = MSG_SELECT_PLAYMODE + static_cast<uint16_t>(Folder::ALBUM);
-    expect.allowSkip = false;
+    VoicePrompt expect{VoicePrompt(static_cast<uint16_t>(VoicePrompt::MSG_SELECT_PLAYMODE) +
+                                       static_cast<uint16_t>(Folder::ALBUM),
+                                   false)};
 
     linkMenu->confirm();
     linkMenu->confirm();
@@ -288,9 +248,9 @@ TEST_F(LinkMenuTest, selectPlayMode1_getPrompt_returnsALBUM)
 
 TEST_F(LinkMenuTest, selectPlayModeMAX_getPrompt_returnsONELARGETRACK)
 {
-    VoicePrompt expect{};
-    expect.promptId = MSG_SELECT_PLAYMODE + static_cast<uint16_t>(Folder::ONELARGETRACK);
-    expect.allowSkip = false;
+    VoicePrompt expect{VoicePrompt(static_cast<uint16_t>(VoicePrompt::MSG_SELECT_PLAYMODE) +
+                                       static_cast<uint16_t>(Folder::ONELARGETRACK),
+                                   false)};
 
     linkMenu->confirm();
     linkMenu->confirm();
@@ -302,9 +262,9 @@ TEST_F(LinkMenuTest, selectPlayModeMAX_getPrompt_returnsONELARGETRACK)
 
 TEST_F(LinkMenuTest, selectPlayMode_testRollover_getPrompt_returnsSAVEPROGRESS)
 {
-    VoicePrompt expect{};
-    expect.promptId = MSG_SELECT_PLAYMODE + static_cast<uint16_t>(Folder::SAVEPROGRESS);
-    expect.allowSkip = false;
+    VoicePrompt expect{VoicePrompt(static_cast<uint16_t>(VoicePrompt::MSG_SELECT_PLAYMODE) +
+                                       static_cast<uint16_t>(Folder::SAVEPROGRESS),
+                                   false)};
 
     linkMenu->confirm();
     linkMenu->confirm();
@@ -317,9 +277,7 @@ TEST_F(LinkMenuTest, selectPlayMode_testRollover_getPrompt_returnsSAVEPROGRESS)
 
 TEST_F(LinkMenuTest, noInit_abort_noPromptSet)
 {
-    VoicePrompt expect{};
-    expect.promptId = MSG_ABORTED;
-    expect.allowSkip = true;
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ABORTED, true)};
 
     linkMenu->abort();
 
@@ -329,9 +287,7 @@ TEST_F(LinkMenuTest, noInit_abort_noPromptSet)
 
 TEST_F(LinkMenuTest, folderId1Selected_abort_promptsAborted)
 {
-    VoicePrompt expect{};
-    expect.promptId = MSG_ABORTED;
-    expect.allowSkip = true;
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ABORTED, true)};
 
     linkMenu->confirm();
     linkMenu->selectNext();
@@ -344,9 +300,7 @@ TEST_F(LinkMenuTest, folderId1Selected_abort_promptsAborted)
 
 TEST_F(LinkMenuTest, folderIdAndPlayModeSelected_abort_promptsAborted)
 {
-    VoicePrompt expect{};
-    expect.promptId = MSG_ABORTED;
-    expect.allowSkip = true;
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ABORTED, true)};
 
     linkMenu->confirm();
     linkMenu->selectNext();
@@ -361,9 +315,7 @@ TEST_F(LinkMenuTest, folderIdAndPlayModeSelected_abort_promptsAborted)
 
 TEST_F(LinkMenuTest, menuCompleted_abort_promptsAborted)
 {
-    VoicePrompt expect{};
-    expect.promptId = MSG_ABORTED;
-    expect.allowSkip = true;
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ABORTED, true)};
 
     linkMenu->confirm();
     linkMenu->selectNext();

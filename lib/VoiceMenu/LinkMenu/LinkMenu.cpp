@@ -6,9 +6,8 @@
 void LinkMenu::confirm()
 {
     m_menuState.confirm();
-
-    m_prompt.promptId = m_menuState.getMenuStateMessage();
-    m_prompt.allowSkip = true;
+    VoicePrompt menuStateMessage{VoicePrompt(m_menuState.getMenuStateMessage(), true)};
+    m_prompt = menuStateMessage;
 
     if (isComplete())
     {
@@ -20,8 +19,7 @@ void LinkMenu::writeTag()
 {
     if (!m_rNfcControl.writeFolderToTag(m_menuState.getResult()))
     {
-        m_prompt.promptId = MSG_ERROR_CARDWRITE;
-        m_prompt.allowSkip = true;
+        m_prompt.reset(VoicePrompt::MSG_ERROR_CARDWRITE, true);
         playPrompt();
         m_menuState.abort();
     }
@@ -29,31 +27,25 @@ void LinkMenu::writeTag()
 
 bool LinkMenu::isComplete()
 {
-    return (m_menuState.getMenuStateMessage() == MSG_TAGCONFSUCCESS);
+    return (m_menuState.getMenuStateMessage() == VoicePrompt::MSG_TAGCONFSUCCESS);
 }
 
 void LinkMenu::abort()
 {
     m_menuState.abort();
-
-    m_prompt.promptId = MSG_ABORTED;
-    m_prompt.allowSkip = true;
+    m_prompt.reset(VoicePrompt::MSG_ABORTED, true);
 }
 
 void LinkMenu::selectNext()
 {
     m_menuState.incrementSelection();
-
-    m_prompt.promptId = m_menuState.getCurrentSelection();
-    m_prompt.allowSkip = false; // as preview will be played right afterwards
+    m_prompt.reset(m_menuState.getCurrentSelection(), false);
 }
 
 void LinkMenu::selectPrev()
 {
     m_menuState.decrementSelection();
-
-    m_prompt.promptId = m_menuState.getCurrentSelection();
-    m_prompt.allowSkip = false; // as preview will be played right afterwards
+    m_prompt.reset(m_menuState.getCurrentSelection(), false);
 }
 
 void LinkMenu::setStatusLed()

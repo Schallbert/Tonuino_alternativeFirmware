@@ -3,6 +3,8 @@
 
 #include "../Arduino_HardwareAbstraction/Arduino_types.h"
 #include "../Config/Tonuino_config.h"
+#include "../MessageHandler/Prompts.h"
+
 
 class DeleteMenu_StateManager
 {
@@ -28,11 +30,11 @@ private:
     enum eMenuState
     {
         NO_MENU = 0,
-        PLACE_TAG_TO_DELETE = MSG_DELETETAG,
-        CONFIRM_DELETE = MSG_CONFIRM_DELETION,
-        COMPLETE = MSG_TAGCONFSUCCESS,
-        ABORTED = MSG_ABORTED,
-        ERROR = MSG_ERROR_CARDREAD
+        PLACE_TAG_TO_DELETE = VoicePrompt::MSG_DELETETAG,
+        CONFIRM_DELETE = VoicePrompt::MSG_CONFIRM_DELETION,
+        COMPLETE = VoicePrompt::MSG_TAGCONFSUCCESS,
+        ABORTED = VoicePrompt::MSG_ABORTED,
+        ERROR = VoicePrompt::MSG_ERROR_CARDREAD
     };
 
     eMenuState menuState{NO_MENU};

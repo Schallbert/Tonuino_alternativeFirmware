@@ -148,9 +148,7 @@ void Folder::setTrackCount(uint8_t trackCount)
     {
         if (is_dependency_set())
         {
-            VoicePrompt tooManyTracks;
-            tooManyTracks.promptId = MSG_ERROR_TOOMANYTRACKS;
-            tooManyTracks.allowSkip = true;
+            VoicePrompt tooManyTracks{VoicePrompt(VoicePrompt::MSG_ERROR_TOOMANYTRACKS, true)};
             m_pMessageHandler->promptMessage(tooManyTracks);
         }
         trackCount = MAXTRACKSPERFOLDER;

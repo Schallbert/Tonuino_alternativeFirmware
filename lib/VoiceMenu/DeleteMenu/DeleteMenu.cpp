@@ -15,7 +15,6 @@ void DeleteMenu::confirm()
 void DeleteMenu::eraseTag()
 {
     bool status = m_rNfcControl.eraseTag();
-    m_prompt.allowSkip = false;
     if (!status)
     {
         m_menuState.setError();
@@ -77,8 +76,7 @@ bool DeleteMenu::isActive()
 
 void DeleteMenu::playPrompt()
 {
-    m_prompt.promptId = m_menuState.getMenuStateMessage();
-    m_prompt.allowSkip = true;
+    m_prompt.reset(m_menuState.getMenuStateMessage(), true);
     m_rMessageHandler.promptMessage(m_prompt);
 }
 

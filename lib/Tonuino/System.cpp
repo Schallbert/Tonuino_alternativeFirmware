@@ -16,9 +16,7 @@ void System::init()
 void System::notifyStartup()
 {
     m_MessageHandler.printMessage(Message{Message::STARTUP});
-    VoicePrompt startup;
-    startup.promptId = MSG_STARTUP;
-    startup.allowSkip = false;
+    VoicePrompt startup{VoicePrompt(VoicePrompt::MSG_STARTUP, false)};
     m_MessageHandler.promptMessage(startup);
 }
 
@@ -32,9 +30,7 @@ void System::shutdown()
 void System::notifyShutdown()
 {
     m_MessageHandler.printMessage(Message{Message::HALT});
-    VoicePrompt shutdown;
-    shutdown.promptId = MSG_SHUTDOWN;
-    shutdown.allowSkip = false;
+    VoicePrompt shutdown{VoicePrompt(VoicePrompt::MSG_SHUTDOWN, false)};
     m_MessageHandler.promptMessage(shutdown);
 }
 

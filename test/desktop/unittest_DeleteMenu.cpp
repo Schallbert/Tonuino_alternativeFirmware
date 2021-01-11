@@ -5,6 +5,7 @@
 #include "mocks/unittest_Mp3Play_mocks.h"
 #include "mocks/unittest_PowerManager_Mocks.h"
 #include "mocks/unittest_MessageHandler_mocks.h"
+#include "mocks/unittest_VoiceMenu.h"
 
 #include "Tonuino_config.h"
 #include "Folder.h"
@@ -35,35 +36,6 @@ protected:
     Menu_factory m_MenuFactory;
     Menu_interface *deleteMenu{nullptr};
 };
-
-MATCHER(invalidPrompt, "")
-{
-    return (arg.promptId == 0);
-}
-
-MATCHER_P(identicalPrompt, comp, "")
-{
-    return (
-        (arg.promptId == comp.promptId) &&
-        (arg.allowSkip == comp.allowSkip));
-}
-
-MATCHER(invalidFolder, "")
-{
-    return (!arg.isInitiated());
-}
-
-MATCHER(validFolder, "")
-{
-    return (arg.isInitiated());
-}
-
-MATCHER_P(identicalFolder, comp, "")
-{
-    return ((arg.getFolderId() == comp.getFolderId()) &&
-            (arg.getPlayMode() == comp.getPlayMode()) &&
-            (arg.getTrackCount() == comp.getTrackCount()));
-}
 
 // INIT() ------------------------------------------------------
 
@@ -128,7 +100,7 @@ TEST_F(DeleteMenuTest, menuComplete_callsEraseCard)
 {
     EXPECT_CALL(m_nfcControlMock, eraseTag());
 
-    deleteMenu->confirm();        // enter
+    deleteMenu->confirm(); // enter
     deleteMenu->setTagState(NfcControl_interface::NEW_REGISTERED_TAG);
     deleteMenu->handlePlayback(); // detects tag to delete
     deleteMenu->confirm();        //confirms deletion
@@ -139,7 +111,7 @@ TEST_F(DeleteMenuTest, menuAbort_setStatusLed_noStatusLedChangeRequested)
     deleteMenu->setTagState(NfcControl_interface::NEW_REGISTERED_TAG);
     deleteMenu->confirm();        // enter
     deleteMenu->handlePlayback(); // detects tag to delete
-    deleteMenu->abort();      
+    deleteMenu->abort();
 
     EXPECT_CALL(m_powerManagerMock, setDeleteMenu()).Times(0);
     deleteMenu->setStatusLed();
@@ -154,10 +126,7 @@ TEST_F(DeleteMenuTest, noInit_noPromptSet)
 
 TEST_F(DeleteMenuTest, init_getPrompt_promptsDeleteTag)
 {
-    VoicePrompt expect{};
-    expect.promptId = MSG_DELETETAG;
-    expect.allowSkip = true;
-
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_DELETETAG, true)};
     deleteMenu->confirm();
 
     EXPECT_CALL(m_messageHandlerMock, promptMessage(identicalPrompt(expect)));
@@ -166,9 +135,7 @@ TEST_F(DeleteMenuTest, init_getPrompt_promptsDeleteTag)
 
 TEST_F(DeleteMenuTest, init2x_getPrompt_promptsDeleteTag)
 {
-    VoicePrompt expect{};
-    expect.promptId = MSG_DELETETAG;
-    expect.allowSkip = true;
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_DELETETAG, true)};
 
     deleteMenu->confirm();
     deleteMenu->confirm();
@@ -180,9 +147,7 @@ TEST_F(DeleteMenuTest, init2x_getPrompt_promptsDeleteTag)
 TEST_F(DeleteMenuTest, placedTagToDelete_getPrompt_promptsWaitForConfirm)
 {
     deleteMenu->setTagState(NfcControl_interface::NEW_REGISTERED_TAG);
-    VoicePrompt expect{};
-    expect.promptId = MSG_CONFIRM_DELETION;
-    expect.allowSkip = true;
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_CONFIRM_DELETION, true)};
 
     deleteMenu->confirm();
 
@@ -194,9 +159,7 @@ TEST_F(DeleteMenuTest, placedTagToDelete_confirmDeletion_promptsTagConfiguration
 {
     ON_CALL(m_nfcControlMock, eraseTag()).WillByDefault(Return(true));
     deleteMenu->setTagState(NfcControl_interface::NEW_REGISTERED_TAG);
-    VoicePrompt expect{};
-    expect.promptId = MSG_TAGCONFSUCCESS;
-    expect.allowSkip = true;
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_TAGCONFSUCCESS, true)};
 
     deleteMenu->confirm();        // enter
     deleteMenu->handlePlayback(); // detects tag to delete
@@ -208,9 +171,7 @@ TEST_F(DeleteMenuTest, placedTagToDelete_confirmDeletion_promptsTagConfiguration
 
 TEST_F(DeleteMenuTest, noInit_abort_noPromptSet)
 {
-    VoicePrompt expect{};
-    expect.promptId = MSG_ABORTED;
-    expect.allowSkip = true;
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ABORTED, true)};
 
     deleteMenu->abort();
 
@@ -220,9 +181,7 @@ TEST_F(DeleteMenuTest, noInit_abort_noPromptSet)
 
 TEST_F(DeleteMenuTest, entered_abort_noPromptSet)
 {
-    VoicePrompt expect{};
-    expect.promptId = MSG_ABORTED;
-    expect.allowSkip = true;
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ABORTED, true)};
 
     deleteMenu->confirm();
     deleteMenu->abort();
@@ -234,9 +193,7 @@ TEST_F(DeleteMenuTest, entered_abort_noPromptSet)
 TEST_F(DeleteMenuTest, tagToDeleteDetected_abort_noPromptSet)
 {
     deleteMenu->setTagState(NfcControl_interface::NEW_REGISTERED_TAG);
-    VoicePrompt expect{};
-    expect.promptId = MSG_ABORTED;
-    expect.allowSkip = true;
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ABORTED, true)};
 
     deleteMenu->confirm();
     deleteMenu->handlePlayback();
@@ -249,10 +206,7 @@ TEST_F(DeleteMenuTest, tagToDeleteDetected_abort_noPromptSet)
 TEST_F(DeleteMenuTest, menuComplete_abort_reentry_promptsDeleteTag)
 {
     deleteMenu->setTagState(NfcControl_interface::NEW_REGISTERED_TAG);
-
-    VoicePrompt expect{};
-    expect.promptId = MSG_CONFIRM_DELETION;
-    expect.allowSkip = true;
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_CONFIRM_DELETION, true)};
 
     deleteMenu->confirm();
     deleteMenu->handlePlayback();
