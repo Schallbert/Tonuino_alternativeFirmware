@@ -35,7 +35,8 @@ public:
     bool isShutdownRequested() override;
 
     // notifies classes that another timer interval passed
-    void notifyTimerTick() override;
+    void notify1sTimer() override;
+    void service1msLed() override;
 
 private:
     Arduino_interface_pins &m_rPinControl;

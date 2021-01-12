@@ -3,7 +3,7 @@
 #include "Tonuino_config.h"
 #include "../Utilities/SimpleTimer/SimpleTimer.h"
 #include "../Folder/Folder.h"
-#include "Messages_interface.h"    
+#include "Messages_interface.h"
 void Mp3Control::setUserInput(UserInput_interface::eUserRequest input)
 {
     m_userInput = input;
@@ -21,14 +21,13 @@ void Mp3Control::setBlocked(bool isBlocked)
 
 void Mp3Control::loop()
 {
-    if(m_blocked)
+    if (m_blocked)
     {
         return;
     }
 
     handleCardInput();
     handleUserInput();
-    m_rMp3Player.autoplay();
 }
 
 void Mp3Control::handleCardInput()
@@ -40,6 +39,10 @@ void Mp3Control::handleCardInput()
         {
             m_rMp3Player.playFolder(readFolder);
         }
+    }
+    else if (m_tagState == NfcControl_interface::ACTIVE_KNOWN_TAG) // TODO: THIS WILL MAKE THE SYSTEM PLAY ONLY AS LONG AS A CARD IS PLACED!
+    {
+        m_rMp3Player.autoplay();
     }
 }
 

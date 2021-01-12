@@ -5,9 +5,11 @@
 
 void System::init()
 {
+    // Timers must be initialized and started by now!
     m_ArduinoHal.getSerial().com_begin(DEBUGSERIAL_BAUDRATE);
     m_NfcControl.init();
     m_Mp3Play.init();
+    m_PwrCtrl.requestKeepAlive();
     UserInput_factory m_pUserInputFactory{};
     m_pUserInput = m_pUserInputFactory.getInstance();
     notifyStartup();
@@ -22,9 +24,8 @@ void System::notifyStartup()
 
 void System::shutdown()
 {
-    // TODO: shutdown should be delayed somehow? As otherwise timers cannot be stopped on time?!
-    //notifyShutdown();
-    //m_PwrCtrl.allowShutdown();
+    notifyShutdown();
+    m_PwrCtrl.allowShutdown();
 }
 
 void System::notifyShutdown()
@@ -64,7 +65,11 @@ bool System::isShutdownRequested()
 void System::timer1Task_1ms()
 {
     static volatile uint16_t ui16Ticks = 0;
-    //m_pUserInput->userinputServiceIsr(); // userInput service 1ms task
+    if (m_pUserInput != nullptr)
+    {
+        m_pUserInput->userinputServiceIsr(); // userInput service 1ms task
+    }
+    m_PwrCtrl.service1msLed();
 
     ++ui16Ticks;
     if (ui16Ticks >= MS_TO_S) // 1ms --> 1s
@@ -76,7 +81,7 @@ void System::timer1Task_1ms()
 
 void System::timer1Task_1sec()
 {
-    m_PwrCtrl.notifyTimerTick(); // idle timer and LED behavior
+    m_PwrCtrl.notify1sTimer(); // idle timer and LED behavior
     m_LullabyeTimer.timerTick();
     m_MenuTimer.timerTick();
     m_DfMiniPromptTimer.timerTick();

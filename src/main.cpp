@@ -22,13 +22,13 @@ void loop()
     //LowPower.sleep(100);
     // SLEEP for 100ms to reduce power consumption?
     tonuino.loop();
-    /*
-    if (tonuino->isShutdownRequested())
+
+    if (tonuino.isShutdownRequested())
     {
-        tonuino->shutdown(); // shutdown system
+        tonuino.shutdown(); // shutdown system
         timer1.detachInterrupt();
         return; // leave loop
-    }*/
+    }
 }
 
 void timer1Task_1ms()

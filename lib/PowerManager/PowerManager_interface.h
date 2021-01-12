@@ -20,7 +20,8 @@ public:
     virtual bool isShutdownRequested() = 0;
     
     // notifies classes that another timer interval passed
-    virtual void notifyTimerTick() = 0;
+    virtual void notify1sTimer() = 0;
+    virtual void service1msLed() = 0;
 };
 
 #endif // POWERMANAGER_INTERFACE_H

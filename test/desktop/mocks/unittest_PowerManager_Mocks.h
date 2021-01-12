@@ -15,7 +15,8 @@ public:
     MOCK_METHOD(void, requestKeepAlive, (), (override));
     MOCK_METHOD(bool, isShutdownRequested, (), (override));
     MOCK_METHOD(void, allowShutdown, (), (override));
-    MOCK_METHOD(void, notifyTimerTick, (), (override));
+    MOCK_METHOD(void, notify1sTimer, (), (override));
+    MOCK_METHOD(void, serviceLed, (), (override));
 };
 
 #endif // UNITTEST_POWERMANAGER_MOCKS_H

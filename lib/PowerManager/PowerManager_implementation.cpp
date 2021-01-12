@@ -50,7 +50,7 @@ void PowerManager::setLinkMenu()
     m_led.set_led_behavior(StatusLed::flash_slow); // Link Menu
 }
 
-void PowerManager::notifyTimerTick()
+void PowerManager::notify1sTimer()
 {
     m_rIdleTimer.timerTick(); // won't increment if stopped
     if (m_rIdleTimer.isElapsed())
@@ -58,5 +58,9 @@ void PowerManager::notifyTimerTick()
         m_rIdleTimer.stop();
         requestShutdown();
     }
+}
+
+void PowerManager::service1msLed()
+{
     m_led.led_service();
 }
