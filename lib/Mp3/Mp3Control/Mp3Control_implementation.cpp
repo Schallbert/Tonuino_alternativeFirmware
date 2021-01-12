@@ -28,6 +28,8 @@ void Mp3Control::loop()
 
     handleCardInput();
     handleUserInput();
+    m_rPowerManager.setPlayback(m_rDfMiniMp3.isPlaying());
+    m_rMp3Player.autoplay();
 }
 
 void Mp3Control::handleCardInput()
@@ -39,10 +41,6 @@ void Mp3Control::handleCardInput()
         {
             m_rMp3Player.playFolder(readFolder);
         }
-    }
-    else if (m_tagState == NfcControl_interface::ACTIVE_KNOWN_TAG) // TODO: THIS WILL MAKE THE SYSTEM PLAY ONLY AS LONG AS A CARD IS PLACED!
-    {
-        m_rMp3Player.autoplay();
     }
 }
 

@@ -9,12 +9,13 @@ void Mp3Play_implementation::init()
     m_rDfMiniMp3.setEq(DFMINI_EQ_SETTING);
     m_rDfMiniMp3.setVolume(VOLUME_INIT);
     Message message{Message(Message::ERRORCOM)};
-    if(m_rDfMiniMp3.getVolume() == VOLUME_INIT)
+    if (m_rDfMiniMp3.getVolume() == VOLUME_INIT)
     {
         message.setContents(Message::SDONLINE);
         m_rMessageHandler.printMessage(message);
     }
-    else{
+    else
+    {
         m_rMessageHandler.printMessage(message);
     }
 }
@@ -25,7 +26,7 @@ void Mp3Play_implementation::playFolder(Folder &folder)
     {
         // Start playing folder: first track of current folder.
         m_rDfMiniMp3.playFolderTrack(m_currentFolder.getFolderId(),
-                                      m_currentFolder.getCurrentTrack());
+                                     m_currentFolder.getCurrentTrack());
         Message playInfo{Message(Message::FOLDEROK)};
         m_rMessageHandler.printMessage(playInfo);
     }
@@ -100,8 +101,13 @@ void Mp3Play_implementation::autoplay()
 
 bool Mp3Play_implementation::shouldPlaybackStop() const
 {
-    Folder::ePlayMode mode = m_currentFolder.getPlayMode();
     bool shouldStop{false};
+    if (!m_currentFolder.isInitiated())
+    {
+        return shouldStop;
+    }
+    Folder::ePlayMode mode = m_currentFolder.getPlayMode();
+
     if (LULLABYE_TIMEOUT_ACTIVE && m_rLullabyeTimer.isElapsed())
     {
         shouldStop = true;
@@ -118,7 +124,7 @@ void Mp3Play_implementation::playNext()
     if (isFolderValid(m_currentFolder))
     {
         m_rDfMiniMp3.playFolderTrack(m_currentFolder.getFolderId(),
-                                      m_currentFolder.getNextTrack());
+                                     m_currentFolder.getNextTrack());
     }
 }
 
@@ -127,6 +133,6 @@ void Mp3Play_implementation::playPrev()
     if (isFolderValid(m_currentFolder))
     {
         m_rDfMiniMp3.playFolderTrack(m_currentFolder.getFolderId(),
-                                      m_currentFolder.getPrevTrack());
+                                     m_currentFolder.getPrevTrack());
     }
 }

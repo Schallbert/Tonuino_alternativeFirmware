@@ -7,6 +7,7 @@
 #include "mocks/unittest_Mp3Play_mocks.h"
 #include "mocks/unittest_DfMiniMp3_mocks.h"
 #include "mocks/unittest_NfcControl_mocks.h"
+#include "mocks/unittest_PowerManager_Mocks.h"
 #include "mocks/unittest_MessageHandler_mocks.h"
 
 #include "../UserInput/UserInput/UserInput_interface.h"
@@ -23,11 +24,13 @@ protected:
     NiceMock<Mock_DfMiniMp3> m_dfMiniMock{};
     NiceMock<Mock_Mp3Play> m_mp3PlayMock{};
     NiceMock<Mock_NfcControl> m_nfcControlMock{};
+    NiceMock<Mock_PowerManager> m_powerManagerMock{};
     NiceMock<Mock_MessageHandler> m_messageHandlerMock{};
 
     Mp3Control m_Mp3Control{Mp3Control(m_dfMiniMock,
                                        m_mp3PlayMock,
                                        m_nfcControlMock,
+                                       m_powerManagerMock,
                                        m_messageHandlerMock)};
 };
 
@@ -42,6 +45,15 @@ TEST_F(Mp3ControlTest, loop_blocked_wontDoAnything)
 TEST_F(Mp3ControlTest, loop_callsAutoplay)
 {
     EXPECT_CALL(m_mp3PlayMock, autoplay());
+    m_Mp3Control.loop();
+}
+
+TEST_F(Mp3ControlTest, loop_notifiesPowerManagerAboutIsPlaying)
+{
+    bool notPlaying{false};
+
+    EXPECT_CALL(m_dfMiniMock, isPlaying()).WillOnce(Return(notPlaying));
+    EXPECT_CALL(m_powerManagerMock, setPlayback(notPlaying));
     m_Mp3Control.loop();
 }
 
