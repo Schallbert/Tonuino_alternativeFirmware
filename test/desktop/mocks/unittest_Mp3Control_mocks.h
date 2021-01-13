@@ -10,7 +10,7 @@ class Mock_Mp3Control : public Mp3Control_interface
 {
 public:
     MOCK_METHOD(void, setUserInput, (UserInput_interface::eUserRequest), (override));
-    MOCK_METHOD(void, setTagState, (NfcControl_interface::eTagState input), (override));
+    MOCK_METHOD(void, setTagState, (Message::eMessageContent input), (override));
     MOCK_METHOD(void, setBlocked, (bool isBlocked), (override));
     MOCK_METHOD(void, loop, (), (override));
 };

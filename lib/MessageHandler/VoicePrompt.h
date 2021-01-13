@@ -44,9 +44,9 @@ public:
         return ((m_promptId == prompt.m_promptId) && (m_allowSkip == prompt.m_allowSkip));
     }
 
-    bool operator!=(VoicePrompt const &prompt) const 
+    bool operator!=(VoicePrompt const &prompt) const
     {
-        return(!operator==(prompt));
+        return (!operator==(prompt));
     }
 
     void reset(uint16_t promptId, bool allowSkip)
@@ -54,7 +54,7 @@ public:
         m_promptId = promptId;
         m_allowSkip = allowSkip;
     }
-    
+
     uint16_t getId() const { return m_promptId; }
     bool getSkip() const { return m_allowSkip; }
 

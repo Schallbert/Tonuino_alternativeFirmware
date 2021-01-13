@@ -1,6 +1,8 @@
 #ifndef MESSAGES_INTERFACE_H
 #define MESSAGES_INTERFACE_H
 
+#include "Arduino_types.h"
+
 class Message
 {
 public:
@@ -42,7 +44,7 @@ public:
         PLAYERONLINE = 0x35,
         NOTAG = 0x40,
         ACTIVETAG = 0x41,
-        NEWTAG = 0x42,
+        NEWKNOWNTAG = 0x42,
         UNKNOWNTAG = 0x43,
         READERINIT = 0x50,
         WRITEOK = 0x51,

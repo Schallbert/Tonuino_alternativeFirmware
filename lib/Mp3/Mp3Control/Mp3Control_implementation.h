@@ -33,7 +33,7 @@ public:
 
     void setUserInput(UserInput_interface::eUserRequest input) override;
     void loop() override;
-    void setTagState(NfcControl_interface::eTagState input) override;
+    void setTagState(Message::eMessageContent input) override;
     void setBlocked(bool isBlocked) override;
 
 private:
@@ -61,7 +61,7 @@ private:
     MessageHander_interface &m_rMessageHandler;
 
     UserInput_interface::eUserRequest m_userInput{UserInput_interface::NO_ACTION};
-    NfcControl_interface::eTagState m_tagState{NfcControl_interface::NO_TAG};
+    Message::eMessageContent m_tagState{Message::NOTAG};
     bool m_blocked{false};
     typedef void (Mp3Control::*dispatcher)(); // table of function pointers
 };

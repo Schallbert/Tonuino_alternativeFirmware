@@ -66,7 +66,7 @@ TEST_F(Mp3ControlTest, loop_Mp3PlayerInit_prints3PlayerStatus)
 TEST_F(Mp3ControlTest, newRegisteredTag_readSuccessful_startsPlayback)
 {
     ON_CALL(m_nfcControlMock, readFolderFromTag(_)).WillByDefault(Return(true));
-    m_Mp3Control.setTagState(NfcControl_interface::NEW_REGISTERED_TAG);
+    m_Mp3Control.setTagState(Message::NEWKNOWNTAG);
     EXPECT_CALL(m_mp3PlayMock, playFolder(_));
     m_Mp3Control.loop();
 }

@@ -151,21 +151,21 @@ TEST_F(NfcCtrlRead, Read_Successful_bufferSet_returnsCorrectFolderData)
 
 TEST_F(NfcCtrlTagPresence, noTag_returnsNoTag)
 {
-    NfcControl_interface::eTagState tagPresence = NfcControl_interface::NO_TAG;
+    Message::eMessageContent tagPresence = Message::NOTAG;
     ON_CALL(m_nfcMock, getTagPresence()).WillByDefault(Return(tagPresence));
     ASSERT_EQ(tagPresence, m_NfcControl.getTagPresence());
 }
 
 TEST_F(NfcCtrlTagPresence, activeTag_returnsActiveTag)
 {
-    NfcControl_interface::eTagState tagPresence = NfcControl_interface::ACTIVE_KNOWN_TAG;
+    Message::eMessageContent tagPresence = Message::ACTIVETAG;
     ON_CALL(m_nfcMock, getTagPresence()).WillByDefault(Return(tagPresence));
     ASSERT_EQ(tagPresence, m_NfcControl.getTagPresence());
 }
 
 TEST_F(NfcCtrlTagPresence, newTag_simulateUnknown_returnsUnknownTag)
 {
-    NfcControl_interface::eTagState tagPresence = NfcControl_interface::NEW_UNKNOWN_TAG;
+    Message::eMessageContent tagPresence = Message::UNKNOWNTAG;
     ON_CALL(m_nfcMock, getTagPresence()).WillByDefault(Return(tagPresence));
     ASSERT_EQ(tagPresence, m_NfcControl.getTagPresence());
 }
@@ -173,15 +173,15 @@ TEST_F(NfcCtrlTagPresence, newTag_simulateUnknown_returnsUnknownTag)
 TEST_F(NfcCtrlTagPresence, newTag_simulateKnown_returnsKnownTag)
 {
     NfcControl myTest{m_nfcMock, m_messageHandlerMock};
-    NfcControl_interface::eTagState tagPresence = NfcControl_interface::NEW_UNKNOWN_TAG;
+    Message::eMessageContent tagPresence = Message::UNKNOWNTAG;
     ON_CALL(m_nfcMock, getTagPresence()).WillByDefault(Return(tagPresence));
     m_nfcMock.DelegateToFake(); // will return known card cookie
-    ASSERT_EQ(NfcControl_interface::NEW_REGISTERED_TAG, myTest.getTagPresence());
+    ASSERT_EQ(Message::NEWKNOWNTAG, myTest.getTagPresence());
 }
 
 TEST_F(NfcCtrlTagPresence, OutOfRange_returnsOutOfRange)
 {
-    NfcControl_interface::eTagState tagPresence = static_cast<NfcControl_interface::eTagState>(static_cast<uint8_t>(NfcControl_interface::NUMBER_OF_TAG_STATES) + 1);
+    Message::eMessageContent tagPresence = Message::READERINIT; // Out of Range
     ON_CALL(m_nfcMock, getTagPresence()).WillByDefault(Return(tagPresence));
     ASSERT_EQ(tagPresence, m_NfcControl.getTagPresence());
 }

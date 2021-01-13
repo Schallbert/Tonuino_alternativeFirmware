@@ -21,7 +21,7 @@ public:
     // initializes communication with the tag reader.
     void init() override;
     // Returns tag state of presence to requesting entity.
-    NfcControl_interface::eTagState getTagPresence() override;
+    Message::eMessageContent getTagPresence() override;
     // takes a reference to an existing folder and copies the card's saved data into that object
     // [cookie, folderId, playMode, trackCount]
     bool readFolderFromTag(Folder &targetFolder) override;

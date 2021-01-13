@@ -8,22 +8,22 @@ void Nfc_implementation::initNfc()
     m_rMessageHandler.printMessage(init);
 }
 
-NfcControl_interface::eTagState Nfc_implementation::getTagPresence()
+Message::eMessageContent Nfc_implementation::getTagPresence()
 {
-    NfcControl_interface::eTagState returnValue{NfcControl_interface::NO_TAG};
+    Message::eMessageContent returnValue{Message::NOTAG};
     if (m_rMfrc522.isCardPresent())
     {
         // A card is present!
         if (!m_rMfrc522.isNewCardPresent())
         {
-            returnValue = NfcControl_interface::ACTIVE_KNOWN_TAG;
+            returnValue = Message::ACTIVETAG;
         }
         else
         {
             // New card detected: runs once as new card is automatically set to ActiveCard
             if (setTagOnline())
             {
-                returnValue = NfcControl_interface::NEW_UNKNOWN_TAG; // assume tag is unknown
+                returnValue = Message::UNKNOWNTAG; // assume tag is unknown
             }
         }
     }

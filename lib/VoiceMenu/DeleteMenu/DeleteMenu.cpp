@@ -49,7 +49,7 @@ void DeleteMenu::setStatusLed()
     }
 }
 
-void DeleteMenu::setTagState(NfcControl_interface::eTagState input)
+void DeleteMenu::setTagState(Message::eMessageContent input)
 {
     m_tagState = input;
 }
@@ -63,7 +63,7 @@ void DeleteMenu::handlePlayback()
 
 void DeleteMenu::handleTagStateChanges()
 {
-    if (m_tagState == NfcControl_interface::NEW_REGISTERED_TAG)
+    if (m_tagState == Message::NEWKNOWNTAG)
     {
         m_menuState.setTagToDeleteDetected();
     }

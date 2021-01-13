@@ -9,7 +9,7 @@ void Mp3Control::setUserInput(UserInput_interface::eUserRequest input)
     m_userInput = input;
 }
 
-void Mp3Control::setTagState(NfcControl_interface::eTagState input)
+void Mp3Control::setTagState(Message::eMessageContent input)
 {
     m_tagState = input;
 }
@@ -35,7 +35,7 @@ void Mp3Control::loop()
 
 void Mp3Control::handleCardInput()
 {
-    if (m_tagState == NfcControl_interface::NEW_REGISTERED_TAG)
+    if (m_tagState == Message::NEWKNOWNTAG)
     {
         Folder readFolder;
         if (m_rNfcControl.readFolderFromTag(readFolder))
@@ -52,7 +52,7 @@ void Mp3Control::handleUserInput()
     static const dispatcher dispatchTable[UserInput_interface::NUMBER_OF_REQUESTS] =
         {
             //NOAC,     PL_PS,     PP_LP,     NEXT_,     PREV_,     INC_V,     DEC_V,
-            &PC::none, &PC::plPs, &PC::help, &PC::next, &PC::prev, &PC::incV, &PC::decV // NO_TAG / ACTIVE_KNOWN_TAG
+            &PC::none, &PC::plPs, &PC::help, &PC::next, &PC::prev, &PC::incV, &PC::decV // NOTAG / ACTIVETAG
         };
     dispatcher dispatchExecutor = dispatchTable[m_userInput];
     (this->*dispatchExecutor)();

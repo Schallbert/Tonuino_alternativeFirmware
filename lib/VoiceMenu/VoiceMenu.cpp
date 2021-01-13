@@ -8,7 +8,7 @@ void VoiceMenu::setUserInput(UserInput_interface::eUserRequest input)
     m_userInput = input;
 }
 
-void VoiceMenu::setTagState(NfcControl_interface::eTagState input)
+void VoiceMenu::setTagState(Message::eMessageContent input)
 {
     m_tagState = input;
 }
@@ -42,7 +42,7 @@ bool VoiceMenu::isActive()
 
 void VoiceMenu::checkEnterLinkMenu()
 {
-    if (m_tagState == NfcControl_interface::NEW_UNKNOWN_TAG)
+    if (m_tagState == Message::UNKNOWNTAG)
     {
         m_pMenuInstance = m_MenuFactory.getInstance(Menu_factory::LINK_MENU,
                                                     m_rNfcControl,
@@ -64,7 +64,7 @@ void VoiceMenu::enterMenu()
 
 void VoiceMenu::checkEnterDeleteMenu()
 {
-    if ((m_tagState == NfcControl_interface::ACTIVE_KNOWN_TAG) &&
+    if ((m_tagState == Message::ACTIVETAG) &&
         (m_userInput == UserInput_interface::PP_LONGPRESS))
     {
         m_pMenuInstance = m_MenuFactory.getInstance(Menu_factory::DELETE_MENU,

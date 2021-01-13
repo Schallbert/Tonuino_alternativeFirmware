@@ -24,7 +24,7 @@ public:
 
 public:
     void setStatusLed() override;
-    void setTagState(NfcControl_interface::eTagState input) override;
+    void setTagState(Message::eMessageContent input) override;
     void handlePlayback() override;
 
     void confirm() override;
@@ -49,7 +49,7 @@ private:
     PowerManager_interface &m_rPowerManager;
 
     DeleteMenu_StateManager m_menuState{};
-    NfcControl_interface::eTagState m_tagState{NfcControl_interface::NO_TAG};
+    Message::eMessageContent m_tagState{Message::NOTAG};
 
     VoicePrompt m_prompt{};
     bool m_tagToDeleteDetected{false};

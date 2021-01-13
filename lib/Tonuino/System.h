@@ -58,7 +58,7 @@ private:
     SimpleTimer m_IdleTimer{SimpleTimer()};
     SimpleTimer m_DfMiniPromptTimer{SimpleTimer()};
 
-    DfMini m_DfMini{DfMini(m_ArduinoHal.getPins(), m_ArduinoHal.getSerial())};
+    DfMini m_DfMini{DfMini(m_ArduinoHal.getPins(), m_MessageHandler)}; // FIX THIS
     // UTILITIES
     PowerManager m_PwrCtrl{PowerManager(m_ArduinoHal.getPins(), m_IdleTimer)};
     MessageToString m_Stringifier{MessageToString()};

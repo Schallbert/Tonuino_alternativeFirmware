@@ -7,9 +7,9 @@ void Fake_Nfc::initNfc()
 {
     return;
 }
-NfcControl_interface::eTagState Fake_Nfc::getTagPresence()
+Message::eMessageContent Fake_Nfc::getTagPresence()
 {
-    return NfcControl_interface::ACTIVE_KNOWN_TAG;
+    return Message::ACTIVETAG;
 }
 bool Fake_Nfc::writeTag(byte blockAddress, byte *dataToWrite)
 {

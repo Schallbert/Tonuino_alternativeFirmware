@@ -40,7 +40,7 @@ void System::loop()
     m_DfMini.loop();
 
     UserInput_interface::eUserRequest userRequest{m_pUserInput->getUserRequest()};
-    NfcControl_interface::eTagState tagState{m_NfcControl.getTagPresence()};
+    Message::eMessageContent tagState{m_NfcControl.getTagPresence()};
 
     // Handle Voice Menu
     /*

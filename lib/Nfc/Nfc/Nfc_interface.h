@@ -14,7 +14,7 @@ public:
     // initializes the NFC reader (serial etc.)
     virtual void initNfc() = 0;
     // returns presence state of NFC tag
-    virtual NfcControl_interface::eTagState getTagPresence(void) = 0;
+    virtual Message::eMessageContent getTagPresence() = 0;
     // Returns true on successful write of data to a sector->block of the tag
     virtual bool writeTag(byte blockAddress, byte *dataToWrite) = 0;
     // Returns true on successful read

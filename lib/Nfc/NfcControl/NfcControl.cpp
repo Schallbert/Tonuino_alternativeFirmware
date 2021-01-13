@@ -6,19 +6,19 @@ void NfcControl::init()
     m_rNfc.initNfc();
 }
 
-NfcControl_interface::eTagState NfcControl::getTagPresence()
+Message::eMessageContent NfcControl::getTagPresence()
 {
     // Adds "known tag" information if a new tag has been placed.
     // Otherwise, just wrapper for layer down method.
-    NfcControl_interface::eTagState tagPresence = m_rNfc.getTagPresence();
-    if (tagPresence == NfcControl_interface::NEW_UNKNOWN_TAG)
+    Message::eMessageContent tagPresence = m_rNfc.getTagPresence();
+    if (tagPresence == Message::UNKNOWNTAG)
     {
         if (is_known_card())
         {
-            tagPresence = NfcControl_interface::NEW_REGISTERED_TAG;
+            tagPresence = Message::NEWKNOWNTAG;
         }
     }
-    Message ctrlStatus{Message(Message::NFCCONTROL, static_cast<uint8_t>(tagPresence))};
+    Message ctrlStatus{Message(tagPresence)};
     m_rMessageHandler.printMessage(ctrlStatus);
     return tagPresence;
 }
