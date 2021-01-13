@@ -71,7 +71,8 @@ char *MessageToString::getStringFromMessage(const Message &message)
 {
     // SUCCESS: procen that the two guards prevent segfault when called with nonexistant content.
     // TODO: Acceptance test case for this behavior. 
-    if(message.getContents() > Message::LASTVALIDMESSAGE)
+    uint8_t content = message.getContents();
+    if((content == 0) || (content > Message::LASTVALIDMESSAGE))
     {
         return nullptr;
     }

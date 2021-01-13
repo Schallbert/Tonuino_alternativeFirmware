@@ -75,12 +75,18 @@ public:
         m_contents = static_cast<uint8_t>(contents);
     }
 
+    void reset()
+    {
+        m_group = 0;
+        m_contents = 0;
+    }
+
     uint8_t getGroup() const { return m_group; }
     uint8_t getContents() const { return m_contents; }
 
 private:
-    uint8_t m_group{};
-    uint8_t m_contents{};
+    uint8_t m_group{0};
+    uint8_t m_contents{0};
 };
 
 class MessageToString_interface
