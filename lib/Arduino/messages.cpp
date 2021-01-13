@@ -36,6 +36,8 @@ const char s_ctt31[] PROGMEM = "SD card online";
 const char s_ctt32[] PROGMEM = "SD card inserted";
 const char s_ctt33[] PROGMEM = "SD Card removed";
 const char s_ctt34[] PROGMEM = "Com Error";
+const char s_ctt35[] PROGMEM = "Mp3Player online";
+
 
 const char s_ctt40[] PROGMEM = "No Tag";
 const char s_ctt41[] PROGMEM = "Active Tag";
@@ -62,7 +64,7 @@ const char *const s_cttTable[] PROGMEM = {
     nullptr, s_ctt00, s_ctt01, s_ctt02, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
     s_ctt10, s_ctt11, s_ctt12, s_ctt13, s_ctt14, s_ctt15, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
     s_ctt20, s_ctt21, s_ctt22, s_ctt23, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-    s_ctt30, s_ctt31, s_ctt32, s_ctt33, s_ctt34, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    s_ctt30, s_ctt31, s_ctt32, s_ctt33, s_ctt34, s_ctt35, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
     s_ctt40, s_ctt41, s_ctt42, s_ctt43, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
     s_ctt50, s_ctt51, s_ctt52, s_ctt53, s_ctt54, s_ctt55, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
     s_ctt60, s_ctt61, s_ctt62, s_ctt63, s_ctt64, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};

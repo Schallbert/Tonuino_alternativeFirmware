@@ -11,13 +11,9 @@ void Mp3Play_implementation::init()
     Message message{Message(Message::ERRORCOM)};
     if (m_rDfMiniMp3.getVolume() == VOLUME_INIT)
     {
-        message.setContents(Message::SDONLINE);
-        m_rMessageHandler.printMessage(message);
+        message.setContents(Message::PLAYERONLINE);
     }
-    else
-    {
-        m_rMessageHandler.printMessage(message);
-    }
+    m_rMessageHandler.printMessage(message);
 }
 
 void Mp3Play_implementation::playFolder(Folder &folder)
@@ -117,7 +113,7 @@ bool Mp3Play_implementation::shouldPlaybackStop() const
     {
         shouldStop = true;
     }
-    
+
     return shouldStop;
 }
 

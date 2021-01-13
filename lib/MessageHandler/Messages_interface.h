@@ -39,6 +39,7 @@ public:
         SDINSERT = 0x32,
         SDREMOVE = 0x33,
         ERRORCOM = 0x34,
+        PLAYERONLINE = 0x35,
         NOTAG = 0x40,
         ACTIVETAG = 0x41,
         NEWTAG = 0x42,
