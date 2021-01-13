@@ -39,5 +39,6 @@ public:
 
     virtual bool isTrackFinished() const = 0;
     virtual bool isPlaying() const = 0;
+    virtual void printStatus() const = 0;
 };
 #endif // DFMINIMP3_INTERFACE_H

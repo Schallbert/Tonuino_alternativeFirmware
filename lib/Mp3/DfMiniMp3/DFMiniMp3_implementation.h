@@ -1,5 +1,7 @@
 #ifndef DFMINIMP3_IMPLEMENTATION_H
 #define DFMINIMP3_IMPLEMENTATION_H
+
+#include "../MessageHandler/Messages_interface.h"
 #include "DFMiniMp3_interface.h"
 #include "Arduino_interface.h"
 #include "Arduino_config.h"
@@ -10,32 +12,6 @@
 
 class Mp3Notify
 {
-public:
-    enum eDfMiniNotify
-    {
-        noMessage = 0,
-        playFinished,
-        playSourceOnline,
-        playSourceInserted,
-        playSourceRemoved,
-        playerError
-    };
-
-private:
-    static inline const char *toString(Mp3Notify::eDfMiniNotify value)
-    {
-#if DEBUGSERIAL
-        static const char *NOTIFY_STRING[] = {
-            nullptr,
-            "finished playing track",
-            "SD card online",
-            "SD card inserted",
-            "SD Card removed",
-            "Com Error"};
-        return NOTIFY_STRING[value];
-#endif
-        return nullptr;
-    };
 
 private:
     // Disallow creating an instance of this object
@@ -44,48 +20,41 @@ private:
 public:
     static void OnError(uint16_t errorCode)
     {
-        setMessage(playerError);
+        bufferedMessage.setContents(Message::ERRORCOM);
     };
 
     static void OnPlayFinished(DfMp3_PlaySources src, uint16_t track)
     {
-        setMessage(playFinished);
+        bufferedMessage.setContents(Message::TRACKFINISHED);
     };
 
     static void OnPlaySourceOnline(uint16_t code)
     {
-        setMessage(playSourceOnline);
+        bufferedMessage.setContents(Message::SDONLINE);
     };
 
     static void OnPlaySourceInserted(uint16_t code)
     {
-        setMessage(playSourceInserted);
+        bufferedMessage.setContents(Message::SDINSERT);
     };
 
     static void OnPlaySourceRemoved(uint16_t code)
     {
-        setMessage(playSourceRemoved);
+        bufferedMessage.setContents(Message::SDREMOVE);
     };
 
-    static eDfMiniNotify getMessage()
+    static Message &getMessage()
     {
-        return setMessage(noMessage);
+        return bufferedMessage;
     };
 
-    static const char *messageToString()
+    static void clearMessage()
     {
-        return toString(getMessage());
-    };
+        bufferedMessage.reset();
+    }
 
-    static eDfMiniNotify setMessage(eDfMiniNotify incomingMessage)
-    {
-        static eDfMiniNotify m_eMessage = noMessage;
-        if (incomingMessage != noMessage)
-        {
-            m_eMessage = incomingMessage;
-        }
-        return m_eMessage;
-    };
+private:
+    static Message bufferedMessage;
 };
 
 // Wrapper class to interface DfMiniMp3 hardware
@@ -93,8 +62,8 @@ class DfMini : public DfMiniMp3_interface
 {
 public:
     DfMini(Arduino_interface_pins &rArduinoPins,
-           Arduino_interface_com &rSerial) : m_rArduinoPins(rArduinoPins),
-                                               m_rSerial(rSerial)
+           MessageHander_interface &rMessageHandler) : m_rArduinoPins(rArduinoPins),
+                                                       m_rMessageHandler(rMessageHandler)
     {
         m_dfMiniMp3.begin(); // init serial and start DfMiniMp3 module
         m_dfMiniMp3.loop();
@@ -105,7 +74,6 @@ public:
     void loop()
     {
         m_dfMiniMp3.loop();
-        sendMessage();
     };
 
     void setEq(eMp3Eq eq)
@@ -176,7 +144,13 @@ public:
 
     bool isTrackFinished() const override
     {
-        return (Mp3Notify::getMessage() == Mp3Notify::playFinished);
+        bool status{false};
+        if (Mp3Notify::getMessage() == Message{Message::TRACKFINISHED})
+        {
+            Mp3Notify::clearMessage();
+            status = true;
+        }
+        return status;
     };
 
     bool isPlaying() const override
@@ -184,21 +158,14 @@ public:
         return !(m_rArduinoPins.digital_read(DFMINI_PIN_ISIDLE));
     }
 
-private:
-    void sendMessage()
+    void printStatus() const override
     {
-        static const char *message = nullptr;
-        const char *newMessage = Mp3Notify::messageToString();
-        if (message != newMessage)
-        {
-            m_rSerial.com_println(message);
-            message = newMessage;
-        }
+        m_rMessageHandler.printMessage(Mp3Notify::getMessage());
     }
 
 private:
     Arduino_interface_pins &m_rArduinoPins;
-    Arduino_interface_com &m_rSerial;
+    MessageHander_interface &m_rMessageHandler;
     // Solution for constructor error found here:
     //https://stackoverflow.com/questions/35762196/expected-a-type-specifier-error-when-creating-an-object-of-a-class-inside-anot
     // Does not work with m_Mp3SwSerial(DFMINI_RX, DFMINI_TX)

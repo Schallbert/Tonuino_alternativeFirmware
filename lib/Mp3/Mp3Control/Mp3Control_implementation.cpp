@@ -30,6 +30,7 @@ void Mp3Control::loop()
     handleUserInput();
     m_rPowerManager.setPlayback(m_rDfMiniMp3.isPlaying());
     m_rMp3Player.autoplay();
+    m_rDfMiniMp3.printStatus();
 }
 
 void Mp3Control::handleCardInput()

@@ -57,6 +57,13 @@ TEST_F(Mp3ControlTest, loop_notifiesPowerManagerAboutIsPlaying)
     m_Mp3Control.loop();
 }
 
+TEST_F(Mp3ControlTest, loop_Mp3PlayerInit_printsEmptyMp3PlayerStatus)
+{
+    Message uninitializedMessage{Message::SYSTEM, 0};
+    EXPECT_CALL(m_dfMiniMock, printStatus());
+    m_Mp3Control.loop();
+}
+
 TEST_F(Mp3ControlTest, newRegisteredTag_readSuccessful_startsPlayback)
 {
     ON_CALL(m_nfcControlMock, readFolderFromTag(_)).WillByDefault(Return(true));

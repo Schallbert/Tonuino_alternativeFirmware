@@ -125,6 +125,14 @@ TEST_F(Mp3Play, autoplay_trackPlaying_nop)
     m_pMp3Play->autoplay();
 }
 
+TEST_F(Mp3Play, autoplay_noFolder_nop)
+{
+    ON_CALL(m_dfMiniMock, isTrackFinished()).WillByDefault(Return(true));
+    // No Folder existing!
+    EXPECT_CALL(m_dfMiniMock, stop());
+    m_pMp3Play->autoplay();
+}
+
 TEST_F(Mp3Play, autoplay_ALBUM_trackFinished_next)
 {
     ON_CALL(m_dfMiniMock, getFolderTrackCount(_)).WillByDefault(Return(8));
