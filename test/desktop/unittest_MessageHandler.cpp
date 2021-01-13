@@ -41,7 +41,6 @@ protected:
     char m_testString[5] = "test"; // 5 due to end character /0
 };
 
-// TODO: all tests
 // PRINT MESSAGE ///////////////////////////////////////////////////////////////
 TEST_F(MessageHandlerTest, PrintMessage_normal_willParseToString)
 {
