@@ -88,7 +88,7 @@ void Mp3Play_implementation::autoplay()
         {
             m_rMessageHandler.printMessage(autoplayInfo);
             m_rDfMiniMp3.stop();
-            restartLullabyeTimer();
+            restartLullabyeTimer(); // Lullabye timer gets restarted until a track is playing.
         }
         else
         {
@@ -102,20 +102,22 @@ void Mp3Play_implementation::autoplay()
 bool Mp3Play_implementation::shouldPlaybackStop() const
 {
     bool shouldStop{false};
+
     if (!m_currentFolder.isInitiated())
     {
-        return shouldStop;
+        shouldStop = true;
     }
-    Folder::ePlayMode mode = m_currentFolder.getPlayMode();
 
     if (LULLABYE_TIMEOUT_ACTIVE && m_rLullabyeTimer.isElapsed())
     {
         shouldStop = true;
     }
-    else if (mode == Folder::ONELARGETRACK)
+    
+    if (m_currentFolder.getPlayMode() == Folder::ONELARGETRACK)
     {
         shouldStop = true;
     }
+    
     return shouldStop;
 }
 

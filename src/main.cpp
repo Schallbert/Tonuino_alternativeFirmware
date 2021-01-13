@@ -67,6 +67,8 @@ void timer1Task_1ms()
 // - solve all TODOS.
 // - rename Folder to PlayList
 
+// - solve cyclic dependencies between mp3 and messageHandler
+
 
 // - BIG TASK: Integration testing on device
 
