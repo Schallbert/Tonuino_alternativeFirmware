@@ -3,7 +3,7 @@
 
 #include "../Arduino_HardwareAbstraction/Arduino_types.h"
 #include "../Config/Tonuino_config.h"
-#include "../MessageHandler/VoicePrompt.h"
+#include "../Mp3/Mp3Prompt/VoicePrompt.h"
 
 #include "../Folder/Folder.h"
 

@@ -47,6 +47,7 @@ void VoiceMenu::checkEnterLinkMenu()
         m_pMenuInstance = m_MenuFactory.getInstance(Menu_factory::LINK_MENU,
                                                     m_rNfcControl,
                                                     m_rMp3Play,
+                                                    m_rMp3Prompt,
                                                     m_rMessageHandler,
                                                     m_rPowerManager);
         enterMenu();
@@ -70,6 +71,7 @@ void VoiceMenu::checkEnterDeleteMenu()
         m_pMenuInstance = m_MenuFactory.getInstance(Menu_factory::DELETE_MENU,
                                                     m_rNfcControl,
                                                     m_rMp3Play,
+                                                    m_rMp3Prompt,
                                                     m_rMessageHandler,
                                                     m_rPowerManager);
         enterMenu();

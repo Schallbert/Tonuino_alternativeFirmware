@@ -127,7 +127,7 @@ TEST_F(Mp3ControlTest, help_promptsHelp)
 {
     m_Mp3Control.setUserInput(UserInput_interface::PP_LONGPRESS);
 
-    EXPECT_CALL(m_messageHandlerMock, promptMessage(_));
+    EXPECT_CALL(m_messageHandlerMock, playPrompt(_));
     m_Mp3Control.loop();
 }
 

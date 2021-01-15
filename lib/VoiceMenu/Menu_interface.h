@@ -1,7 +1,7 @@
 #ifndef MENU_INTERFACE_H
 #define MENU_INTERFACE_H
 
-#include "NfcControl/NfcControl_interface.h"
+#include "Messages_interface.h"
 
 class Menu_interface
 {

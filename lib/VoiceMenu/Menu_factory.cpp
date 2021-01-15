@@ -11,6 +11,7 @@ Menu_factory::~Menu_factory()
 Menu_interface *Menu_factory::getInstance(eMenuType menuType,
                                           NfcControl_interface &rNfcCtrl,
                                           Mp3Play_interface &rMp3Play,
+                                          Mp3Prompt_interface &rMp3Prompt,
                                           MessageHander_interface &rMessageHandler,
                                           PowerManager_interface &rPowerMgr)
 {
@@ -18,10 +19,10 @@ Menu_interface *Menu_factory::getInstance(eMenuType menuType,
     switch (menuType)
     {
     case DELETE_MENU:
-        m_instance = new DeleteMenu(rNfcCtrl, rMp3Play, rMessageHandler, rPowerMgr);
+        m_instance = new DeleteMenu(rNfcCtrl, rMp3Play, rMp3Prompt, rMessageHandler, rPowerMgr);
         break;
     case LINK_MENU:
-        m_instance = new LinkMenu(rNfcCtrl, rMp3Play, rMessageHandler, rPowerMgr);
+        m_instance = new LinkMenu(rNfcCtrl, rMp3Play, rMp3Prompt, rMessageHandler, rPowerMgr);
         break;
     default:
         removeInstance();

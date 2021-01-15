@@ -69,7 +69,7 @@ bool LinkMenu::isActive()
 
 void LinkMenu::playPrompt()
 {
-    m_rMessageHandler.promptMessage(m_prompt);
+    m_rMp3Prompt.playPrompt(m_prompt);
 }
 
 void LinkMenu::playPreview()

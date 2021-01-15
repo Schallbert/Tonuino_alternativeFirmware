@@ -12,7 +12,8 @@ Folder::Folder(const Folder &cpySrcFolder) : m_ui8FolderId(cpySrcFolder.m_ui8Fol
                                              m_ePlayMode(cpySrcFolder.m_ePlayMode),
                                              m_ui8TrackCount(cpySrcFolder.m_ui8TrackCount),
                                              m_pArduinoHal(cpySrcFolder.m_pArduinoHal),
-                                             m_pMessageHandler(cpySrcFolder.m_pMessageHandler)
+                                             m_pMessageHandler(cpySrcFolder.m_pMessageHandler),
+                                             m_pMp3Prompt(cpySrcFolder.m_pMp3Prompt)
 {
     if (cpySrcFolder.m_TrackQueue[1] != 0)
     {
@@ -33,6 +34,7 @@ Folder &Folder::operator=(const Folder &cpySrcFolder)
     m_ui8TrackCount = cpySrcFolder.m_ui8TrackCount;
     m_pArduinoHal = cpySrcFolder.m_pArduinoHal;
     m_pMessageHandler = cpySrcFolder.m_pMessageHandler;
+    m_pMp3Prompt = cpySrcFolder.m_pMp3Prompt;
     if (cpySrcFolder.m_TrackQueue[1] != 0)
     {
         deep_copy_queue(cpySrcFolder.m_TrackQueue);
@@ -58,7 +60,7 @@ bool Folder::isValid()
         {
             return true;
         }
-        else if (is_dependency_set())
+        else if (isDependencySet())
         {
             setup_track_queue();
             return true;
@@ -77,9 +79,9 @@ bool Folder::isInitiated() const
     return (m_ui8FolderId && m_ePlayMode != Folder::UNDEFINED);
 }
 
-bool Folder::is_dependency_set()
+bool Folder::isDependencySet()
 {
-    return (m_pArduinoHal != nullptr && m_pMessageHandler != nullptr);
+    return (m_pArduinoHal != nullptr && m_pMessageHandler != nullptr && m_pMp3Prompt != nullptr);
 }
 
 void Folder::setup_track_queue()
@@ -135,10 +137,13 @@ void Folder::saveProgressIfRequired()
     }
 }
 
-void Folder::setupDependencies(Arduino_DIcontainer_interface *pArduinoHal, MessageHander_interface *pMessageHandler)
+void Folder::setupDependencies(Arduino_DIcontainer_interface *pArduinoHal,
+                               MessageHander_interface *pMessageHandler,
+                               Mp3Prompt_interface *pMp3Prompt)
 {
     m_pArduinoHal = pArduinoHal;
     m_pMessageHandler = pMessageHandler;
+    m_pMp3Prompt = pMp3Prompt;
     isValid(); // Call to setup play queue in case dependencies are correctly linked
 }
 
@@ -146,10 +151,10 @@ void Folder::setTrackCount(uint8_t trackCount)
 {
     if (trackCount > MAXTRACKSPERFOLDER)
     {
-        if (is_dependency_set())
+        if (isDependencySet())
         {
             VoicePrompt tooManyTracks{VoicePrompt(VoicePrompt::MSG_ERROR_TOOMANYTRACKS, true)};
-            m_pMessageHandler->promptMessage(tooManyTracks);
+            m_pMp3Prompt->playPrompt(tooManyTracks);
         }
         trackCount = MAXTRACKSPERFOLDER;
     }

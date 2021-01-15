@@ -182,14 +182,14 @@ TEST_F(folderInvalid, trackCountIsTooHigh_playsWarning)
 {
     Folder invalidFolder(1, Folder::ALBUM);
     invalidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
-       EXPECT_CALL(m_messageHandlerMock, promptMessage(_));
+       EXPECT_CALL(m_messageHandlerMock, playPrompt(_));
     invalidFolder.setTrackCount(MAXTRACKSPERFOLDER + 1);
 }
 
 TEST_F(folderInvalid, trackCountIsTooHigh_dependenciesNotSet_wontPlayWarning)
 {
     Folder invalidFolder(1, Folder::ALBUM);
-    EXPECT_CALL(m_messageHandlerMock, promptMessage(_)).Times(0);
+    EXPECT_CALL(m_messageHandlerMock, playPrompt(_)).Times(0);
     invalidFolder.setTrackCount(MAXTRACKSPERFOLDER + 1);
 }
 

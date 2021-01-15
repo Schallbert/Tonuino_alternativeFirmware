@@ -5,6 +5,7 @@
 
 #include "../Arduino_HardwareAbstraction/Arduino_DIcontainer_interface.h"
 #include "../MessageHandler/MessageHandler_interface.h"
+#include "../Mp3/Mp3Prompt/Mp3Prompt_interface.h"
 
 class Folder
 {
@@ -16,7 +17,7 @@ public:
         RANDOM = 2,        // Like ALBUM but with shuffled non-repeating queue. TODO: RECORD VOICE OUTPUT
         SAVEPROGRESS = 3,  // like ALBUM but saves track that is currently active. TODO: RE-RECORD VOICE OUTPUT
         ONELARGETRACK = 4, // So-called Hörspielmodus. Queue like ALBUM but stops playback after finishing track. TODO: RE-RECORD VOICE OUTPUT.
-        ENUM_COUNT = 4    // Last entry of enum to allow iteration (no value for content)
+        ENUM_COUNT = 4     // Last entry of enum to allow iteration (no value for content)
     };
 
 public:
@@ -40,7 +41,8 @@ public:
     uint8_t getTrackCount() const;
     // Tries to initiate the track queue by using injected dependencies depending on play mode
     void setupDependencies(Arduino_DIcontainer_interface *pArduinoHal,
-                            MessageHander_interface *pMessageHandler); // Dependency injection: Random seed & eeprom
+                           MessageHander_interface *pMessageHandler,
+                           Mp3Prompt_interface *pMp3Prompt); // Dependency injection: Random seed & eeprom
     // sets trackCount of folder
     void setTrackCount(uint8_t trackCount);
 
@@ -59,10 +61,10 @@ private:
     // Creates a Pseudo random queue, each track only once in queue
     void shuffle_queue();
     // Returns true if folder is bound to necessary external dependencies (eeprom, random seed)
-    bool is_dependency_set();
+    bool isDependencySet();
     // Returns true if folder's track queue has been initialized
     bool isTrackQueueSet();
-    // 
+    //
     void saveProgressIfRequired();
 
 private:
@@ -72,8 +74,9 @@ private:
 
     Arduino_DIcontainer_interface *m_pArduinoHal{nullptr};
     MessageHander_interface *m_pMessageHandler{nullptr};
+    Mp3Prompt_interface *m_pMp3Prompt{nullptr};
 
-    uint8_t m_TrackQueue[MAXTRACKSPERFOLDER + 1]{0}; 
+    uint8_t m_TrackQueue[MAXTRACKSPERFOLDER + 1]{0};
     uint8_t m_ui8CurrentQueueEntry{0};
 };
 

@@ -3,7 +3,9 @@
 
 #include "Menu_interface.h"
 
+class NfcControl_interface;
 class Mp3Play_interface;
+class Mp3Prompt_interface;
 class MessageHander_interface;
 class PowerManager_interface;
 
@@ -23,6 +25,7 @@ public:
     Menu_interface *getInstance(eMenuType menuType,
                                 NfcControl_interface &rNfcCtrl,
                                 Mp3Play_interface &rMp3Play,
+                                Mp3Prompt_interface &rMp3Prompt,
                                 MessageHander_interface &rMessageHandler,
                                 PowerManager_interface &rPowerMgr);
 

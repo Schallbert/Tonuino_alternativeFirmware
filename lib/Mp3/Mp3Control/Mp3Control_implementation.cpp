@@ -3,7 +3,7 @@
 #include "Tonuino_config.h"
 #include "../Utilities/SimpleTimer/SimpleTimer.h"
 #include "../Folder/Folder.h"
-#include "Messages_interface.h"
+
 void Mp3Control::setUserInput(UserInput_interface::eUserRequest input)
 {
     m_userInput = input;
@@ -115,5 +115,5 @@ void Mp3Control::decV()
 void Mp3Control::help()
 {
     VoicePrompt helpMessage{VoicePrompt(VoicePrompt::MSG_HELP, true)};
-    m_rMessageHandler.promptMessage(helpMessage);
+    m_rMp3Prompt.playPrompt(helpMessage);
 }

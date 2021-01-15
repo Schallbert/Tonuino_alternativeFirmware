@@ -1,7 +1,7 @@
 #ifndef MESSAGES_H
 #define MESSAGES_H
 
-#include "Tonuino_config.h"
+#include "../Config/Tonuino_config.h"
 #include "../MessageHandler/Messages_interface.h"
 
 class MessageToString : public MessageToString_interface

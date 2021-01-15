@@ -103,7 +103,7 @@ TEST_F(MessageHandlerTest, PromptMessage_Undefined_WillNotPrompt)
 {
     VoicePrompt undefined;
     EXPECT_CALL(m_dfMiniMp3Mock, playMp3FolderTrack(_)).Times(0);
-    m_pMessageHandler->promptMessage(undefined);
+    m_pMessageHandler->playPrompt(undefined);
 }
 
 TEST_F(MessageHandlerTest, PromptMessage_noSkipNotPlaying_Timeout)
@@ -114,7 +114,7 @@ TEST_F(MessageHandlerTest, PromptMessage_noSkipNotPlaying_Timeout)
     ON_CALL(m_dfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_messageTimer, &SimpleTimer::timerTick));
 
     EXPECT_CALL(m_dfMiniMp3Mock, loop()).Times(WAIT_DFMINI_READY); // timeout kicks in. to wait system calls MP3's loop
-    m_pMessageHandler->promptMessage(prompt);
+    m_pMessageHandler->playPrompt(prompt);
 }
 
 TEST_F(MessageHandlerTest, PromptMessage_noSkipNotFinishing_Timeout)
@@ -125,7 +125,7 @@ TEST_F(MessageHandlerTest, PromptMessage_noSkipNotFinishing_Timeout)
     ON_CALL(m_dfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_messageTimer, &SimpleTimer::timerTick));
 
     EXPECT_CALL(m_dfMiniMp3Mock, loop()).Times(TIMEOUT_PROMPT_PLAYED); // timeout kicks in. to wait system calls MP3's loop
-    m_pMessageHandler->promptMessage(prompt);
+    m_pMessageHandler->playPrompt(prompt);
 }
 
 TEST_F(MessageHandlerTest, PromptMessage_noSkipPlaying_onlyStartTimeout)
@@ -138,7 +138,7 @@ TEST_F(MessageHandlerTest, PromptMessage_noSkipPlaying_onlyStartTimeout)
         .WillOnce(Return(true))                    // All following(s) called by WaitForPromptToFinish();
         .WillRepeatedly(Return(false));            // Finishing before timeout
     EXPECT_CALL(m_dfMiniMp3Mock, loop()).Times(1); //called once before isplaying returns true
-    m_pMessageHandler->promptMessage(prompt);
+    m_pMessageHandler->playPrompt(prompt);
 }
 
 TEST_F(MessageHandlerTest, PromptMessage_playStarts_willCallPrompt)
@@ -147,7 +147,7 @@ TEST_F(MessageHandlerTest, PromptMessage_playStarts_willCallPrompt)
 
     ON_CALL(m_dfMiniMp3Mock, isPlaying()).WillByDefault(Return(true));
     EXPECT_CALL(m_dfMiniMp3Mock, playMp3FolderTrack(_));
-    m_pMessageHandler->promptMessage(prompt);
+    m_pMessageHandler->playPrompt(prompt);
 }
 
 TEST_F(MessageHandlerTest, PromptMessage_callTwice_wontPlayAgain)
@@ -156,6 +156,6 @@ TEST_F(MessageHandlerTest, PromptMessage_callTwice_wontPlayAgain)
 
     ON_CALL(m_dfMiniMp3Mock, isPlaying()).WillByDefault(Return(true));
     EXPECT_CALL(m_dfMiniMp3Mock, playMp3FolderTrack(_)).Times(1);
-    m_pMessageHandler->promptMessage(prompt);
-    m_pMessageHandler->promptMessage(prompt);
+    m_pMessageHandler->playPrompt(prompt);
+    m_pMessageHandler->playPrompt(prompt);
 }

@@ -19,7 +19,7 @@ void System::notifyStartup()
 {
     m_MessageHandler.printMessage(Message{Message::STARTUP});
     VoicePrompt startup{VoicePrompt(VoicePrompt::MSG_STARTUP, false)};
-    m_MessageHandler.promptMessage(startup);
+    m_Mp3Prompt.playPrompt(startup);
 }
 
 void System::shutdown()
@@ -32,7 +32,7 @@ void System::notifyShutdown()
 {
     m_MessageHandler.printMessage(Message{Message::HALT});
     VoicePrompt shutdown{VoicePrompt(VoicePrompt::MSG_SHUTDOWN, false)};
-    m_MessageHandler.promptMessage(shutdown);
+    m_Mp3Prompt.playPrompt(shutdown);
 }
 
 void System::loop()

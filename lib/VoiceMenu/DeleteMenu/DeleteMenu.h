@@ -2,6 +2,7 @@
 #define DELETEMENU_H
 
 #include "Mp3Play/Mp3Play_interface.h"
+#include "Mp3Prompt/Mp3Prompt_interface.h"
 #include "NfcControl/NfcControl_interface.h"
 #include "PowerManager_interface.h"
 
@@ -16,9 +17,11 @@ class DeleteMenu : public Menu_interface
 public:
     DeleteMenu(NfcControl_interface &rNfcCtrl,
                Mp3Play_interface &rMp3Play,
+Mp3Prompt_interface &rMp3Prompt,
                MessageHander_interface &rMessageHandler,
                PowerManager_interface &rPowerMgr) : m_rNfcControl(rNfcCtrl),
                                                     m_rMp3Play(rMp3Play),
+                                                    m_rMp3Prompt(rMp3Prompt),
                                                     m_rMessageHandler(rMessageHandler),
                                                     m_rPowerManager(rPowerMgr){};
 
@@ -45,6 +48,7 @@ private:
 private:
     NfcControl_interface &m_rNfcControl;
     Mp3Play_interface &m_rMp3Play;
+    Mp3Prompt_interface &m_rMp3Prompt;
     MessageHander_interface &m_rMessageHandler;
     PowerManager_interface &m_rPowerManager;
 

@@ -12,6 +12,7 @@
 #include "../Mp3/DFMiniMp3/DFMiniMp3_implementation.h"
 #include "../Mp3/Mp3Play/Mp3Play_implementation.h"
 #include "../Mp3/Mp3Control/Mp3Control_implementation.h"
+#include "../Mp3/Mp3Prompt/Mp3Prompt_implementation.h"
 // USER INPUT
 #include "UserInput/UserInput_factory.h"
 // MISC
@@ -58,30 +59,37 @@ private:
     SimpleTimer m_IdleTimer{SimpleTimer()};
     SimpleTimer m_DfMiniPromptTimer{SimpleTimer()};
 
-    DfMini m_DfMini{DfMini(m_ArduinoHal.getPins(), m_MessageHandler)}; // FIX THIS
     // UTILITIES
     PowerManager m_PwrCtrl{PowerManager(m_ArduinoHal.getPins(), m_IdleTimer)};
     MessageToString m_Stringifier{MessageToString()};
     MessageHandler m_MessageHandler{MessageHandler(m_ArduinoHal.getSerial(),
-                                                   m_Stringifier,
-                                                   m_DfMini,
-                                                   m_DfMiniPromptTimer)};
+                                                   m_Stringifier)};
+
     // PERIPHERY
+    // mp3
+    DfMini m_DfMini{DfMini(m_ArduinoHal.getPins(), m_MessageHandler)}; // FIX THIS
+    Mp3Prompt m_Mp3Prompt{Mp3Prompt(m_DfMini, m_DfMiniPromptTimer)};
+    Mp3Play_implementation m_Mp3Play{Mp3Play_implementation(m_ArduinoHal,
+                                                            m_DfMini,
+                                                            m_Mp3Prompt,
+                                                            m_LullabyeTimer,
+                                                            m_MessageHandler)};
+
     // nfc
     MFRC522_implementation m_Mfrc522{MFRC522_implementation()};
     Nfc_implementation m_Nfc{Nfc_implementation(m_Mfrc522, m_MessageHandler)};
-
     NfcControl m_NfcControl{NfcControl(m_Nfc, m_MessageHandler)};
-    // mp3
-    Mp3Play_implementation m_Mp3Play{Mp3Play_implementation(m_ArduinoHal,
-                                                            m_DfMini,
-                                                            m_LullabyeTimer,
-                                                            m_MessageHandler)};
+
+    // TODO: Why does Mp3Control need NFC??? SRP hurt?
     Mp3Control m_Mp3Control{Mp3Control(m_DfMini,
                                        m_Mp3Play,
+                                       m_Mp3Prompt,
                                        m_NfcControl,
+                                       m_PwrCtrl,
                                        m_MessageHandler)};
+
     VoiceMenu m_VoiceMenu{VoiceMenu(m_Mp3Play,
+                                    m_Mp3Prompt,
                                     m_NfcControl,
                                     m_MessageHandler,
                                     m_PwrCtrl,

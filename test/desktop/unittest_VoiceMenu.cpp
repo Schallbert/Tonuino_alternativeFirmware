@@ -119,7 +119,7 @@ TEST_F(VoiceMenuTest, initLinkMenu_loop_invokesPrompt)
     m_VoiceMenu.setUserInput(UserInput_interface::PLAY_PAUSE); // provides (invalid) confirmation
     m_VoiceMenu.loop();
 
-    EXPECT_CALL(m_messageHandlerMock, promptMessage(_));
+    EXPECT_CALL(m_messageHandlerMock, playPrompt(_));
     m_VoiceMenu.loop();
 }
 
@@ -179,7 +179,7 @@ TEST_F(VoiceMenuTest, initdeleteMenu_loop_invokesPrompt)
     m_VoiceMenu.loop();                             // enter
     m_VoiceMenu.setUserInput(UserInput_interface::NO_ACTION); // if it stays PP_LONGPRESS that will abort the menu
 
-    EXPECT_CALL(m_messageHandlerMock, promptMessage(_));
+    EXPECT_CALL(m_messageHandlerMock, playPrompt(_));
     m_VoiceMenu.loop();
 }
 

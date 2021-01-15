@@ -71,7 +71,7 @@ TEST_F(Mp3Play, playFolder_notInitialized_setsFolderError)
 {
     Folder unInitializedFolder;
 
-    EXPECT_CALL(m_messageHandlerMock, promptMessage(_));
+    EXPECT_CALL(m_messageHandlerMock, playPrompt(_));
     m_pMp3Play->playFolder(unInitializedFolder);
 }
 
@@ -80,7 +80,7 @@ TEST_F(Mp3Play, playFolder_playerCannotFindFolderOnSdCard_setsFolderError)
     Folder nonExistantFolder(1, Folder::ALBUM);
     ON_CALL(m_dfMiniMock, getFolderTrackCount(_)).WillByDefault(Return(0));
 
-    EXPECT_CALL(m_messageHandlerMock, promptMessage(_));
+    EXPECT_CALL(m_messageHandlerMock, playPrompt(_));
     m_pMp3Play->playFolder(nonExistantFolder);
 }
 

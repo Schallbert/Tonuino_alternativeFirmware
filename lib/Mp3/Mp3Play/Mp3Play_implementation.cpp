@@ -34,7 +34,7 @@ bool Mp3Play_implementation::prepareFolderToPlay(Folder &folder)
     bool check{true};
     check &= isFolderNew(folder);
 
-    folder.setupDependencies(&m_rArduinoHal, &m_rMessageHandler);
+    folder.setupDependencies(&m_rArduinoHal, &m_rMessageHandler, &m_rMp3Prompt);
     folder.setTrackCount(getTrackCountOfFolderOnSdCard(folder));
 
     check &= isFolderValid(folder);
@@ -66,10 +66,10 @@ bool Mp3Play_implementation::isFolderValid(Folder &folder)
     }
     else
     {
-        VoicePrompt folderErrorPrompt{VoicePrompt(VoicePrompt::MSG_ERROR_FOLDER, false)};
         Message folderErrorPrint{Message(Message::ERRORFOLDER)};
+        VoicePrompt folderErrorPrompt{VoicePrompt(VoicePrompt::MSG_ERROR_FOLDER, false)};
         m_rMessageHandler.printMessage(folderErrorPrint);
-        m_rMessageHandler.promptMessage(folderErrorPrompt);
+        m_rMp3Prompt.playPrompt(folderErrorPrompt);
         result = false;
     }
     return result;

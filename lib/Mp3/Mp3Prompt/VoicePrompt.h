@@ -1,6 +1,8 @@
 #ifndef PROMPTS_H
 #define PROMPTS_H
 
+#include "Arduino_types.h"
+
 class VoicePrompt
 {
 public:
