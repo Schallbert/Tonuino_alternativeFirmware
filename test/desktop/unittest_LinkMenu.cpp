@@ -3,6 +3,7 @@
 
 #include "mocks/unittest_NfcControl_mocks.h"
 #include "mocks/unittest_Mp3Play_mocks.h"
+#include "mocks/unittest_Mp3Prompt_mocks.h"
 #include "mocks/unittest_PowerManager_Mocks.h"
 #include "mocks/unittest_MessageHandler_mocks.h"
 #include "mocks/unittest_VoiceMenu.h"
@@ -20,6 +21,7 @@ protected:
         linkMenu = m_MenuFactory.getInstance(Menu_factory::LINK_MENU,
                                              m_nfcControlMock,
                                              m_mp3PlayMock,
+                                             m_mp3PromptMock,
                                              m_messageHandlerMock,
                                              m_powerManagerMock);
     }
@@ -28,6 +30,7 @@ protected:
     Menu_interface *linkMenu{nullptr};
     NiceMock<Mock_NfcControl> m_nfcControlMock{};
     NiceMock<Mock_Mp3Play> m_mp3PlayMock{};
+    NiceMock<Mock_Mp3Prompt> m_mp3PromptMock{};
     NiceMock<Mock_MessageHandler> m_messageHandlerMock{};
     NiceMock<Mock_PowerManager> m_powerManagerMock{};
 
@@ -92,7 +95,7 @@ TEST_F(LinkMenuTest, menuComplete_writesConfigToCardFails_promptsError)
 
     VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ERROR_CARDWRITE, true)};
 
-    EXPECT_CALL(m_messageHandlerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
     linkMenu->confirm();
 }
 
@@ -160,7 +163,7 @@ TEST_F(LinkMenuTest, menuAbort_setStatusLed_noStatusLedChangeRequested)
 // Prompt tests
 TEST_F(LinkMenuTest, noInit_noPromptSet)
 {
-    EXPECT_CALL(m_messageHandlerMock, playPrompt(invalidPrompt()));
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(invalidPrompt()));
     linkMenu->handlePlayback();
 }
 
@@ -170,7 +173,7 @@ TEST_F(LinkMenuTest, selectFolderId_noSelection_getPrompt_FolderIdAndAllowSkip)
 
     linkMenu->confirm();
 
-    EXPECT_CALL(m_messageHandlerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -181,7 +184,7 @@ TEST_F(LinkMenuTest, selectPlayMode_noSelection_getPrompt_PlayModeAndAllowSkip)
     linkMenu->confirm();
     linkMenu->confirm();
 
-    EXPECT_CALL(m_messageHandlerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -194,7 +197,7 @@ TEST_F(LinkMenuTest, menuComplete_noSelection_getPrompt_TagConfigSuccess)
     linkMenu->confirm();
     linkMenu->confirm();
 
-    EXPECT_CALL(m_messageHandlerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -206,7 +209,7 @@ TEST_F(LinkMenuTest, menuComplete_noSelection_confirmAgainAndGetPrompt_noPromptS
     linkMenu->confirm();
     linkMenu->confirm();
 
-    EXPECT_CALL(m_messageHandlerMock, playPrompt(invalidPrompt()));
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(invalidPrompt()));
     linkMenu->handlePlayback();
 }
 
@@ -217,7 +220,7 @@ TEST_F(LinkMenuTest, selectFolderId1_getPrompt_returns1)
     linkMenu->confirm();
     linkMenu->selectNext();
 
-    EXPECT_CALL(m_messageHandlerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -228,7 +231,7 @@ TEST_F(LinkMenuTest, selectFolderIdMAX_getPrompt_returnsMAX)
     linkMenu->confirm();
     linkMenu->selectPrev();
 
-    EXPECT_CALL(m_messageHandlerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -242,7 +245,7 @@ TEST_F(LinkMenuTest, selectPlayMode1_getPrompt_returnsALBUM)
     linkMenu->confirm();
     linkMenu->selectNext();
 
-    EXPECT_CALL(m_messageHandlerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -256,7 +259,7 @@ TEST_F(LinkMenuTest, selectPlayModeMAX_getPrompt_returnsONELARGETRACK)
     linkMenu->confirm();
     linkMenu->selectPrev();
 
-    EXPECT_CALL(m_messageHandlerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -271,7 +274,7 @@ TEST_F(LinkMenuTest, selectPlayMode_testRollover_getPrompt_returnsSAVEPROGRESS)
     linkMenu->selectPrev();
     linkMenu->selectPrev();
 
-    EXPECT_CALL(m_messageHandlerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -281,7 +284,7 @@ TEST_F(LinkMenuTest, noInit_abort_noPromptSet)
 
     linkMenu->abort();
 
-    EXPECT_CALL(m_messageHandlerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -294,7 +297,7 @@ TEST_F(LinkMenuTest, folderId1Selected_abort_promptsAborted)
 
     linkMenu->abort();
 
-    EXPECT_CALL(m_messageHandlerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -309,7 +312,7 @@ TEST_F(LinkMenuTest, folderIdAndPlayModeSelected_abort_promptsAborted)
 
     linkMenu->abort();
 
-    EXPECT_CALL(m_messageHandlerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 
@@ -325,7 +328,7 @@ TEST_F(LinkMenuTest, menuCompleted_abort_promptsAborted)
 
     linkMenu->abort();
 
-    EXPECT_CALL(m_messageHandlerMock, playPrompt(identicalPrompt(expect)));
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
     linkMenu->handlePlayback();
 }
 

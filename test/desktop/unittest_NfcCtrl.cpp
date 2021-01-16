@@ -8,6 +8,7 @@
 #include "mocks/unittest_MessageHandler_mocks.h"
 #include "mocks/unittest_Nfc_mocks.h"
 #include "mocks/unittest_ArduinoDIcontainer_mocks.h"
+#include "mocks/unittest_Mp3Prompt_mocks.h"
 
 using ::testing::_;
 using ::testing::NiceMock;
@@ -21,13 +22,14 @@ protected:
     virtual void SetUp()
     {
         m_TestFolder.setTrackCount(fakeBufferData[6]);
-        m_TestFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
+        m_TestFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
     }
 
 protected:
     NiceMock<Mock_Nfc> m_nfcMock;
     NiceMock<Mock_MessageHandler> m_messageHandlerMock{};
     NiceMock<Mock_ArduinoDIcontainer> m_arduinoHalMock{};
+    NiceMock<Mock_Mp3Prompt> m_mp3PromptMock{};
     NfcControl m_NfcControl{NfcControl(m_nfcMock, m_messageHandlerMock)};
     Folder m_TestFolder{Folder(fakeBufferData[4],
                                    (Folder::ePlayMode)fakeBufferData[5])};

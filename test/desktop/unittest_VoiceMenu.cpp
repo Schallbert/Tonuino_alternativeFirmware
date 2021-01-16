@@ -2,6 +2,7 @@
 #include <gmock/gmock.h>
 
 #include "mocks/unittest_Mp3Play_mocks.h"
+#include "mocks/unittest_Mp3Prompt_mocks.h"
 #include "mocks/unittest_NfcControl_mocks.h"
 #include "mocks/unittest_PowerManager_Mocks.h"
 #include "mocks/unittest_MessageHandler_mocks.h"
@@ -21,15 +22,17 @@ class VoiceMenuTest : public ::testing::Test
 {
 protected:
     NiceMock<Mock_Mp3Play> m_Mp3PlayMock{};
-    NiceMock<Mock_NfcControl> m_nfcControlMock{};
-    NiceMock<Mock_MessageHandler> m_messageHandlerMock{};
-    NiceMock<Mock_PowerManager> m_powerManagerMock{};
+    NiceMock<Mock_Mp3Prompt> m_Mp3PromptMock{};
+    NiceMock<Mock_NfcControl> m_NfcControlMock{};
+    NiceMock<Mock_MessageHandler> m_MessageHandlerMock{};
+    NiceMock<Mock_PowerManager> m_PowerManagerMock{};
     SimpleTimer m_MenuTimer;
     VoiceMenu m_VoiceMenu{VoiceMenu(m_Mp3PlayMock,
-                                     m_nfcControlMock,
-                                     m_messageHandlerMock,
-                                     m_powerManagerMock,
-                                     m_MenuTimer)};
+                                    m_Mp3PromptMock,
+                                    m_NfcControlMock,
+                                    m_MessageHandlerMock,
+                                    m_PowerManagerMock,
+                                    m_MenuTimer)};
 };
 
 TEST_F(VoiceMenuTest, noInit_isActive_returnsFalse)
@@ -82,7 +85,7 @@ TEST_F(VoiceMenuTest, initLinkMenu_isActive_returnsTrue)
 TEST_F(VoiceMenuTest, linkMenuRunning_isActive_returnsTrue)
 {
     m_VoiceMenu.setTagState(Message::UNKNOWNTAG);
-    m_VoiceMenu.loop();                              // enters Menu: select folderId
+    m_VoiceMenu.loop();                                        // enters Menu: select folderId
     m_VoiceMenu.setUserInput(UserInput_interface::PLAY_PAUSE); // enters (invalid) folderId
     m_VoiceMenu.loop();
 
@@ -92,10 +95,10 @@ TEST_F(VoiceMenuTest, linkMenuRunning_isActive_returnsTrue)
 TEST_F(VoiceMenuTest, linkMenuComplete_isActive_returnsFalse)
 {
     m_VoiceMenu.setTagState(Message::UNKNOWNTAG);
-    m_VoiceMenu.loop();                              // enters Menu: select folderId
+    m_VoiceMenu.loop();                                        // enters Menu: select folderId
     m_VoiceMenu.setUserInput(UserInput_interface::PLAY_PAUSE); // provides (invalid) confirmation
-    m_VoiceMenu.loop();                              // selects folder Id
-    m_VoiceMenu.loop();                              // selects playmode and completes Menu
+    m_VoiceMenu.loop();                                        // selects folder Id
+    m_VoiceMenu.loop();                                        // selects playmode and completes Menu
 
     ASSERT_FALSE(m_VoiceMenu.isActive());
 }
@@ -103,10 +106,10 @@ TEST_F(VoiceMenuTest, linkMenuComplete_isActive_returnsFalse)
 TEST_F(VoiceMenuTest, linkMenuCompleteAndCalledAgain_isActive_returnsTrue)
 {
     m_VoiceMenu.setTagState(Message::UNKNOWNTAG);
-    m_VoiceMenu.loop();                              // enters Menu: select folderId
+    m_VoiceMenu.loop();                                        // enters Menu: select folderId
     m_VoiceMenu.setUserInput(UserInput_interface::PLAY_PAUSE); // provides (invalid) confirmation
-    m_VoiceMenu.loop();                              // selects folder Id
-    m_VoiceMenu.loop();                              // selects playmode and completes Menu
+    m_VoiceMenu.loop();                                        // selects folder Id
+    m_VoiceMenu.loop();                                        // selects playmode and completes Menu
 
     m_VoiceMenu.loop(); // call again
 
@@ -119,16 +122,16 @@ TEST_F(VoiceMenuTest, initLinkMenu_loop_invokesPrompt)
     m_VoiceMenu.setUserInput(UserInput_interface::PLAY_PAUSE); // provides (invalid) confirmation
     m_VoiceMenu.loop();
 
-    EXPECT_CALL(m_messageHandlerMock, playPrompt(_));
+    EXPECT_CALL(m_Mp3PromptMock, playPrompt(_));
     m_VoiceMenu.loop();
 }
 
 TEST_F(VoiceMenuTest, linkMenu_linkPreview_isInvoked)
 {
-    ON_CALL(m_nfcControlMock, readFolderFromTag(_)).WillByDefault(Return(true));
+    ON_CALL(m_NfcControlMock, readFolderFromTag(_)).WillByDefault(Return(true));
     m_VoiceMenu.setTagState(Message::UNKNOWNTAG);
 
-    m_VoiceMenu.loop();                              // enter
+    m_VoiceMenu.loop();                                        // enter
     m_VoiceMenu.setUserInput(UserInput_interface::NEXT_TRACK); // if it stays PP_LONGPRESS that will abort the menu
 
     EXPECT_CALL(m_Mp3PlayMock, playFolder(_));
@@ -162,12 +165,12 @@ TEST_F(VoiceMenuTest, deleteMenuComplete_isActive_returnsFalse)
 {
     m_VoiceMenu.setTagState(Message::ACTIVETAG);
     m_VoiceMenu.setUserInput(UserInput_interface::PP_LONGPRESS);
-    m_VoiceMenu.loop();                              // enter
+    m_VoiceMenu.loop(); // enter
     m_VoiceMenu.setUserInput(UserInput_interface::NO_ACTION);
     m_VoiceMenu.setTagState(Message::NEWKNOWNTAG);
-    m_VoiceMenu.loop();                              // register known tag
+    m_VoiceMenu.loop();                                        // register known tag
     m_VoiceMenu.setUserInput(UserInput_interface::PLAY_PAUSE); // provides (invalid) confirmation
-    m_VoiceMenu.loop();                              // completes menu
+    m_VoiceMenu.loop();                                        // completes menu
 
     ASSERT_FALSE(m_VoiceMenu.isActive());
 }
@@ -176,20 +179,20 @@ TEST_F(VoiceMenuTest, initdeleteMenu_loop_invokesPrompt)
 {
     m_VoiceMenu.setTagState(Message::ACTIVETAG);
     m_VoiceMenu.setUserInput(UserInput_interface::PP_LONGPRESS);
-    m_VoiceMenu.loop();                             // enter
+    m_VoiceMenu.loop();                                       // enter
     m_VoiceMenu.setUserInput(UserInput_interface::NO_ACTION); // if it stays PP_LONGPRESS that will abort the menu
 
-    EXPECT_CALL(m_messageHandlerMock, playPrompt(_));
+    EXPECT_CALL(m_Mp3PromptMock, playPrompt(_));
     m_VoiceMenu.loop();
 }
 
 TEST_F(VoiceMenuTest, deleteMenu_deletePreview_isInvoked)
 {
-    ON_CALL(m_nfcControlMock, readFolderFromTag(_)).WillByDefault(Return(true));
-   
+    ON_CALL(m_NfcControlMock, readFolderFromTag(_)).WillByDefault(Return(true));
+
     m_VoiceMenu.setTagState(Message::ACTIVETAG);
     m_VoiceMenu.setUserInput(UserInput_interface::PP_LONGPRESS);
-    m_VoiceMenu.loop();                             // enter
+    m_VoiceMenu.loop(); // enter
     m_VoiceMenu.setTagState(Message::NEWKNOWNTAG);
     m_VoiceMenu.setUserInput(UserInput_interface::NO_ACTION); // if it stays PP_LONGPRESS that will abort the menu
 

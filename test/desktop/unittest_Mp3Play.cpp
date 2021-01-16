@@ -2,11 +2,12 @@
 #include <gmock/gmock.h>
 
 #include "../Mp3/Mp3Play/Mp3Play_implementation.h"
-#include "../Utilities/SimpleTimer/SimpleTimer.h"
 
 #include "mocks/unittest_ArduinoDIcontainer_mocks.h"
 #include "mocks/unittest_ArduinoIf_mocks.h"
+#include "mocks/unittest_Mp3Prompt_mocks.h"
 #include "mocks/unittest_DfMiniMp3_mocks.h"
+
 #include "mocks/unittest_MessageHandler_mocks.h"
 
 using ::testing::_;
@@ -26,6 +27,7 @@ protected:
         //  will try calling getPins() which won't be delegated then
         m_pMp3Play = new Mp3Play_implementation(m_arduinoHalMock,
                                                 m_dfMiniMock,
+                                                m_mp3PromptMock,
                                                 m_lullabyeTimer,
                                                 m_messageHandlerMock);
     }
@@ -38,7 +40,7 @@ protected:
 protected:
     NiceMock<Mock_ArduinoDIcontainer> m_arduinoHalMock{};
     NiceMock<Mock_DfMiniMp3> m_dfMiniMock{};
-    SimpleTimer m_dfMiniPromptTimer{};
+    NiceMock<Mock_Mp3Prompt> m_mp3PromptMock{};
     SimpleTimer m_lullabyeTimer{};
     NiceMock<Mock_MessageHandler> m_messageHandlerMock{};
     NiceMock<Mock_pinCtrl> pinControlMock{};
@@ -71,7 +73,7 @@ TEST_F(Mp3Play, playFolder_notInitialized_setsFolderError)
 {
     Folder unInitializedFolder;
 
-    EXPECT_CALL(m_messageHandlerMock, playPrompt(_));
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(_));
     m_pMp3Play->playFolder(unInitializedFolder);
 }
 
@@ -80,7 +82,7 @@ TEST_F(Mp3Play, playFolder_playerCannotFindFolderOnSdCard_setsFolderError)
     Folder nonExistantFolder(1, Folder::ALBUM);
     ON_CALL(m_dfMiniMock, getFolderTrackCount(_)).WillByDefault(Return(0));
 
-    EXPECT_CALL(m_messageHandlerMock, playPrompt(_));
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(_));
     m_pMp3Play->playFolder(nonExistantFolder);
 }
 

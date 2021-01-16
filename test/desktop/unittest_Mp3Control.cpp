@@ -6,6 +6,7 @@
 
 #include "mocks/unittest_Mp3Play_mocks.h"
 #include "mocks/unittest_DfMiniMp3_mocks.h"
+#include "mocks/unittest_Mp3Prompt_mocks.h"
 #include "mocks/unittest_NfcControl_mocks.h"
 #include "mocks/unittest_PowerManager_Mocks.h"
 #include "mocks/unittest_MessageHandler_mocks.h"
@@ -23,12 +24,14 @@ class Mp3ControlTest : public ::testing::Test
 protected:
     NiceMock<Mock_DfMiniMp3> m_dfMiniMock{};
     NiceMock<Mock_Mp3Play> m_mp3PlayMock{};
+    NiceMock<Mock_Mp3Prompt> m_mp3PromptMock{};
     NiceMock<Mock_NfcControl> m_nfcControlMock{};
     NiceMock<Mock_PowerManager> m_powerManagerMock{};
     NiceMock<Mock_MessageHandler> m_messageHandlerMock{};
 
     Mp3Control m_Mp3Control{Mp3Control(m_dfMiniMock,
                                        m_mp3PlayMock,
+                                       m_mp3PromptMock,
                                        m_nfcControlMock,
                                        m_powerManagerMock,
                                        m_messageHandlerMock)};
@@ -127,7 +130,7 @@ TEST_F(Mp3ControlTest, help_promptsHelp)
 {
     m_Mp3Control.setUserInput(UserInput_interface::PP_LONGPRESS);
 
-    EXPECT_CALL(m_messageHandlerMock, playPrompt(_));
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(_));
     m_Mp3Control.loop();
 }
 
