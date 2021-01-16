@@ -1,10 +1,12 @@
 #ifndef DFMINIMP3_IMPLEMENTATION_H
 #define DFMINIMP3_IMPLEMENTATION_H
 
-#include "../MessageHandler/Messages_interface.h"
-#include "DFMiniMp3_interface.h"
-#include "Arduino_interface.h"
+#include "Arduino.h"
+
+#include "MessageHandler_interface.h"
 #include "Arduino_config.h"
+
+#include "DfMiniMp3/DFMiniMp3_interface.h"
 
 #include <SoftwareSerial.h>
 
@@ -61,9 +63,7 @@ private:
 class DfMini : public DfMiniMp3_interface
 {
 public:
-    DfMini(Arduino_interface_pins &rArduinoPins,
-           MessageHander_interface &rMessageHandler) : m_rArduinoPins(rArduinoPins),
-                                                       m_rMessageHandler(rMessageHandler)
+    DfMini(MessageHander_interface &rMessageHandler) : m_rMessageHandler(rMessageHandler)
     {
         m_dfMiniMp3.begin(); // init serial and start DfMiniMp3 module
         m_dfMiniMp3.loop();
@@ -155,7 +155,7 @@ public:
 
     bool isPlaying() const override
     {
-        return !(m_rArduinoPins.digital_read(DFMINI_PIN_ISIDLE));
+        return !(digitalRead(DFMINI_PIN_ISIDLE));
     }
 
     void printStatus() const override
@@ -164,7 +164,6 @@ public:
     }
 
 private:
-    Arduino_interface_pins &m_rArduinoPins;
     MessageHander_interface &m_rMessageHandler;
     // Solution for constructor error found here:
     //https://stackoverflow.com/questions/35762196/expected-a-type-specifier-error-when-creating-an-object-of-a-class-inside-anot

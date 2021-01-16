@@ -71,7 +71,7 @@ const char *const s_cttTable[] PROGMEM = {
 
 char *MessageToString::getStringFromMessage(const Message &message)
 {
-    // SUCCESS: procen that the two guards prevent segfault when called with nonexistant content.
+    // SUCCESS: proven that the two guards prevent segfault when called with nonexistant content.
     // TODO: Acceptance test case for this behavior. 
     uint8_t content = message.getContents();
     if((content == 0) || (content > Message::LASTVALIDMESSAGE))

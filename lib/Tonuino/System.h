@@ -9,7 +9,7 @@
 #include "../Nfc/Nfc/Nfc_implementation.h"
 #include "../Nfc/NfcControl/NfcControl.h"
 // MP3
-#include "../Mp3/DFMiniMp3/DFMiniMp3_implementation.h"
+#include "../Arduino/DFMiniMp3_implementation.h"
 #include "../Mp3/Mp3Play/Mp3Play_implementation.h"
 #include "../Mp3/Mp3Control/Mp3Control_implementation.h"
 #include "../Mp3/Mp3Prompt/Mp3Prompt_implementation.h"
@@ -67,7 +67,7 @@ private:
 
     // PERIPHERY
     // mp3
-    DfMini m_DfMini{DfMini(m_ArduinoHal.getPins(), m_MessageHandler)}; // FIX THIS
+    DfMini m_DfMini{DfMini(m_MessageHandler)};
     Mp3Prompt m_Mp3Prompt{Mp3Prompt(m_DfMini, m_DfMiniPromptTimer)};
     Mp3Play_implementation m_Mp3Play{Mp3Play_implementation(m_ArduinoHal,
                                                             m_DfMini,

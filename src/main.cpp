@@ -68,7 +68,7 @@ void timer1Task_1ms()
 // - rename Folder to PlayList
 
 // - solve cyclic dependencies between mp3 and messageHandler
-
+// - fix SRP issue withc NfcControl
 
 // - BIG TASK: Integration testing on device
 
