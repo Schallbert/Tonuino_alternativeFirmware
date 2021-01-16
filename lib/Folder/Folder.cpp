@@ -12,8 +12,7 @@ Folder::Folder(const Folder &cpySrcFolder) : m_ui8FolderId(cpySrcFolder.m_ui8Fol
                                              m_ePlayMode(cpySrcFolder.m_ePlayMode),
                                              m_ui8TrackCount(cpySrcFolder.m_ui8TrackCount),
                                              m_pArduinoHal(cpySrcFolder.m_pArduinoHal),
-                                             m_pMessageHandler(cpySrcFolder.m_pMessageHandler),
-                                             m_pMp3Prompt(cpySrcFolder.m_pMp3Prompt)
+                                             m_pMessageHandler(cpySrcFolder.m_pMessageHandler)
 {
     if (cpySrcFolder.m_TrackQueue[1] != 0)
     {
@@ -34,7 +33,6 @@ Folder &Folder::operator=(const Folder &cpySrcFolder)
     m_ui8TrackCount = cpySrcFolder.m_ui8TrackCount;
     m_pArduinoHal = cpySrcFolder.m_pArduinoHal;
     m_pMessageHandler = cpySrcFolder.m_pMessageHandler;
-    m_pMp3Prompt = cpySrcFolder.m_pMp3Prompt;
     if (cpySrcFolder.m_TrackQueue[1] != 0)
     {
         deep_copy_queue(cpySrcFolder.m_TrackQueue);
@@ -81,7 +79,7 @@ bool Folder::isInitiated() const
 
 bool Folder::isDependencySet()
 {
-    return (m_pArduinoHal != nullptr && m_pMessageHandler != nullptr && m_pMp3Prompt != nullptr);
+    return (m_pArduinoHal != nullptr && m_pMessageHandler != nullptr);
 }
 
 void Folder::setup_track_queue()
@@ -138,28 +136,25 @@ void Folder::saveProgressIfRequired()
 }
 
 void Folder::setupDependencies(Arduino_DIcontainer_interface *pArduinoHal,
-                               MessageHander_interface *pMessageHandler,
-                               Mp3Prompt_interface *pMp3Prompt)
+                               MessageHander_interface *pMessageHandler)
 {
     m_pArduinoHal = pArduinoHal;
     m_pMessageHandler = pMessageHandler;
-    m_pMp3Prompt = pMp3Prompt;
     isValid(); // Call to setup play queue in case dependencies are correctly linked
 }
 
-void Folder::setTrackCount(uint8_t trackCount)
+bool Folder::setTrackCount(uint8_t trackCount)
 {
+    bool countValid{true};
     if (trackCount > MAXTRACKSPERFOLDER)
     {
-        if (isDependencySet())
-        {
-            VoicePrompt tooManyTracks{VoicePrompt(VoicePrompt::MSG_ERROR_TOOMANYTRACKS, true)};
-            m_pMp3Prompt->playPrompt(tooManyTracks);
-        }
+        countValid = false;
         trackCount = MAXTRACKSPERFOLDER;
     }
+
     m_ui8TrackCount = trackCount;
     isValid(); // Call to setup play queue in case dependencies are correctly linked
+    return countValid;
 }
 
 uint8_t Folder::getNextTrack()

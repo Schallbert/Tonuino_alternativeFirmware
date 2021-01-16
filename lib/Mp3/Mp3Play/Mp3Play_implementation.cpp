@@ -32,11 +32,16 @@ void Mp3Play_implementation::playFolder(Folder &folder)
 bool Mp3Play_implementation::prepareFolderToPlay(Folder &folder)
 {
     bool check{true};
+    bool countValid{true};
     check &= isFolderNew(folder);
 
-    folder.setupDependencies(&m_rArduinoHal, &m_rMessageHandler, &m_rMp3Prompt);
-    folder.setTrackCount(getTrackCountOfFolderOnSdCard(folder));
-
+    folder.setupDependencies(&m_rArduinoHal, &m_rMessageHandler);
+    countValid = folder.setTrackCount(getTrackCountOfFolderOnSdCard(folder));
+    if (!countValid)
+    {
+        VoicePrompt tooManyTracks{VoicePrompt(VoicePrompt::MSG_ERROR_TOOMANYTRACKS, true)};
+        m_rMp3Prompt.playPrompt(tooManyTracks);
+    }
     check &= isFolderValid(folder);
     return check;
 }
@@ -108,7 +113,7 @@ bool Mp3Play_implementation::shouldPlaybackStop() const
     {
         shouldStop = true;
     }
-    
+
     if (m_currentFolder.getPlayMode() == Folder::ONELARGETRACK)
     {
         shouldStop = true;

@@ -4,7 +4,6 @@
 #include "mocks/unittest_ArduinoIf_mocks.h"
 #include "mocks/unittest_ArduinoDIcontainer_mocks.h"
 #include "mocks/unittest_MessageHandler_mocks.h"
-#include "mocks/unittest_Mp3Prompt_mocks.h"
 
 using ::testing::_;
 using ::testing::NiceMock;
@@ -17,7 +16,6 @@ class folderInvalid : public ::testing::Test
 {
 protected:
     NiceMock<Mock_ArduinoDIcontainer> m_arduinoHalMock{};
-    NiceMock<Mock_Mp3Prompt> m_mp3PromptMock{};
     NiceMock<Mock_MessageHandler> m_messageHandlerMock{};
 };
 
@@ -49,7 +47,7 @@ protected:
     {
         folderMethods::SetUp();
         m_ValidFolder.setTrackCount(10);
-        m_ValidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+        m_ValidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     }
 
     virtual void TearDown()
@@ -146,28 +144,28 @@ TEST_F(folderInvalid, initiated_trackCountSet_isValid_returnsFalse)
 TEST_F(folderInvalid, dependenciesSetup_isValidReturnsFalse)
 {
     Folder invalidFolder(1, Folder::ALBUM);
-    invalidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+    invalidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     ASSERT_FALSE(invalidFolder.isValid());
 }
 
 TEST_F(folderInvalid, playModeUndefined_isValidReturnsFalse)
 {
     Folder invalidFolder(1, Folder::UNDEFINED);
-    invalidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+    invalidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     ASSERT_FALSE(invalidFolder.isValid());
 }
 
 TEST_F(folderInvalid, folderIdIs0_isValidReturnsFalse)
 {
     Folder invalidFolder(0, Folder::ALBUM);
-    invalidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+    invalidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     ASSERT_FALSE(invalidFolder.isValid());
 }
 
 TEST_F(folderInvalid, trackCountIsTooHigh_autoSetToMaxTracks)
 {
     Folder invalidFolder(1, Folder::ALBUM);
-    invalidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+    invalidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     invalidFolder.setTrackCount(MAXTRACKSPERFOLDER + 1);
     ASSERT_EQ(invalidFolder.getTrackCount(), MAXTRACKSPERFOLDER);
 }
@@ -175,30 +173,22 @@ TEST_F(folderInvalid, trackCountIsTooHigh_autoSetToMaxTracks)
 TEST_F(folderInvalid, trackCountIsTooHigh_autoSetToMaxTracks_isValidReturnsTrue)
 {
     Folder invalidFolder(1, Folder::ALBUM);
-    invalidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+    invalidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     invalidFolder.setTrackCount(MAXTRACKSPERFOLDER + 1);
     ASSERT_TRUE(invalidFolder.isValid());
 }
 
-TEST_F(folderInvalid, trackCountIsTooHigh_playsWarning)
+TEST_F(folderInvalid, trackCountIsTooHigh_setTrackCount_ReturnsFalse)
 {
     Folder invalidFolder(1, Folder::ALBUM);
-    invalidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
-    EXPECT_CALL(m_mp3PromptMock, playPrompt(_));
-    invalidFolder.setTrackCount(MAXTRACKSPERFOLDER + 1);
+    invalidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
+    ASSERT_FALSE(invalidFolder.setTrackCount(MAXTRACKSPERFOLDER + 1));
 }
 
-TEST_F(folderInvalid, trackCountIsTooHigh_dependenciesNotSet_wontPlayWarning)
+TEST_F(folderInvalid, trackCount0_isValid_ReturnsFalse)
 {
     Folder invalidFolder(1, Folder::ALBUM);
-    EXPECT_CALL(m_mp3PromptMock, playPrompt(_)).Times(0);
-    invalidFolder.setTrackCount(MAXTRACKSPERFOLDER + 1);
-}
-
-TEST_F(folderInvalid, trackCount0_isValidReturnsFalse)
-{
-    Folder invalidFolder(1, Folder::ALBUM);
-    invalidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+    invalidFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     invalidFolder.setTrackCount(0);
     ASSERT_FALSE(invalidFolder.isValid());
 }
@@ -209,7 +199,7 @@ TEST_F(folderMethods, copyConstructor_workingOK)
     ON_CALL(m_Eeprom, eeprom_read(254)).WillByDefault(Return(13));
     Folder testFolder(254, Folder::SAVEPROGRESS);
     testFolder.setTrackCount(1);
-    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     // Act
     Folder copyFolder(testFolder);
     // Assert
@@ -233,7 +223,7 @@ TEST_F(folderMethods, copyConstructor_valuesOK)
     ON_CALL(m_Eeprom, eeprom_read(254)).WillByDefault(Return(13));
     Folder testFolder(254, Folder::SAVEPROGRESS);
     testFolder.setTrackCount(14);
-    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
 
     Folder copyFolder(testFolder);
 
@@ -247,7 +237,7 @@ TEST_F(folderMethods, copyConstructor_valuesOK)
 TEST_F(folderMethods, assignmentOperator_workingOK)
 {
     Folder testFolder(254, Folder::ALBUM);
-    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     testFolder.setTrackCount(1);
     Folder copyFolder = Folder();
 
@@ -260,7 +250,7 @@ TEST_F(folderMethods, assignmentOperator_valuesOK)
 {
     Folder testFolder(254, Folder::ALBUM);
     testFolder.setTrackCount(1);
-    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     Folder copyFolder = Folder();
 
     copyFolder = testFolder;
@@ -284,13 +274,19 @@ TEST_F(folderMethods, assignmentOperator_dependencyIsNullptr_isAlsoCopied)
     ASSERT_FALSE(copyFolder.isValid());
 }
 
+TEST_F(folderMethods, validFolder_setTrackCount_ReturnsTrue)
+{
+    Folder testFolder(254, Folder::ALBUM);
+    ASSERT_TRUE(testFolder.setTrackCount(1));
+}
+
 TEST_F(folderMethods, validFolder_createsQueue_callsNotification)
 {
     Folder testFolder(254, Folder::ALBUM);
     testFolder.setTrackCount(1);
 
     EXPECT_CALL(m_messageHandlerMock, printMessage(_));
-    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
 }
 
 TEST_F(folderAlbum, folder_ALBUM_valid)
@@ -368,7 +364,7 @@ TEST_F(folderDependencies, RANDOM_trackCountIs10_trackQueueLoopComplete)
         .WillOnce(Return(7))
         .WillOnce(Return(5))
         .WillOnce(Return(6));
-    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     // take sample that track queue is correctly setup
     // ALSO CONFIRMS THAT TRACK LIST IS OK BECAUSE OF WILLONCE STRUCTURE
     EXPECT_EQ(1, testFolder.getCurrentTrack());
@@ -394,7 +390,7 @@ TEST_F(folderDependencies, RANDOM_trackCountIs10_willNotAllowSameTrackMultipleTi
         .WillOnce(Return(5))
         .WillOnce(Return(6));
 
-    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     // take sample that track queue is correctly setup
     testFolder.getNextTrack();
     ASSERT_EQ(2, testFolder.getNextTrack());
@@ -419,7 +415,7 @@ TEST_F(folderDependencies, RANDOM_trackCountIs10_willNotAllowTrackNumber0)
         .WillOnce(Return(5))
         .WillOnce(Return(6));
 
-    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     // take sample that track queue is correctly setup
     ASSERT_EQ(10, testFolder.getNextTrack());
 }
@@ -443,7 +439,7 @@ TEST_F(folderDependencies, RANDOM_trackCountIs10_willNotAllowTrackNumberOutOfRan
         .WillOnce(Return(5))
         .WillOnce(Return(6));
 
-    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     // take sample that track queue is correctly setup
     ASSERT_EQ(10, testFolder.getNextTrack());
 }
@@ -453,7 +449,7 @@ TEST_F(folderDependencies, SAVEPROGRESS_trackLoadIsWorking)
     Folder testFolder(99, Folder::SAVEPROGRESS);
     testFolder.setTrackCount(16);
     ON_CALL(m_Eeprom, eeprom_read(_)).WillByDefault(Return(13));
-    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
 
     EXPECT_EQ(13, testFolder.getCurrentTrack());
 }
@@ -463,7 +459,7 @@ TEST_F(folderDependencies, SAVEPROGRESS_trackLoadValueIsCorrupt_ReturnsTrack1)
     Folder testFolder(99, Folder::SAVEPROGRESS);
     testFolder.setTrackCount(10);
     ON_CALL(m_Eeprom, eeprom_read(_)).WillByDefault(Return(13));
-    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
 
     EXPECT_EQ(1, testFolder.getCurrentTrack());
 }
@@ -475,7 +471,7 @@ TEST_F(folderDependencies, SAVEPROGRESS_trackSaveIsWorking)
     ON_CALL(m_Eeprom, eeprom_read(_)).WillByDefault(Return(13));
 
     EXPECT_CALL(m_Eeprom, eeprom_write(99, 14));
-    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     EXPECT_EQ(14, testFolder.getNextTrack());
 }
 
@@ -485,7 +481,7 @@ TEST_F(folderDependencies, SAVEPROGRESS_EepromRead0_currentTrackDefaultsTo1)
     testFolder.setTrackCount(16);
     ON_CALL(m_Eeprom, eeprom_read(_)).WillByDefault(Return(0));
 
-    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     EXPECT_EQ(1, testFolder.getCurrentTrack());
 }
 TEST_F(folderDependencies, SAVEPROGRESS_EepromReadOutOfRange_currentTrackDefaultsTo1)
@@ -494,6 +490,6 @@ TEST_F(folderDependencies, SAVEPROGRESS_EepromReadOutOfRange_currentTrackDefault
     testFolder.setTrackCount(16);
     ON_CALL(m_Eeprom, eeprom_read(_)).WillByDefault(Return(17));
 
-    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock, &m_mp3PromptMock);
+    testFolder.setupDependencies(&m_arduinoHalMock, &m_messageHandlerMock);
     EXPECT_EQ(1, testFolder.getCurrentTrack());
 }

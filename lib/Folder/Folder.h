@@ -41,10 +41,9 @@ public:
     uint8_t getTrackCount() const;
     // Tries to initiate the track queue by using injected dependencies depending on play mode
     void setupDependencies(Arduino_DIcontainer_interface *pArduinoHal,
-                           MessageHander_interface *pMessageHandler,
-                           Mp3Prompt_interface *pMp3Prompt); // Dependency injection: Random seed & eeprom
-    // sets trackCount of folder
-    void setTrackCount(uint8_t trackCount);
+                           MessageHander_interface *pMessageHandler); // Dependency injection: Random seed & eeprom
+    // returns false if trackCount cannot be set
+    bool setTrackCount(uint8_t trackCount);
 
     // Returns true if the folder can be fully setup and is ready to be used in other modules
     bool isValid();
@@ -74,7 +73,6 @@ private:
 
     Arduino_DIcontainer_interface *m_pArduinoHal{nullptr};
     MessageHander_interface *m_pMessageHandler{nullptr};
-    Mp3Prompt_interface *m_pMp3Prompt{nullptr};
 
     uint8_t m_TrackQueue[MAXTRACKSPERFOLDER + 1]{0};
     uint8_t m_ui8CurrentQueueEntry{0};
