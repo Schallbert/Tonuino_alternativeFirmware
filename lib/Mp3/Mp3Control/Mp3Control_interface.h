@@ -13,8 +13,8 @@ public:
 
 public:
     virtual void setUserInput(UserInput_interface::eUserRequest input) = 0;
-    virtual void setTagState(Message::eMessageContent input) = 0;
     virtual void setBlocked(bool isBlocked) = 0;
+    virtual void playFolder(Folder &folder) = 0;
     // Call in main loop. Listens for DFminiMp3 replies & autoplays next song
     virtual void loop() = 0;
 };

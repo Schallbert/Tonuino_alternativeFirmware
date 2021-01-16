@@ -1,22 +1,42 @@
 #include "Messages_interface.h"
 
+#include "Folder.h"
 #include "Tonuino.h"
 
 void Tonuino::loop()
 {
-    UserInput_interface::eUserRequest userRequest{m_pUserInput->getUserRequest()};
-    Message::eMessageContent tagState{m_rNfcControl.getTagPresence()};
+    m_userRequest = m_pUserInput->getUserRequest();
+    m_tagState = m_rNfcControl.getTagPresence();
 
-    // Handle Voice Menu
-    /*
-    m_rVoiceMenu.setTagState(tagState);
-    m_rVoiceMenu.setUserInput(userRequest);
+    handleTagInput();
+    handleTagInput();
+    handleMp3Playback();
+}
+
+void Tonuino::handleVoiceMenu()
+{
+ /*
+    m_rVoiceMenu.setTagState(m_tagState);
+    m_rVoiceMenu.setUserInput(m_userRequest);
     m_rVoiceMenu.loop();
     */
+}
 
-    // Handle Mp3 Playback
-    m_rMp3Control.setTagState(tagState);
-    m_rMp3Control.setUserInput(userRequest);
+void Tonuino::handleTagInput()
+{
+    if (m_tagState == Message::NEWKNOWNTAG)
+    {
+        Folder readFolder;
+        if (m_rNfcControl.readFolderFromTag(readFolder))
+        {
+            m_rMp3Control.playFolder(readFolder);
+        }
+    }
+}
+
+void Tonuino::handleMp3Playback()
+{
+    m_rMp3Control.setUserInput(m_userRequest);
     m_rMp3Control.setBlocked(m_rVoiceMenu.isActive()); // VoiceMenu overrules Playback
     m_rMp3Control.loop();
 }

@@ -85,7 +85,6 @@ private:
     Mp3Control m_Mp3Control{Mp3Control(m_DfMini,
                                        m_Mp3Play,
                                        m_Mp3Prompt,
-                                       m_NfcControl,
                                        m_PwrCtrl,
                                        m_MessageHandler)};
 

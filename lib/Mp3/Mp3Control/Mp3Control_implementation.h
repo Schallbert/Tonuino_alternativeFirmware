@@ -12,7 +12,7 @@
 #include "../PowerManager/PowerManager_interface.h"
 #include "../MessageHandler/MessageHandler_interface.h"
 
-
+class Folder;
 
 // Implementation of Player controller interface.
 // Uses Software Serial to communicate with DfMiniMp3 player.
@@ -24,23 +24,20 @@ public:
     Mp3Control(DfMiniMp3_interface &rDfMini,
                Mp3Play_interface &rPlayer,
                Mp3Prompt_interface &rPrompt,
-               NfcControl_interface &rNfcControl,
                PowerManager_interface &rPowerManager,
                MessageHander_interface &rMsgHandler) : m_rDfMiniMp3(rDfMini),
                                                        m_rMp3Player(rPlayer),
                                                        m_rMp3Prompt(rPrompt),
-                                                       m_rNfcControl(rNfcControl),
                                                        m_rPowerManager(rPowerManager),
                                                        m_rMessageHandler(rMsgHandler){};
     ~Mp3Control() = default;
 
     void setUserInput(UserInput_interface::eUserRequest input) override;
     void loop() override;
-    void setTagState(Message::eMessageContent input) override;
+    void playFolder(Folder &folder) override;
     void setBlocked(bool isBlocked) override;
 
 private:
-    void handleCardInput();
     void handleUserInput();
     void autoplay();
 
@@ -60,7 +57,6 @@ private:
     DfMiniMp3_interface &m_rDfMiniMp3;
     Mp3Play_interface &m_rMp3Player;
     Mp3Prompt_interface &m_rMp3Prompt;
-    NfcControl_interface &m_rNfcControl;
     PowerManager_interface &m_rPowerManager;
     MessageHander_interface &m_rMessageHandler;
 
