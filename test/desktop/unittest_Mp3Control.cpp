@@ -63,14 +63,6 @@ TEST_F(Mp3ControlTest, loop_Mp3PlayerInit_prints3PlayerStatus)
     m_Mp3Control.loop();
 }
 
-TEST_F(Mp3ControlTest, newRegisteredTag_readSuccessful_startsPlayback)
-{
-    ON_CALL(m_nfcControlMock, readFolderFromTag(_)).WillByDefault(Return(true));
-    m_Mp3Control.setTagState(Message::NEWKNOWNTAG);
-    EXPECT_CALL(m_mp3PlayMock, playFolder(_));
-    m_Mp3Control.loop();
-}
-
 TEST_F(Mp3ControlTest, volumeUp_belowMax_volumeIsIncreased)
 {
     ON_CALL(m_dfMiniMock, getVolume()).WillByDefault(Return(VOLUME_MAX - 1));
