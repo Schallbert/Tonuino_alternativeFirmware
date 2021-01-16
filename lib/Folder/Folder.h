@@ -5,7 +5,6 @@
 
 #include "../Arduino_HardwareAbstraction/Arduino_DIcontainer_interface.h"
 #include "../MessageHandler/MessageHandler_interface.h"
-#include "../Mp3/Mp3Prompt/Mp3Prompt_interface.h"
 
 class Folder
 {

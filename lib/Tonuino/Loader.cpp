@@ -1,9 +1,9 @@
-#include "System.h"
+#include "Loader.h"
 
 #include "../UserInput/UserInput/UserInput_implementation.h"
 #include "../UserInput/ClickEncoder/ClickEncoder_implementation.h"
 
-void System::init()
+void Loader::init()
 {
     // Timers must be initialized and started by now!
     m_ArduinoHal.getSerial().com_begin(DEBUGSERIAL_BAUDRATE);
@@ -15,54 +15,41 @@ void System::init()
     notifyStartup();
 }
 
-void System::notifyStartup()
+void Loader::notifyStartup()
 {
     m_MessageHandler.printMessage(Message{Message::STARTUP});
     VoicePrompt startup{VoicePrompt(VoicePrompt::MSG_STARTUP, false)};
     m_Mp3Prompt.playPrompt(startup);
 }
 
-void System::shutdown()
+void Loader::loop()
+{
+    //LowPower.sleep(100);
+    // FEATURE SLEEP for 100ms to reduce power consumption?
+    static Tonuino tonuino{Tonuino(m_pUserInput, m_NfcControl, m_Mp3Control, m_VoiceMenu)};
+    tonuino.loop();
+}
+
+void Loader::shutdown()
 {
     notifyShutdown();
     m_PwrCtrl.allowShutdown();
 }
 
-void System::notifyShutdown()
+void Loader::notifyShutdown()
 {
     m_MessageHandler.printMessage(Message{Message::HALT});
     VoicePrompt shutdown{VoicePrompt(VoicePrompt::MSG_SHUTDOWN, false)};
     m_Mp3Prompt.playPrompt(shutdown);
 }
 
-void System::loop()
-{
-    m_DfMini.loop();
-
-    UserInput_interface::eUserRequest userRequest{m_pUserInput->getUserRequest()};
-    Message::eMessageContent tagState{m_NfcControl.getTagPresence()};
-
-    // Handle Voice Menu
-    /*
-    m_VoiceMenu.setTagState(tagState);
-    m_VoiceMenu.setUserInput(userRequest);
-    m_VoiceMenu.loop();
-    */
-
-    // Handle Mp3 Playback
-    m_Mp3Control.setTagState(tagState);
-    m_Mp3Control.setUserInput(userRequest);
-    m_Mp3Control.setBlocked(m_VoiceMenu.isActive()); // VoiceMenu overrules Playback
-    m_Mp3Control.loop();
-}
-
-bool System::isShutdownRequested()
+bool Loader::isShutdownRequested()
 {
     //return (m_PwrCtrl.isShutdownRequested());
     return false;
 }
 
-void System::timer1Task_1ms()
+void Loader::timer1Task_1ms()
 {
     static volatile uint16_t ui16Ticks = 0;
     if (m_pUserInput != nullptr)
@@ -79,7 +66,7 @@ void System::timer1Task_1ms()
     }
 }
 
-void System::timer1Task_1sec()
+void Loader::timer1Task_1sec()
 {
     m_PwrCtrl.notify1sTimer(); // idle timer and LED behavior
     m_LullabyeTimer.timerTick();

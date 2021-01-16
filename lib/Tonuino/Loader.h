@@ -1,5 +1,5 @@
-#ifndef SYSTEM_H
-#define SYSTEM_H
+#ifndef LOADER_H
+#define LOADER_H
 
 // ARDUINO HAL
 #include "Arduino.h"
@@ -20,6 +20,7 @@
 #include "../Arduino/messages.h"
 #include "../MessageHandler/MessageHandler_implementation.h"
 
+#include "Tonuino.h"
 #include "../VoiceMenu/VoiceMenu.h"
 #include "../Utilities/SimpleTimer/SimpleTimer.h"
 
@@ -31,11 +32,11 @@ class Folder;
 // It is not designed to be unit testable,
 // thus it does not contain business logic.
 */
-class System
+class Loader
 {
 public:
-    System() = default;
-    ~System() = default;
+    Loader() = default;
+    ~Loader() = default;
 
 public:
     void init();
@@ -97,4 +98,4 @@ private:
     // userInput
     UserInput_interface *m_pUserInput{nullptr};
 };
-#endif // SYSTEM_H
+#endif // LOADER_H

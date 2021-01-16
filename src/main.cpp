@@ -4,28 +4,27 @@
 // project includes -------
 #include <TimerOne.h>
 #include "Tonuino_config.h"
-#include "System.h"
+#include "Loader.h"
 
-System tonuino;
+Loader loader;
 TimerOne timer1;
 
 void timer1Task_1ms();
 void setup()
-{   
+{
     timer1.initialize(TIMERONE_TASK_INTERVAL_USEC);
     timer1.attachInterrupt(timer1Task_1ms); // only allowed for "free" functions, NO METHODS :/
-    tonuino.init();
+    loader.init();
 }
 
 void loop()
 {
-    //LowPower.sleep(100);
-    // SLEEP for 100ms to reduce power consumption?
-    tonuino.loop();
+    loader.loop();
 
-    if (tonuino.isShutdownRequested())
+    // TODO: Think about if this should be sent to LOADER level
+    if (loader.isShutdownRequested())
     {
-        tonuino.shutdown(); // shutdown system
+        loader.shutdown(); // shutdown Loader
         timer1.detachInterrupt();
         return; // leave loop
     }
@@ -33,7 +32,7 @@ void loop()
 
 void timer1Task_1ms()
 {
-    tonuino.timer1Task_1ms();
+    loader.timer1Task_1ms();
 }
 
 // TODO:::::::
@@ -56,7 +55,7 @@ void timer1Task_1ms()
 // - Insource InputDispatcher_errorHandler to respective value creators DONE
 // - Outsource error handling to an own class DONE
 // - cleanup folder structure/levels DONE
-// - Take NFC state decision on SYSTEM level DONE
+// - Take NFC state decision on Loader level DONE
 // - solve reset lullabye timer on button press DONE
 // - FEATURE: change Lullabye in a way that it's a configurable feature, not a playmode. DONE
 // - cleanup #includes and move implementation includes to cpps DONE
@@ -73,6 +72,6 @@ void timer1Task_1ms()
 // - BIG TASK: Integration testing on device
 
 // - FEATURE: implement power save (arduino, nfc, etc.)
-// - FEATURE: Card stays on system or can be removed while playing? Config?
+// - FEATURE: Card stays on Loader or can be removed while playing? Config?
 // - FEATURE: VoiceMenu for configuration items that currently require reprogramming
-// - FEAUTRE: Lullaybe time per Card (currently system level only)
+// - FEAUTRE: Lullaybe time per Card (currently Loader level only)
