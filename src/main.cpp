@@ -62,6 +62,8 @@ void timer1Task_1ms()
 
 // - solve cyclic dependencies between messageHandler and message (?)
 // - add Tonuino unit tests to solution
+// - add debug messages to other modules (?)
+// - create namespaces to solve Arduino_Hal namings (low Priority)
 
 // - BIG TASK: Integration testing on device
 

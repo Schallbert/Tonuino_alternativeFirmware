@@ -18,10 +18,10 @@ void MessageHandler::printMessage(const Message &message)
 bool MessageHandler::isNewMessage(const Message &message)
 {
     bool status{false};
-    if (m_lastMessage[message.getGroup()] != message.getContents())
+    if (m_lastMessage[message.getGroupId()] != message.getContents())
     {
         status = true;
-        m_lastMessage[message.getGroup()] = message.getContents();
+        m_lastMessage[message.getGroupId()] = message.getContents();
     }
     return status;
 }

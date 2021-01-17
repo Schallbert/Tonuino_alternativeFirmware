@@ -21,7 +21,7 @@ public:
     void loop();
 
 private:
-    void handleVoiceMenu();
+    bool handleVoiceMenu();
     void handleTagInput();
     void handleMp3Playback();
 

@@ -10,7 +10,6 @@ void PowerManager::requestKeepAlive()
 
 void PowerManager::requestShutdown()
 {
-    m_led.set_led_behavior(StatusLed::off);
     m_keepAlive.requestShutdown();
 }
 
@@ -21,6 +20,7 @@ bool PowerManager::isShutdownRequested()
 
 void PowerManager::allowShutdown()
 {
+    m_led.set_led_behavior(StatusLed::off);
     m_keepAlive.allowShutdown();
 }
 

@@ -34,14 +34,6 @@ protected:
                                        m_messageHandlerMock)};
 };
 
-TEST_F(Mp3ControlTest, loop_blocked_wontDoAnything)
-{
-    m_Mp3Control.setBlocked(true);
-
-    EXPECT_CALL(m_mp3PlayMock, autoplay()).Times(0);
-    m_Mp3Control.loop();
-}
-
 TEST_F(Mp3ControlTest, loop_callsAutoplay)
 {
     EXPECT_CALL(m_mp3PlayMock, autoplay());

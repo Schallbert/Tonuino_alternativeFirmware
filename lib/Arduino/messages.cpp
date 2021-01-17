@@ -85,7 +85,7 @@ char *MessageToString::getStringFromMessage(const Message &message)
     }
 
     m_completeMessage[0] = 0; //delete string
-    strcpy_P(m_completeMessage, (char *)(pgm_read_word(&(s_grTable[message.getGroup()]))));
+    strcpy_P(m_completeMessage, (char *)(pgm_read_word(&(s_grTable[message.getGroupId()]))));
     strcat_P(m_completeMessage, s_sep);
     strcat_P(m_completeMessage, (char *)(pgm_read_word(&(s_cttTable[message.getContents()]))));
     return m_completeMessage;

@@ -14,18 +14,8 @@ void Mp3Control::playFolder(Folder &folder)
     m_rMp3Player.playFolder(folder);
 }
 
-void Mp3Control::setBlocked(bool isBlocked)
-{
-    m_blocked = isBlocked;
-}
-
 void Mp3Control::loop()
 {
-    if (m_blocked)
-    {
-        return;
-    }
-
     handleUserInput();
     m_rPowerManager.setPlayback(m_rDfMiniMp3.isPlaying());
     m_rMp3Player.autoplay();

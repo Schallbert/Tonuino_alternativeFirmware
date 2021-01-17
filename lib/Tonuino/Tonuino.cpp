@@ -8,18 +8,23 @@ void Tonuino::loop()
     m_userRequest = m_pUserInput->getUserRequest();
     m_tagState = m_rNfcControl.getTagPresence();
 
-    handleTagInput();
+    if (handleVoiceMenu()) 
+    {
+        return; // VoiceMenu overrules "normal operation"
+    }
+
     handleTagInput();
     handleMp3Playback();
 }
 
-void Tonuino::handleVoiceMenu()
+bool Tonuino::handleVoiceMenu()
 {
- /*
+    /*
     m_rVoiceMenu.setTagState(m_tagState);
     m_rVoiceMenu.setUserInput(m_userRequest);
     m_rVoiceMenu.loop();
     */
+    return m_rVoiceMenu.isActive();
 }
 
 void Tonuino::handleTagInput()
@@ -37,6 +42,5 @@ void Tonuino::handleTagInput()
 void Tonuino::handleMp3Playback()
 {
     m_rMp3Control.setUserInput(m_userRequest);
-    m_rMp3Control.setBlocked(m_rVoiceMenu.isActive()); // VoiceMenu overrules Playback
     m_rMp3Control.loop();
 }

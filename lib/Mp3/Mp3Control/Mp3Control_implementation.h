@@ -35,7 +35,6 @@ public:
     void setUserInput(UserInput_interface::eUserRequest input) override;
     void loop() override;
     void playFolder(Folder &folder) override;
-    void setBlocked(bool isBlocked) override;
 
 private:
     void handleUserInput();
@@ -62,7 +61,6 @@ private:
 
     UserInput_interface::eUserRequest m_userInput{UserInput_interface::NO_ACTION};
     Message::eMessageContent m_tagState{Message::NOTAG};
-    bool m_blocked{false};
     typedef void (Mp3Control::*dispatcher)(); // table of function pointers
 };
 
