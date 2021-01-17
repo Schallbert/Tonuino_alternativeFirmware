@@ -28,6 +28,11 @@ void Loader::loop()
     // FEATURE SLEEP for 100ms to reduce power consumption?
     static Tonuino tonuino{Tonuino(m_pUserInput, m_NfcControl, m_Mp3Control, m_VoiceMenu)}; // maybe add an init() for dependencies?
     tonuino.loop();
+
+    if (isShutdownRequested())
+    {
+        shutdown(); // shutdown System
+    }
 }
 
 void Loader::shutdown()

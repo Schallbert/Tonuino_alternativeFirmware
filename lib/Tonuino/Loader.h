@@ -81,7 +81,6 @@ private:
     Nfc_implementation m_Nfc{Nfc_implementation(m_Mfrc522, m_MessageHandler)};
     NfcControl m_NfcControl{NfcControl(m_Nfc, m_MessageHandler)};
 
-    // TODO: Why does Mp3Control need NFC??? SRP hurt?
     Mp3Control m_Mp3Control{Mp3Control(m_DfMini,
                                        m_Mp3Play,
                                        m_Mp3Prompt,

@@ -20,14 +20,6 @@ void setup()
 void loop()
 {
     loader.loop();
-
-    // TODO: Think about if this should be sent to LOADER level
-    if (loader.isShutdownRequested())
-    {
-        loader.shutdown(); // shutdown Loader
-        timer1.detachInterrupt();
-        return; // leave loop
-    }
 }
 
 void timer1Task_1ms()
@@ -61,17 +53,19 @@ void timer1Task_1ms()
 // - cleanup #includes and move implementation includes to cpps DONE
 // - all debugserial string output should go in one file and be PROGMEMs DONE
 // - restructure VoicePrompts to an own class DONE
+// - solve cyclic dependencies between mp3 and messageHandler DONE
+// - fix SRP issue with NfcControl DONE
 
 // - create well-readable README.md
 // - solve all TODOS.
 // - rename Folder to PlayList
 
-// - solve cyclic dependencies between mp3 and messageHandler
-// - fix SRP issue withc NfcControl
+// - solve cyclic dependencies between messageHandler and message (?)
+// - add Tonuino unit tests to solution
 
 // - BIG TASK: Integration testing on device
 
 // - FEATURE: implement power save (arduino, nfc, etc.)
-// - FEATURE: Card stays on Loader or can be removed while playing? Config?
+// - FEATURE: Card must be placed permanently or can be removed while playing? Config?
 // - FEATURE: VoiceMenu for configuration items that currently require reprogramming
-// - FEAUTRE: Lullaybe time per Card (currently Loader level only)
+// - FEAUTRE: Lullaybe time per Card (currently System level only)

@@ -12,7 +12,7 @@ public:
         MSG_ERROR_CARDWRITE = 410,
         MSG_ERROR_CARDREAD = 411,
         MSG_ERROR_FOLDER = 412,
-        MSG_ERROR_TOOMANYTRACKS = 413,
+        MSG_ERROR_TOOMANYTRACKS = 413, // TODO: Record prompt
         MSG_STARTUP = 500,
         MSG_SHUTDOWN = 501,
         MSG_SELECT_FOLDERID = 300,
