@@ -6,8 +6,9 @@
 
 class Mock_UserInput : public UserInput_interface
 {
-    MOCK_METHOD(eUserRequest, getUserRequest, (void), (override));
-    MOCK_METHOD(void, userinputServiceIsr, (void), (override));
+public:
+    MOCK_METHOD(eUserRequest, getUserRequest, (), (override));
+    MOCK_METHOD(void, userinputServiceIsr, (), (override));
 };
 
 #endif // UNITTEST_USERINPUT_MOCKS_H

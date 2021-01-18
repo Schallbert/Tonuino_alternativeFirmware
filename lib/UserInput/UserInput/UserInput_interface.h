@@ -28,8 +28,8 @@ protected:
 
 public:
     virtual ~UserInput_interface(){};
-    virtual eUserRequest getUserRequest(void) = 0; // returns user's request to main program
-    virtual void userinputServiceIsr(void) = 0;  // recurring task to poll UserInput's connected hardware
+    virtual eUserRequest getUserRequest() = 0; // returns user's request to main program
+    virtual void userinputServiceIsr() = 0;  // recurring task to poll UserInput's connected hardware
 }; // UserInput
 
 #endif // USERINPUT_INTERFACE_H
