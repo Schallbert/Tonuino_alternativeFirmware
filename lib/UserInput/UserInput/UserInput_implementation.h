@@ -29,7 +29,7 @@ public:
     eUserRequest getUserRequest() override;
 
 private:
-    void userinputRefresh() override;
+    void userinputRefresh(); // refreshes button status to UserInput class
 
 private:
     ClickEncoder_interface &m_Encoder;
@@ -80,7 +80,7 @@ public:
     eUserRequest getUserRequest() override;
 
 private:
-    void userinputRefresh() override;
+    void userinputRefresh();
 
 private:
     Encoder_longPressRepeat m_PlpsButton;
