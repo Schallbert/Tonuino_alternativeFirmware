@@ -75,18 +75,18 @@ private:
                                                             m_Mp3Prompt,
                                                             m_LullabyeTimer,
                                                             m_MessageHandler)};
-
-    // nfc
-    MFRC522_implementation m_Mfrc522{MFRC522_implementation()};
-    Nfc_implementation m_Nfc{Nfc_implementation(m_Mfrc522, m_MessageHandler)};
-    NfcControl m_NfcControl{NfcControl(m_Nfc, m_MessageHandler)};
-
     Mp3Control m_Mp3Control{Mp3Control(m_DfMini,
                                        m_Mp3Play,
                                        m_Mp3Prompt,
                                        m_PwrCtrl,
                                        m_MessageHandler)};
 
+    // nfc
+    MFRC522_implementation m_Mfrc522{MFRC522_implementation()};
+    Nfc_implementation m_Nfc{Nfc_implementation(m_Mfrc522, m_MessageHandler)};
+    NfcControl m_NfcControl{NfcControl(m_Nfc, m_MessageHandler)};
+
+    // voicemenu
     VoiceMenu m_VoiceMenu{VoiceMenu(m_Mp3Play,
                                     m_Mp3Prompt,
                                     m_NfcControl,
