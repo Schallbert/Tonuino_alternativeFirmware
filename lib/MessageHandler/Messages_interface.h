@@ -62,7 +62,7 @@ public:
 
 public:
     // Constructors convert bitcoded types into base values: Groups 0x00 - 0x0F, Messages 0x00 - 0xFF
-    Message(eMessageContent contents) : m_contents(static_cast<uint8_t>(contents)){};
+    explicit Message(eMessageContent contents) : m_contents(static_cast<uint8_t>(contents)){};
     Message(eMessageGroup group, uint8_t offset) : m_contents(group | offset){};
     ~Message() = default;
     

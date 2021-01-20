@@ -18,7 +18,7 @@ class UserInput_ClickEncoder : public UserInput_interface
 
 public:
     // pinA, pinB, pinButton are the pins of the encoder that are connected to the uC.
-    UserInput_ClickEncoder(ClickEncoder_interface &Encoder) : m_Encoder(Encoder)
+    explicit UserInput_ClickEncoder(ClickEncoder_interface &Encoder) : m_Encoder(Encoder)
     {
         m_Encoder.setAccelerationEnabled(false);
         m_Encoder.setDoubleClickEnabled(true);

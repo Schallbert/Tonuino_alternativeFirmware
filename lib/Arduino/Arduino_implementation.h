@@ -47,17 +47,17 @@ class Arduino_random : public Arduino_interface_random
 {
 public:
     ~Arduino_random(){};
-    uint8_t random_generateUi8();
+    uint8_t random_generateUi8() override;
 
 private:
-    void random_generateSeed(byte floatingAnalogPin_Id);
+    void random_generateSeed(byte floatingAnalogPin_Id)  override;
 };
 
 class Arduino_eeprom : public Arduino_interface_eeprom
 {
 public:
-    uint8_t eeprom_read(uint8_t memId);
-    void eeprom_write(uint8_t memId, uint8_t contents);
+    uint8_t eeprom_read(uint8_t memId)  override;
+    void eeprom_write(uint8_t memId, uint8_t contents)  override;
 };
 
 #endif // ARDUINO_IMPLEMENTATION_H
