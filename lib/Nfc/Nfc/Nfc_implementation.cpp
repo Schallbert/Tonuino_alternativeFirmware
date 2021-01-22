@@ -81,6 +81,6 @@ bool Nfc_implementation::setTagOnline()
     status &= m_rMfrc522.isCardPresent();
     m_pConcreteTag = m_NfcTagFactory.getInstance(m_rMfrc522);
     status &= (m_pConcreteTag != nullptr); // Not implemented if factory cannot respond OK
-    printNotification(status, Message::READOK, Message::ERRORTYPE);
+    printNotification(status, Message::ONLINE, Message::ERRORTYPE);
     return status;
 }

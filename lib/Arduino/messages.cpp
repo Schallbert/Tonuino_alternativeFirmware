@@ -50,6 +50,7 @@ const char s_ctt52[] PROGMEM = "Tag Read Success";
 const char s_ctt53[] PROGMEM = "Tag write Error";
 const char s_ctt54[] PROGMEM = "Tag read Error";
 const char s_ctt55[] PROGMEM = "Tag type not implemented";
+const char s_ctt56[] PROGMEM = "Tag online";
 
 const char s_ctt60[] PROGMEM = "Mode Lullabye";
 const char s_ctt61[] PROGMEM = "Mode Album";
@@ -66,7 +67,7 @@ const char *const s_cttTable[] PROGMEM = {
     s_ctt20, s_ctt21, s_ctt22, s_ctt23, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
     s_ctt30, s_ctt31, s_ctt32, s_ctt33, s_ctt34, s_ctt35, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
     s_ctt40, s_ctt41, s_ctt42, s_ctt43, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-    s_ctt50, s_ctt51, s_ctt52, s_ctt53, s_ctt54, s_ctt55, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    s_ctt50, s_ctt51, s_ctt52, s_ctt53, s_ctt54, s_ctt55, s_ctt56, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
     s_ctt60, s_ctt61, s_ctt62, s_ctt63, s_ctt64, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 
 char *MessageToString::getStringFromMessage(const Message &message)

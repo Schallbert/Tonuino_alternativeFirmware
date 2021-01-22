@@ -104,9 +104,8 @@ TEST_F(Nfc_write, tagWriteError_returnsError)
     ON_CALL(m_mfrc, tagWrite(_, _, _)).WillByDefault(Return(false));
     uint8_t dataToWrite[16] = {};
 
-    // setOnline will return READOK, tagWrite will fail with ERRORWRITE
     Sequence seq;
-    EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(Message(Message::READOK))));
+    EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(Message(Message::ONLINE))));
     EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(tagWriteError)));
     m_Nfc.writeTag(4, dataToWrite);
 }
@@ -121,7 +120,7 @@ TEST_F(Nfc_write, tagWriteSuccess_returnsSuccessNotification)
     uint8_t dataToWrite[16] = {};
 
     Sequence seq;
-    EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(Message(Message::READOK))));
+    EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(Message(Message::ONLINE))));
     EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(tagWriteSuccess)));
     m_Nfc.writeTag(4, dataToWrite);
 }
@@ -165,7 +164,7 @@ TEST_F(Nfc_read, tagReadError_returnsError)
 
     // setOnline will return READOK, tagRead will fail with ERRORREAD
     Sequence seq;
-    EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(Message(Message::READOK))));
+    EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(Message(Message::ONLINE))));
     EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(tagReadError)));
     m_Nfc.readTag(4, readData);
 }
@@ -179,6 +178,8 @@ TEST_F(Nfc_read, tagReadSuccess_returnsSuccessNotification)
     ON_CALL(m_mfrc, tagRead(_, _, _)).WillByDefault(Return(true));
     uint8_t readData[16] = {};
 
-    EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(tagReadSuccess))).Times(2);
+    Sequence seq;
+    EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(Message(Message::ONLINE))));
+    EXPECT_CALL(m_messageHandler, printMessage(identicalMessage(tagReadSuccess)));
     m_Nfc.readTag(4, readData);
 }

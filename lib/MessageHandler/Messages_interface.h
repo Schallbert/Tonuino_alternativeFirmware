@@ -52,6 +52,7 @@ public:
         ERRORWRITE = 0x53,
         ERRORREAD = 0x54,
         ERRORTYPE = 0x55,
+        ONLINE = 0x56,
         MODELULLABYE = 0x60,
         MODEALBUM = 0x61,
         MODERANDOM = 0x62,
