@@ -8,11 +8,6 @@ void PowerManager::requestKeepAlive()
     m_led.set_led_behavior(StatusLed::solid);
 }
 
-void PowerManager::requestShutdown()
-{
-    m_keepAlive.requestShutdown();
-}
-
 bool PowerManager::isShutdownRequested()
 {
     return m_keepAlive.isShutdownRequested();
@@ -58,6 +53,11 @@ void PowerManager::notify1sTimer()
         m_rIdleTimer.stop();
         requestShutdown();
     }
+}
+
+void PowerManager::requestShutdown()
+{
+    m_keepAlive.requestShutdown();
 }
 
 void PowerManager::service1msLed()

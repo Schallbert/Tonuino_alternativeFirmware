@@ -19,11 +19,9 @@ void Tonuino::loop()
 
 bool Tonuino::handleVoiceMenu()
 {
-    /*
     m_rVoiceMenu.setTagState(m_tagState);
     m_rVoiceMenu.setUserInput(m_userRequest);
     m_rVoiceMenu.loop();
-    */
     return m_rVoiceMenu.isActive();
 }
 
