@@ -14,9 +14,9 @@ public:
     void printMessageIdToConsole()
     {
         ON_CALL(*this, printMessage).WillByDefault([this](const Message &message) {
-            std::cout << "printMessage: GroupId "
+            std::cout << "printMessage GroupId: 0x"
                       << std::hex << +message.getGroupId()
-                      << ", Contents "
+                      << ", Contents: 0x"
                       << std::hex << +message.getContents()
                       << std::endl;
         });

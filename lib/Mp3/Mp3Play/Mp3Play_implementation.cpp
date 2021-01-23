@@ -23,7 +23,7 @@ void Mp3Play_implementation::playFolder(Folder &folder)
         // Start playing folder: first track of current folder.
         m_rDfMiniMp3.playFolderTrack(m_currentFolder.getFolderId(),
                                      m_currentFolder.getCurrentTrack());
-        Message playInfo{Message(Message::FOLDEROK)};
+        Message playInfo{Message(Message::FOLDEROKPLAY)};
         m_rMessageHandler.printMessage(playInfo);
     }
     restartLullabyeTimer();

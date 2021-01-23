@@ -33,7 +33,7 @@ public:
         PLAY = 0x14,
         PAUSE = 0x15,
         ERRORFOLDER = 0x20,
-        FOLDEROK = 0x21,
+        FOLDEROKPLAY = 0x21,
         AUTOPLAYPAUSE = 0x22,
         AUTOPLAYNEXT = 0x23,
         TRACKFINISHED = 0x30,

@@ -111,12 +111,24 @@ protected:
 {
 };*/
 
-// TESTS
+// TESTS are some selected "happy paths" through the system that make sure that everything 
+// is glued together nicely. Mocks only engage on the last abstraction layer before hardware.
 
-TEST_F(SystemTestPlayback, initWorksFine)
+TEST_F(SystemTestPlayback, NewKnownCard_noUserInput_WillPlayFolder)
 {
-    EXPECT_CALL(m_UserInputMock, getUserRequest()).WillOnce(Return(UserInput_interface::NO_ACTION));
-    m_pTonuino->loop(); 
+    // Should return "NEWKNOWNTAG" on MIFARE_1k, will respond with fake tag on read() call.
+    ON_CALL(m_Mfrc522Mock, isCardPresent()).WillByDefault(Return(true));
+    ON_CALL(m_Mfrc522Mock, isNewCardPresent()).WillByDefault(Return(true));
+    ON_CALL(m_Mfrc522Mock, tagLogin(_)).WillByDefault(Return(true));
+    ON_CALL(m_Mfrc522Mock, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
+    ON_CALL(m_DfMiniMp3Mock, getFolderTrackCount(_)).WillByDefault(Return(5));
+    m_Mfrc522Mock.DelegateToFakeMini1k4k();
+    m_MessageHandlerMock.printMessageIdToConsole();// 
+
+    ON_CALL(m_UserInputMock, getUserRequest()).WillByDefault(Return(UserInput_interface::NO_ACTION));
+
+    EXPECT_CALL(m_DfMiniMp3Mock, playFolderTrack(fakeBufferData[4], 1));
+    m_pTonuino->loop();
 }
 
 /*
@@ -295,7 +307,7 @@ TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_writesInfoToCard)
     m_pOutputManager->dispatchInputs();    // should log playmode and complete linkMenu
 }
 
-MATCHER_P3(FOLDEROK, expFolderId, expPlayMode, expTrackCnt, "")
+MATCHER_P3(FOLDEROKPLAY, expFolderId, expPlayMode, expTrackCnt, "")
 {
     return ((arg->getFolderId() == expFolderId) &&
             (arg->getPlayMode() == expPlayMode) &&
@@ -316,7 +328,7 @@ TEST_F(OutputManagerTest, linkMenu_linkMenuComplete_startsPlaybackWithCorrectSet
     m_pOutputManager->setTagState(Message::UNKNOWNTAG, UserInput_interface::NEXT_TRACK);
     m_pOutputManager->dispatchInputs(); // should set link menu to playmode ALBUM
     m_pOutputManager->setTagState(Message::UNKNOWNTAG, UserInput_interface::PLAY_PAUSE);
-    EXPECT_CALL(*m_pMp3Control, play_folder(FOLDEROK(1, Folder::ALBUM, 8)));
+    EXPECT_CALL(*m_pMp3Control, play_folder(FOLDEROKPLAY(1, Folder::ALBUM, 8)));
     m_pOutputManager->dispatchInputs(); // should log playmode and complete linkMenu
 }
 

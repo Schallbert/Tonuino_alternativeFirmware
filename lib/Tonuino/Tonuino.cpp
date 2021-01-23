@@ -3,13 +3,12 @@
 
 #include "Folder.h"
 
-
 void Tonuino::loop()
 {
     m_userRequest = m_pUserInput->getUserRequest();
     m_tagState = m_rNfcControl.getTagPresence();
 
-    if (handleVoiceMenu()) 
+    if (handleVoiceMenu())
     {
         return; // VoiceMenu overrules "normal operation"
     }
@@ -33,10 +32,8 @@ void Tonuino::handleTagInput()
     if (m_tagState == Message::NEWKNOWNTAG)
     {
         Folder readFolder;
-        if (m_rNfcControl.readFolderFromTag(readFolder))
-        {
-            m_rMp3Control.playFolder(readFolder);
-        }
+        m_rNfcControl.readFolderFromTag(readFolder);
+        m_rMp3Control.playFolder(readFolder);
     }
 }
 
