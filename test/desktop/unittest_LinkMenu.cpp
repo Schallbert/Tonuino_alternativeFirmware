@@ -126,12 +126,6 @@ TEST_F(LinkMenuTest, confirmFolderIdAndPlayMode_isActive_returnsTrue)
     ASSERT_TRUE(linkMenu->isActive());
 }
 
-TEST_F(LinkMenuTest, noInit_setStatusLed_noStatusLedChangeRequested)
-{
-    EXPECT_CALL(m_powerManagerMock, setLinkMenu()).Times(0);
-    linkMenu->setStatusLed();
-}
-
 TEST_F(LinkMenuTest, entered_setStatusLed_statusLedSetTolinkMenu)
 {
     linkMenu->confirm();
@@ -148,15 +142,6 @@ TEST_F(LinkMenuTest, menuComplete_setStatusLed_statusLedChangeRequested)
     linkMenu->confirm(); // confirm playMode -->complete
 
     EXPECT_CALL(m_powerManagerMock, setLinkMenu());
-    linkMenu->setStatusLed();
-}
-
-TEST_F(LinkMenuTest, menuAbort_setStatusLed_noStatusLedChangeRequested)
-{
-    linkMenu->confirm();
-    linkMenu->abort();
-
-    EXPECT_CALL(m_powerManagerMock, setLinkMenu()).Times(0);
     linkMenu->setStatusLed();
 }
 

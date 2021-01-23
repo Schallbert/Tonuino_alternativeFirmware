@@ -50,10 +50,7 @@ void LinkMenu::selectPrev()
 
 void LinkMenu::setStatusLed()
 {
-    if (isActive())
-    {
         m_rPowerManager.setLinkMenu();
-    }
 }
 
 void LinkMenu::handlePlayback()

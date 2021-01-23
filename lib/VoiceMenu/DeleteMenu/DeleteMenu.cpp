@@ -43,10 +43,7 @@ void DeleteMenu::selectPrev()
 
 void DeleteMenu::setStatusLed()
 {
-    if (isActive())
-    {
         m_rPowerManager.setDeleteMenu();
-    }
 }
 
 void DeleteMenu::setTagState(Message::eMessageContent input)
