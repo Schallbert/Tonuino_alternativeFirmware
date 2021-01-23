@@ -29,7 +29,7 @@ void Loader::loop()
     static Tonuino tonuino{Tonuino(m_pUserInput, m_NfcControl, m_Mp3Control, m_VoiceMenu)}; // maybe add an init() for dependencies?
     tonuino.loop();
 
-    if (isShutdownRequested())
+    if (m_PwrCtrl.isShutdownRequested())
     {
         shutdown(); // shutdown System
     }
@@ -48,12 +48,6 @@ void Loader::notifyShutdown()
     m_Mp3Prompt.playPrompt(shutdown);
 }
 
-bool Loader::isShutdownRequested()
-{
-    //return (m_PwrCtrl.isShutdownRequested());
-    return false;
-}
-
 void Loader::timer1Task_1ms()
 {
     static volatile uint16_t ui16Ticks = 0;
@@ -64,7 +58,7 @@ void Loader::timer1Task_1ms()
     m_PwrCtrl.service1msLed();
 
     ++ui16Ticks;
-    if (ui16Ticks >= MS_TO_S) // 1ms --> 1s
+    if (ui16Ticks == MS_TO_S) // 1ms --> 1s
     {
         ui16Ticks = 0;
         timer1Task_1sec();
@@ -73,7 +67,7 @@ void Loader::timer1Task_1ms()
 
 void Loader::timer1Task_1sec()
 {
-    m_PwrCtrl.notify1sTimer(); // idle timer and LED behavior
+    m_PwrCtrl.notify1sTimer(); // idle timer
     m_LullabyeTimer.timerTick();
     m_MenuTimer.timerTick();
     m_DfMiniPromptTimer.timerTick();

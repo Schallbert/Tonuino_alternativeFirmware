@@ -42,14 +42,12 @@ public:
     void init();
     void loop(); // main loop. Read inputs, react and set outputs.
     void timer1Task_1ms();
-    void shutdown();
-
-    bool isShutdownRequested();
 
 private:
     void timer1Task_1sec();
     void notifyStartup();
     void notifyShutdown();
+    void shutdown();
 
 private:
     // Arduino Hardware Abstraction Layer
