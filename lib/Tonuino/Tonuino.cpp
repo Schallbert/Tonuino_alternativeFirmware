@@ -8,13 +8,12 @@ void Tonuino::loop()
     m_userRequest = m_pUserInput->getUserRequest();
     m_tagState = m_rNfcControl.getTagPresence();
 
-    if (handleVoiceMenu())
+    // VoiceMenu overrules "normal operation"
+    if (!handleVoiceMenu())
     {
-        return; // VoiceMenu overrules "normal operation"
+        handleTagInput();
+        handleMp3Playback();
     }
-
-    handleTagInput();
-    handleMp3Playback();
 }
 
 bool Tonuino::handleVoiceMenu()
