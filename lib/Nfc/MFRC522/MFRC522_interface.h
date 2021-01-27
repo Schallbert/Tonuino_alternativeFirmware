@@ -34,20 +34,23 @@ public:
     virtual void softPowerUp() = 0;
     // set tag to "sleep" and halt communication
     virtual void tagHalt() = 0;
+    // returns true ONCE when a "fresh" tag is detected
+    virtual bool setTagActive() = 0;
+    // returns true when the tag's unique ID was read successfully.
+    virtual bool getTagUid() = 0;
     // end communication with tag
     virtual void tagLogoff() = 0;
     // system supports multiple manufacturers and tag sizes
     virtual eTagType getTagType() = 0;
 
-    // Helper methods
-    // returns true ONCE when a "fresh" tag is detected
-    virtual bool isNewCardPresent() = 0;
     // returns true if a tag is detected
-    virtual bool isCardPresent() = 0;
+    virtual bool isTagPresent() = 0;
 
     // ------------------------------------------------------------------
     // BELOW METHODS ARE SPECIFIC AND DIFFER BETWEEN DIFFERENT TAG TYPES!
-    // authenticate NfcTag to reader, blockAddress selects memory sector to authenticate
+    // Make sure to call setTagActive() and getTagUid() before logging in.
+    // Then use tagLogin() NfcTag to reader, blockAddress selects memory sector to authenticate
+    // after that, Tag can be read or written.
     virtual bool tagLogin(byte blockAddress) = 0;
     // reads data from tag's specific block Address into buffer
     virtual bool tagRead(byte blockAddress, byte *buffer, byte bufferSize) = 0;

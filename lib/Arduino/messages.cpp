@@ -36,7 +36,7 @@ const char s_ctt31[] PROGMEM = "SD card online";
 const char s_ctt32[] PROGMEM = "SD card inserted";
 const char s_ctt33[] PROGMEM = "SD Card removed";
 const char s_ctt34[] PROGMEM = "Com Error";
-const char s_ctt35[] PROGMEM = "Mp3Player online";
+const char s_ctt35[] PROGMEM = "Init";
 
 
 const char s_ctt40[] PROGMEM = "No Tag";
@@ -44,7 +44,7 @@ const char s_ctt41[] PROGMEM = "Active Tag";
 const char s_ctt42[] PROGMEM = "New Tag";
 const char s_ctt43[] PROGMEM = "Unknown Tag";
 
-const char s_ctt50[] PROGMEM = "Tag Reader Init";
+const char s_ctt50[] PROGMEM = "Init";
 const char s_ctt51[] PROGMEM = "Tag Write Success";
 const char s_ctt52[] PROGMEM = "Tag Read Success";
 const char s_ctt53[] PROGMEM = "Tag write Error";

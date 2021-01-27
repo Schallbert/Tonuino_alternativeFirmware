@@ -8,32 +8,52 @@
 // Introduced for clarity and testability.
 class MFRC522_implementation : public MFRC522_interface
 {
-    public:
+public:
     MFRC522_implementation(){};
 
-    public:
-    void init() override { m_Mfrc522.PCD_Init(); };
+public:
+    void init() override
+    {
+        SPI.begin();
+        m_Mfrc522.PCD_Init();
+        m_Mfrc522.PCD_DumpVersionToSerial();
+    };
     void softPowerDown() override { m_Mfrc522.PCD_SoftPowerDown(); };
-	void softPowerUp() override { m_Mfrc522.PCD_SoftPowerUp(); };
-    bool tagLogin(byte blockAddress) override 
-    { return (m_Mfrc522.PCD_Authenticate(m_command, blockAddress, &m_key, &m_Mfrc522.uid) == MFRC522::STATUS_OK ); };
+    void softPowerUp() override { m_Mfrc522.PCD_SoftPowerUp(); };
+    bool getTagUid() override { return m_Mfrc522.PICC_ReadCardSerial(); };
+    bool tagLogin(byte blockAddress) override
+    {
+        return (m_Mfrc522.PCD_Authenticate(m_command, blockAddress, &m_key, &m_Mfrc522.uid) == MFRC522::STATUS_OK);
+    };
     void tagHalt() override { m_Mfrc522.PICC_HaltA(); };
     void tagLogoff() override { m_Mfrc522.PCD_StopCrypto1(); };
     eTagType getTagType() override { return static_cast<eTagType>(m_Mfrc522.PICC_GetType(m_Mfrc522.uid.sak)); }; // most likely cast needed
 
     bool tagRead(byte blockAddress, byte *buffer, byte bufferSize) override
-    { return (m_Mfrc522.MIFARE_Read(blockAddress, buffer, &bufferSize) == MFRC522::STATUS_OK); };
+    {
+        return (m_Mfrc522.MIFARE_Read(blockAddress, buffer, &bufferSize) == MFRC522::STATUS_OK);
+    };
     bool tagWrite(byte blockAddress, byte *buffer, byte bufferSize) override
-    { return (m_Mfrc522.MIFARE_Write(blockAddress, buffer, bufferSize) == MFRC522::STATUS_OK); };
+    {
+        return (m_Mfrc522.MIFARE_Write(blockAddress, buffer, bufferSize) == MFRC522::STATUS_OK);
+    };
 
-    bool isNewCardPresent() override { return m_Mfrc522.PICC_IsNewCardPresent(); };
-	bool isCardPresent() override { return m_Mfrc522.PICC_ReadCardSerial(); };
+    bool setTagActive() override { return m_Mfrc522.PICC_IsNewCardPresent(); };
+    bool isTagPresent() override
+    {
+        byte bufferATQA[2];
+        byte bufferSize = sizeof(bufferATQA);
+
+        MFRC522::StatusCode result = m_Mfrc522.PICC_WakeupA(bufferATQA, &bufferSize);
+        m_Mfrc522.PICC_HaltA();
+        return (result == MFRC522::STATUS_OK || result == MFRC522::STATUS_COLLISION);
+    };
 
 private:
     MFRC522 m_Mfrc522{MFRC522(SS_PIN, RST_PIN)};
     // Key and auth commands hardcoded to streamline interface
     MFRC522::MIFARE_Key m_key = {{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}}; // 6 byte key, factory default all set.
-    MFRC522::PICC_Command m_command{MFRC522::PICC_CMD_MF_AUTH_KEY_A}; // authentication command, hardcoded to Key A
+    MFRC522::PICC_Command m_command{MFRC522::PICC_CMD_MF_AUTH_KEY_A};   // authentication command, hardcoded to Key A
 };
 
 #endif //MFRC522_IMPLEMENTATION_H

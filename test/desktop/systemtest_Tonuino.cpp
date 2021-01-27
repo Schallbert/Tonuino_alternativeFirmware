@@ -113,8 +113,8 @@ protected:
 TEST_F(SystemTest, NewKnownTag_noUserInput_playsFolder)
 {
     // Should return "NEWKNOWNTAG" on MIFARE_1k, will respond with fake tag on read() call.
-    ON_CALL(m_Mfrc522Mock, isCardPresent()).WillByDefault(Return(true));
-    ON_CALL(m_Mfrc522Mock, isNewCardPresent()).WillByDefault(Return(true));
+    ON_CALL(m_Mfrc522Mock, isTagPresent()).WillByDefault(Return(true));
+    ON_CALL(m_Mfrc522Mock, setTagActive()).WillByDefault(Return(true));
     ON_CALL(m_Mfrc522Mock, tagLogin(_)).WillByDefault(Return(true));
     ON_CALL(m_Mfrc522Mock, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     ON_CALL(m_DfMiniMp3Mock, getFolderTrackCount(_)).WillByDefault(Return(5));
@@ -136,7 +136,7 @@ TEST_F(SystemTest, PlayerPlaying_setsLedState)
 TEST_F(SystemTest, NoTag_ppLongPress_playsHelp)
 {
     // Should return "NOTAG"
-    ON_CALL(m_Mfrc522Mock, isCardPresent()).WillByDefault(Return(false));
+    ON_CALL(m_Mfrc522Mock, isTagPresent()).WillByDefault(Return(false));
     ON_CALL(m_UserInputMock, getUserRequest()).WillByDefault(Return(UserInput_interface::PP_LONGPRESS));
 
     VoicePrompt expectedPrompt{VoicePrompt(VoicePrompt::MSG_HELP, true)};
@@ -146,8 +146,8 @@ TEST_F(SystemTest, NoTag_ppLongPress_playsHelp)
 
 TEST_F(SystemTest, NewUnknownTag_InvokesLinkMenu)
 {
-    ON_CALL(m_Mfrc522Mock, isCardPresent()).WillByDefault(Return(true));
-    ON_CALL(m_Mfrc522Mock, isNewCardPresent()).WillByDefault(Return(true));
+    ON_CALL(m_Mfrc522Mock, isTagPresent()).WillByDefault(Return(true));
+    ON_CALL(m_Mfrc522Mock, setTagActive()).WillByDefault(Return(true));
     ON_CALL(m_Mfrc522Mock, tagLogin(_)).WillByDefault(Return(true));
     ON_CALL(m_Mfrc522Mock, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     // No delegate to fake, thus folder data will be empty and Tag should be set to UNKNOWN
@@ -162,8 +162,8 @@ TEST_F(SystemTest, NewUnknownTag_InvokesLinkMenu)
 TEST_F(SystemTest, ActiveTag_ppLongPress_InvokesDeleteMenu)
 {
     // Should return "KNOWNTAG" on MIFARE_1k, will respond with fake tag on read() call.
-    ON_CALL(m_Mfrc522Mock, isCardPresent()).WillByDefault(Return(true));
-    ON_CALL(m_Mfrc522Mock, isNewCardPresent()).WillByDefault(Return(false));
+    ON_CALL(m_Mfrc522Mock, isTagPresent()).WillByDefault(Return(true));
+    ON_CALL(m_Mfrc522Mock, setTagActive()).WillByDefault(Return(false));
     ON_CALL(m_Mfrc522Mock, tagLogin(_)).WillByDefault(Return(true));
     ON_CALL(m_Mfrc522Mock, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     m_Mfrc522Mock.DelegateToFakeMini1k4k();
@@ -179,8 +179,8 @@ TEST_F(SystemTest, ActiveTag_ppLongPress_InvokesDeleteMenu)
 
 TEST_F(SystemTest, VoiceMenuActive_blocksNormalPlayback)
 {
-    ON_CALL(m_Mfrc522Mock, isCardPresent()).WillByDefault(Return(true));
-    ON_CALL(m_Mfrc522Mock, isNewCardPresent()).WillByDefault(Return(true));
+    ON_CALL(m_Mfrc522Mock, isTagPresent()).WillByDefault(Return(true));
+    ON_CALL(m_Mfrc522Mock, setTagActive()).WillByDefault(Return(true));
     ON_CALL(m_Mfrc522Mock, tagLogin(_)).WillByDefault(Return(true));
     ON_CALL(m_Mfrc522Mock, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     // No delegate to fake, thus folder data will be empty and Tag should be set to UNKNOWN

@@ -11,10 +11,10 @@ void Nfc_implementation::initNfc()
 Message::eMessageContent Nfc_implementation::getTagPresence()
 {
     Message::eMessageContent returnValue{Message::NOTAG};
-    if (m_rMfrc522.isCardPresent())
+    if (m_rMfrc522.isTagPresent())
     {
         // A card is present!
-        if (!m_rMfrc522.isNewCardPresent())
+        if (!m_rMfrc522.setTagActive())
         {
             returnValue = Message::ACTIVETAG;
         }
@@ -77,8 +77,10 @@ void Nfc_implementation::setTagOffline()
 bool Nfc_implementation::setTagOnline()
 {
     bool status{true};
-    // Try reading card
-    status &= m_rMfrc522.isCardPresent();
+    // Try to set card active, obtain Id and type
+    status &= m_rMfrc522.isTagPresent();
+    status &= m_rMfrc522.setTagActive();
+    status &= m_rMfrc522.getTagUid();
     m_pConcreteTag = m_NfcTagFactory.getInstance(m_rMfrc522);
     status &= (m_pConcreteTag != nullptr); // Not implemented if factory cannot respond OK
     printNotification(status, Message::ONLINE, Message::ERRORTYPE);

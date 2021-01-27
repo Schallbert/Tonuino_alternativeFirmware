@@ -40,6 +40,7 @@ public:
     void init() override { return; };
     void softPowerDown() override { return; };
 	void softPowerUp() override { return; };
+    bool getTagUid() override { return false; };
     bool tagLogin(byte blockAddress) override 
     { return false; };
     void tagHalt() override { return; };
@@ -47,8 +48,8 @@ public:
     eTagType getTagType() override { return MFRC522_interface::PICC_TYPE_UNKNOWN; };
     bool tagRead(byte blockAddress, byte *buffer, byte bufferSize) override;
     bool tagWrite(byte blockAddress, byte *buffer, byte bufferSize) override { return true; };
-    bool isNewCardPresent() override { return false; };
-	bool isCardPresent() override { return true; };
+    bool setTagActive() override { return false; };
+	bool isTagPresent() override { return true; };
 };
 
 class Fake_MFRC522_MifareUltralight : public MFRC522_interface
@@ -57,6 +58,7 @@ public:
     void init() override { return; };
     void softPowerDown() override { return; };
 	void softPowerUp() override { return; };
+     bool getTagUid() override { return false; };
     bool tagLogin(byte blockAddress) override 
     { return false; };
     void tagHalt() override { return; };
@@ -64,8 +66,8 @@ public:
     eTagType getTagType() override { return MFRC522_interface::PICC_TYPE_UNKNOWN; };
     bool tagRead(byte blockAddress, byte *buffer, byte bufferSize) override;
     bool tagWrite(byte blockAddress, byte *buffer, byte bufferSize) override { return true; };
-    bool isNewCardPresent() override { return false; };
-	bool isCardPresent() override { return true; };
+    bool setTagActive() override { return false; };
+	bool isTagPresent() override { return true; };
 };
 
 // MOCKS
@@ -109,8 +111,9 @@ public:
     MOCK_METHOD(void, tagHalt, (), (override));
     MOCK_METHOD(void, tagLogoff, (), (override));
     MOCK_METHOD(MFRC522_interface::eTagType, getTagType, (), (override));
-    MOCK_METHOD(bool, isNewCardPresent, (), (override));
-    MOCK_METHOD(bool, isCardPresent, (), (override));
+    MOCK_METHOD(bool, setTagActive, (), (override));
+    MOCK_METHOD(bool, getTagUid, (),  (override));
+    MOCK_METHOD(bool, isTagPresent, (), (override));
     MOCK_METHOD(bool, tagLogin, (byte blockAddress), (override));
     MOCK_METHOD(bool, tagRead, (byte blockAddress, byte *buffer, byte bufferSize), (override));
     MOCK_METHOD(bool, tagWrite, (byte blockAddress, byte *buffer, byte bufferSize), (override));
