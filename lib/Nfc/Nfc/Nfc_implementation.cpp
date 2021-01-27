@@ -13,19 +13,19 @@ Message::eMessageContent Nfc_implementation::getTagPresence()
     Message::eMessageContent returnValue{Message::NOTAG};
     if (m_rMfrc522.isTagPresent())
     {
-        // A card is present!
-        if (!m_rMfrc522.setTagActive())
+        if (m_wasTagPresent)
         {
             returnValue = Message::ACTIVETAG;
         }
         else
         {
-            // New card detected: runs once as new card is automatically set to ActiveCard
-            if (setTagOnline())
-            {
-                returnValue = Message::UNKNOWNTAG; // assume tag is unknown
-            }
+            returnValue = Message::UNKNOWNTAG; // New tag, assume it is unknown
+            m_wasTagPresent = true;
         }
+    }
+    else
+    {
+        m_wasTagPresent = false;
     }
     return returnValue;
 }

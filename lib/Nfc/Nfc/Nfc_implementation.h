@@ -38,5 +38,7 @@ private:
 
     NfcTag_factory m_NfcTagFactory;
     NfcTag_interface *m_pConcreteTag{nullptr};
+
+    bool m_wasTagPresent{false};
 };
 #endif // NFC_IMPLEMENTATION_H
