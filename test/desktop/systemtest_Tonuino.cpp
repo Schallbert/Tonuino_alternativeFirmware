@@ -115,6 +115,7 @@ TEST_F(SystemTest, NewKnownTag_noUserInput_playsFolder)
     // Should return "NEWKNOWNTAG" on MIFARE_1k, will respond with fake tag on read() call.
     ON_CALL(m_Mfrc522Mock, isTagPresent()).WillByDefault(Return(true));
     ON_CALL(m_Mfrc522Mock, setTagActive()).WillByDefault(Return(true));
+    ON_CALL(m_Mfrc522Mock, getTagUid()).WillByDefault(Return(true));
     ON_CALL(m_Mfrc522Mock, tagLogin(_)).WillByDefault(Return(true));
     ON_CALL(m_Mfrc522Mock, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     ON_CALL(m_DfMiniMp3Mock, getFolderTrackCount(_)).WillByDefault(Return(5));
@@ -144,10 +145,27 @@ TEST_F(SystemTest, NoTag_ppLongPress_playsHelp)
     m_pTonuino->loop();
 }
 
+TEST_F(SystemTest, NewKnownTag_WontInvokeLinkMenu)
+{
+    ON_CALL(m_Mfrc522Mock, isTagPresent()).WillByDefault(Return(true));
+    ON_CALL(m_Mfrc522Mock, setTagActive()).WillByDefault(Return(true));
+    ON_CALL(m_Mfrc522Mock, getTagUid()).WillByDefault(Return(true));
+    ON_CALL(m_Mfrc522Mock, tagLogin(_)).WillByDefault(Return(true));
+    ON_CALL(m_Mfrc522Mock, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
+    m_Mfrc522Mock.DelegateToFakeMini1k4k(); // Should default to "known TAG"
+    ON_CALL(m_DfMiniMp3Mock, getFolderTrackCount(_)).WillByDefault(Return(5));
+
+    m_pTonuino->loop(); // Will not enter Link Menu
+
+    EXPECT_CALL(m_DfMiniMp3Mock, isPlaying());
+    m_pTonuino->loop(); // Thus, won't block normal operation
+}
+
 TEST_F(SystemTest, NewUnknownTag_InvokesLinkMenu)
 {
     ON_CALL(m_Mfrc522Mock, isTagPresent()).WillByDefault(Return(true));
     ON_CALL(m_Mfrc522Mock, setTagActive()).WillByDefault(Return(true));
+    ON_CALL(m_Mfrc522Mock, getTagUid()).WillByDefault(Return(true));
     ON_CALL(m_Mfrc522Mock, tagLogin(_)).WillByDefault(Return(true));
     ON_CALL(m_Mfrc522Mock, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     // No delegate to fake, thus folder data will be empty and Tag should be set to UNKNOWN
@@ -163,14 +181,16 @@ TEST_F(SystemTest, ActiveTag_ppLongPress_InvokesDeleteMenu)
 {
     // Should return "KNOWNTAG" on MIFARE_1k, will respond with fake tag on read() call.
     ON_CALL(m_Mfrc522Mock, isTagPresent()).WillByDefault(Return(true));
-    ON_CALL(m_Mfrc522Mock, setTagActive()).WillByDefault(Return(false));
+    ON_CALL(m_Mfrc522Mock, setTagActive()).WillByDefault(Return(true));
+    ON_CALL(m_Mfrc522Mock, getTagUid()).WillByDefault(Return(true));
     ON_CALL(m_Mfrc522Mock, tagLogin(_)).WillByDefault(Return(true));
     ON_CALL(m_Mfrc522Mock, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
-    m_Mfrc522Mock.DelegateToFakeMini1k4k();
+    m_Mfrc522Mock.DelegateToFakeMini1k4k(); // Should default to "known TAG"
     ON_CALL(m_DfMiniMp3Mock, getFolderTrackCount(_)).WillByDefault(Return(5));
     ON_CALL(m_UserInputMock, getUserRequest()).WillByDefault(Return(UserInput_interface::PP_LONGPRESS));
 
-    m_pTonuino->loop(); // enters Delete Menu
+    m_pTonuino->loop(); // New Tag detected
+    m_pTonuino->loop(); // Active Tag, enters Delete Menu
     ON_CALL(m_UserInputMock, getUserRequest()).WillByDefault(Return(UserInput_interface::NO_ACTION));
     VoicePrompt expectedPrompt{VoicePrompt(VoicePrompt::MSG_DELETETAG, true)};
     EXPECT_CALL(m_Mp3PromptMock, playPrompt(expectedPrompt));
@@ -181,6 +201,7 @@ TEST_F(SystemTest, VoiceMenuActive_blocksNormalPlayback)
 {
     ON_CALL(m_Mfrc522Mock, isTagPresent()).WillByDefault(Return(true));
     ON_CALL(m_Mfrc522Mock, setTagActive()).WillByDefault(Return(true));
+    ON_CALL(m_Mfrc522Mock, getTagUid()).WillByDefault(Return(true));
     ON_CALL(m_Mfrc522Mock, tagLogin(_)).WillByDefault(Return(true));
     ON_CALL(m_Mfrc522Mock, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     // No delegate to fake, thus folder data will be empty and Tag should be set to UNKNOWN
@@ -190,5 +211,3 @@ TEST_F(SystemTest, VoiceMenuActive_blocksNormalPlayback)
     EXPECT_CALL(m_DfMiniMp3Mock, isPlaying()).Times(0);
     m_pTonuino->loop(); // once entered, VoiceMenu will block playback
 }
-
-// m_MessageHandlerMock.printMessageIdToConsole();
