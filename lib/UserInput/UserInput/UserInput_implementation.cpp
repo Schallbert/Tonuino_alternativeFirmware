@@ -5,27 +5,38 @@
 
 void UserInput_ClickEncoder::userinputServiceIsr()
 {
-    m_Encoder.service();
+    m_rEncoder.service();
 }
 
-UserInput_interface::eUserRequest UserInput_ClickEncoder::getUserRequest()
+Message::eMessageContent UserInput_ClickEncoder::getUserRequest()
 {
     //Poll for current encoder position and button state
     userinputRefresh();
 
     if (buttonState == ClickEncoder_interface::DoubleClicked)
     {
-        UserInput_interface::userInputLocked = !UserInput_interface::userInputLocked; // Doubleclick: lock buttons
+        if (UserInput_interface::userInputLocked)
+        {
+            UserInput_interface::userInputLocked = false;
+            VoicePrompt locked{VoicePrompt::MSG_BUTTONFREE, true};
+            m_rPrompt.playPrompt(locked);
+        }
+        else
+        {
+            UserInput_interface::userInputLocked = true;
+            VoicePrompt unlocked{VoicePrompt::MSG_BUTTONLOCK, true};
+            m_rPrompt.playPrompt(unlocked);
+        }
     }
 
     if (UserInput_interface::userInputLocked)
     {
-        return NO_ACTION;
+        return Message::INLOCK;
     }
 
     if (buttonState == ClickEncoder_interface::Clicked)
     {
-        return PLAY_PAUSE;
+        return Message::INPLPS;
     }
 
     if (encoderDiff > 0) // TODO: Check in INTEGRATION TEST if this really is a good idea. Alternative: take position.
@@ -34,11 +45,11 @@ UserInput_interface::eUserRequest UserInput_ClickEncoder::getUserRequest()
         if (buttonState == ClickEncoder_interface::Pressed ||
             buttonState == ClickEncoder_interface::Held)
         {
-            return INC_VOLUME; //while button was pressed/held: volume up
+            return Message::INNEXTLP;
         }
         else
         {
-            return NEXT_TRACK; //no button press: next track
+            return Message::INNEXT;
         }
     }
 
@@ -48,30 +59,30 @@ UserInput_interface::eUserRequest UserInput_ClickEncoder::getUserRequest()
         if (buttonState == ClickEncoder_interface::Pressed ||
             buttonState == ClickEncoder_interface::Held)
         {
-            return DEC_VOLUME; //while button was pressed/held: volume up
+            return Message::INPREVLP;
         }
         else
         {
-            return PREV_TRACK; //no button press: next track
+            return Message::INPREV;
         }
     }
 
     if (buttonState == ClickEncoder_interface::Held)
     {
         // Button held but not turned
-        return PP_LONGPRESS;
+        return Message::INPLPSLP;
     }
 
-    return NO_ACTION;
+    return Message::INNONE;
 }
 
 void UserInput_ClickEncoder::userinputRefresh()
 {
 
     //Get values from encoder
-    encoderDiff = m_Encoder.getValue(); // diff to last "getValue" call
+    encoderDiff = m_rEncoder.getValue(); // diff to last "getValue" call
     encoderPosition += encoderDiff;
-    buttonState = m_Encoder.getButton();
+    buttonState = m_rEncoder.getButton();
 }
 
 // USERINPUT___CLICKENCODER ---------------------------------------------------------------
@@ -86,52 +97,63 @@ void UserInput_3Buttons::userinputServiceIsr()
     m_PrevButton.service();
 }
 
-UserInput_interface::eUserRequest UserInput_3Buttons::getUserRequest()
+Message::eMessageContent UserInput_3Buttons::getUserRequest()
 {
     //Get current button's states
     userinputRefresh();
 
     if (buttonStates.plpsButton == Encoder_longPressRepeat::DoubleClicked)
     {
-        UserInput_interface::userInputLocked = !UserInput_interface::userInputLocked;
+        if (UserInput_interface::userInputLocked)
+        {
+            UserInput_interface::userInputLocked = false;
+            VoicePrompt locked{VoicePrompt::MSG_BUTTONFREE, true};
+            m_rPrompt.playPrompt(locked);
+        }
+        else
+        {
+            UserInput_interface::userInputLocked = true;
+            VoicePrompt unlocked{VoicePrompt::MSG_BUTTONLOCK, true};
+            m_rPrompt.playPrompt(unlocked);
+        }
     }
 
     if (UserInput_interface::userInputLocked)
     {
-        return NO_ACTION;
+        return Message::INLOCK;
     }
 
     if (buttonStates.plpsButton == Encoder_longPressRepeat::Clicked)
     {
-        return PLAY_PAUSE;
+        return Message::INPLPS;
     }
     else if (buttonStates.plpsButton == Encoder_longPressRepeat::Held ||
              buttonStates.plpsButton == Encoder_longPressRepeat::LongPressRepeat)
     {
-        return PP_LONGPRESS;
+        return Message::INPLPSLP;
     }
 
     // --- Next button handler --------------------------------------
     if (buttonStates.nextButton == Encoder_longPressRepeat::Clicked)
     {
-        return NEXT_TRACK;
+        return Message::INNEXT;
     }
     else if (buttonStates.nextButton == Encoder_longPressRepeat::LongPressRepeat)
     {
-        return INC_VOLUME;
+        return Message::INNEXTLP;
     }
 
     // --- Previous button handler ----------------------------------
     if (buttonStates.prevButton == Encoder_longPressRepeat::Clicked)
     {
-        return PREV_TRACK;
+       return Message::INPREV;
     }
     else if (buttonStates.prevButton == Encoder_longPressRepeat::LongPressRepeat)
     {
-        return DEC_VOLUME;
+        return Message::INPREVLP;
     }
 
-    return NO_ACTION;
+    return Message::INNONE;
 }
 
 void UserInput_3Buttons::userinputRefresh()

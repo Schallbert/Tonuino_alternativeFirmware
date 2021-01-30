@@ -1,6 +1,8 @@
 #ifndef USERINPUT_INTERFACE_H
 #define USERINPUT_INTERFACE_H
 
+#include "Messages_interface.h"
+
 class UserInput_interface
 {
     //Interface class of UserInput implementation
@@ -10,25 +12,13 @@ class UserInput_interface
         This interface is set up to make the main program independent of
         the physical implementation of the user input.
     */
-public:
-    enum eUserRequest
-    {
-        NO_ACTION = 0,
-        PLAY_PAUSE,
-        PP_LONGPRESS,
-        NEXT_TRACK,
-        PREV_TRACK,
-        INC_VOLUME,
-        DEC_VOLUME,
-        NUMBER_OF_REQUESTS = 7
-    };
 
 protected:
     bool userInputLocked{false};
 
 public:
     virtual ~UserInput_interface(){};
-    virtual eUserRequest getUserRequest() = 0; // returns user's request to main program
+    virtual Message::eMessageContent getUserRequest() = 0; // returns user's request to main program
     virtual void userinputServiceIsr() = 0;  // recurring task to poll UserInput's connected hardware
 }; // UserInput
 

@@ -3,9 +3,9 @@
 
 void Nfc_implementation::initNfc()
 {
-    m_rMfrc522.init(); // Init MFRC522
     Message init{Message(Message::READERINIT)};
     m_rMessageHandler.printMessage(init);
+    m_rMfrc522.init(); // Init MFRC522
 }
 
 Message::eMessageContent Nfc_implementation::getTagPresence()

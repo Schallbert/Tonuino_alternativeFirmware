@@ -13,11 +13,13 @@ public:
         MSG_ERROR_CARDREAD = 411,
         MSG_ERROR_FOLDER = 412,
         MSG_ERROR_TOOMANYTRACKS = 413, // TODO: Record prompt
+        MSG_BUTTONLOCK = 420, // TODO: Record buttonlock prompt
+        MSG_BUTTONFREE = 421, // TODO: Record buttonUnlock prompt
         MSG_STARTUP = 500,
         MSG_SHUTDOWN = 501,
         MSG_SELECT_FOLDERID = 300,
         MSG_SELECT_PLAYMODE = 400,
-        MSG_HELP = 420, // TODO HOW TO SELECT UserINput variant?
+        MSG_HELP = 420, // TODO HOW TO SELECT UserInput variant?
         MSG_TAGCONFSUCCESS = 702,
         MSG_DELETETAG = 700,
         MSG_CONFIRM_DELETION = 701,

@@ -2,11 +2,11 @@
 #define MENU_IMPLEMENTATION_H
 
 #include "Menu_interface.h"
+#include "MessageHandler_interface.h"
 
 class NfcControl_interface;
 class Mp3Play_interface;
 class Mp3Prompt_interface;
-class MessageHander_interface;
 class PowerManager_interface;
 
 class Menu_factory

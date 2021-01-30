@@ -58,15 +58,25 @@ public:
         MODERANDOM = 0x62,
         MODESAVEPROGRESS = 0x63,
         MODEONETRACKONLY = 0x64,
-        LASTVALIDMESSAGE = 0x6F
+        INNONE = 0x70,
+        INPLPS = 0x71,
+        INPLPSLP = 0x72,
+        INNEXT = 0x73,
+        INNEXTLP = 0x74,
+        INPREV = 0x75,
+        INPREVLP = 0x76,
+        INLOCK = 0x77,
+        LASTVALIDMESSAGE = 0x7F
     };
+
+    static const uint8_t IN_REQUEST_OPTIONS{8}; // number of user input messages, KEEP UP TO DATE WITH eMessageContent::INxxxx
 
 public:
     // Constructors convert bitcoded types into base values: Groups 0x00 - 0x0F, Messages 0x00 - 0xFF
     explicit Message(eMessageContent contents) : m_contents(static_cast<uint8_t>(contents)){};
     Message(eMessageGroup group, uint8_t offset) : m_contents(group | offset){};
     ~Message() = default;
-    
+
     bool operator==(Message const &message) const
     {
         return (message.getContents() == m_contents);

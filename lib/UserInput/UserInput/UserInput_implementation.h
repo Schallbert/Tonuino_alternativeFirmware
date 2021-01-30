@@ -1,6 +1,8 @@
 #ifndef USERINPUT_IMPLEMENTATION_H
 #define USERINPUT_IMPLEMENTATION_H
 
+#include "Mp3Prompt/Mp3Prompt_interface.h"
+
 #include "../UserInput/UserInput_interface.h"
 #include "ClickEncoder_Abstraction/ClickEncoder_interface.h"
 #include "ClickEncoder_Abstraction/ClickEncoder_supportsLongPress.h"
@@ -18,27 +20,29 @@ class UserInput_ClickEncoder : public UserInput_interface
 
 public:
     // pinA, pinB, pinButton are the pins of the encoder that are connected to the uC.
-    explicit UserInput_ClickEncoder(ClickEncoder_interface &Encoder) : m_Encoder(Encoder)
+    explicit UserInput_ClickEncoder(ClickEncoder_interface &rEncoder,
+                                    Mp3Prompt_interface &rPrompt) : m_rEncoder(rEncoder),
+                                                                                m_rPrompt(rPrompt)
     {
-        m_Encoder.setAccelerationEnabled(false);
-        m_Encoder.setDoubleClickEnabled(true);
+        m_rEncoder.setAccelerationEnabled(false);
+        m_rEncoder.setDoubleClickEnabled(true);
     };
     ~UserInput_ClickEncoder() = default;
 
     void userinputServiceIsr() override;
-    eUserRequest getUserRequest() override;
+    Message::eMessageContent getUserRequest() override;
 
 private:
     void userinputRefresh(); // refreshes button status to UserInput class
 
 private:
-    ClickEncoder_interface &m_Encoder;
+    ClickEncoder_interface &m_rEncoder;
+    Mp3Prompt_interface &m_rPrompt;
 
     volatile int16_t encoderPosition{0};
     volatile int16_t encoderDiff{0};
     ClickEncoder_interface::eButtonState buttonState{ClickEncoder_interface::Open};
 }; // UserInput_ClickEncoder
-
 
 class UserInput_3Buttons : public UserInput_interface
 {
@@ -63,21 +67,24 @@ public:
     UserInput_3Buttons(ClickEncoder_interface &PlPsButton,
                        ClickEncoder_interface &NextButton,
                        ClickEncoder_interface &PrevButton,
+                       Mp3Prompt_interface &rPrompt,
                        const uint16_t &longPressRepeatInterval) : m_PlpsButton{Encoder_longPressRepeat(PlPsButton, longPressRepeatInterval)},
                                                                   m_NextButton{Encoder_longPressRepeat(NextButton, longPressRepeatInterval)},
-                                                                  m_PrevButton{Encoder_longPressRepeat(PrevButton, longPressRepeatInterval)}
+                                                                  m_PrevButton{Encoder_longPressRepeat(PrevButton, longPressRepeatInterval)},
+                                                                  m_rPrompt(rPrompt)
+
     {
         m_PlpsButton.setAccelerationEnabled(false);
         m_PlpsButton.setDoubleClickEnabled(true);
         m_NextButton.setAccelerationEnabled(false);
-        m_NextButton.setDoubleClickEnabled(true);
+        m_NextButton.setDoubleClickEnabled(false);
         m_PrevButton.setAccelerationEnabled(false);
-        m_PrevButton.setDoubleClickEnabled(true);
+        m_PrevButton.setDoubleClickEnabled(false);
     };
     ~UserInput_3Buttons() = default;
 
     void userinputServiceIsr(void) override;
-    eUserRequest getUserRequest() override;
+    Message::eMessageContent getUserRequest() override;
 
 private:
     void userinputRefresh();
@@ -86,6 +93,8 @@ private:
     Encoder_longPressRepeat m_PlpsButton;
     Encoder_longPressRepeat m_NextButton;
     Encoder_longPressRepeat m_PrevButton;
+    Mp3Prompt_interface &m_rPrompt;
+
     ButtonStates buttonStates;
 }; // UserInput_3Buttons
 

@@ -3,7 +3,7 @@
 
 #include "ClickEncoder_interface.h"
 
-/* This class enhances ClickEncoder by a longPress and longPressRepeat detection
+/* This class enhances ClickEncoder by a longPressRepeat detection
     LongPressRepeat will periodically be set to enable button quick increment behavior
 */
 class Encoder_longPressRepeat
