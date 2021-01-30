@@ -10,7 +10,6 @@
 #include "Mp3Prompt/Mp3Prompt_interface.h"
 #include "../Nfc/NfcControl/NfcControl_interface.h"
 #include "../PowerManager/PowerManager_interface.h"
-#include "../MessageHandler/MessageHandler_interface.h"
 
 class Folder;
 
@@ -32,7 +31,7 @@ public:
                                                        m_rMessageHandler(rMsgHandler){};
     ~Mp3Control() = default;
 
-    void setUserInput(UserInput_interface::eUserRequest input) override;
+    void setUserInput(Message::eMessageContent input) override;
     void loop() override;
     void playFolder(Folder &folder) override;
 
@@ -59,7 +58,7 @@ private:
     PowerManager_interface &m_rPowerManager;
     MessageHander_interface &m_rMessageHandler;
 
-    UserInput_interface::eUserRequest m_userInput{UserInput_interface::NO_ACTION};
+    Message::eMessageContent m_userInput{Message::INNONE};
     Message::eMessageContent m_tagState{Message::NOTAG};
     typedef void (Mp3Control::*dispatcher)(); // table of function pointers
 };

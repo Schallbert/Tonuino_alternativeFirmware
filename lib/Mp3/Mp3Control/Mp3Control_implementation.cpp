@@ -4,7 +4,7 @@
 #include "../Utilities/SimpleTimer/SimpleTimer.h"
 #include "../Folder/Folder.h"
 
-void Mp3Control::setUserInput(UserInput_interface::eUserRequest input)
+void Mp3Control::setUserInput(Message::eMessageContent input)
 {
     m_userInput = input;
 }
@@ -25,11 +25,12 @@ void Mp3Control::loop()
 void Mp3Control::handleUserInput()
 {
     // initialize array of function pointers to address state-event transitions
+    // Order MUST be inline with INxxx of Message
+    
     typedef Mp3Control PC;
-    static const dispatcher dispatchTable[UserInput_interface::NUMBER_OF_REQUESTS] =
+    static const dispatcher dispatchTable[Message::IN_REQUEST_OPTIONS] =
         {
-            //NOAC,     PL_PS,     PP_LP,     NEXT_,     PREV_,     INC_V,     DEC_V,
-            &PC::none, &PC::plPs, &PC::help, &PC::next, &PC::prev, &PC::incV, &PC::decV // NOTAG / ACTIVETAG
+            &PC::none, &PC::plPs, &PC::help, &PC::next, &PC::incV, &PC::prev, &PC::decV, &PC::none
         };
     dispatcher dispatchExecutor = dispatchTable[m_userInput];
     (this->*dispatchExecutor)();

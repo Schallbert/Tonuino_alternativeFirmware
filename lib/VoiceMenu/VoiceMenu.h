@@ -1,7 +1,6 @@
 #ifndef VOICEMENU_H
 #define VOICEMENU_H
 
-#include "UserInput/UserInput_interface.h"
 #include "Menu_factory.h"
 #include "Menu_interface.h"
 
@@ -29,7 +28,7 @@ public:
     ~VoiceMenu() = default;
 
 public:
-    void setUserInput(UserInput_interface::eUserRequest input);
+    void setUserInput(Message::eMessageContent input);
     void setTagState(Message::eMessageContent input);
     bool isActive();
     void loop();
@@ -61,7 +60,7 @@ private:
 
     typedef void (VoiceMenu::*dispatcher)(); // table of function pointers
 
-    UserInput_interface::eUserRequest m_userInput{UserInput_interface::NO_ACTION};
+    Message::eMessageContent m_userInput{Message::INNONE};
     Message::eMessageContent m_tagState{Message::NOTAG};
 
     Menu_factory m_MenuFactory;

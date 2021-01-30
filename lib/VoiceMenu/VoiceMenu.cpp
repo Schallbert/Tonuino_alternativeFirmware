@@ -3,7 +3,7 @@
 
 #include "VoiceMenu.h"
 
-void VoiceMenu::setUserInput(UserInput_interface::eUserRequest input)
+void VoiceMenu::setUserInput(Message::eMessageContent input)
 {
     m_userInput = input;
 }
@@ -67,7 +67,7 @@ void VoiceMenu::enterMenu()
 void VoiceMenu::checkEnterDeleteMenu()
 {
     if ((m_tagState == Message::ACTIVETAG) &&
-        (m_userInput == UserInput_interface::PP_LONGPRESS))
+        (m_userInput == Message::INPLPSLP))
     {
         m_pMenuInstance = m_MenuFactory.getInstance(Menu_factory::DELETE_MENU,
                                                     m_rNfcControl,
@@ -101,10 +101,9 @@ bool VoiceMenu::isComplete()
 void VoiceMenu::dispatchInputs()
 {
     typedef VoiceMenu VM;
-    static const dispatcher dispatchTable[UserInput_interface::NUMBER_OF_REQUESTS] =
+    static const dispatcher dispatchTable[Message::IN_REQUEST_OPTIONS] =
         {
-            //NOAC,     PL_PS,     PP_LP,     NEXT_,     PREV_,     INC_V,     DEC_V,
-            &VM::none, &VM::conf, &VM::abrt, &VM::next, &VM::prev, &VM::none, &VM::none};
+            &VM::none, &VM::conf, &VM::abrt, &VM::next, &VM::none, &VM::prev, &VM::none, &VM::none};
     dispatcher dispatchExecutor = dispatchTable[m_userInput];
     (this->*dispatchExecutor)();
 }
