@@ -9,19 +9,6 @@
 class Encoder_longPressRepeat
 {
 public:
-    enum eButtonState
-    {
-        Open = 0,
-        Closed,
-        Pressed,
-        Held,
-        Released,
-        Clicked,
-        DoubleClicked,
-        LongPressRepeat
-    };
-
-public:
     Encoder_longPressRepeat(ClickEncoder_interface &rEncoder,
                             const uint16_t &ui16longPressRepeatInterval) : m_rEncoder(rEncoder),
                                                                            m_ui16longPressRepeatInterval(ui16longPressRepeatInterval){};
@@ -41,16 +28,16 @@ public:
         }
     }
 
-    eButtonState getButton()
+    ClickEncoder_interface::eButtonState getButton()
     {
-        eButtonState buttonState = Open;
-        buttonState = static_cast<eButtonState>(m_rEncoder.getButton());
-        if (buttonState == Held &&
+        ClickEncoder_interface::eButtonState buttonState{ClickEncoder_interface::Open};
+        buttonState = m_rEncoder.getButton();
+        if (buttonState == ClickEncoder_interface::Held &&
             m_ui16longPressRepeatInterval > 0)
         {
             if (m_ui16ButtonHeldTicks > m_ui16longPressRepeatInterval)
             {
-                buttonState = LongPressRepeat;
+                buttonState = ClickEncoder_interface::LongPressRepeat;
                 m_ui16ButtonHeldTicks = 0;
             }
         }
@@ -74,8 +61,8 @@ public:
 
 private:
     ClickEncoder_interface &m_rEncoder;
-    const uint16_t &m_ui16longPressRepeatInterval;  // tick level to detect long press repeat
-    volatile uint16_t m_ui16ButtonHeldTicks{0}; // tick counter for long press and repeat long press detection
+    const uint16_t &m_ui16longPressRepeatInterval; // tick level to detect long press repeat
+    volatile uint16_t m_ui16ButtonHeldTicks{0};    // tick counter for long press and repeat long press detection
 };
 
 #endif // CLICKENCODER_SUPPORTSLONGPRESS_H

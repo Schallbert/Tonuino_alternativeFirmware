@@ -6,11 +6,14 @@
 void Loader::init()
 {
     // Timers must be initialized and started by now!
-    m_ArduinoHal.getSerial().com_begin(DEBUGSERIAL_BAUDRATE);
+    if(DEBUGSERIAL)
+    { 
+            m_ArduinoHal.getSerial().com_begin(DEBUGSERIAL_BAUDRATE);
+    }
     m_NfcControl.init();
     m_Mp3Play.init();
     m_PwrCtrl.requestKeepAlive();
-    UserInput_factory m_pUserInputFactory{};
+    UserInput_factory m_pUserInputFactory{m_Mp3Prompt, m_MessageHandler};
     m_pUserInput = m_pUserInputFactory.getInstance();
     notifyStartup();
 }
@@ -28,11 +31,11 @@ void Loader::loop()
     // FEATURE SLEEP for 100ms to reduce power consumption?
     static Tonuino tonuino{Tonuino(m_pUserInput, m_NfcControl, m_Mp3Control, m_VoiceMenu)}; // maybe add an init() for dependencies?
     tonuino.loop();
-
+    /*
     if (m_PwrCtrl.isShutdownRequested())
     {
         shutdown(); // shutdown System
-    }
+    }*/
 }
 
 void Loader::shutdown()

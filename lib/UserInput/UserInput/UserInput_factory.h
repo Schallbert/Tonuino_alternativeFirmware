@@ -12,7 +12,8 @@ class UserInput_factory
 {
 public:
 #if (USERINPUT_VARIANT == three_buttons)
-    explicit UserInput_factory(Mp3Prompt_interface &rPrompt)
+    explicit UserInput_factory(Mp3Prompt_interface &rPrompt,
+                               MessageHander_interface &rMessageHandler)
     {
         static ClickEncoder_implementation pinPlPs{ClickEncoder_implementation(PINPLPS, USERINPUTACTIVE_STATE)};
         static ClickEncoder_implementation pinNext{ClickEncoder_implementation(PINNEXT, USERINPUTACTIVE_STATE)};
@@ -22,16 +23,19 @@ public:
             pinNext,
             pinPrev,
             rPrompt,
+            rMessageHandler,
             ENC_LONGPRESSREPEATINTERVAL)};
         m_instance = &instance;
     };
 #elif (USERINPUT_VARIANT == one_encoder)
-    explicit UserInput_factory(Mp3Prompt_interface &rPrompt)
+    explicit UserInput_factory(Mp3Prompt_interface &rPrompt,
+                               MessageHander_interface &rMessageHandler)
     {
         static ClickEncoder_implementation m_enc{ClickEncoder_implementation(ENCA,
                                                                              ENCB,
                                                                              ENCSW,
                                                                              rPrompt,
+                                                                             rMessageHandler,
                                                                              ENC_STEPSPERNOTCH,
                                                                              USERINPUTACTIVE_STATE)};
         static UserInput_ClickEncoder instance{UserInput_ClickEncoder(m_enc)};

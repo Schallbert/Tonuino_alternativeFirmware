@@ -15,6 +15,7 @@ public:
         Released,
         Clicked,
         DoubleClicked,
+        LongPressRepeat
     };
 
 public:

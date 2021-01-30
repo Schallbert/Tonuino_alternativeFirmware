@@ -2,6 +2,7 @@
 #define USERINPUT_IMPLEMENTATION_H
 
 #include "Mp3Prompt/Mp3Prompt_interface.h"
+#include "MessageHandler_interface.h"
 
 #include "../UserInput/UserInput_interface.h"
 #include "ClickEncoder_Abstraction/ClickEncoder_interface.h"
@@ -21,8 +22,10 @@ class UserInput_ClickEncoder : public UserInput_interface
 public:
     // pinA, pinB, pinButton are the pins of the encoder that are connected to the uC.
     explicit UserInput_ClickEncoder(ClickEncoder_interface &rEncoder,
-                                    Mp3Prompt_interface &rPrompt) : m_rEncoder(rEncoder),
-                                                                                m_rPrompt(rPrompt)
+                                    Mp3Prompt_interface &rPrompt, 
+                                    MessageHander_interface &rMessageHandler) : m_rEncoder(rEncoder),
+                                                                                m_rPrompt(rPrompt),
+                                                                                m_rMessageHandler(rMessageHandler)
     {
         m_rEncoder.setAccelerationEnabled(false);
         m_rEncoder.setDoubleClickEnabled(true);
@@ -38,6 +41,7 @@ private:
 private:
     ClickEncoder_interface &m_rEncoder;
     Mp3Prompt_interface &m_rPrompt;
+    MessageHander_interface &m_rMessageHandler;
 
     volatile int16_t encoderPosition{0};
     volatile int16_t encoderDiff{0};
@@ -58,9 +62,9 @@ class UserInput_3Buttons : public UserInput_interface
 private:
     struct ButtonStates
     {
-        Encoder_longPressRepeat::eButtonState plpsButton{Encoder_longPressRepeat::Open};
-        Encoder_longPressRepeat::eButtonState nextButton{Encoder_longPressRepeat::Open};
-        Encoder_longPressRepeat::eButtonState prevButton{Encoder_longPressRepeat::Open};
+        ClickEncoder_interface::eButtonState plpsButton{ClickEncoder_interface::Open};
+        ClickEncoder_interface::eButtonState nextButton{ClickEncoder_interface::Open};
+        ClickEncoder_interface::eButtonState prevButton{ClickEncoder_interface::Open};
     };
 
 public:
@@ -68,10 +72,12 @@ public:
                        ClickEncoder_interface &NextButton,
                        ClickEncoder_interface &PrevButton,
                        Mp3Prompt_interface &rPrompt,
+                       MessageHander_interface &rMessageHandler,
                        const uint16_t &longPressRepeatInterval) : m_PlpsButton{Encoder_longPressRepeat(PlPsButton, longPressRepeatInterval)},
                                                                   m_NextButton{Encoder_longPressRepeat(NextButton, longPressRepeatInterval)},
                                                                   m_PrevButton{Encoder_longPressRepeat(PrevButton, longPressRepeatInterval)},
-                                                                  m_rPrompt(rPrompt)
+                                                                  m_rPrompt(rPrompt),
+                                                                  m_rMessageHandler(rMessageHandler)
 
     {
         m_PlpsButton.setAccelerationEnabled(false);
@@ -94,6 +100,7 @@ private:
     Encoder_longPressRepeat m_NextButton;
     Encoder_longPressRepeat m_PrevButton;
     Mp3Prompt_interface &m_rPrompt;
+    MessageHander_interface &m_rMessageHandler;
 
     ButtonStates buttonStates;
 }; // UserInput_3Buttons
