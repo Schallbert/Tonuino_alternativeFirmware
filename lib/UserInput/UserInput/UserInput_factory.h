@@ -23,8 +23,7 @@ public:
             pinNext,
             pinPrev,
             rPrompt,
-            rMessageHandler,
-            ENC_LONGPRESSREPEATINTERVAL)};
+            rMessageHandler)};
         m_instance = &instance;
     };
 #elif (USERINPUT_VARIANT == one_encoder)

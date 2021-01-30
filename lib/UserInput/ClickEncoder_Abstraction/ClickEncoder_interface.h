@@ -12,10 +12,10 @@ public:
         Closed,
         Pressed,
         Held,
+        LongPressRepeat,
         Released,
         Clicked,
-        DoubleClicked,
-        LongPressRepeat
+        DoubleClicked
     };
 
 public:
@@ -28,9 +28,9 @@ public:
     virtual int16_t getValue() = 0;
     // retrieve button status from hardware
     virtual eButtonState getButton() = 0;
-    // acceleration feature of encoder: Quick turn will over-proportionally bump values
+    // enhanced feature control
     virtual void setAccelerationEnabled(const bool &enabled) = 0;
-    // doubleclick feature of encoder button.
+    virtual void setLongPressRepeatEnabled(const bool &enabled) = 0;
     virtual void setDoubleClickEnabled(const bool &enabled) = 0;
 };
 

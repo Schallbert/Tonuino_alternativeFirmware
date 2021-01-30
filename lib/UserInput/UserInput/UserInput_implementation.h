@@ -6,7 +6,6 @@
 
 #include "../UserInput/UserInput_interface.h"
 #include "ClickEncoder_Abstraction/ClickEncoder_interface.h"
-#include "ClickEncoder_Abstraction/ClickEncoder_supportsLongPress.h"
 
 class UserInput_ClickEncoder : public UserInput_interface
 {
@@ -22,12 +21,11 @@ class UserInput_ClickEncoder : public UserInput_interface
 public:
     // pinA, pinB, pinButton are the pins of the encoder that are connected to the uC.
     explicit UserInput_ClickEncoder(ClickEncoder_interface &rEncoder,
-                                    Mp3Prompt_interface &rPrompt, 
+                                    Mp3Prompt_interface &rPrompt,
                                     MessageHander_interface &rMessageHandler) : m_rEncoder(rEncoder),
                                                                                 m_rPrompt(rPrompt),
                                                                                 m_rMessageHandler(rMessageHandler)
     {
-        m_rEncoder.setAccelerationEnabled(false);
         m_rEncoder.setDoubleClickEnabled(true);
     };
     ~UserInput_ClickEncoder() = default;
@@ -68,24 +66,20 @@ private:
     };
 
 public:
-    UserInput_3Buttons(ClickEncoder_interface &PlPsButton,
-                       ClickEncoder_interface &NextButton,
-                       ClickEncoder_interface &PrevButton,
+    UserInput_3Buttons(ClickEncoder_interface &rPlPsButton,
+                       ClickEncoder_interface &rNextButton,
+                       ClickEncoder_interface &rPrevButton,
                        Mp3Prompt_interface &rPrompt,
-                       MessageHander_interface &rMessageHandler,
-                       const uint16_t &longPressRepeatInterval) : m_PlpsButton{Encoder_longPressRepeat(PlPsButton, longPressRepeatInterval)},
-                                                                  m_NextButton{Encoder_longPressRepeat(NextButton, longPressRepeatInterval)},
-                                                                  m_PrevButton{Encoder_longPressRepeat(PrevButton, longPressRepeatInterval)},
-                                                                  m_rPrompt(rPrompt),
-                                                                  m_rMessageHandler(rMessageHandler)
+                       MessageHander_interface &rMessageHandler) : m_PlpsButton(rPlPsButton),
+                                                                   m_NextButton(rNextButton),
+                                                                   m_PrevButton(rPrevButton),
+                                                                   m_rPrompt(rPrompt),
+                                                                   m_rMessageHandler(rMessageHandler)
 
     {
-        m_PlpsButton.setAccelerationEnabled(false);
         m_PlpsButton.setDoubleClickEnabled(true);
-        m_NextButton.setAccelerationEnabled(false);
-        m_NextButton.setDoubleClickEnabled(false);
-        m_PrevButton.setAccelerationEnabled(false);
-        m_PrevButton.setDoubleClickEnabled(false);
+        m_NextButton.setLongPressRepeatEnabled(true);
+        m_PrevButton.setLongPressRepeatEnabled(true);
     };
     ~UserInput_3Buttons() = default;
 
@@ -96,9 +90,9 @@ private:
     void userinputRefresh();
 
 private:
-    Encoder_longPressRepeat m_PlpsButton;
-    Encoder_longPressRepeat m_NextButton;
-    Encoder_longPressRepeat m_PrevButton;
+    ClickEncoder_interface &m_PlpsButton;
+    ClickEncoder_interface &m_NextButton;
+    ClickEncoder_interface &m_PrevButton;
     Mp3Prompt_interface &m_rPrompt;
     MessageHander_interface &m_rMessageHandler;
 

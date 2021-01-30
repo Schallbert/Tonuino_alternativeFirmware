@@ -104,21 +104,22 @@ Message::eMessageContent UserInput_3Buttons::getUserRequest()
     //Get current button's states
     UserInput_3Buttons::userinputRefresh();
 
+// TODO: ISSUE: SOMEHOW THE VOICEPROMT MAY NOT BE CALLED HERE (REF ISSUE?) IT WILL BREAK WHEN I DO THAT
     if (buttonStates.plpsButton == ClickEncoder_interface::DoubleClicked)
     {
         if (UserInput_interface::userInputLocked)
         {
             UserInput_interface::userInputLocked = false;
-            VoicePrompt locked{VoicePrompt::MSG_BUTTONFREE, true};
-            m_rPrompt.playPrompt(locked);
+            //VoicePrompt locked{VoicePrompt::MSG_BUTTONFREE, true};
+            //m_rPrompt.playPrompt(locked);
         }
         else
         {
             UserInput_interface::userInputLocked = true;
-            VoicePrompt unlocked{VoicePrompt::MSG_BUTTONLOCK, true};
-            m_rPrompt.playPrompt(unlocked);
+            //VoicePrompt unlocked{VoicePrompt::MSG_BUTTONLOCK, true};
+            //m_rPrompt.playPrompt(unlocked);
         }
-    }
+    } 
 
     if (UserInput_interface::userInputLocked)
     {
@@ -128,8 +129,7 @@ Message::eMessageContent UserInput_3Buttons::getUserRequest()
     {
         result = Message::INPLPS;
     }
-    else if (buttonStates.plpsButton == ClickEncoder_interface::Held ||
-             buttonStates.plpsButton == ClickEncoder_interface::LongPressRepeat)
+    else if (buttonStates.plpsButton == ClickEncoder_interface::Held)
     {
         result = Message::INPLPSLP;
     }

@@ -48,6 +48,11 @@ public:
         m_rEncoder.setDoubleClickEnabled(enabled);
     }
 
+    void setLongPressRepeatEnabled(const bool &enabled) override
+    {
+        m_rEncoder.setLongPressRepeatEnabled(enabled);
+    }
+
 private:
     ClickEncoder m_rEncoder;
 };
