@@ -13,6 +13,7 @@ public:
     MOCK_METHOD(ClickEncoder_interface::eButtonState, getButton, (), (override));
 
     MOCK_METHOD(void, setAccelerationEnabled, (const bool &enabled), (override));
+    MOCK_METHOD(void, setLongPressRepeatEnabled, (const bool &enabled), (override));
     MOCK_METHOD(void, setDoubleClickEnabled, (const bool &enabled), (override));
 };
 

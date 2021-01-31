@@ -7,7 +7,7 @@
 class Mock_UserInput : public UserInput_interface
 {
 public:
-    MOCK_METHOD(eUserRequest, getUserRequest, (), (override));
+    MOCK_METHOD(Message::eMessageContent, getUserRequest, (), (override));
     MOCK_METHOD(void, userinputServiceIsr, (), (override));
 };
 

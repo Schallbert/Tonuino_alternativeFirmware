@@ -138,7 +138,7 @@ TEST_F(SystemTest, NoTag_ppLongPress_playsHelp)
 {
     // Should return "NOTAG"
     ON_CALL(m_Mfrc522Mock, isTagPresent()).WillByDefault(Return(false));
-    ON_CALL(m_UserInputMock, getUserRequest()).WillByDefault(Return(UserInput_interface::PP_LONGPRESS));
+    ON_CALL(m_UserInputMock, getUserRequest()).WillByDefault(Return(Message::INPUTPLPSLP));
 
     VoicePrompt expectedPrompt{VoicePrompt(VoicePrompt::MSG_HELP, true)};
     EXPECT_CALL(m_Mp3PromptMock, playPrompt(expectedPrompt));
@@ -187,11 +187,11 @@ TEST_F(SystemTest, ActiveTag_ppLongPress_InvokesDeleteMenu)
     ON_CALL(m_Mfrc522Mock, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     m_Mfrc522Mock.DelegateToFakeMini1k4k(); // Should default to "known TAG"
     ON_CALL(m_DfMiniMp3Mock, getFolderTrackCount(_)).WillByDefault(Return(5));
-    ON_CALL(m_UserInputMock, getUserRequest()).WillByDefault(Return(UserInput_interface::PP_LONGPRESS));
+    ON_CALL(m_UserInputMock, getUserRequest()).WillByDefault(Return(Message::INPUTPLPSLP));
 
     m_pTonuino->loop(); // New Tag detected
     m_pTonuino->loop(); // Active Tag, enters Delete Menu
-    ON_CALL(m_UserInputMock, getUserRequest()).WillByDefault(Return(UserInput_interface::NO_ACTION));
+    ON_CALL(m_UserInputMock, getUserRequest()).WillByDefault(Return(Message::INPUTNONE));
     VoicePrompt expectedPrompt{VoicePrompt(VoicePrompt::MSG_DELETETAG, true)};
     EXPECT_CALL(m_Mp3PromptMock, playPrompt(expectedPrompt));
     m_pTonuino->loop(); // once entered, prompt will play in next call

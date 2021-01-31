@@ -60,7 +60,7 @@ TEST_F(Mp3ControlTest, volumeUp_belowMax_volumeIsIncreased)
     ON_CALL(m_dfMiniMock, getVolume()).WillByDefault(Return(VOLUME_MAX - 1));
 
     EXPECT_CALL(m_dfMiniMock, increaseVolume()).Times(1);
-    m_Mp3Control.setUserInput(UserInput_interface::INC_VOLUME);
+    m_Mp3Control.setUserInput(Message::INPUTNEXTLP);
     m_Mp3Control.loop();
 }
 
@@ -69,7 +69,7 @@ TEST_F(Mp3ControlTest, volumeUp_Max_volumeNotIncreased)
     ON_CALL(m_dfMiniMock, getVolume()).WillByDefault(Return(VOLUME_MAX));
 
     EXPECT_CALL(m_dfMiniMock, increaseVolume()).Times(0);
-    m_Mp3Control.setUserInput(UserInput_interface::INC_VOLUME);
+    m_Mp3Control.setUserInput(Message::INPUTNEXTLP);
     m_Mp3Control.loop();
 }
 
@@ -78,7 +78,7 @@ TEST_F(Mp3ControlTest, volumeDown_aboveMin_volumeIsDecreased)
     ON_CALL(m_dfMiniMock, getVolume()).WillByDefault(Return(VOLUME_MIN + 1));
 
     EXPECT_CALL(m_dfMiniMock, decreaseVolume());
-    m_Mp3Control.setUserInput(UserInput_interface::DEC_VOLUME);
+    m_Mp3Control.setUserInput(Message::INPUTPREVLP);
     m_Mp3Control.loop();
 }
 
@@ -87,13 +87,13 @@ TEST_F(Mp3ControlTest, volumeDown_Min_volumeNotDecreased)
     ON_CALL(m_dfMiniMock, getVolume()).WillByDefault(Return(VOLUME_MIN));
 
     EXPECT_CALL(m_dfMiniMock, decreaseVolume()).Times(0);
-    m_Mp3Control.setUserInput(UserInput_interface::DEC_VOLUME);
+    m_Mp3Control.setUserInput(Message::INPUTPREVLP);
     m_Mp3Control.loop();
 }
 
 TEST_F(Mp3ControlTest, prev_PrevTrack)
 {
-    m_Mp3Control.setUserInput(UserInput_interface::PREV_TRACK);
+    m_Mp3Control.setUserInput(Message::INPUTPREV);
 
     EXPECT_CALL(m_mp3PlayMock, playPrev());
     m_Mp3Control.loop();
@@ -101,7 +101,7 @@ TEST_F(Mp3ControlTest, prev_PrevTrack)
 
 TEST_F(Mp3ControlTest, next_NextTrack)
 {
-    m_Mp3Control.setUserInput(UserInput_interface::NEXT_TRACK);
+    m_Mp3Control.setUserInput(Message::INPUTNEXT);
 
     EXPECT_CALL(m_mp3PlayMock, playNext());
     m_Mp3Control.loop();
@@ -109,7 +109,7 @@ TEST_F(Mp3ControlTest, next_NextTrack)
 
 TEST_F(Mp3ControlTest, help_promptsHelp)
 {
-    m_Mp3Control.setUserInput(UserInput_interface::PP_LONGPRESS);
+    m_Mp3Control.setUserInput(Message::INPUTPLPSLP);
 
     EXPECT_CALL(m_mp3PromptMock, playPrompt(_));
     m_Mp3Control.loop();
@@ -117,7 +117,7 @@ TEST_F(Mp3ControlTest, help_promptsHelp)
 
 TEST_F(Mp3ControlTest, pause_toggle_Plays)
 {
-    m_Mp3Control.setUserInput(UserInput_interface::PLAY_PAUSE);
+    m_Mp3Control.setUserInput(Message::INPUTPLPS);
     ON_CALL(m_dfMiniMock, isPlaying()).WillByDefault(Return(false));
 
     EXPECT_CALL(m_dfMiniMock, start());
@@ -126,7 +126,7 @@ TEST_F(Mp3ControlTest, pause_toggle_Plays)
 
 TEST_F(Mp3ControlTest, play_toggle_Pauses)
 {
-    m_Mp3Control.setUserInput(UserInput_interface::PLAY_PAUSE);
+    m_Mp3Control.setUserInput(Message::INPUTPLPS);
     ON_CALL(m_dfMiniMock, isPlaying()).WillByDefault(Return(true));
 
     EXPECT_CALL(m_dfMiniMock, pause());
