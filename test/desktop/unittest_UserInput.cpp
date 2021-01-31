@@ -51,36 +51,36 @@ TEST_F(UserInput_ClickEncoderTest, NoActionOnAnyButton_willReturnNoAction)
     ASSERT_EQ(m_UserInput.getUserRequest(), Message::INPUTNONE);
 }
 
-TEST_F(UserInput_ClickEncoderTest, LockUserInput_buttonPress_willReturnNoAction)
+TEST_F(UserInput_ClickEncoderTest, LockUserInput_buttonPress_willReturnLocked)
 {
     ClickEncoder_interface::eButtonState btnState = ClickEncoder_interface::DoubleClicked;
     ON_CALL(enc, getButton()).WillByDefault(ReturnPointee(&btnState));
 
-    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTNONE);
+    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTLOCK);
     btnState = ClickEncoder_interface::Clicked;
-    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTNONE);
+    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTLOCK);
 }
 
-TEST_F(UserInput_ClickEncoderTest, LockUserInput_turnRight_willReturnNoAction)
+TEST_F(UserInput_ClickEncoderTest, LockUserInput_turnRight_willReturnLocked)
 {
     ClickEncoder_interface::eButtonState btnState = ClickEncoder_interface::DoubleClicked;
     ON_CALL(enc, getButton()).WillByDefault(ReturnPointee(&btnState));
     ON_CALL(enc, getValue()).WillByDefault(Return(1));
 
-    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTNONE);
+    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTLOCK);
     btnState = ClickEncoder_interface::Open;
-    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTNONE);
+    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTLOCK);
 }
 
-TEST_F(UserInput_ClickEncoderTest, LockUserInput_turnLeft_willReturnNoAction)
+TEST_F(UserInput_ClickEncoderTest, LockUserInput_turnLeft_willReturnLocked)
 {
     ClickEncoder_interface::eButtonState btnState = ClickEncoder_interface::DoubleClicked;
     ON_CALL(enc, getButton()).WillByDefault(ReturnPointee(&btnState));
     ON_CALL(enc, getValue()).WillByDefault(Return(-1));
 
-    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTNONE);
+    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTLOCK);
     btnState = ClickEncoder_interface::Open;
-    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTNONE);
+    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTLOCK);
 }
 
 TEST_F(UserInput_ClickEncoderTest, LockUserInput_Unlock_willReturnAction)
@@ -172,36 +172,36 @@ TEST_F(UserInput_3ButtonsTest, NoActionOnAnyButton_willReturnNoAction)
     ASSERT_EQ(m_UserInput.getUserRequest(), Message::INPUTNONE);
 }
 
-TEST_F(UserInput_3ButtonsTest, LockUserInput_m_plpsMockButtonPress_willReturnNoAction)
+TEST_F(UserInput_3ButtonsTest, LockUserInput_m_plpsMockButtonPress_willReturnLocked)
 {
     ClickEncoder_interface::eButtonState plpsBtnState = ClickEncoder_interface::DoubleClicked;
     ON_CALL(m_plpsMock, getButton()).WillByDefault(ReturnPointee(&plpsBtnState));
 
-    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTNONE);
+    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTLOCK);
     plpsBtnState = ClickEncoder_interface::Clicked;
-    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTNONE);
+    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTLOCK);
 }
 
-TEST_F(UserInput_3ButtonsTest, LockUserInput_m_nextMockButtonPress_willReturnNoAction)
+TEST_F(UserInput_3ButtonsTest, LockUserInput_m_nextMockButtonPress_willReturnLocked)
 {
     ClickEncoder_interface::eButtonState plpsBtnState = ClickEncoder_interface::DoubleClicked;
     ON_CALL(m_plpsMock, getButton()).WillByDefault(ReturnPointee(&plpsBtnState));
     ON_CALL(m_nextMock, getButton()).WillByDefault(Return(ClickEncoder_interface::Clicked));
 
-    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTNONE);
+    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTLOCK);
     plpsBtnState = ClickEncoder_interface::Open;
-    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTNONE);
+    EXPECT_EQ(m_UserInput.getUserRequest(),  Message::INPUTLOCK);
 }
 
-TEST_F(UserInput_3ButtonsTest, LockUserInput_prevButtonPress_willReturnNoAction)
+TEST_F(UserInput_3ButtonsTest, LockUserInput_prevButtonPress_willReturnLocked)
 {
     ClickEncoder_interface::eButtonState plpsBtnState = ClickEncoder_interface::DoubleClicked;
     ON_CALL(m_plpsMock, getButton()).WillByDefault(ReturnPointee(&plpsBtnState));
     ON_CALL(m_prevMock, getButton()).WillByDefault(Return(ClickEncoder_interface::Clicked));
 
-    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTNONE);
+    EXPECT_EQ(m_UserInput.getUserRequest(),  Message::INPUTLOCK);
     plpsBtnState = ClickEncoder_interface::Open;
-    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTNONE);
+    EXPECT_EQ(m_UserInput.getUserRequest(),  Message::INPUTLOCK);
 }
 
 TEST_F(UserInput_3ButtonsTest, LockUserInput_Unlock_willReturnAction)
@@ -212,7 +212,7 @@ TEST_F(UserInput_3ButtonsTest, LockUserInput_Unlock_willReturnAction)
     m_UserInput.getUserRequest(); // unlock
     plpsBtnState = ClickEncoder_interface::Clicked;
 
-    ASSERT_NE(m_UserInput.getUserRequest(), Message::INPUTNONE);
+    ASSERT_NE(m_UserInput.getUserRequest(),  Message::INPUTLOCK);
 }
 
 TEST_F(UserInput_3ButtonsTest, plpsClicked_willReturnPlayPause)
@@ -226,13 +226,13 @@ TEST_F(UserInput_3ButtonsTest, plpsHeld_willReturnPPLongPress)
 {
     ON_CALL(m_plpsMock, getButton()).WillByDefault(Return(ClickEncoder_interface::Held));
 
-    ASSERT_EQ(m_UserInput.getUserRequest(), Message::INPUTPLPS);
+    ASSERT_EQ(m_UserInput.getUserRequest(), Message::INPUTPLPSLP);
 }
 
-TEST_F(UserInput_3ButtonsTest, plpsLongPressRepeat_willReturnPPLongPressRepeat)
+TEST_F(UserInput_3ButtonsTest, plpsLongPressRepeat_willReturnPPLongPress)
 {
     ON_CALL(m_plpsMock, getButton()).WillByDefault(Return(ClickEncoder_interface::LongPressRepeat));
-    ASSERT_EQ(m_UserInput.getUserRequest(), Message::INPUTPLPSLP);
+    ASSERT_EQ(m_UserInput.getUserRequest(), Message::INPUTNONE);
 }
 
 TEST_F(UserInput_3ButtonsTest, m_nextMockClicked_willReturnNextTrack)
