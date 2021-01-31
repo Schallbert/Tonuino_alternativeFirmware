@@ -58,19 +58,19 @@ public:
         MODERANDOM = 0x62,
         MODESAVEPROGRESS = 0x63,
         MODEONETRACKONLY = 0x64,
-        INPUTONLINE = 0x70,
-        INPUTNONE = 0x71,
-        INPUTPLPS = 0x72,
-        INPUTPLPSLP = 0x73,
-        INPUTNEXT = 0x74,
-        INPUTNEXTLP = 0x75,
-        INPUTPREV = 0x76,
-        INPUTPREVLP = 0x77,
-        INPUTLOCK = 0x78,
+        INPUTNONE = 0x70,
+        INPUTPLPS = 0x71,
+        INPUTPLPSLP = 0x72,
+        INPUTNEXT = 0x73,
+        INPUTNEXTLP = 0x74,
+        INPUTPREV = 0x75,
+        INPUTPREVLP = 0x76,
+        INPUTLOCK = 0x77,
+        INPUTONLINE = 0x78,
         LASTVALIDMESSAGE = 0x7F
     };
 
-    static const uint8_t IN_REQUEST_OPTIONS{8}; // number of user input messages, KEEP UP TO DATE WITH eMessageContent::INxxxx
+    static const uint8_t IN_REQUEST_OPTIONS{8}; // number of possible USERS input messages, 0x70-0x7x
 
 public:
     // Constructors convert bitcoded types into base values: Groups 0x00 - 0x0F, Messages 0x00 - 0xFF

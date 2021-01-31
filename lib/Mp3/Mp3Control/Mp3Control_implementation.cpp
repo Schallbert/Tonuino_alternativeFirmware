@@ -32,7 +32,7 @@ void Mp3Control::handleUserInput()
         {
             &PC::none, &PC::plPs, &PC::help, &PC::next, &PC::incV, &PC::prev, &PC::decV, &PC::none
         };
-    dispatcher dispatchExecutor = dispatchTable[m_userInput];
+    dispatcher dispatchExecutor = dispatchTable[static_cast<uint8_t>(m_userInput) & 0x0F];
     (this->*dispatchExecutor)();
 }
 

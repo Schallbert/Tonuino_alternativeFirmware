@@ -104,7 +104,7 @@ void VoiceMenu::dispatchInputs()
     static const dispatcher dispatchTable[Message::IN_REQUEST_OPTIONS] =
         {
             &VM::none, &VM::conf, &VM::abrt, &VM::next, &VM::none, &VM::prev, &VM::none, &VM::none};
-    dispatcher dispatchExecutor = dispatchTable[m_userInput];
+    dispatcher dispatchExecutor = dispatchTable[static_cast<uint8_t>(m_userInput) & 0x0F]; // 
     (this->*dispatchExecutor)();
 }
 
