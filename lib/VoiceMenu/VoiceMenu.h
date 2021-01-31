@@ -60,7 +60,7 @@ private:
 
     typedef void (VoiceMenu::*dispatcher)(); // table of function pointers
 
-    Message::eMessageContent m_userInput{Message::INNONE};
+    Message::eMessageContent m_userInput{Message::INPUTNONE};
     Message::eMessageContent m_tagState{Message::NOTAG};
 
     Menu_factory m_MenuFactory;

@@ -39,13 +39,11 @@ const char s_ctt33[] PROGMEM = "SD Card removed";
 const char s_ctt34[] PROGMEM = "Com Error";
 const char s_ctt35[] PROGMEM = "Init";
 
-
 const char s_ctt40[] PROGMEM = "No Tag";
 const char s_ctt41[] PROGMEM = "Active Tag";
 const char s_ctt42[] PROGMEM = "New Tag";
 const char s_ctt43[] PROGMEM = "Unknown Tag";
 
-const char s_ctt50[] PROGMEM = "Init with";
 const char s_ctt51[] PROGMEM = "Tag Write Success";
 const char s_ctt52[] PROGMEM = "Tag Read Success";
 const char s_ctt53[] PROGMEM = "Tag write Error";
@@ -59,14 +57,14 @@ const char s_ctt62[] PROGMEM = "Mode Random";
 const char s_ctt63[] PROGMEM = "Mode SaveProgress";
 const char s_ctt64[] PROGMEM = "Mode OneLargeTrack";
 
-const char s_ctt70[] PROGMEM = "None";
-const char s_ctt71[] PROGMEM = "PlPs";
-const char s_ctt72[] PROGMEM = "PlPsLong";
-const char s_ctt73[] PROGMEM = "Next";
-const char s_ctt74[] PROGMEM = "NextLong";
-const char s_ctt75[] PROGMEM = "Prev";
-const char s_ctt76[] PROGMEM = "PrevLong";
-const char s_ctt77[] PROGMEM = "Locked";
+const char s_ctt71[] PROGMEM = "None";
+const char s_ctt72[] PROGMEM = "PlPs";
+const char s_ctt73[] PROGMEM = "PlPsLong";
+const char s_ctt74[] PROGMEM = "Next";
+const char s_ctt75[] PROGMEM = "NextLong";
+const char s_ctt76[] PROGMEM = "Prev";
+const char s_ctt77[] PROGMEM = "PrevLong";
+const char s_ctt78[] PROGMEM = "Locked";
 
 const char s_sep[] PROGMEM = ": ";
 
@@ -77,9 +75,9 @@ const char *const s_cttTable[] PROGMEM = {
     s_ctt20, s_ctt21, s_ctt22, s_ctt23, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
     s_ctt30, s_ctt31, s_ctt32, s_ctt33, s_ctt34, s_ctt35, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
     s_ctt40, s_ctt41, s_ctt42, s_ctt43, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-    s_ctt50, s_ctt51, s_ctt52, s_ctt53, s_ctt54, s_ctt55, s_ctt56, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+    s_ctt35, s_ctt51, s_ctt52, s_ctt53, s_ctt54, s_ctt55, s_ctt56, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
     s_ctt60, s_ctt61, s_ctt62, s_ctt63, s_ctt64, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-    s_ctt70, s_ctt71, s_ctt72, s_ctt73, s_ctt74, s_ctt75, s_ctt76, s_ctt77, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+    s_ctt35, s_ctt71, s_ctt72, s_ctt73, s_ctt74, s_ctt75, s_ctt76, s_ctt77, s_ctt78, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 
 char *MessageToString::getStringFromMessage(const Message &message)
 {

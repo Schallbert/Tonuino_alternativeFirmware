@@ -58,14 +58,15 @@ public:
         MODERANDOM = 0x62,
         MODESAVEPROGRESS = 0x63,
         MODEONETRACKONLY = 0x64,
-        INNONE = 0x70,
-        INPLPS = 0x71,
-        INPLPSLP = 0x72,
-        INNEXT = 0x73,
-        INNEXTLP = 0x74,
-        INPREV = 0x75,
-        INPREVLP = 0x76,
-        INLOCK = 0x77,
+        INPUTONLINE = 0x70,
+        INPUTNONE = 0x71,
+        INPUTPLPS = 0x72,
+        INPUTPLPSLP = 0x73,
+        INPUTNEXT = 0x74,
+        INPUTNEXTLP = 0x75,
+        INPUTPREV = 0x76,
+        INPUTPREVLP = 0x77,
+        INPUTLOCK = 0x78,
         LASTVALIDMESSAGE = 0x7F
     };
 

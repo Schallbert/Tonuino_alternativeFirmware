@@ -67,7 +67,7 @@ void VoiceMenu::enterMenu()
 void VoiceMenu::checkEnterDeleteMenu()
 {
     if ((m_tagState == Message::ACTIVETAG) &&
-        (m_userInput == Message::INPLPSLP))
+        (m_userInput == Message::INPUTPLPSLP))
     {
         m_pMenuInstance = m_MenuFactory.getInstance(Menu_factory::DELETE_MENU,
                                                     m_rNfcControl,

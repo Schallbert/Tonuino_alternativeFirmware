@@ -58,7 +58,7 @@ private:
     PowerManager_interface &m_rPowerManager;
     MessageHander_interface &m_rMessageHandler;
 
-    Message::eMessageContent m_userInput{Message::INNONE};
+    Message::eMessageContent m_userInput{Message::INPUTNONE};
     Message::eMessageContent m_tagState{Message::NOTAG};
     typedef void (Mp3Control::*dispatcher)(); // table of function pointers
 };

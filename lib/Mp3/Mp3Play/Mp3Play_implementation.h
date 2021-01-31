@@ -17,7 +17,7 @@ class Mp3Play_implementation : public Mp3Play_interface
 public:
     Mp3Play_implementation(Arduino_DIcontainer_interface &rArduinoHal,
                            DfMiniMp3_interface &rDfMini,
-Mp3Prompt_interface &rPrompt,
+                           Mp3Prompt_interface &rPrompt,
                            SimpleTimer &rLullabyeTimer,
                            MessageHander_interface &rMessage) : m_rArduinoHal(rArduinoHal),
                                                                 m_rDfMiniMp3(rDfMini),

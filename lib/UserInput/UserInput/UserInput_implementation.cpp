@@ -10,7 +10,7 @@ void UserInput_ClickEncoder::userinputServiceIsr()
 
 Message::eMessageContent UserInput_ClickEncoder::getUserRequest()
 {
-    Message::eMessageContent result{Message::INNONE};
+    Message::eMessageContent result{Message::INPUTNONE};
     //Poll for current encoder position and button state
     UserInput_ClickEncoder::userinputRefresh();
 
@@ -32,11 +32,11 @@ Message::eMessageContent UserInput_ClickEncoder::getUserRequest()
 
     if (UserInput_interface::userInputLocked)
     {
-        result = Message::INLOCK;
+        result = Message::INPUTLOCK;
     }
     else if (buttonState == ClickEncoder_interface::Clicked)
     {
-        result = Message::INPLPS;
+        result = Message::INPUTPLPS;
     }
     else if (encoderDiff > 0) // TODO: Check in INTEGRATION TEST if this really is a good idea. Alternative: take position.
     {
@@ -44,11 +44,11 @@ Message::eMessageContent UserInput_ClickEncoder::getUserRequest()
         if (buttonState == ClickEncoder_interface::Pressed ||
             buttonState == ClickEncoder_interface::Held)
         {
-            result = Message::INNEXTLP;
+            result = Message::INPUTNEXTLP;
         }
         else
         {
-            result = Message::INNEXT;
+            result = Message::INPUTNEXT;
         }
     }
     else if (encoderDiff < 0)
@@ -57,20 +57,20 @@ Message::eMessageContent UserInput_ClickEncoder::getUserRequest()
         if (buttonState == ClickEncoder_interface::Pressed ||
             buttonState == ClickEncoder_interface::Held)
         {
-            result = Message::INPREVLP;
+            result = Message::INPUTPREVLP;
         }
         else
         {
-            result = Message::INPREV;
+            result = Message::INPUTPREV;
         }
     }
     else if (buttonState == ClickEncoder_interface::Held) // Button not turned
     {
-        result = Message::INPLPSLP;
+        result = Message::INPUTPLPSLP;
     }
     else
     {
-        result = Message::INNONE;
+        result = Message::INPUTNONE;
     }
 
     m_rMessageHandler.printMessage(Message{result});
@@ -100,7 +100,7 @@ void UserInput_3Buttons::userinputServiceIsr()
 
 Message::eMessageContent UserInput_3Buttons::getUserRequest()
 {
-    Message::eMessageContent result{Message::INNONE};
+    Message::eMessageContent result{Message::INPUTNONE};
     //Get current button's states
     UserInput_3Buttons::userinputRefresh();
 
@@ -123,35 +123,35 @@ Message::eMessageContent UserInput_3Buttons::getUserRequest()
 
     if (UserInput_interface::userInputLocked)
     {
-        result = Message::INLOCK;
+        result = Message::INPUTLOCK;
     }
     else if (buttonStates.plpsButton == ClickEncoder_interface::Clicked)
     {
-        result = Message::INPLPS;
+        result = Message::INPUTPLPS;
     }
     else if (buttonStates.plpsButton == ClickEncoder_interface::Held)
     {
-        result = Message::INPLPSLP;
+        result = Message::INPUTPLPSLP;
     }
     else if (buttonStates.nextButton == ClickEncoder_interface::Clicked)
     {
-        result = Message::INNEXT;
+        result = Message::INPUTNEXT;
     }
     else if (buttonStates.nextButton == ClickEncoder_interface::LongPressRepeat)
     {
-        result = Message::INNEXTLP;
+        result = Message::INPUTNEXTLP;
     }
     else if (buttonStates.prevButton == ClickEncoder_interface::Clicked)
     {
-        result = Message::INPREV;
+        result = Message::INPUTPREV;
     }
     else if (buttonStates.prevButton == ClickEncoder_interface::LongPressRepeat)
     {
-        result = Message::INPREVLP;
+        result = Message::INPUTPREVLP;
     }
     else
     {
-        result = Message::INNONE;
+        result = Message::INPUTNONE;
     }
 
     m_rMessageHandler.printMessage(Message{result});
