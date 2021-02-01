@@ -13,24 +13,30 @@ void Loader::init()
     m_NfcControl.init();
     m_Mp3Play.init();
     m_PwrCtrl.requestKeepAlive();
-    UserInput_factory m_pUserInputFactory{m_Mp3Prompt, m_MessageHandler};
     m_pUserInput = m_pUserInputFactory.getInstance();
+    m_pTonuino = new Tonuino(m_pUserInput, m_NfcControl, m_Mp3Control, m_VoiceMenu);
     notifyStartup();
 }
 
 void Loader::notifyStartup()
 {
-    m_MessageHandler.printMessage(Message{Message::STARTUP});
     VoicePrompt startup{VoicePrompt(VoicePrompt::MSG_STARTUP, false)};
     m_Mp3Prompt.playPrompt(startup);
+    m_MessageHandler.printMessage(Message{Message::STARTUP});
 }
 
-void Loader::loop()
+void Loader::run()
 {
+    /*m_MessageHandler.printMessage(Message{Message::HALT});
+    VoicePrompt shutdwn{VoicePrompt(VoicePrompt::MSG_SHUTDOWN, false)};
+    m_Mp3Prompt.playPrompt(shutdwn);
+    m_MessageHandler.printMessage(Message{Message::STARTUP});
+    VoicePrompt startup{VoicePrompt(VoicePrompt::MSG_STARTUP, false)};
+    m_Mp3Prompt.playPrompt(startup);*/
+
     //LowPower.sleep(100);
     // FEATURE SLEEP for 100ms to reduce power consumption?
-    static Tonuino tonuino{Tonuino(m_pUserInput, m_NfcControl, m_Mp3Control, m_VoiceMenu)}; // maybe add an init() for dependencies?
-    tonuino.loop();
+    m_pTonuino->run();
     /*
     if (m_PwrCtrl.isShutdownRequested())
     {
@@ -41,6 +47,8 @@ void Loader::loop()
 void Loader::shutdown()
 {
     notifyShutdown();
+    delete m_pTonuino;
+    m_pTonuino = nullptr;
     m_PwrCtrl.allowShutdown();
 }
 
@@ -53,17 +61,16 @@ void Loader::notifyShutdown()
 
 void Loader::timer1Task_1ms()
 {
-    static volatile uint16_t ui16Ticks = 0;
     if (m_pUserInput != nullptr)
     {
         m_pUserInput->userinputServiceIsr(); // userInput service 1ms task
     }
     m_PwrCtrl.service1msLed();
 
-    ++ui16Ticks;
-    if (ui16Ticks == MS_TO_S) // 1ms --> 1s
+    ++m_timer1msTicks;
+    if (m_timer1msTicks == MSTOSEC)
     {
-        ui16Ticks = 0;
+        m_timer1msTicks = 0;
         timer1Task_1sec();
     }
 }

@@ -19,7 +19,7 @@ void setup()
 
 void loop()
 {
-    loader.loop();
+    loader.run();
 }
 
 void timer1Task_1ms()

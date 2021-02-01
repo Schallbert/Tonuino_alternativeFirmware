@@ -11,41 +11,53 @@ class UserInput_interface;
 class UserInput_factory
 {
 public:
-#if (USERINPUT_VARIANT == three_buttons)
     explicit UserInput_factory(Mp3Prompt_interface &rPrompt,
-                               MessageHander_interface &rMessageHandler)
-    {
-        static ClickEncoder_implementation pinPlPs{ClickEncoder_implementation(PINPLPS, USERINPUTACTIVE_STATE)};
-        static ClickEncoder_implementation pinNext{ClickEncoder_implementation(PINNEXT, USERINPUTACTIVE_STATE)};
-        static ClickEncoder_implementation pinPrev{ClickEncoder_implementation(PINPREV, USERINPUTACTIVE_STATE)};
-        static UserInput_3Buttons instance{UserInput_3Buttons(
-            pinPlPs,
-            pinNext,
-            pinPrev,
-            rPrompt,
-            rMessageHandler)};
-        m_instance = &instance;
-    };
-#elif (USERINPUT_VARIANT == one_encoder)
-    explicit UserInput_factory(Mp3Prompt_interface &rPrompt,
-                               MessageHander_interface &rMessageHandler)
-    {
-        static ClickEncoder_implementation m_enc{ClickEncoder_implementation(ENCA,
-                                                                             ENCB,
-                                                                             ENCSW,
-                                                                             rPrompt,
-                                                                             rMessageHandler,
-                                                                             ENC_STEPSPERNOTCH,
-                                                                             USERINPUTACTIVE_STATE)};
-        static UserInput_ClickEncoder instance{UserInput_ClickEncoder(m_enc)};
-        m_instance = &instance;
-    };
-#endif
+                               MessageHander_interface &rMessageHandler) : m_rPrompt(rPrompt),
+                                                                           m_rMessageHandler(rMessageHandler){};
     ~UserInput_factory() = default;
-    UserInput_interface *getInstance() { return m_instance; };
+    // TODO: delete move constructors of mostly all classes
+
+    UserInput_interface *getInstance()
+    {
+        if (m_pConcreteUserInput == nullptr)
+        {
+            m_rMessageHandler.printMessage(Message{Message::INPUTERROR});
+        }
+        else
+        {
+            m_rMessageHandler.printMessage(Message{Message::INPUTONLINE});
+        }
+        return m_pConcreteUserInput;
+    }
 
 private:
-    UserInput_interface *m_instance;
+    Mp3Prompt_interface &m_rPrompt;
+    MessageHander_interface &m_rMessageHandler;
+
+#if (USERINPUT_VARIANT == three_buttons)
+    ClickEncoder_implementation m_pinPlPs{ClickEncoder_implementation(PINPLPS, USERINPUTACTIVE_STATE)};
+    ClickEncoder_implementation m_pinNext{ClickEncoder_implementation(PINNEXT, USERINPUTACTIVE_STATE)};
+    ClickEncoder_implementation m_pinPrev{ClickEncoder_implementation(PINPREV, USERINPUTACTIVE_STATE)};
+    UserInput_3Buttons instance{UserInput_3Buttons(
+        m_pinPlPs,
+        m_pinNext,
+        m_pinPrev,
+        m_rPrompt,
+        m_rMessageHandler)};
+    UserInput_interface *m_pConcreteUserInput{&instance};
+
+#elif (USERINPUT_VARIANT == one_encoder)
+    ClickEncoder_implementation instance{ClickEncoder_implementation(ENCA,
+                                                                     ENCB,
+                                                                     ENCSW,
+                                                                     rPrompt,
+                                                                     rMessageHandler,
+                                                                     ENC_STEPSPERNOTCH,
+                                                                     USERINPUTACTIVE_STATE)};
+    UserInput_interface *m_pConcreteUserInput{&instance};
+#else
+UserInput_interface *m_pConcreteUserInput{nullptr};
+#endif
 };
 
 #endif // USERINPUT_FACTORY_h

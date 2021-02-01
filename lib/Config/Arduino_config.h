@@ -3,7 +3,6 @@
 
 // CPU clock Speed
 //#define F_CPU 8000000UL
-#define MS_TO_S 1000
 
 //Pin defines ------------------------
 #define PINANALOG_RNDMGEN 19 //ADC1 28 A5
