@@ -76,28 +76,4 @@ private:
     uint8_t m_TrackQueue[MAXTRACKSPERFOLDER + 1]{0};
     uint8_t m_ui8CurrentQueueEntry{0};
 };
-
-class FolderNotify
-{
-private:
-    // Disallow creating an instance of this object
-    FolderNotify(){};
-
-public:
-    static inline const char *toString(Folder::ePlayMode value)
-    {
-#if DEBUGSERIAL
-        static const char *NOTIFY_STRING[] = {
-            nullptr,
-            "Playmode Lullabye",
-            "Playmode Album",
-            "PLaymode Random",
-            "Playmode SaveProgress",
-            "Playmode OneLargeTrack"};
-        return NOTIFY_STRING[value];
-#endif
-        return nullptr;
-    };
-};
-
 #endif // FOLDER_H
