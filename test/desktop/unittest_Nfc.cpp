@@ -135,7 +135,6 @@ TEST_F(Nfc_write, mfrcWriteSucceeds_returnsTrue)
 
 TEST_F(Nfc_write, tagWriteError_returnsError)
 {
-    Message tagWriteError{Message(Message::ERRORWRITE)};
     ON_CALL(m_mfrcMock, isTagPresent()).WillByDefault(Return(true));
     ON_CALL(m_mfrcMock, setTagActive()).WillByDefault(Return(true));
     ON_CALL(m_mfrcMock, getTagUid()).WillByDefault(Return(true));
@@ -144,14 +143,13 @@ TEST_F(Nfc_write, tagWriteError_returnsError)
     uint8_t dataToWrite[16] = {};
 
     Sequence seq;
-    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message(Message::ONLINE))));
-    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(tagWriteError)));
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::ONLINE));
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::ERRORWRITE)));
     m_pNfc->writeTag(4, dataToWrite);
 }
 
 TEST_F(Nfc_write, tagWriteSuccess_returnsSuccessNotification)
 {
-    Message tagWriteSuccess{Message(Message::WRITEOK)};
     ON_CALL(m_mfrcMock, isTagPresent()).WillByDefault(Return(true));
     ON_CALL(m_mfrcMock, setTagActive()).WillByDefault(Return(true));
     ON_CALL(m_mfrcMock, getTagUid()).WillByDefault(Return(true));
@@ -161,8 +159,8 @@ TEST_F(Nfc_write, tagWriteSuccess_returnsSuccessNotification)
     uint8_t dataToWrite[16] = {};
 
     Sequence seq;
-    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message(Message::ONLINE))));
-    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(tagWriteSuccess)));
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::ONLINE));
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::WRITEOK)));
     m_pNfc->writeTag(4, dataToWrite);
 }
 
@@ -203,7 +201,6 @@ TEST_F(Nfc_read, mfrcReadSucceeds_returnsTrue)
 
 TEST_F(Nfc_read, tagReadError_returnsError)
 {
-    Message tagReadError{Message(Message::ERRORREAD)};
     ON_CALL(m_mfrcMock, isTagPresent()).WillByDefault(Return(true));
     ON_CALL(m_mfrcMock, setTagActive()).WillByDefault(Return(true));
     ON_CALL(m_mfrcMock, getTagUid()).WillByDefault(Return(true));
@@ -213,14 +210,13 @@ TEST_F(Nfc_read, tagReadError_returnsError)
 
     // setOnline will return READOK, tagRead will fail with ERRORREAD
     Sequence seq;
-    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message(Message::ONLINE))));
-    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(tagReadError)));
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::ONLINE)));
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::ERRORREAD)));
     m_pNfc->readTag(4, readData);
 }
 
 TEST_F(Nfc_read, tagReadSuccess_returnsSuccessNotification)
 {
-    Message tagReadSuccess{Message(Message::READOK)};
     ON_CALL(m_mfrcMock, isTagPresent()).WillByDefault(Return(true));
     ON_CALL(m_mfrcMock, setTagActive()).WillByDefault(Return(true));
     ON_CALL(m_mfrcMock, getTagUid()).WillByDefault(Return(true));
@@ -230,7 +226,7 @@ TEST_F(Nfc_read, tagReadSuccess_returnsSuccessNotification)
     uint8_t readData[16] = {};
 
     Sequence seq;
-    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message(Message::ONLINE))));
-    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(tagReadSuccess)));
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::ONLINE)));
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::READOK)));
     m_pNfc->readTag(4, readData);
 }

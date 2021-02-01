@@ -13,10 +13,10 @@ public:
                    MessageToString_interface &rMessages) : m_rSerial(rSerial),
                                                            m_rMessages(rMessages){};
 
-    virtual void printMessage(const Message &message) override;
+    virtual void printMessage(const Message::eMessageContent message) override;
 
 private:
-    bool isNewMessage(const Message &message);
+    bool isNewMessage(const Message::eMessageContent msg);
 
 private:
     Arduino_interface_com &m_rSerial;

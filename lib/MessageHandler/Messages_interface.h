@@ -71,7 +71,7 @@ public:
         LASTVALIDMESSAGE = 0x7F
     };
 
-    static const uint8_t IN_REQUEST_OPTIONS{8}; // number of possible USERS input messages, 0x70-0x7x
+    static const uint8_t IN_REQUEST_OPTIONS{8}; // number of possible USER input messages, 0x70-0x77
 
 public:
     // Constructors convert bitcoded types into base values: Groups 0x00 - 0x0F, Messages 0x00 - 0xFF
@@ -81,21 +81,12 @@ public:
 
     bool operator==(Message const &message) const
     {
-        return (message.getContents() == m_contents);
+        return (message.getContentInt() == m_contents);
     }
 
-    void setContents(eMessageContent contents)
-    {
-        m_contents = static_cast<uint8_t>(contents);
-    }
-
-    void reset()
-    {
-        m_contents = 0;
-    }
-
-    uint8_t getGroupId() const { return (m_contents >> 4); }
-    uint8_t getContents() const { return m_contents; }
+    uint8_t getGroupIdInt() const { return (m_contents >> 4); }
+    uint8_t getContentInt() const { return m_contents; }
+    eMessageContent getContent() const { return static_cast<eMessageContent>(m_contents); }
 
 private:
     uint8_t m_contents{0};
@@ -105,7 +96,7 @@ class MessageToString_interface
 {
 public:
     virtual ~MessageToString_interface(){};
-    virtual char *getStringFromMessage(const Message &message) = 0;
+    virtual char *getStringFromMessage(const Message::eMessageContent message) = 0;
 };
 
 #endif // MESSAGES_INTERFACE_H

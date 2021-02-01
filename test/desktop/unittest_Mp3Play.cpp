@@ -52,19 +52,17 @@ protected:
 // INIT ////////////////////////////////////////////////////////////
 TEST_F(Mp3Play, init_ComError_printsError)
 {
-    Message message{Message(Message::ERRORCOM)};
     ON_CALL(m_dfMiniMock, getVolume()).WillByDefault(Return(VOLUME_MAX)); // wrong value
     
-    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(message)));
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::ERRORCOM)));
     m_pMp3Play->init();
 }
 
 TEST_F(Mp3Play, init_ComOK_printsPlayerOnline)
 {
-    Message message{Message(Message::PLAYERONLINE)};
     ON_CALL(m_dfMiniMock, getVolume()).WillByDefault(Return(VOLUME_INIT));
     
-    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(message)));
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::PLAYERONLINE)));
     m_pMp3Play->init();
 }
 

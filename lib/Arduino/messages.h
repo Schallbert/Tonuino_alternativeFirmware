@@ -10,7 +10,7 @@ public:
     MessageToString() = default;
     ~MessageToString() = default;
 
-    char *getStringFromMessage(const Message &message) override;
+    char *getStringFromMessage(const Message::eMessageContent message) override;
 
 private:
     char m_completeMessage[DEBUG_MAXMESSAGELENGTH]{};

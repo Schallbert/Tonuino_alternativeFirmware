@@ -18,8 +18,7 @@ Message::eMessageContent NfcControl::getTagPresence()
             tagPresence = Message::NEWKNOWNTAG;
         }
     }
-    Message ctrlStatus{Message(tagPresence)};
-    m_rMessageHandler.printMessage(ctrlStatus);
+    m_rMessageHandler.printMessage(tagPresence);
     return tagPresence;
 }
 

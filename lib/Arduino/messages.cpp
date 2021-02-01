@@ -80,25 +80,26 @@ const char *const s_cttTable[] PROGMEM = {
     s_ctt60, s_ctt61, s_ctt62, s_ctt63, s_ctt64, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
     s_ctt70, s_ctt71, s_ctt72, s_ctt73, s_ctt74, s_ctt75, s_ctt76, s_ctt77, s_ctt35, s_ctt03, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 
-char *MessageToString::getStringFromMessage(const Message &message)
+char *MessageToString::getStringFromMessage(const Message::eMessageContent msg)
 {
     // SUCCESS: proven that the two guards prevent segfault when called with nonexistant content.
-    // TODO: Acceptance test case for this behavior. 
-    uint8_t content = message.getContents();
+    // TODO: Acceptance test case for this behavior.
+    Message message{Message(msg)};
+    uint8_t content = message.getContentInt();
     if((content == 0) || (content > Message::LASTVALIDMESSAGE))
     {
         return nullptr;
     }
 
-    if(!(char *)(pgm_read_word(&(s_cttTable[message.getContents()]))))
+    if(!(char *)(pgm_read_word(&(s_cttTable[message.getContentInt()]))))
     {
         return nullptr;
     }
 
     m_completeMessage[0] = 0; //delete string
-    strcpy_P(m_completeMessage, (char *)(pgm_read_word(&(s_grTable[message.getGroupId()]))));
+    strcpy_P(m_completeMessage, (char *)(pgm_read_word(&(s_grTable[message.getGroupIdInt()]))));
     strcat_P(m_completeMessage, s_sep);
-    strcat_P(m_completeMessage, (char *)(pgm_read_word(&(s_cttTable[message.getContents()]))));
+    strcat_P(m_completeMessage, (char *)(pgm_read_word(&(s_cttTable[message.getContentInt()]))));
     return m_completeMessage;
 }
 #else

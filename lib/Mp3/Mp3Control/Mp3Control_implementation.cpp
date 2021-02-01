@@ -51,25 +51,25 @@ void Mp3Control::plPs()
 void Mp3Control::play()
 {
     m_rDfMiniMp3.start(); // Only successful if a track is entered.
-    m_rMessageHandler.printMessage(Message(Message::PLAY));
+    m_rMessageHandler.printMessage(Message::PLAY);
 }
 
 void Mp3Control::pause()
 {
     m_rDfMiniMp3.pause();
-    m_rMessageHandler.printMessage(Message(Message::PAUSE));
+    m_rMessageHandler.printMessage(Message::PAUSE);
 }
 
 void Mp3Control::next()
 {
     m_rMp3Player.playNext();
-    m_rMessageHandler.printMessage(Message(Message::NEXT));
+    m_rMessageHandler.printMessage(Message::NEXT);
 }
 
 void Mp3Control::prev()
 {
     m_rMp3Player.playPrev();
-    m_rMessageHandler.printMessage(Message(Message::PREV));
+    m_rMessageHandler.printMessage(Message::PREV);
 }
 
 void Mp3Control::incV()
@@ -77,7 +77,7 @@ void Mp3Control::incV()
     if (m_rDfMiniMp3.getVolume() < VOLUME_MAX)
     {
         m_rDfMiniMp3.increaseVolume();
-        m_rMessageHandler.printMessage(Message(Message::VOLUP));
+        m_rMessageHandler.printMessage(Message::VOLUP);
     }
 }
 
@@ -86,7 +86,7 @@ void Mp3Control::decV()
     if (m_rDfMiniMp3.getVolume() > VOLUME_MIN)
     {
         m_rDfMiniMp3.decreaseVolume();
-        m_rMessageHandler.printMessage(Message(Message::VOLDN));
+        m_rMessageHandler.printMessage(Message::VOLDN);
     }
 }
 

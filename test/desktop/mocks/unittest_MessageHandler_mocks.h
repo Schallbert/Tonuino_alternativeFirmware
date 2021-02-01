@@ -8,12 +8,13 @@
 class Mock_MessageHandler : public MessageHander_interface
 {
 public:
-    MOCK_METHOD(void, printMessage, (const Message &message), (override));
+    MOCK_METHOD(void, printMessage, (const Message::eMessageContent message), (override));
 
     // Helper method for debugging purposes
     void printMessageIdToConsole()
     {
-        ON_CALL(*this, printMessage).WillByDefault([this](const Message &message) {
+        ON_CALL(*this, printMessage).WillByDefault([this](const Message::eMessageContent msg) {
+            Message message{Message(msg)};
             std::cout << "printMessage GroupId: 0x"
                       << std::hex << +message.getGroupId()
                       << ", Contents: 0x"
@@ -26,7 +27,7 @@ public:
 class Mock_MessageToString : public MessageToString_interface
 {
 public:
-    MOCK_METHOD(char *, getStringFromMessage, (const Message &message), (override));
+    MOCK_METHOD(char *, getStringFromMessage, (const Message::eMessageContent message), (override));
 };
 
 MATCHER_P(identicalMessage, comp, "")

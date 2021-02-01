@@ -12,6 +12,7 @@ void Mp3Prompt::playPrompt(const VoicePrompt &prompt)
         {
             waitForPromptToFinish();
         }
+        m_rDfMiniMp3.printStatus();
     }
 }
 

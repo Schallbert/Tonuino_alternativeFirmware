@@ -22,41 +22,41 @@ private:
 public:
     static void OnError(uint16_t errorCode)
     {
-        bufferedMessage.setContents(Message::ERRORCOM);
+        bufferedMessage = Message::ERRORCOM;
     };
 
     static void OnPlayFinished(DfMp3_PlaySources src, uint16_t track)
     {
-        bufferedMessage.setContents(Message::TRACKFINISHED);
+        bufferedMessage = Message::TRACKFINISHED;
     };
 
     static void OnPlaySourceOnline(uint16_t code)
     {
-        bufferedMessage.setContents(Message::SDONLINE);
+        bufferedMessage = Message::SDONLINE;
     };
 
     static void OnPlaySourceInserted(uint16_t code)
     {
-        bufferedMessage.setContents(Message::SDINSERT);
+        bufferedMessage = Message::SDINSERT;
     };
 
     static void OnPlaySourceRemoved(uint16_t code)
     {
-        bufferedMessage.setContents(Message::SDREMOVE);
+        bufferedMessage = Message::SDREMOVE;
     };
 
-    static Message &getMessage()
+    static Message::eMessageContent getMessage()
     {
         return bufferedMessage;
     };
 
     static void clearMessage()
     {
-        bufferedMessage.reset();
+        bufferedMessage = Message::NONE;
     }
 
 private:
-    static Message bufferedMessage;
+    static Message::eMessageContent bufferedMessage;
 };
 
 // Wrapper class to interface DfMiniMp3 hardware
@@ -145,7 +145,7 @@ public:
     bool isTrackFinished() const override
     {
         bool status{false};
-        if (Mp3Notify::getMessage() == Message{Message::TRACKFINISHED})
+        if (Mp3Notify::getMessage() == Message::TRACKFINISHED)
         {
             Mp3Notify::clearMessage();
             status = true;

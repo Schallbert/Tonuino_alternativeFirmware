@@ -73,7 +73,7 @@ Message::eMessageContent UserInput_ClickEncoder::getUserRequest()
         result = Message::INPUTNONE;
     }
 
-    m_rMessageHandler.printMessage(Message{result});
+    m_rMessageHandler.printMessage(result);
     return result;
 }
 
@@ -154,7 +154,7 @@ Message::eMessageContent UserInput_3Buttons::getUserRequest()
         result = Message::INPUTNONE;
     }
 
-    m_rMessageHandler.printMessage(Message{result});
+    m_rMessageHandler.printMessage(result);
     return result;
 }
 

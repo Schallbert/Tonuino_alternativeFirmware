@@ -19,14 +19,12 @@ public:
 
     UserInput_interface *getInstance()
     {
+        Message::eMessageContent message{Message::INPUTONLINE};
         if (m_pConcreteUserInput == nullptr)
         {
-            m_rMessageHandler.printMessage(Message{Message::INPUTERROR});
+            message = Message::INPUTERROR;
         }
-        else
-        {
-            m_rMessageHandler.printMessage(Message{Message::INPUTONLINE});
-        }
+        m_rMessageHandler.printMessage(message);
         return m_pConcreteUserInput;
     }
 
