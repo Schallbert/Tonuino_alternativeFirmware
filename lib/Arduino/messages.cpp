@@ -19,6 +19,7 @@ const char s_gr7[] PROGMEM = "Input";
 const char s_ctt00[] PROGMEM = "Started";
 const char s_ctt01[] PROGMEM = "Shutdown";
 const char s_ctt02[] PROGMEM = "Prompt timeout";
+const char s_ctt03[] PROGMEM = "Init Error";
 
 const char s_ctt10[] PROGMEM = "Volume up";
 const char s_ctt11[] PROGMEM = "Volume down";
@@ -77,7 +78,7 @@ const char *const s_cttTable[] PROGMEM = {
     s_ctt40, s_ctt41, s_ctt42, s_ctt43, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
     s_ctt35, s_ctt51, s_ctt52, s_ctt53, s_ctt54, s_ctt55, s_ctt56, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
     s_ctt60, s_ctt61, s_ctt62, s_ctt63, s_ctt64, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-    s_ctt70, s_ctt71, s_ctt72, s_ctt73, s_ctt74, s_ctt75, s_ctt76, s_ctt77, s_ctt35, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+    s_ctt70, s_ctt71, s_ctt72, s_ctt73, s_ctt74, s_ctt75, s_ctt76, s_ctt77, s_ctt35, s_ctt03, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 
 char *MessageToString::getStringFromMessage(const Message &message)
 {

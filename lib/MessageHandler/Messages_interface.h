@@ -67,6 +67,7 @@ public:
         INPUTPREVLP = 0x76,
         INPUTLOCK = 0x77,
         INPUTONLINE = 0x78,
+        INPUTERROR = 0x79,
         LASTVALIDMESSAGE = 0x7F
     };
 
