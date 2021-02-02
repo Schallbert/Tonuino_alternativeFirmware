@@ -67,36 +67,36 @@ const char s_ctt75[] PROGMEM = "Prev";
 const char s_ctt76[] PROGMEM = "PrevLong";
 const char s_ctt77[] PROGMEM = "Locked";
 
+const char s_error[] PROGMEM = "UNDEFINED MESSAGE!";
+
 const char s_sep[] PROGMEM = ": ";
 
 const char *const s_grTable[] PROGMEM = {s_gr0, s_gr1, s_gr2, s_gr3, s_gr4, s_gr5, s_gr6, s_gr7};
 const char *const s_cttTable[] PROGMEM = {
-    nullptr, s_ctt00, s_ctt01, s_ctt02, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-    s_ctt10, s_ctt11, s_ctt12, s_ctt13, s_ctt14, s_ctt15, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-    s_ctt20, s_ctt21, s_ctt22, s_ctt23, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-    s_ctt30, s_ctt31, s_ctt32, s_ctt33, s_ctt34, s_ctt35, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-    s_ctt40, s_ctt41, s_ctt42, s_ctt43, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-    s_ctt35, s_ctt51, s_ctt52, s_ctt53, s_ctt54, s_ctt55, s_ctt56, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-    s_ctt60, s_ctt61, s_ctt62, s_ctt63, s_ctt64, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-    s_ctt70, s_ctt71, s_ctt72, s_ctt73, s_ctt74, s_ctt75, s_ctt76, s_ctt77, s_ctt35, s_ctt03, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+    s_error, s_ctt00, s_ctt01, s_ctt02, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error,
+    s_ctt10, s_ctt11, s_ctt12, s_ctt13, s_ctt14, s_ctt15, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error,
+    s_ctt20, s_ctt21, s_ctt22, s_ctt23, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error,
+    s_ctt30, s_ctt31, s_ctt32, s_ctt33, s_ctt34, s_ctt35, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error,
+    s_ctt40, s_ctt41, s_ctt42, s_ctt43, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error,
+    s_ctt35, s_ctt51, s_ctt52, s_ctt53, s_ctt54, s_ctt55, s_ctt56, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error,
+    s_ctt60, s_ctt61, s_ctt62, s_ctt63, s_ctt64, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error,
+    s_ctt70, s_ctt71, s_ctt72, s_ctt73, s_ctt74, s_ctt75, s_ctt76, s_ctt77, s_ctt35, s_ctt03, s_error, s_error, s_error, s_error, s_error, s_error};
 
 char *MessageToString::getStringFromMessage(const Message::eMessageContent msg)
 {
     // SUCCESS: proven that the two guards prevent segfault when called with nonexistant content.
     // TODO: Acceptance test case for this behavior.
+    m_completeMessage[0] = 0; //delete string
     Message message{Message(msg)};
     uint8_t content = message.getContentInt();
-    if((content == 0) || (content > Message::LASTVALIDMESSAGE))
+
+    // return error message stored in s_ctttable[0]
+    if((content > Message::LASTVALIDMESSAGE))
     {
-        return nullptr;
+        strcpy_P(m_completeMessage, (char *)(pgm_read_word(&(s_cttTable[0]))));
+        return m_completeMessage;
     }
 
-    if(!(char *)(pgm_read_word(&(s_cttTable[message.getContentInt()]))))
-    {
-        return nullptr;
-    }
-
-    m_completeMessage[0] = 0; //delete string
     strcpy_P(m_completeMessage, (char *)(pgm_read_word(&(s_grTable[message.getGroupIdInt()]))));
     strcat_P(m_completeMessage, s_sep);
     strcat_P(m_completeMessage, (char *)(pgm_read_word(&(s_cttTable[message.getContentInt()]))));
@@ -105,6 +105,6 @@ char *MessageToString::getStringFromMessage(const Message::eMessageContent msg)
 #else
 char *MessageToString::getStringFromMessage(const Message &message)
 {
-    return nullptr;
+    return s_error;
 }
 #endif
