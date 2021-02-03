@@ -16,9 +16,9 @@ public:
         ON_CALL(*this, printMessage).WillByDefault([this](const Message::eMessageContent msg) {
             Message message{Message(msg)};
             std::cout << "printMessage GroupId: 0x"
-                      << std::hex << +message.getGroupId()
+                      << std::hex << +message.getGroupIdInt()
                       << ", Contents: 0x"
-                      << std::hex << +message.getContents()
+                      << std::hex << +message.getContentInt()
                       << std::endl;
         });
     }

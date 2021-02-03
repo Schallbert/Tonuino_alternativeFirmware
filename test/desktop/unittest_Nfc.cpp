@@ -143,7 +143,7 @@ TEST_F(Nfc_write, tagWriteError_returnsError)
     uint8_t dataToWrite[16] = {};
 
     Sequence seq;
-    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::ONLINE));
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::ONLINE)));
     EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::ERRORWRITE)));
     m_pNfc->writeTag(4, dataToWrite);
 }
@@ -159,7 +159,7 @@ TEST_F(Nfc_write, tagWriteSuccess_returnsSuccessNotification)
     uint8_t dataToWrite[16] = {};
 
     Sequence seq;
-    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::ONLINE));
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::ONLINE)));
     EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::WRITEOK)));
     m_pNfc->writeTag(4, dataToWrite);
 }

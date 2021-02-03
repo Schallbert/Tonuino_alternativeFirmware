@@ -80,7 +80,7 @@ TEST_F(MessageHandlerTest, PrintMessage_offset_WillPrint)
     ON_CALL(m_messagesMock, getStringFromMessage(_)).WillByDefault(Return(m_testString));
     EXPECT_CALL(m_serialMock, com_println(_));
     const Message testMessage{Message(Message::MP3PLAYBACK, 2)};
-    m_pMessageHandler->printMessage(testMessage);
+    m_pMessageHandler->printMessage(testMessage.getContent());
 }
 
 TEST_F(MessageHandlerTest, PrintMessage_offset_ParsesCorrectMessage)
