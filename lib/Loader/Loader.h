@@ -92,10 +92,9 @@ private:
                                     m_PwrCtrl,
                                     m_MenuTimer)};
     // userInput
-    UserInput_factory m_pUserInputFactory{m_Mp3Prompt, m_MessageHandler};
+    UserInput_factory m_UserInputFactory{m_Mp3Prompt, m_MessageHandler};
     UserInput_interface *m_pUserInput{nullptr};
     Tonuino *m_pTonuino{nullptr};
-
 
     const uint16_t MSTOSEC{1000};
     uint16_t m_timer1msTicks{0};

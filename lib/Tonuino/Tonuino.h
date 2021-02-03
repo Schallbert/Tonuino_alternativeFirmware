@@ -17,7 +17,7 @@ public:
                                      m_rMp3Control(rMp3Control),
                                      m_rVoiceMenu(rVoiceMenu){};
 
-    void loop();
+    void run();
 
 private:
     bool handleVoiceMenu();
@@ -31,7 +31,7 @@ private:
     VoiceMenu &m_rVoiceMenu;
 
     Message::eMessageContent m_tagState{Message::NOTAG};
-    UserInput_interface::eUserRequest m_userRequest{UserInput_interface::NO_ACTION};
+    Message::eMessageContent m_userRequest{Message::INPUTNONE};
 };
 
 #endif // TONUINO_H

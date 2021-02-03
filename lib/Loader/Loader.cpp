@@ -12,8 +12,8 @@ void Loader::init()
     }
     m_NfcControl.init();
     m_Mp3Play.init();
-    m_PwrCtrl.requestKeepAlive();
-    m_pUserInput = m_pUserInputFactory.getInstance();
+    //m_PwrCtrl.requestKeepAlive();
+    m_pUserInput = m_UserInputFactory.getInstance();
     m_pTonuino = new Tonuino(m_pUserInput, m_NfcControl, m_Mp3Control, m_VoiceMenu);
     notifyStartup();
 }
@@ -22,18 +22,11 @@ void Loader::notifyStartup()
 {
     VoicePrompt startup{VoicePrompt(VoicePrompt::MSG_STARTUP, false)};
     m_Mp3Prompt.playPrompt(startup);
-    m_MessageHandler.printMessage(Message{Message::STARTUP});
+    m_MessageHandler.printMessage(Message::STARTUP);
 }
 
 void Loader::run()
 {
-    /*m_MessageHandler.printMessage(Message{Message::HALT});
-    VoicePrompt shutdwn{VoicePrompt(VoicePrompt::MSG_SHUTDOWN, false)};
-    m_Mp3Prompt.playPrompt(shutdwn);
-    m_MessageHandler.printMessage(Message{Message::STARTUP});
-    VoicePrompt startup{VoicePrompt(VoicePrompt::MSG_STARTUP, false)};
-    m_Mp3Prompt.playPrompt(startup);*/
-
     //LowPower.sleep(100);
     // FEATURE SLEEP for 100ms to reduce power consumption?
     m_pTonuino->run();
@@ -44,6 +37,7 @@ void Loader::run()
     }*/
 }
 
+/*
 void Loader::shutdown()
 {
     notifyShutdown();
@@ -51,10 +45,11 @@ void Loader::shutdown()
     m_pTonuino = nullptr;
     m_PwrCtrl.allowShutdown();
 }
+*/
 
 void Loader::notifyShutdown()
 {
-    m_MessageHandler.printMessage(Message{Message::HALT});
+    m_MessageHandler.printMessage(Message::HALT);
     VoicePrompt shutdown{VoicePrompt(VoicePrompt::MSG_SHUTDOWN, false)};
     m_Mp3Prompt.playPrompt(shutdown);
 }
@@ -65,7 +60,7 @@ void Loader::timer1Task_1ms()
     {
         m_pUserInput->userinputServiceIsr(); // userInput service 1ms task
     }
-    m_PwrCtrl.service1msLed();
+    //m_PwrCtrl.service1msLed();
 
     ++m_timer1msTicks;
     if (m_timer1msTicks == MSTOSEC)
@@ -77,7 +72,7 @@ void Loader::timer1Task_1ms()
 
 void Loader::timer1Task_1sec()
 {
-    m_PwrCtrl.notify1sTimer(); // idle timer
+    //m_PwrCtrl.notify1sTimer(); // idle timer
     m_LullabyeTimer.timerTick();
     m_MenuTimer.timerTick();
     m_DfMiniPromptTimer.timerTick();
