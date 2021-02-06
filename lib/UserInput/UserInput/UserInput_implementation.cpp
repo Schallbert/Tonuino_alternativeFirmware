@@ -110,13 +110,13 @@ Message::eMessageContent UserInput_3Buttons::getUserRequest()
         if (UserInput_interface::userInputLocked)
         {
             UserInput_interface::userInputLocked = false;
-            VoicePrompt locked{VoicePrompt::MSG_BUTTONFREE, true};
+            VoicePrompt locked{VoicePrompt::MSG_BUTTONFREE, false};
             m_rPrompt.playPrompt(locked);
         }
         else
         {
             UserInput_interface::userInputLocked = true;
-            VoicePrompt unlocked{VoicePrompt::MSG_BUTTONLOCK, true};
+            VoicePrompt unlocked{VoicePrompt::MSG_BUTTONLOCK, false};
             m_rPrompt.playPrompt(unlocked);
         }
     }

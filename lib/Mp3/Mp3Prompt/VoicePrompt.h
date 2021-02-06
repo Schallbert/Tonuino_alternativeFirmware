@@ -12,9 +12,9 @@ public:
         MSG_ERROR_CARDWRITE = 410,
         MSG_ERROR_CARDREAD = 411,
         MSG_ERROR_FOLDER = 412,
-        MSG_ERROR_TOOMANYTRACKS = 413, // TODO: Record prompt
-        MSG_BUTTONLOCK = 420, // TODO: Record buttonlock prompt
-        MSG_BUTTONFREE = 421, // TODO: Record buttonUnlock prompt
+        MSG_ERROR_TOOMANYTRACKS = 413,
+        MSG_BUTTONLOCK = 426,
+        MSG_BUTTONFREE = 427,
         MSG_STARTUP = 500,
         MSG_SHUTDOWN = 501,
         MSG_SELECT_FOLDERID = 300,
