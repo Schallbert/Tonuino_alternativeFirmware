@@ -1,6 +1,6 @@
 #ifndef ARDUINO_INTERFACE_H
 #define ARDUINO_INTERFACE_H
-#include "../Arduino_HardwareAbstraction/Arduino_types.h"
+#include "Arduino_types.h"
 
     // Interface class for Arduino pin manipulation functions
     // Preparation for mocking
