@@ -36,17 +36,17 @@ public:
         return static_cast<eButtonState>(m_Encoder.getButton());
     }
 
-    void setAccelerationEnabled(const bool enabled) //override
+    void setAccelerationEnabled(const bool enabled) override
     {
         m_Encoder.setAccelerationEnabled(enabled);
     }
 
-    void setDoubleClickEnabled(const bool enabled) //override
+    void setDoubleClickEnabled(const bool enabled) override
     {
         m_Encoder.setDoubleClickEnabled(enabled);
     }
 
-    void setLongPressRepeatEnabled(const bool enabled) // override
+    void setLongPressRepeatEnabled(const bool enabled)  override
     {
         m_Encoder.setLongPressRepeatEnabled(enabled);
     }

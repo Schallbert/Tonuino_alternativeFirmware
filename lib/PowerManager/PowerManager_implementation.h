@@ -43,7 +43,7 @@ private:
     Arduino_interface_pins &m_rPinControl;
     SimpleTimer &m_rIdleTimer;
     // Member objects
-    StatusLed m_led{m_rPinControl, LED_PIN, FLASHSLOWMS, FLASHQUICKMS, LED_ACTIVE_STATE};
+    StatusLed m_led{m_rPinControl, LED_PIN, LED_ACTIVE_STATE, FLASHSLOWMS, FLASHQUICKMS};
     KeepAlive m_keepAlive{m_rPinControl, KEEPALIVE_PIN, KEEPALIVE_ACTIVE_STATE};
 };
 
