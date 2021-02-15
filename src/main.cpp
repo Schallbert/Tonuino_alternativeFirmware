@@ -2,9 +2,9 @@
 //#include <avr/sleep.h>
 
 // project includes -------
+#include "Loader.h"
 #include "TimerOne.h"
 #include "Tonuino_config.h"
-#include "Loader.h"
 
 Loader loader;
 TimerOne timer1;
