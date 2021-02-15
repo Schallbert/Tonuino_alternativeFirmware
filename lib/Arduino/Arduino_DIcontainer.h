@@ -14,7 +14,7 @@ public:
     Arduino_DIcontainer(const Arduino_DIcontainer &cpy) = delete;
 
 public:
-    // public methods returning a pointer to the implementation via public interface
+    // public methods returning a reference to the implementation via public interface
     Arduino_interface_pins &getPins() override;
     Arduino_interface_delay &getDelay() override;
     Arduino_interface_com &getSerial() override;

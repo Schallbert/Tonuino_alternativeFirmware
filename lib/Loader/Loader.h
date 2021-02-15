@@ -37,6 +37,7 @@ class Loader
 public:
     Loader() = default;
     ~Loader() = default;
+    Loader(const Loader &cpy) = delete;
 
 public:
     void init();
@@ -51,46 +52,45 @@ private:
 
 private:
     // Arduino Hardware Abstraction Layer
-    Arduino_DIcontainer m_ArduinoHal{Arduino_DIcontainer()};
+    Arduino_DIcontainer m_ArduinoHal;
     // timer instances
-    SimpleTimer m_MenuTimer{SimpleTimer()};
-    SimpleTimer m_LullabyeTimer{SimpleTimer()};
-    SimpleTimer m_IdleTimer{SimpleTimer()};
-    SimpleTimer m_DfMiniPromptTimer{SimpleTimer()};
+    SimpleTimer m_MenuTimer;
+    SimpleTimer m_LullabyeTimer;
+    SimpleTimer m_IdleTimer;
+    SimpleTimer m_DfMiniPromptTimer;
 
     // UTILITIES
-    PowerManager m_PwrCtrl{PowerManager(m_ArduinoHal.getPins(), m_IdleTimer)};
-    MessageToString m_Stringifier{MessageToString()};
-    MessageHandler m_MessageHandler{MessageHandler(m_ArduinoHal.getSerial(),
-                                                   m_Stringifier)};
+    PowerManager m_PwrCtrl{m_ArduinoHal.getPins(), m_IdleTimer};
+    MessageToString m_Stringifier;
+    MessageHandler m_MessageHandler{m_ArduinoHal.getSerial(), m_Stringifier};
 
     // PERIPHERY
     // mp3
-    DfMini m_DfMini{DfMini(m_MessageHandler)};
-    Mp3Prompt m_Mp3Prompt{Mp3Prompt(m_DfMini, m_DfMiniPromptTimer)};
-    Mp3Play_implementation m_Mp3Play{Mp3Play_implementation(m_ArduinoHal,
-                                                            m_DfMini,
-                                                            m_Mp3Prompt,
-                                                            m_LullabyeTimer,
-                                                            m_MessageHandler)};
-    Mp3Control m_Mp3Control{Mp3Control(m_DfMini,
-                                       m_Mp3Play,
-                                       m_Mp3Prompt,
-                                       m_PwrCtrl,
-                                       m_MessageHandler)};
+    DfMini m_DfMini{m_MessageHandler};
+    Mp3Prompt m_Mp3Prompt{m_DfMini, m_DfMiniPromptTimer};
+    Mp3Play_implementation m_Mp3Play{m_ArduinoHal,
+                                     m_DfMini,
+                                     m_Mp3Prompt,
+                                     m_LullabyeTimer,
+                                     m_MessageHandler};
+    Mp3Control m_Mp3Control{m_DfMini,
+                            m_Mp3Play,
+                            m_Mp3Prompt,
+                            m_PwrCtrl,
+                            m_MessageHandler};
 
     // nfc
-    MFRC522_implementation m_Mfrc522{MFRC522_implementation()};
-    Nfc_implementation m_Nfc{Nfc_implementation(m_Mfrc522, m_MessageHandler)};
-    NfcControl m_NfcControl{NfcControl(m_Nfc, m_MessageHandler)};
+    MFRC522_implementation m_Mfrc522;
+    Nfc_implementation m_Nfc{m_Mfrc522, m_MessageHandler};
+    NfcControl m_NfcControl{m_Nfc, m_MessageHandler};
 
     // voicemenu
-    VoiceMenu m_VoiceMenu{VoiceMenu(m_Mp3Play,
-                                    m_Mp3Prompt,
-                                    m_NfcControl,
-                                    m_MessageHandler,
-                                    m_PwrCtrl,
-                                    m_MenuTimer)};
+    VoiceMenu m_VoiceMenu{m_Mp3Play,
+                          m_Mp3Prompt,
+                          m_NfcControl,
+                          m_MessageHandler,
+                          m_PwrCtrl,
+                          m_MenuTimer};
     // userInput
     UserInput_factory m_UserInputFactory{m_Mp3Prompt, m_MessageHandler};
     UserInput_interface *m_pUserInput{nullptr};

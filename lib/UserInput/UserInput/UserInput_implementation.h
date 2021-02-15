@@ -29,6 +29,7 @@ public:
         m_rEncoder.setDoubleClickEnabled(true);
     };
     ~UserInput_ClickEncoder() = default;
+    UserInput_ClickEncoder(const UserInput_ClickEncoder &cpySrc) = delete;
 
     void userinputServiceIsr() override;
     Message::eMessageContent getUserRequest() override;

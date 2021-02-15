@@ -12,6 +12,9 @@ public:
     MessageHandler(Arduino_interface_com &rSerial,
                    MessageToString_interface &rMessages) : m_rSerial(rSerial),
                                                            m_rMessages(rMessages){};
+    ~MessageHandler() = default;
+    MessageHandler(const MessageHandler &cpy) = delete;
+    MessageHandler &operator=(const MessageHandler &cpy) = delete;
 
     virtual void printMessage(const Message::eMessageContent message) override;
 
