@@ -11,6 +11,8 @@ public:
     Mp3Prompt(DfMiniMp3_interface &rDfMini,
               SimpleTimer &rDfMiniPromptTimer) : m_rDfMiniMp3(rDfMini),
                                                  m_rDfMiniPromptTimer(rDfMiniPromptTimer){};
+    ~Mp3Prompt() = default;
+    Mp3Prompt(const Mp3Prompt &cpy) = delete;
 
     virtual void playPrompt(const VoicePrompt &prompt) override;
 

@@ -25,6 +25,7 @@ public:
                                                                 m_rLullabyeTimer(rLullabyeTimer),
                                                                 m_rMessageHandler(rMessage){};
     ~Mp3Play_implementation() = default;
+    Mp3Play_implementation(const Mp3Play_implementation &cpy) = delete;
 
     void init();
     void playFolder(Folder &folder) override;

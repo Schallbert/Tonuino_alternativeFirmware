@@ -35,6 +35,7 @@ public:
                 bool allowSkip) : m_promptId(static_cast<uint16_t>(promptId)),
                                   m_allowSkip(allowSkip){};
     ~VoicePrompt() = default;
+    VoicePrompt(const VoicePrompt &cpy) = delete;
 
     VoicePrompt &operator=(const VoicePrompt &cpyPrompt)
     {

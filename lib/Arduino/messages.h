@@ -9,6 +9,7 @@ class MessageToString : public MessageToString_interface
 public:
     MessageToString() = default;
     ~MessageToString() = default;
+    MessageToString(const MessageToString &cpy) = delete;
 
     char *getStringFromMessage(const Message::eMessageContent message) override;
 

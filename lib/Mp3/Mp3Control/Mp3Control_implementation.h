@@ -30,6 +30,7 @@ public:
                                                        m_rPowerManager(rPowerManager),
                                                        m_rMessageHandler(rMsgHandler){};
     ~Mp3Control() = default;
+    Mp3Control(const Mp3Control &cpy) = delete;
 
     void setUserInput(Message::eMessageContent input) override;
     void loop() override;

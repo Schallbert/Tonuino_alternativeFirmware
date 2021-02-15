@@ -6,13 +6,13 @@
 void Loader::init()
 {
     // Timers must be initialized and started by now!
-    if(DEBUGSERIAL)
-    { 
-            m_ArduinoHal.getSerial().com_begin(DEBUGSERIAL_BAUDRATE);
+    if (DEBUGSERIAL)
+    {
+        m_ArduinoHal.getSerial().com_begin(DEBUGSERIAL_BAUDRATE);
     }
     m_NfcControl.init();
     m_Mp3Play.init();
-    //m_PwrCtrl.requestKeepAlive();
+    m_PwrCtrl.requestKeepAlive();
     m_pUserInput = m_UserInputFactory.getInstance();
     m_pTonuino = new Tonuino(m_pUserInput, m_NfcControl, m_Mp3Control, m_VoiceMenu);
     notifyStartup();
@@ -20,7 +20,7 @@ void Loader::init()
 
 void Loader::notifyStartup()
 {
-    VoicePrompt startup{VoicePrompt(VoicePrompt::MSG_STARTUP, false)};
+    VoicePrompt startup(VoicePrompt::MSG_STARTUP, false);
     m_Mp3Prompt.playPrompt(startup);
     m_MessageHandler.printMessage(Message::STARTUP);
 }
@@ -29,6 +29,7 @@ void Loader::run()
 {
     //LowPower.sleep(100);
     // FEATURE SLEEP for 100ms to reduce power consumption?
+
     m_pTonuino->run();
     /*
     if (m_PwrCtrl.isShutdownRequested())
@@ -50,7 +51,7 @@ void Loader::shutdown()
 void Loader::notifyShutdown()
 {
     m_MessageHandler.printMessage(Message::HALT);
-    VoicePrompt shutdown{VoicePrompt(VoicePrompt::MSG_SHUTDOWN, false)};
+    VoicePrompt shutdown(VoicePrompt::MSG_SHUTDOWN, false);
     m_Mp3Prompt.playPrompt(shutdown);
 }
 
@@ -60,7 +61,8 @@ void Loader::timer1Task_1ms()
     {
         m_pUserInput->userinputServiceIsr(); // userInput service 1ms task
     }
-    //m_PwrCtrl.service1msLed();
+
+    m_PwrCtrl.service1msLed();
 
     ++m_timer1msTicks;
     if (m_timer1msTicks == MSTOSEC)

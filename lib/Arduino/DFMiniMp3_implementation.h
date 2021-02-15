@@ -168,9 +168,8 @@ private:
     // Solution for constructor error found here:
     //https://stackoverflow.com/questions/35762196/expected-a-type-specifier-error-when-creating-an-object-of-a-class-inside-anot
     // Does not work with m_Mp3SwSerial(DFMINI_RX, DFMINI_TX)
-    //because compiler interprets this as a class method call
-    SoftwareSerial m_Mp3SwSerial{SoftwareSerial(DFMINI_RX, DFMINI_TX)};
-    DFMiniMp3<SoftwareSerial, Mp3Notify> m_dfMiniMp3{
-        DFMiniMp3<SoftwareSerial, Mp3Notify>(m_Mp3SwSerial)};
+    //because compiler interprets this as a class method call. Using curly braces also solves "Most Vexing Parse problem."
+    SoftwareSerial m_Mp3SwSerial{DFMINI_RX, DFMINI_TX};
+    DFMiniMp3<SoftwareSerial, Mp3Notify> m_dfMiniMp3{m_Mp3SwSerial};
 };
 #endif // DFMINIMP3_IMPLEMENTATION_H

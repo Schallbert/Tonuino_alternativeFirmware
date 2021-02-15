@@ -6,7 +6,7 @@
 void LinkMenu::confirm()
 {
     m_menuState.confirm();
-    VoicePrompt menuStateMessage{VoicePrompt(m_menuState.getMenuStateMessage(), true)};
+    VoicePrompt menuStateMessage(m_menuState.getMenuStateMessage(), true);
     m_prompt = menuStateMessage;
 
     if (isComplete())
