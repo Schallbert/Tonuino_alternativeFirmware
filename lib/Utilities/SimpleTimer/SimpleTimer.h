@@ -10,8 +10,9 @@ Is 16 bit only! */
 class SimpleTimer
 {
 public:
-    //SimpleTimer(){};
-    //~SimpleTimer(){};
+    SimpleTimer() = default;
+    ~SimpleTimer() = default;;
+    SimpleTimer(const SimpleTimer &cpy) = delete;
 
 public:
     // counts timer if started
