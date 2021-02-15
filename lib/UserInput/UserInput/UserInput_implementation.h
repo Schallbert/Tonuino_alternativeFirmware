@@ -41,7 +41,6 @@ private:
     Mp3Prompt_interface &m_rPrompt;
     MessageHander_interface &m_rMessageHandler;
 
-    volatile int16_t encoderPosition{0};
     volatile int16_t encoderDiff{0};
     ClickEncoder_interface::eButtonState buttonState{ClickEncoder_interface::Open};
 }; // UserInput_ClickEncoder

@@ -41,8 +41,7 @@ Message::eMessageContent UserInput_ClickEncoder::getUserRequest()
     else if (encoderDiff > 0) // TODO: Check in INTEGRATION TEST if this really is a good idea. Alternative: take position.
     {
         //encoder turned right
-        if (buttonState == ClickEncoder_interface::Pressed ||
-            buttonState == ClickEncoder_interface::Held)
+        if (buttonState == ClickEncoder_interface::Held)
         {
             result = Message::INPUTNEXTLP;
         }
@@ -54,8 +53,7 @@ Message::eMessageContent UserInput_ClickEncoder::getUserRequest()
     else if (encoderDiff < 0)
     {
         //encoder turned left
-        if (buttonState == ClickEncoder_interface::Pressed ||
-            buttonState == ClickEncoder_interface::Held)
+        if (buttonState == ClickEncoder_interface::Held)
         {
             result = Message::INPUTPREVLP;
         }
@@ -79,10 +77,8 @@ Message::eMessageContent UserInput_ClickEncoder::getUserRequest()
 
 void UserInput_ClickEncoder::userinputRefresh()
 {
-
     //Get values from encoder
-    encoderDiff = m_rEncoder.getValue(); // diff to last "getValue" call
-    encoderPosition += encoderDiff;
+    encoderDiff = m_rEncoder.getIncrement(); // diff to last "getValue" call
     buttonState = m_rEncoder.getButton();
 }
 

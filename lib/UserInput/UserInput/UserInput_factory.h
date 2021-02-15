@@ -13,12 +13,43 @@ class UserInput_factory
 public:
     explicit UserInput_factory(Mp3Prompt_interface &rPrompt,
                                MessageHander_interface &rMessageHandler) : m_rPrompt(rPrompt),
-                                                                           m_rMessageHandler(rMessageHandler){};
+                                                                           m_rMessageHandler(rMessageHandler){
+
+                                                                           };
     ~UserInput_factory() = default;
+    UserInput_factory(const UserInput_factory &cpy) = delete;
+    UserInput_factory &operator=(const UserInput_factory &cpy) = delete;
+
     // TODO: delete move constructors of mostly all classes
 
     UserInput_interface *getInstance()
     {
+        if (m_pConcreteUserInput != nullptr)
+        {
+            delete m_pConcreteUserInput;
+            m_pConcreteUserInput = nullptr;
+        }
+
+#if (USERINPUT_VARIANT == three_buttons)
+        static Button_implementation m_pinPlPs(PINPLPS, USERINPUTACTIVE_STATE);
+        static Button_implementation m_pinNext(PINNEXT, USERINPUTACTIVE_STATE);
+        static Button_implementation m_pinPrev(PINPREV, USERINPUTACTIVE_STATE);
+        m_pConcreteUserInput = new UserInput_3Buttons(
+            m_pinPlPs,
+            m_pinNext,
+            m_pinPrev,
+            m_rPrompt,
+            m_rMessageHandler);
+#elif (USERINPUT_VARIANT == one_encoder)
+        m_pConcreteUserInput = new ClickEncoder_implementation(ENCA,
+                                                               ENCB,
+                                                               ENCSW,
+                                                               rPrompt,
+                                                               rMessageHandler,
+                                                               ENC_STEPSPERNOTCH,
+                                                               USERINPUTACTIVE_STATE);
+#endif
+
         Message::eMessageContent message{Message::INPUTONLINE};
         if (m_pConcreteUserInput == nullptr)
         {
@@ -32,30 +63,7 @@ private:
     Mp3Prompt_interface &m_rPrompt;
     MessageHander_interface &m_rMessageHandler;
 
-#if (USERINPUT_VARIANT == three_buttons)
-    ClickEncoder_implementation m_pinPlPs{ClickEncoder_implementation(PINPLPS, USERINPUTACTIVE_STATE)};
-    ClickEncoder_implementation m_pinNext{ClickEncoder_implementation(PINNEXT, USERINPUTACTIVE_STATE)};
-    ClickEncoder_implementation m_pinPrev{ClickEncoder_implementation(PINPREV, USERINPUTACTIVE_STATE)};
-    UserInput_3Buttons instance{UserInput_3Buttons(
-        m_pinPlPs,
-        m_pinNext,
-        m_pinPrev,
-        m_rPrompt,
-        m_rMessageHandler)};
-    UserInput_interface *m_pConcreteUserInput{&instance};
-
-#elif (USERINPUT_VARIANT == one_encoder)
-    ClickEncoder_implementation instance{ClickEncoder_implementation(ENCA,
-                                                                     ENCB,
-                                                                     ENCSW,
-                                                                     rPrompt,
-                                                                     rMessageHandler,
-                                                                     ENC_STEPSPERNOTCH,
-                                                                     USERINPUTACTIVE_STATE)};
-    UserInput_interface *m_pConcreteUserInput{&instance};
-#else
-UserInput_interface *m_pConcreteUserInput{nullptr};
-#endif
+    UserInput_interface *m_pConcreteUserInput{nullptr};
 };
 
 #endif // USERINPUT_FACTORY_h
