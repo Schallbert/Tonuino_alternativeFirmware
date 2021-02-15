@@ -13,7 +13,6 @@ Once a new card is detected, It has to be linked to an existing folder on the SD
 */
 class LinkMenu : public Menu_interface
 {
-
 public:
     LinkMenu(NfcControl_interface &rNfcCtrl,
              Mp3Play_interface &rMp3Play,
@@ -24,10 +23,12 @@ public:
                                                   m_rMp3Prompt(rMp3Prompt),
                                                   m_rMessageHandler(rMessageHandler),
                                                   m_rPowerManager(rPowerMgr){};
+    ~LinkMenu() = default;
+    LinkMenu(const LinkMenu &cpy) = delete;
 
 public:
     void setStatusLed() override;
-    void setTagState(Message::eMessageContent input) override {};
+    void setTagState(Message::eMessageContent input) override{};
     void handlePlayback() override;
 
     void confirm() override;

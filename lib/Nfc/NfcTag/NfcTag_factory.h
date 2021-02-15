@@ -10,6 +10,7 @@ class NfcTag_factory
 public:
     NfcTag_factory() = default;
     ~NfcTag_factory();
+    NfcTag_factory(const NfcTag_factory &cpy) = delete;
 
 public:
     // Returns a de-facto singleton of correct tag-Type

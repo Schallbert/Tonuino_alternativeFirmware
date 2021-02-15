@@ -21,6 +21,7 @@ public:
 public:
     Menu_factory() = default;
     ~Menu_factory();
+    Menu_factory(const Menu_factory &cpy) = delete;
 
     Menu_interface *getInstance(eMenuType menuType,
                                 NfcControl_interface &rNfcCtrl,

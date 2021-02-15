@@ -19,6 +19,8 @@ class KeepAlive
 public:
     //Note: For usage of a bistable relay, active must be inverted!
     KeepAlive(Arduino_interface_pins &rPinCtrl, uint8_t ui8PinID, bool bActiveState);
+    ~KeepAlive() = default;
+    KeepAlive(const KeepAlive &cpy) = delete;
 
     // Physically keeps system powered (depending on external cirtuitry)
     void keep_alive();

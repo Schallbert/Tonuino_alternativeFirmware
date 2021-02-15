@@ -8,6 +8,8 @@ class NfcTag_MifareUltralight : public NfcTag_interface
 {
 public:
     explicit NfcTag_MifareUltralight(MFRC522_interface &rMfrc522) : m_rMfrc522(rMfrc522) {}
+    ~NfcTag_MifareUltralight() = default;
+    NfcTag_MifareUltralight(const NfcTag_MifareUltralight &cpy) = delete;
 
 public:
     bool readTag(byte blockAddress, byte *readResult) override;

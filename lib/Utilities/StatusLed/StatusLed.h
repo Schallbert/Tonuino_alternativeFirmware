@@ -22,6 +22,8 @@ public:
               bool pinActiveState = true,
               uint16_t msFlashSlow = 500,
               uint16_t msFlashQuick = 100);
+    ~StatusLed() = default;
+    StatusLed(const StatusLed &cpy) = delete;
 
 public:
     // Methods
@@ -32,7 +34,7 @@ private:
     // Methods
     void led_off();
     void led_solid();
-    void led_flash_slow(); // wrapper method for led_flash()
+    void led_flash_slow();  // wrapper method for led_flash()
     void led_flash_quick(); // wrapper method for led_flash()
     void led_flash(uint16_t msFlashInterval);
     void led_dim();

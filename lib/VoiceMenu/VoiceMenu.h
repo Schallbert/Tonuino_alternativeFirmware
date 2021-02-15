@@ -26,6 +26,7 @@ public:
                                          m_rPowerManager(rPowerMgr),
                                          m_rMenuTimer(rMenuTimer){};
     ~VoiceMenu() = default;
+    VoiceMenu(const VoiceMenu &cpy) = delete;
 
 public:
     void setUserInput(Message::eMessageContent input);

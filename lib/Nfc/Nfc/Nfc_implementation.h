@@ -16,7 +16,8 @@ public:
     Nfc_implementation(MFRC522_interface &rMfrc522,
                        MessageHander_interface &rMessageHandler) : m_rMfrc522(rMfrc522),
                                                                    m_rMessageHandler(rMessageHandler){};
-    ~Nfc_implementation(){};
+    ~Nfc_implementation() = default;
+    Nfc_implementation(const Nfc_implementation &cpy) = delete;
 
 public:
     void initNfc() override;

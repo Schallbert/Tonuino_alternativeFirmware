@@ -18,9 +18,6 @@ public:
                                                                            };
     ~UserInput_factory() = default;
     UserInput_factory(const UserInput_factory &cpy) = delete;
-    UserInput_factory &operator=(const UserInput_factory &cpy) = delete;
-
-    // TODO: delete move constructors of mostly all classes
 
     UserInput_interface *getInstance()
     {
@@ -41,13 +38,13 @@ public:
             m_rPrompt,
             m_rMessageHandler);
 #elif (USERINPUT_VARIANT == one_encoder)
-        m_pConcreteUserInput = new ClickEncoder_implementation(ENCA,
+        m_pConcreteUserInput = new ClickEncoder_implementation{ENCA,
                                                                ENCB,
                                                                ENCSW,
                                                                rPrompt,
                                                                rMessageHandler,
                                                                ENC_STEPSPERNOTCH,
-                                                               USERINPUTACTIVE_STATE);
+                                                               USERINPUTACTIVE_STATE};
 #endif
 
         Message::eMessageContent message{Message::INPUTONLINE};

@@ -8,6 +8,8 @@ class NfcTag_MifareMini1k4k : public NfcTag_interface
 {
 public:
     explicit NfcTag_MifareMini1k4k(MFRC522_interface &rMfrc522) : m_rMfrc522(rMfrc522) {}
+    ~NfcTag_MifareMini1k4k() = default;
+    NfcTag_MifareMini1k4k(const NfcTag_MifareMini1k4k &cpy) = delete;
 
 public:
     bool readTag(byte blockAddress, byte *readResult) override;

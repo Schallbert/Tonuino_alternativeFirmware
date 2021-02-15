@@ -21,7 +21,8 @@ public:
     PowerManager(Arduino_interface_pins &rPinCtrl,
                  SimpleTimer &rIdleTimer) : m_rPinControl(rPinCtrl),
                                             m_rIdleTimer(rIdleTimer){};
-    ~PowerManager(){};
+    ~PowerManager() = default;
+    PowerManager(const PowerManager &cpy) = delete;
 
 public:
     void setPlayback(bool isPlaying) override;
@@ -42,8 +43,8 @@ private:
     Arduino_interface_pins &m_rPinControl;
     SimpleTimer &m_rIdleTimer;
     // Member objects
-    StatusLed m_led{StatusLed(m_rPinControl, LED_PIN, FLASHSLOWMS, FLASHQUICKMS, LED_ACTIVE_STATE)};
-    KeepAlive m_keepAlive{KeepAlive(m_rPinControl, KEEPALIVE_PIN, KEEPALIVE_ACTIVE_STATE)};
+    StatusLed m_led{m_rPinControl, LED_PIN, FLASHSLOWMS, FLASHQUICKMS, LED_ACTIVE_STATE};
+    KeepAlive m_keepAlive{m_rPinControl, KEEPALIVE_PIN, KEEPALIVE_ACTIVE_STATE};
 };
 
 #endif // POWERMANAGER_IMPLEMENTATION_H

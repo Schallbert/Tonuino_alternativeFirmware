@@ -17,15 +17,16 @@ class DeleteMenu : public Menu_interface
 public:
     DeleteMenu(NfcControl_interface &rNfcCtrl,
                Mp3Play_interface &rMp3Play,
-Mp3Prompt_interface &rMp3Prompt,
+               Mp3Prompt_interface &rMp3Prompt,
                MessageHander_interface &rMessageHandler,
                PowerManager_interface &rPowerMgr) : m_rNfcControl(rNfcCtrl),
                                                     m_rMp3Play(rMp3Play),
                                                     m_rMp3Prompt(rMp3Prompt),
                                                     m_rMessageHandler(rMessageHandler),
                                                     m_rPowerManager(rPowerMgr){};
+    ~DeleteMenu() = default;
+    DeleteMenu(const DeleteMenu &cpy) = delete;
 
-public:
     void setStatusLed() override;
     void setTagState(Message::eMessageContent input) override;
     void handlePlayback() override;

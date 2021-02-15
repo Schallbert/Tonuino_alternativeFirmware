@@ -10,6 +10,10 @@
 class LinkMenu_StateManager
 {
 public:
+    LinkMenu_StateManager() = default;
+    ~LinkMenu_StateManager() = default;
+    LinkMenu_StateManager(const LinkMenu_StateManager &cpy) = delete;
+
     void confirm();
     void abort();
     void incrementSelection();
@@ -41,12 +45,16 @@ private:
     class MenuOptions
     {
     public:
+        MenuOptions() = default;
+        ~MenuOptions() = default;
+        MenuOptions(const MenuOptions &cpy) = delete;
+
         void resetForFolderId();
         void resetForPlayMode();
         void incrementSelection();
         void decrementSelection();
 
-        uint16_t getSelection() { return selection; };    
+        uint16_t getSelection() { return selection; };
 
     private:
         uint16_t selection{START_OPTION_FOLDERID};

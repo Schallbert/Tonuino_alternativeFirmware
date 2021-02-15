@@ -9,7 +9,9 @@
 class MFRC522_implementation : public MFRC522_interface
 {
 public:
-    MFRC522_implementation(){};
+    MFRC522_implementation() = default;
+    ~MFRC522_implementation() = default;
+    MFRC522_implementation(const MFRC522_implementation &cpy) = delete;
 
 public:
     void init() override
@@ -50,7 +52,7 @@ public:
     };
 
 private:
-    MFRC522 m_Mfrc522{MFRC522(SS_PIN, RST_PIN)};
+    MFRC522 m_Mfrc522{SS_PIN, RST_PIN};
     // Key and auth commands hardcoded to streamline interface
     MFRC522::MIFARE_Key m_key = {{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}}; // 6 byte key, factory default all set.
     MFRC522::PICC_Command m_command{MFRC522::PICC_CMD_MF_AUTH_KEY_A};   // authentication command, hardcoded to Key A

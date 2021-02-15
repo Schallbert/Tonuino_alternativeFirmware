@@ -16,6 +16,7 @@ public:
                MessageHander_interface &rMessageHandler) : m_rNfc(rNfc),
                                                            m_rMessageHandler(rMessageHandler){};
     ~NfcControl() = default;
+    NfcControl(const NfcControl &cpy) = delete;
 
 public:
     // initializes communication with the tag reader.
@@ -51,7 +52,7 @@ private:
     uint32_t m_ui32CardCookie{0};                    //Cookie read from card to compare against magic ID
     static const uint8_t blockAddressToReadWrite{4}; // sector 1 block 0 for Mini1k4k, page 4-7 for UltraLight
     uint8_t m_pBuffer[NFCTAG_MEMORY_TO_OCCUPY]{};    // Buffer to read/write from/to tag reader
-    Folder m_oFolder{};                              //Uninitialized!
+    Folder m_oFolder;                                //Uninitialized!
 };
 
 #endif //NFCCONTROL_H

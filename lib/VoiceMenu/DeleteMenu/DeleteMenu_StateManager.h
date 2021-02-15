@@ -9,6 +9,10 @@
 class DeleteMenu_StateManager
 {
 public:
+    DeleteMenu_StateManager() = default;
+    ~DeleteMenu_StateManager() = default;
+    DeleteMenu_StateManager(const DeleteMenu_StateManager &cpy) = delete;
+
     void confirm();
     void abort();
 
@@ -24,7 +28,6 @@ public:
 private:
     void initMenu();
     void handleDeletionConfirmed();
-
 
 private:
     enum eMenuState
