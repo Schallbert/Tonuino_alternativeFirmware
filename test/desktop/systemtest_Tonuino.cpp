@@ -92,10 +92,10 @@ protected:
     NiceMock<Mock_MFRC522> m_Mfrc522Mock{};
 
     // Real implementations without dependencies used
-    SimpleTimer m_MenuTimer{SimpleTimer()};
-    SimpleTimer m_LullabyeTimer{SimpleTimer()};
-    SimpleTimer m_IdleTimer{SimpleTimer()};
-    SimpleTimer m_DfMiniPromptTimer{SimpleTimer()};
+    SimpleTimer m_MenuTimer;
+    SimpleTimer m_LullabyeTimer;
+    SimpleTimer m_IdleTimer;
+    SimpleTimer m_DfMiniPromptTimer;
 
     // Real implementations that depend on initialized objects (realized as pointers)
     PowerManager *m_pPwrCtrl{nullptr};

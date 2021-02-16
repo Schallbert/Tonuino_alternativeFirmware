@@ -28,9 +28,9 @@ protected:
     NiceMock<Mock_Nfc> m_nfcMock;
     NiceMock<Mock_MessageHandler> m_messageHandlerMock{};
     NiceMock<Mock_ArduinoDIcontainer> m_arduinoHalMock{};
-    NfcControl m_NfcControl{NfcControl(m_nfcMock, m_messageHandlerMock)};
-    Folder m_TestFolder{Folder(fakeBufferData[4],
-                                   (Folder::ePlayMode)fakeBufferData[5])};
+    NfcControl m_NfcControl{m_nfcMock, m_messageHandlerMock};
+    Folder m_TestFolder{fakeBufferData[4],
+                        (Folder::ePlayMode)fakeBufferData[5]};
 };
 
 class NfcCtrlRead : public NfcCtrlWrite
@@ -71,8 +71,8 @@ TEST_F(NfcCtrlWrite, validFolder_IsCalledWithCorrectBlockAddr)
 TEST_F(NfcCtrlWrite, validFolder_IsCalledWithCorrectPayload)
 {
     EXPECT_CALL(m_nfcMock, writeTag(_, arrayByteCompare(
-                                             fakeBufferData,
-                                             NFCTAG_MEMORY_TO_OCCUPY)))
+                                           fakeBufferData,
+                                           NFCTAG_MEMORY_TO_OCCUPY)))
         .Times(1);
     m_NfcControl.writeFolderToTag(m_TestFolder);
 }
@@ -88,8 +88,8 @@ TEST_F(NfcCtrlWrite, EraseTag)
     // Compare if input of writeTag buffer is really 0
     byte emptyBuffer[NFCTAG_MEMORY_TO_OCCUPY] = {};
     EXPECT_CALL(m_nfcMock, writeTag(_, arrayByteCompare(
-                                             emptyBuffer,
-                                             NFCTAG_MEMORY_TO_OCCUPY)));
+                                           emptyBuffer,
+                                           NFCTAG_MEMORY_TO_OCCUPY)));
     m_NfcControl.eraseTag();
 }
 
@@ -118,8 +118,8 @@ TEST_F(NfcCtrlRead, isCalledWithCorrectPayload)
 {
     Folder resultFolder;
     EXPECT_CALL(m_nfcMock, readTag(_, arrayByteCompare(
-                                            fakeBufferData,
-                                            NFCTAG_MEMORY_TO_OCCUPY)));
+                                          fakeBufferData,
+                                          NFCTAG_MEMORY_TO_OCCUPY)));
     // sets buffer to a certain value
     m_NfcControl.writeFolderToTag(m_TestFolder);
     // read with this buffer sets correct argument at readTag

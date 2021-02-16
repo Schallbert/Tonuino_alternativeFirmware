@@ -21,11 +21,11 @@ protected:
     NiceMock<Mock_Mp3Prompt> m_Mp3PromptMock{};
     NiceMock<Mock_MessageHandler> m_MessageHandlerMock{};
 
-    UserInput_3Buttons m_UserInput{UserInput_3Buttons(m_plpsMock,
-                                                      m_nextMock,
-                                                      m_prevMock,
-                                                      m_Mp3PromptMock,
-                                                      m_MessageHandlerMock)};
+    UserInput_3Buttons m_UserInput{m_plpsMock,
+                                   m_nextMock,
+                                   m_prevMock,
+                                   m_Mp3PromptMock,
+                                   m_MessageHandlerMock};
 };
 
 class UserInput_ClickEncoderTest : public ::testing::Test
@@ -34,7 +34,9 @@ protected:
     NiceMock<Mock_ClickEncoder> enc{};
     NiceMock<Mock_Mp3Prompt> m_Mp3PromptMock{};
     NiceMock<Mock_MessageHandler> m_MessageHandlerMock{};
-    UserInput_ClickEncoder m_UserInput{UserInput_ClickEncoder(enc, m_Mp3PromptMock, m_MessageHandlerMock)};
+    UserInput_ClickEncoder m_UserInput{enc,
+                                       m_Mp3PromptMock,
+                                       m_MessageHandlerMock};
 };
 
 TEST_F(UserInput_ClickEncoderTest, ServiceCalled)
@@ -65,7 +67,7 @@ TEST_F(UserInput_ClickEncoderTest, LockUserInput_turnRight_willReturnLocked)
 {
     ClickEncoder_interface::eButtonState btnState = ClickEncoder_interface::DoubleClicked;
     ON_CALL(enc, getButton()).WillByDefault(ReturnPointee(&btnState));
-    ON_CALL(enc, getValue()).WillByDefault(Return(1));
+    ON_CALL(enc, getIncrement()).WillByDefault(Return(1));
 
     EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTLOCK);
     btnState = ClickEncoder_interface::Open;
@@ -76,7 +78,7 @@ TEST_F(UserInput_ClickEncoderTest, LockUserInput_turnLeft_willReturnLocked)
 {
     ClickEncoder_interface::eButtonState btnState = ClickEncoder_interface::DoubleClicked;
     ON_CALL(enc, getButton()).WillByDefault(ReturnPointee(&btnState));
-    ON_CALL(enc, getValue()).WillByDefault(Return(-1));
+    ON_CALL(enc, getIncrement()).WillByDefault(Return(-1));
 
     EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTLOCK);
     btnState = ClickEncoder_interface::Open;
@@ -110,7 +112,7 @@ TEST_F(UserInput_ClickEncoderTest, plpsHeld_willReturnPPLongPress)
 
 TEST_F(UserInput_ClickEncoderTest, turnRight_willReturnNextTrack)
 {
-    ON_CALL(enc, getValue()).WillByDefault(Return(1));
+    ON_CALL(enc, getIncrement()).WillByDefault(Return(1));
 
     ASSERT_EQ(m_UserInput.getUserRequest(), Message::INPUTNEXT);
 }
@@ -118,22 +120,22 @@ TEST_F(UserInput_ClickEncoderTest, turnRight_willReturnNextTrack)
 TEST_F(UserInput_ClickEncoderTest, turnRightWhileHeld_willReturnIncVolume)
 {
     ON_CALL(enc, getButton()).WillByDefault(Return(ClickEncoder_interface::Held));
-    ON_CALL(enc, getValue()).WillByDefault(Return(1));
+    ON_CALL(enc, getIncrement()).WillByDefault(Return(1));
 
     ASSERT_EQ(m_UserInput.getUserRequest(), Message::INPUTNEXTLP);
 }
 
 TEST_F(UserInput_ClickEncoderTest, turnRightWhilePressed_willReturnIncVolume)
 {
-    ON_CALL(enc, getButton()).WillByDefault(Return(ClickEncoder_interface::Pressed));
-    ON_CALL(enc, getValue()).WillByDefault(Return(1));
+    ON_CALL(enc, getButton()).WillByDefault(Return(ClickEncoder_interface::Closed));
+    ON_CALL(enc, getIncrement()).WillByDefault(Return(1));
 
     ASSERT_EQ(m_UserInput.getUserRequest(), Message::INPUTNEXTLP);
 }
 
 TEST_F(UserInput_ClickEncoderTest, turnLeft_willReturnPrevTrack)
 {
-    ON_CALL(enc, getValue()).WillByDefault(Return(-1));
+    ON_CALL(enc, getIncrement()).WillByDefault(Return(-1));
 
     ASSERT_EQ(m_UserInput.getUserRequest(), Message::INPUTPREV);
 }
@@ -141,15 +143,15 @@ TEST_F(UserInput_ClickEncoderTest, turnLeft_willReturnPrevTrack)
 TEST_F(UserInput_ClickEncoderTest, turnLeftWhileHeld_willReturnDecVolume)
 {
     ON_CALL(enc, getButton()).WillByDefault(Return(ClickEncoder_interface::Held));
-    ON_CALL(enc, getValue()).WillByDefault(Return(-1));
+    ON_CALL(enc, getIncrement()).WillByDefault(Return(-1));
 
     ASSERT_EQ(m_UserInput.getUserRequest(), Message::INPUTPREVLP);
 }
 
 TEST_F(UserInput_ClickEncoderTest, turnLeftWhilePressed_willReturnDecVolume)
 {
-    ON_CALL(enc, getButton()).WillByDefault(Return(ClickEncoder_interface::Pressed));
-    ON_CALL(enc, getValue()).WillByDefault(Return(-1));
+    ON_CALL(enc, getButton()).WillByDefault(Return(ClickEncoder_interface::Closed));
+    ON_CALL(enc, getIncrement()).WillByDefault(Return(-1));
 
     ASSERT_EQ(m_UserInput.getUserRequest(), Message::INPUTPREVLP);
 }
@@ -190,7 +192,7 @@ TEST_F(UserInput_3ButtonsTest, LockUserInput_m_nextMockButtonPress_willReturnLoc
 
     EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTLOCK);
     plpsBtnState = ClickEncoder_interface::Open;
-    EXPECT_EQ(m_UserInput.getUserRequest(),  Message::INPUTLOCK);
+    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTLOCK);
 }
 
 TEST_F(UserInput_3ButtonsTest, LockUserInput_prevButtonPress_willReturnLocked)
@@ -199,9 +201,9 @@ TEST_F(UserInput_3ButtonsTest, LockUserInput_prevButtonPress_willReturnLocked)
     ON_CALL(m_plpsMock, getButton()).WillByDefault(ReturnPointee(&plpsBtnState));
     ON_CALL(m_prevMock, getButton()).WillByDefault(Return(ClickEncoder_interface::Clicked));
 
-    EXPECT_EQ(m_UserInput.getUserRequest(),  Message::INPUTLOCK);
+    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTLOCK);
     plpsBtnState = ClickEncoder_interface::Open;
-    EXPECT_EQ(m_UserInput.getUserRequest(),  Message::INPUTLOCK);
+    EXPECT_EQ(m_UserInput.getUserRequest(), Message::INPUTLOCK);
 }
 
 TEST_F(UserInput_3ButtonsTest, LockUserInput_Unlock_willReturnAction)
@@ -212,7 +214,7 @@ TEST_F(UserInput_3ButtonsTest, LockUserInput_Unlock_willReturnAction)
     m_UserInput.getUserRequest(); // unlock
     plpsBtnState = ClickEncoder_interface::Clicked;
 
-    ASSERT_NE(m_UserInput.getUserRequest(),  Message::INPUTLOCK);
+    ASSERT_NE(m_UserInput.getUserRequest(), Message::INPUTLOCK);
 }
 
 TEST_F(UserInput_3ButtonsTest, plpsClicked_willReturnPlayPause)

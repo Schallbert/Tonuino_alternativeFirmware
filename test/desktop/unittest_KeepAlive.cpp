@@ -16,7 +16,7 @@ protected:
     NiceMock<Mock_pinCtrl> pinCtrl{}; 
     uint8_t keepAlivePinId{7};
     bool pinActiveState{true};
-    KeepAlive m_keepAlive{KeepAlive(pinCtrl, keepAlivePinId, pinActiveState)};
+    KeepAlive m_keepAlive{pinCtrl, keepAlivePinId, pinActiveState};
 };
 
 TEST_F(KeepAliveTest, Constructor_ActivatesSelfKeepingPowerSupply)

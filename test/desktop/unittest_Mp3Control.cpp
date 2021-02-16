@@ -27,11 +27,11 @@ protected:
     NiceMock<Mock_PowerManager> m_powerManagerMock{};
     NiceMock<Mock_MessageHandler> m_messageHandlerMock{};
 
-    Mp3Control m_Mp3Control{Mp3Control(m_dfMiniMock,
-                                       m_mp3PlayMock,
-                                       m_mp3PromptMock,
-                                       m_powerManagerMock,
-                                       m_messageHandlerMock)};
+    Mp3Control m_Mp3Control{m_dfMiniMock,
+                            m_mp3PlayMock,
+                            m_mp3PromptMock,
+                            m_powerManagerMock,
+                            m_messageHandlerMock};
 };
 
 TEST_F(Mp3ControlTest, loop_callsAutoplay)

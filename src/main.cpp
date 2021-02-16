@@ -5,18 +5,19 @@
 #include "Loader.h"
 #include "TimerOne.h"
 #include "Tonuino_config.h"
-
-Loader loader;
-TimerOne timer1;
-
+// static objects ---------
+static Loader loader;
+static TimerOne timer1;
+// function prototypes ----
 void timer1Task_1ms();
+// ARDUINO SETUP ----------
 void setup()
 {
     timer1.initialize(TIMERONE_TASK_INTERVAL_USEC);
     timer1.attachInterrupt(timer1Task_1ms); // only allowed for "free" functions, NO METHODS :/
     loader.init();
 }
-
+// ARDUINO LOOP -----------
 void loop()
 {
     loader.run();

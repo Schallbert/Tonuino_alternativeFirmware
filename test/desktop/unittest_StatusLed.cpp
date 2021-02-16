@@ -17,11 +17,11 @@ protected:
     bool pinActiveState{LOW};
     uint16_t msFlashSlow{6};
     uint16_t msFlashQuick{2};
-    StatusLed m_StatusLed{StatusLed(pinCtrl,
-                             ledPinId,
-                             pinActiveState,
-                             msFlashSlow,
-                             msFlashQuick)};
+    StatusLed m_StatusLed{pinCtrl,
+                          ledPinId,
+                          pinActiveState,
+                          msFlashSlow,
+                          msFlashQuick};
 };
 
 TEST_F(StatusLedTest, Constructor_InitLedStateIsOff)

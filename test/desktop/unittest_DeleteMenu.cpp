@@ -112,7 +112,7 @@ TEST_F(DeleteMenuTest, noInit_noPromptSet)
 
 TEST_F(DeleteMenuTest, init_getPrompt_promptsDeleteTag)
 {
-    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_DELETETAG, true)};
+    VoicePrompt expect{VoicePrompt::MSG_DELETETAG, true};
     deleteMenu->confirm();
 
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
@@ -121,7 +121,7 @@ TEST_F(DeleteMenuTest, init_getPrompt_promptsDeleteTag)
 
 TEST_F(DeleteMenuTest, init2x_getPrompt_promptsDeleteTag)
 {
-    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_DELETETAG, true)};
+    VoicePrompt expect{VoicePrompt::MSG_DELETETAG, true};
 
     deleteMenu->confirm();
     deleteMenu->confirm();
@@ -133,7 +133,7 @@ TEST_F(DeleteMenuTest, init2x_getPrompt_promptsDeleteTag)
 TEST_F(DeleteMenuTest, placedTagToDelete_getPrompt_promptsWaitForConfirm)
 {
     deleteMenu->setTagState(Message::NEWKNOWNTAG);
-    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_CONFIRM_DELETION, true)};
+    VoicePrompt expect{VoicePrompt::MSG_CONFIRM_DELETION, true};
 
     deleteMenu->confirm();
 
@@ -145,7 +145,7 @@ TEST_F(DeleteMenuTest, placedTagToDelete_confirmDeletion_promptsTagConfiguration
 {
     ON_CALL(m_nfcControlMock, eraseTag()).WillByDefault(Return(true));
     deleteMenu->setTagState(Message::NEWKNOWNTAG);
-    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_TAGCONFSUCCESS, true)};
+    VoicePrompt expect{VoicePrompt::MSG_TAGCONFSUCCESS, true};
 
     deleteMenu->confirm();        // enter
     deleteMenu->handlePlayback(); // detects tag to delete
@@ -157,7 +157,7 @@ TEST_F(DeleteMenuTest, placedTagToDelete_confirmDeletion_promptsTagConfiguration
 
 TEST_F(DeleteMenuTest, noInit_abort_noPromptSet)
 {
-    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ABORTED, true)};
+    VoicePrompt expect{VoicePrompt::MSG_ABORTED, true};
 
     deleteMenu->abort();
 
@@ -167,7 +167,7 @@ TEST_F(DeleteMenuTest, noInit_abort_noPromptSet)
 
 TEST_F(DeleteMenuTest, entered_abort_noPromptSet)
 {
-    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ABORTED, true)};
+    VoicePrompt expect{VoicePrompt::MSG_ABORTED, true};
 
     deleteMenu->confirm();
     deleteMenu->abort();
@@ -179,7 +179,7 @@ TEST_F(DeleteMenuTest, entered_abort_noPromptSet)
 TEST_F(DeleteMenuTest, tagToDeleteDetected_abort_noPromptSet)
 {
     deleteMenu->setTagState(Message::NEWKNOWNTAG);
-    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ABORTED, true)};
+    VoicePrompt expect{VoicePrompt::MSG_ABORTED, true};
 
     deleteMenu->confirm();
     deleteMenu->handlePlayback();
@@ -192,7 +192,7 @@ TEST_F(DeleteMenuTest, tagToDeleteDetected_abort_noPromptSet)
 TEST_F(DeleteMenuTest, menuComplete_abort_reentry_promptsDeleteTag)
 {
     deleteMenu->setTagState(Message::NEWKNOWNTAG);
-    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_CONFIRM_DELETION, true)};
+    VoicePrompt expect{VoicePrompt::MSG_CONFIRM_DELETION, true};
 
     deleteMenu->confirm();
     deleteMenu->handlePlayback();
