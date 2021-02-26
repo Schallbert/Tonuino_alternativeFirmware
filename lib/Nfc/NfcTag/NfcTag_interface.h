@@ -5,7 +5,6 @@
 
 class NfcTag_interface
 {
-
 public:
     virtual ~NfcTag_interface(){};
 
@@ -18,7 +17,7 @@ public:
 protected:
     // Cheap copy of c-function "memcpy". Due to interface logic it is easier
     // to re-implement it here...
-    static void copyArray(byte *target, byte *source, uint8_t numberOfBytes)
+    void copyArray(byte *target, byte *source, uint8_t numberOfBytes)
     {
         for (int i{0}; i < numberOfBytes; ++i)
         {

@@ -1,17 +1,12 @@
 #include "Tonuino_config.h"
 #include "Mp3Prompt_implementation.h"
 
-//#include "Arduino.h"
-
 void Mp3Prompt::playPrompt(const VoicePrompt &prompt)
 {
     if (isNewPrompt(prompt))
     {
-        //Serial.println("DEBUG: isNew.");
         m_rDfMiniMp3.playMp3FolderTrack(prompt.getId());
-       // Serial.println("DEBUG: Requested2Play.");
         waitForPromptToStart();
-        //Serial.println("DEBUG: WaitedToStart.");
         if (!prompt.getSkip())
         {
             waitForPromptToFinish();

@@ -33,8 +33,6 @@ void timer1Task_1ms()
 // - solve all TODOS.
 // - rename Folder to PlayList
 
-// - solve cyclic dependencies between messageHandler and message (?)
-// - add Tonuino unit tests to solution
 // - add debug messages to other modules (?)
 // - create namespaces to solve Arduino_Hal namings (low Priority)
 

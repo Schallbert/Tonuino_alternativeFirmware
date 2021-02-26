@@ -1,7 +1,7 @@
 #ifndef TONUINO_CONFIG_H
 #define TONUINO_CONFIG_H
 
-//DEBUG OUTPUT [just write "true" to disable debug output on serial]
+//DEBUG OUTPUT [just write "false" to disable debug output on serial]
 #define DEBUGSERIAL true
 #define DEBUGSERIAL_BAUDRATE 9600
 #define DEBUG_MAXMESSAGELENGTH 38 // max number of characters in a message
@@ -10,9 +10,9 @@
 // Change it to your preferred variant
 // and make sure the pin selection below is
 // according to your wishes.
+#define three_buttons 1
+#define one_encoder 2
 #define USERINPUT_VARIANT three_buttons
-#define three_buttons 0
-#define one_encoder 1
 
 //StatusLEDs interaction outputs
 #define FLASHSLOWMS 500

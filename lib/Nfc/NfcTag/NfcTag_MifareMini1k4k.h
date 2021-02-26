@@ -4,6 +4,8 @@
 #include "../Nfc/NfcTag/NfcTag_interface.h"
 #include "../Nfc/MFRC522/MFRC522_interface.h"
 
+constexpr byte SECTORSTRAILERBLOCKMINI1K4K{3};
+
 class NfcTag_MifareMini1k4k : public NfcTag_interface
 {
 public:
@@ -20,8 +22,7 @@ private:
 
 private:
     MFRC522_interface &m_rMfrc522;
-    static const byte SECTORSTRAILERBLOCKMINI1K4K{3};
-    byte m_ui8SectorMini1k4k = {0};
+    byte m_ui8SectorMini1k4k{0};
     byte m_ui8TrailerBlockMini1k4k{3};
 };
 
