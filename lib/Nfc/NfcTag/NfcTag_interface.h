@@ -20,7 +20,7 @@ protected:
     // to re-implement it here...
     static void copyArray(byte *target, byte *source, uint8_t numberOfBytes)
     {
-        for (int i = 0; i < numberOfBytes; i++)
+        for (int i{0}; i < numberOfBytes; ++i)
         {
             *(target + i) = *(source + i);
         }

@@ -32,7 +32,7 @@ bool NfcControl::writeFolderToTag(const Folder &sourceFolder)
     }
     folder_to_buffer(); // Set buffer according to local folder data
     // Get card online and authenticate
-    return m_rNfc.writeTag(blockAddressToReadWrite, m_pBuffer);
+    return m_rNfc.writeTag(TAG_BLOCKADDRESS, m_pBuffer);
 }
 
 bool NfcControl::eraseTag()
@@ -41,13 +41,13 @@ bool NfcControl::eraseTag()
     {
         m_pBuffer[i] = 0x00;
     }
-    return m_rNfc.writeTag(blockAddressToReadWrite, m_pBuffer);
+    return m_rNfc.writeTag(TAG_BLOCKADDRESS, m_pBuffer);
 }
 
 bool NfcControl::readFolderFromTag(Folder &targetFolder)
 {
     bool status{false}; //unknown or corrupted card
-    if (m_rNfc.readTag(blockAddressToReadWrite, m_pBuffer))
+    if (m_rNfc.readTag(TAG_BLOCKADDRESS, m_pBuffer))
     {
         buffer_to_folder();
         if (m_oFolder.isInitiated())
@@ -61,10 +61,10 @@ bool NfcControl::readFolderFromTag(Folder &targetFolder)
 
 void NfcControl::folder_to_buffer()
 {
-    m_pBuffer[0] = (byte)(cui32MagicCookie >> 24);          // 0
-    m_pBuffer[1] = (byte)((cui32MagicCookie >> 16) & 0xFF); // 1
-    m_pBuffer[2] = (byte)((cui32MagicCookie >> 8) & 0xFF);  // 2
-    m_pBuffer[3] = (byte)(cui32MagicCookie & 0xFF);         // 3: magic cookie to identify our nfc tags
+    m_pBuffer[0] = (byte)(TAG_MAGIC_COOKIE >> 24);          // 0
+    m_pBuffer[1] = (byte)((TAG_MAGIC_COOKIE >> 16) & 0xFF); // 1
+    m_pBuffer[2] = (byte)((TAG_MAGIC_COOKIE >> 8) & 0xFF);  // 2
+    m_pBuffer[3] = (byte)(TAG_MAGIC_COOKIE & 0xFF);         // 3: magic cookie to identify our nfc tags
     m_pBuffer[4] = (byte)m_oFolder.getFolderId();         // 4: folder picked by the user
     m_pBuffer[5] = (byte)m_oFolder.getPlayMode();         // 5: playback mode picked by the user
     m_pBuffer[6] = (byte)m_oFolder.getTrackCount();       // 6: track count of that m_oFolder
@@ -94,7 +94,7 @@ bool NfcControl::is_known_card()
     Folder dummy;
     if (readFolderFromTag(dummy)) // gets magic cookie.
     {
-        return (m_ui32CardCookie == cui32MagicCookie);
+        return (m_ui32CardCookie == TAG_MAGIC_COOKIE);
     }
     else
     {

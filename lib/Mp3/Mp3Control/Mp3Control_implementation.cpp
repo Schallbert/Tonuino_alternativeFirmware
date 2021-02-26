@@ -28,7 +28,7 @@ void Mp3Control::handleUserInput()
     // Order MUST be inline with INxxx of Message
     
     typedef Mp3Control PC;
-    static const dispatcher dispatchTable[Message::IN_REQUEST_OPTIONS] =
+    static const dispatcher dispatchTable[IN_REQUEST_OPTIONS] =
         {
             &PC::none, &PC::plPs, &PC::help, &PC::next, &PC::incV, &PC::prev, &PC::decV, &PC::none
         };

@@ -4,6 +4,10 @@
 #include "../Nfc/NfcTag/NfcTag_interface.h"
 #include "../Nfc/MFRC522/MFRC522_interface.h"
 
+constexpr byte MIFARE_UL_BLOCK_SIZE{4};
+constexpr byte ULTRALIGHTSTARTPAGE{4};
+constexpr byte ULTRALIGHTSTOPPAGE{11};
+
 class NfcTag_MifareUltralight : public NfcTag_interface
 {
 public:
@@ -17,11 +21,6 @@ public:
 
 private:
     void checkAndRectifyBlockAddress(byte &blockAddress) override;
-
-public:
-    static const byte MIFARE_UL_BLOCK_SIZE{4};
-    static const byte ULTRALIGHTSTARTPAGE{4};
-    static const byte ULTRALIGHTSTOPPAGE{11};
 
 private:
     MFRC522_interface &m_rMfrc522;

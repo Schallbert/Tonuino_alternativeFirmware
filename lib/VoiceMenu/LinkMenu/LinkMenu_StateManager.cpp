@@ -9,8 +9,8 @@ void LinkMenu_StateManager::MenuOptions::resetForFolderId()
 
 void LinkMenu_StateManager::MenuOptions::resetForPlayMode()
 {
-    selection = LinkMenu_StateManager::START_OPTION_PLAYMODE;
-    offset = LinkMenu_StateManager::START_OPTION_PLAYMODE;
+    selection = START_OPTION_PLAYMODE;
+    offset = START_OPTION_PLAYMODE;
     range = offset + static_cast<uint16_t>(Folder::ePlayMode::ENUM_COUNT);
 }
 

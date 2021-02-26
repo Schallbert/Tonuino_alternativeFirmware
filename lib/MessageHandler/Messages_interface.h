@@ -3,6 +3,8 @@
 
 #include "Arduino_types.h"
 
+constexpr uint8_t IN_REQUEST_OPTIONS = 8; // number of possible USER input messages, 0x70-0x77
+
 class Message
 {
 public:
@@ -70,8 +72,6 @@ public:
         INPUTERROR = 0x79,
         LASTVALIDMESSAGE = 0x7F
     };
-
-    static const uint8_t IN_REQUEST_OPTIONS{8}; // number of possible USER input messages, 0x70-0x77
 
 public:
     // Constructors convert bitcoded types into base values: Groups 0x00 - 0x0F, Messages 0x00 - 0xFF

@@ -7,6 +7,9 @@
 
 #include "../Folder/Folder.h"
 
+constexpr uint16_t START_OPTION_FOLDERID{0};
+constexpr uint16_t START_OPTION_PLAYMODE{VoicePrompt::MSG_SELECT_PLAYMODE};
+
 class LinkMenu_StateManager
 {
 public:
@@ -29,10 +32,6 @@ private:
     void saveFolderIdSelection();
     void initPlayModeSelection();
     void savePlayModeSelection();
-
-private:
-    static const uint16_t START_OPTION_FOLDERID = 0;
-    static const uint16_t START_OPTION_PLAYMODE = VoicePrompt::MSG_SELECT_PLAYMODE;
 
     enum eMenuState
     {
