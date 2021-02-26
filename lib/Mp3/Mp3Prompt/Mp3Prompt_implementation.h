@@ -14,7 +14,7 @@ public:
     ~Mp3Prompt() = default;
     Mp3Prompt(const Mp3Prompt &cpy) = delete;
 
-    virtual void playPrompt(const VoicePrompt &prompt) override;
+    void playPrompt(const VoicePrompt &prompt) override;
 
 private:
     bool isNewPrompt(const VoicePrompt &prompt);

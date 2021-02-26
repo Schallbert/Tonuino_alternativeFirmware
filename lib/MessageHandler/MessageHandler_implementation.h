@@ -16,7 +16,7 @@ public:
     MessageHandler(const MessageHandler &cpy) = delete;
     MessageHandler &operator=(const MessageHandler &cpy) = delete;
 
-    virtual void printMessage(const Message::eMessageContent message) override;
+    void printMessage(const Message::eMessageContent message) override;
 
 private:
     bool isNewMessage(const Message::eMessageContent msg);
