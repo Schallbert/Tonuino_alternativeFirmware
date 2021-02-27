@@ -5,6 +5,7 @@
 
 #include "MessageHandler_interface.h"
 #include "Arduino_config.h"
+#include "Tonuino_config.h"
 
 #include "DfMiniMp3/DFMiniMp3_interface.h"
 
@@ -63,84 +64,94 @@ private:
 class DfMini : public DfMiniMp3_interface
 {
 public:
-    explicit DfMini(MessageHander_interface &rMessageHandler) : m_rMessageHandler(rMessageHandler)
+    explicit DfMini(MessageHander_interface &rMessageHandler) : m_rMessageHandler(rMessageHandler) {}
+    ~DfMini() = default;
+    DfMini(const DfMini &cpy) = delete;
+
+    void init() override
     {
         m_dfMiniMp3.begin(); // init serial and start DfMiniMp3 module
-        m_dfMiniMp3.loop();
-    };
-
-    ~DfMini(){};
+        loop();
+        setEq(DFMINI_EQ_SETTING);
+        setVolume(VOLUME_INIT);
+        Message::eMessageContent message{Message::ERRORCOM};
+        if (getVolume() == VOLUME_INIT)
+        {
+            message = Message::PLAYERONLINE;
+        }
+        m_rMessageHandler.printMessage(message);
+    }
 
     void loop() override
     {
         m_dfMiniMp3.loop();
-    };
+    }
 
     void setEq(eMp3Eq eq) override
     {
         m_dfMiniMp3.setEq((DfMp3_Eq)eq);
         m_dfMiniMp3.loop();
-    };
+    }
 
     void setVolume(uint8_t volume) override
     {
         m_dfMiniMp3.setVolume(volume);
         m_dfMiniMp3.loop();
-    };
+    }
 
     uint8_t getVolume() override
     {
         m_dfMiniMp3.loop();
         return m_dfMiniMp3.getVolume();
-    };
+    }
 
     void increaseVolume() override
     {
         m_dfMiniMp3.increaseVolume();
         m_dfMiniMp3.loop();
-    };
+    }
 
     void decreaseVolume() override
     {
         m_dfMiniMp3.decreaseVolume();
         m_dfMiniMp3.loop();
-    };
+    }
 
     void pause() override
     {
         m_dfMiniMp3.pause();
         m_dfMiniMp3.loop();
-    };
+    }
 
     void start() override
     {
         m_dfMiniMp3.start();
         m_dfMiniMp3.loop();
-    };
+    }
 
     void stop() override
     {
         m_dfMiniMp3.stop();
         m_dfMiniMp3.loop();
-    };
+    }
 
     void playFolderTrack(uint8_t folderId, uint8_t trackId) override
     {
         m_dfMiniMp3.playFolderTrack(folderId, trackId);
         m_dfMiniMp3.loop();
-    };
+    }
 
     void playMp3FolderTrack(uint16_t trackId) override
     {
         m_dfMiniMp3.loop();
         m_dfMiniMp3.playMp3FolderTrack(trackId);
-    };
+    }
 
     uint8_t getFolderTrackCount(uint8_t folderId) override
     {
         m_dfMiniMp3.loop();
         return static_cast<uint8_t>(m_dfMiniMp3.getFolderTrackCount(static_cast<uint16_t>(folderId)));
-    };
+    }
 
     bool isTrackFinished() const override
     {
@@ -151,7 +162,7 @@ public:
             status = true;
         }
         return status;
-    };
+    }
 
     bool isPlaying() const override
     {

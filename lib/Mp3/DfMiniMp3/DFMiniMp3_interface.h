@@ -22,6 +22,7 @@ public:
     virtual ~DfMiniMp3_interface(){};
 
 public:
+    virtual void init() = 0;
     virtual void loop() = 0;
     virtual void setEq(eMp3Eq eq) = 0;
     virtual void setVolume(uint8_t volume) = 0;

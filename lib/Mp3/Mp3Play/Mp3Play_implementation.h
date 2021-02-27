@@ -8,7 +8,6 @@
 #include "../MessageHandler/MessageHandler_interface.h"
 #include "../Utilities/SimpleTimer/SimpleTimer.h"
 
-#include "Tonuino_config.h"
 #include "Mp3Play_interface.h"
 
 class Mp3Play_implementation : public Mp3Play_interface

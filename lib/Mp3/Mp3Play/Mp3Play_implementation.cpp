@@ -6,14 +6,6 @@ void Mp3Play_implementation::init()
 {
     // Init communication with module and setup
     m_rArduinoHal.getPins().pin_mode(DFMINI_PIN_ISIDLE, INPUT);
-    m_rDfMiniMp3.setEq(DFMINI_EQ_SETTING);
-    m_rDfMiniMp3.setVolume(VOLUME_INIT);
-    Message::eMessageContent message{Message::ERRORCOM};
-    if (m_rDfMiniMp3.getVolume() == VOLUME_INIT)
-    {
-        message = Message::PLAYERONLINE;
-    }
-    m_rMessageHandler.printMessage(message);
 }
 
 void Mp3Play_implementation::playFolder(Folder &folder)
