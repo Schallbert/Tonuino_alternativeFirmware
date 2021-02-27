@@ -1,47 +1,56 @@
-#include "Tonuino_config.h"
-#include "Arduino_config.h"
-
 #include "UserInput_implementation.h"
+
+void UserInput_ClickEncoder::init()
+    {
+        isInitiated = true;
+        m_rMessageHandler.printMessage(Message::INPUTONLINE);
+    }
 
 void UserInput_ClickEncoder::userinputServiceIsr()
 {
-    m_rEncoder.service();
+    m_Encoder.service();
 }
 
 Message::eMessageContent UserInput_ClickEncoder::getUserRequest()
 {
     Message::eMessageContent result{Message::INPUTNONE};
-    //Poll for current encoder position and button state
-    UserInput_ClickEncoder::userinputRefresh();
-
-    if (buttonState == ClickEncoder_interface::DoubleClicked)
+    if (!isInitiated)
     {
-        if (UserInput_interface::userInputLocked)
+        return result;
+    }
+
+    //Get values from encoder
+    int16_t encoderDiff = m_Encoder.getIncrement(); // diff to last "getValue" call
+    Button::eButtonStates buttonState = m_Encoder.getButton();
+
+    if (buttonState == Button::DoubleClicked)
+    {
+        if (UserInput_interface::isLocked)
         {
-            UserInput_interface::userInputLocked = false;
+            UserInput_interface::isLocked = false;
             VoicePrompt locked{VoicePrompt::MSG_BUTTONFREE, true};
             m_rPrompt.playPrompt(locked);
         }
         else
         {
-            UserInput_interface::userInputLocked = true;
+            UserInput_interface::isLocked = true;
             VoicePrompt unlocked{VoicePrompt::MSG_BUTTONLOCK, true};
             m_rPrompt.playPrompt(unlocked);
         }
     }
 
-    if (UserInput_interface::userInputLocked)
+    if (UserInput_interface::isLocked)
     {
         result = Message::INPUTLOCK;
     }
-    else if (buttonState == ClickEncoder_interface::Clicked)
+    else if (buttonState == Button::Clicked)
     {
         result = Message::INPUTPLPS;
     }
     else if (encoderDiff > 0) // TODO: Check in INTEGRATION TEST if this really is a good idea. Alternative: take position.
     {
         //encoder turned right
-        if (buttonState == ClickEncoder_interface::Held || buttonState == ClickEncoder_interface::Closed)
+        if (buttonState == Button::Held || buttonState == Button::Closed)
         {
             result = Message::INPUTNEXTLP;
         }
@@ -53,7 +62,7 @@ Message::eMessageContent UserInput_ClickEncoder::getUserRequest()
     else if (encoderDiff < 0)
     {
         //encoder turned left
-        if (buttonState == ClickEncoder_interface::Held || buttonState == ClickEncoder_interface::Closed)
+        if (buttonState == Button::Held || buttonState == Button::Closed)
         {
             result = Message::INPUTPREVLP;
         }
@@ -62,7 +71,7 @@ Message::eMessageContent UserInput_ClickEncoder::getUserRequest()
             result = Message::INPUTPREV;
         }
     }
-    else if (buttonState == ClickEncoder_interface::Held) // Button not turned
+    else if (buttonState == Button::Held) // Button not turned
     {
         result = Message::INPUTPLPSLP;
     }
@@ -75,17 +84,16 @@ Message::eMessageContent UserInput_ClickEncoder::getUserRequest()
     return result;
 }
 
-void UserInput_ClickEncoder::userinputRefresh()
-{
-    //Get values from encoder
-    encoderDiff = m_rEncoder.getIncrement(); // diff to last "getValue" call
-    buttonState = m_rEncoder.getButton();
-}
-
 // USERINPUT___CLICKENCODER ---------------------------------------------------------------
 
 // USERINPUT___3BUTTONS     ---------------------------------------------------------------
 //UserInput_3Buttons::UserInput_3Buttons(){}
+
+void UserInput_3Buttons::init()
+    {
+        isInitiated = true;
+        m_rMessageHandler.printMessage(Message::INPUTONLINE);
+    }
 
 void UserInput_3Buttons::userinputServiceIsr()
 {
@@ -97,51 +105,58 @@ void UserInput_3Buttons::userinputServiceIsr()
 Message::eMessageContent UserInput_3Buttons::getUserRequest()
 {
     Message::eMessageContent result{Message::INPUTNONE};
+    if (!isInitiated)
+    {
+        return result;
+    }
+    
     //Get current button's states
-    UserInput_3Buttons::userinputRefresh();
+    Button::eButtonStates plpsButtonState{m_PlpsButton.getButton()};
+    Button::eButtonStates nextButtonState{m_NextButton.getButton()};
+    Button::eButtonStates prevButtonState{m_PrevButton.getButton()};
 
     // TODO: ISSUE: SOMEHOW THE VOICEPROMT MAY NOT BE CALLED HERE (REF ISSUE?) IT WILL BREAK WHEN I DO THAT
-    if (buttonStates.plpsButton == ClickEncoder_interface::DoubleClicked)
+    if (plpsButtonState == Button::DoubleClicked)
     {
-        if (UserInput_interface::userInputLocked)
+        if (UserInput_interface::isLocked)
         {
-            UserInput_interface::userInputLocked = false;
+            UserInput_interface::isLocked = false;
             VoicePrompt locked{VoicePrompt::MSG_BUTTONFREE, false};
             m_rPrompt.playPrompt(locked);
         }
         else
         {
-            UserInput_interface::userInputLocked = true;
+            UserInput_interface::isLocked = true;
             VoicePrompt unlocked{VoicePrompt::MSG_BUTTONLOCK, false};
             m_rPrompt.playPrompt(unlocked);
         }
     }
 
-    if (UserInput_interface::userInputLocked)
+    if (UserInput_interface::isLocked)
     {
         result = Message::INPUTLOCK;
     }
-    else if (buttonStates.plpsButton == ClickEncoder_interface::Clicked)
+    else if (plpsButtonState == Button::Clicked)
     {
         result = Message::INPUTPLPS;
     }
-    else if (buttonStates.plpsButton == ClickEncoder_interface::Held)
+    else if (plpsButtonState == Button::Held)
     {
         result = Message::INPUTPLPSLP;
     }
-    else if (buttonStates.nextButton == ClickEncoder_interface::Clicked)
+    else if (nextButtonState == Button::Clicked)
     {
         result = Message::INPUTNEXT;
     }
-    else if (buttonStates.nextButton == ClickEncoder_interface::LongPressRepeat)
+    else if (nextButtonState == Button::LongPressRepeat)
     {
         result = Message::INPUTNEXTLP;
     }
-    else if (buttonStates.prevButton == ClickEncoder_interface::Clicked)
+    else if (prevButtonState == Button::Clicked)
     {
         result = Message::INPUTPREV;
     }
-    else if (buttonStates.prevButton == ClickEncoder_interface::LongPressRepeat)
+    else if (prevButtonState == Button::LongPressRepeat)
     {
         result = Message::INPUTPREVLP;
     }
@@ -152,13 +167,6 @@ Message::eMessageContent UserInput_3Buttons::getUserRequest()
 
     m_rMessageHandler.printMessage(result);
     return result;
-}
-
-void UserInput_3Buttons::userinputRefresh()
-{
-    buttonStates.plpsButton = m_PlpsButton.getButton();
-    buttonStates.nextButton = m_NextButton.getButton();
-    buttonStates.prevButton = m_PrevButton.getButton();
 }
 
 // USERINPUT___3BUTTONS     ---------------------------------------------------------------

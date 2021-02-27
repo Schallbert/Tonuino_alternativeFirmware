@@ -14,12 +14,15 @@ class UserInput_interface
     */
 
 protected:
-    bool userInputLocked{false};
+    bool isInitiated{false};
+    bool isLocked{false};
 
 public:
     virtual ~UserInput_interface(){};
+
+    virtual void init() = 0;
     virtual Message::eMessageContent getUserRequest() = 0; // returns user's request to main program
-    virtual void userinputServiceIsr() = 0;  // recurring task to poll UserInput's connected hardware
-}; // UserInput
+    virtual void userinputServiceIsr() = 0;                // recurring task to poll UserInput's connected hardware
+};                                                         // UserInput_interface
 
 #endif // USERINPUT_INTERFACE_H
