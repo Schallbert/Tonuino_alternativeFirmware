@@ -1,6 +1,7 @@
 #ifndef TONUINO_H
 #define TONUINO_H
 
+//#include "UserInput/justEncoder.h"
 #include "UserInput/UserInput_interface.h"
 #include "NfcControl/NfcControl_interface.h"
 #include "Mp3Control/Mp3Control_interface.h"
@@ -9,14 +10,13 @@
 class Tonuino
 {
 public:
-    Tonuino(UserInput_interface *pUserInput,
+    Tonuino(UserInput_interface &rUserInput,
             NfcControl_interface &rNfcControl,
             Mp3Control_interface &rMp3Control,
-            VoiceMenu &rVoiceMenu) : m_pUserInput(pUserInput),
+            VoiceMenu &rVoiceMenu) : m_rUserInput(rUserInput),
                                      m_rNfcControl(rNfcControl),
                                      m_rMp3Control(rMp3Control),
                                      m_rVoiceMenu(rVoiceMenu){};
-
     void run();
 
 private:
@@ -25,7 +25,8 @@ private:
     void handleMp3Playback();
 
 private:
-    UserInput_interface *m_pUserInput{nullptr};
+    UserInput_interface &m_rUserInput;
+    //ThreeButtons &m_rUserInput;
     NfcControl_interface &m_rNfcControl;
     Mp3Control_interface &m_rMp3Control;
     VoiceMenu &m_rVoiceMenu;

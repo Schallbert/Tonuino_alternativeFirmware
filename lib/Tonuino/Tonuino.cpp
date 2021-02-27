@@ -5,8 +5,9 @@
 
 void Tonuino::run()
 {
-    m_userRequest = m_pUserInput->getUserRequest();
+    m_userRequest = m_rUserInput.getUserRequest();
     m_tagState = m_rNfcControl.getTagPresence();
+
     // VoiceMenu overrules "normal operation"
     if (!handleVoiceMenu())
     {

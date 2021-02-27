@@ -15,6 +15,8 @@
 #include "../Mp3/Mp3Prompt/Mp3Prompt_implementation.h"
 // USER INPUT
 #include "UserInput/UserInput_factory.h"
+//#include "Arduino_config.h"
+//#include "UserInput/justEncoder.h"
 // MISC
 #include "../PowerManager/PowerManager_implementation.h"
 #include "../Arduino/messages.h"
@@ -23,6 +25,8 @@
 #include "Tonuino.h"
 #include "../VoiceMenu/VoiceMenu.h"
 #include "../Utilities/SimpleTimer/SimpleTimer.h"
+
+constexpr uint16_t MSTOSEC{1000};
 
 class Folder;
 
@@ -39,7 +43,6 @@ public:
     ~Loader() = default;
     Loader(const Loader &cpy) = delete;
 
-public:
     void init();
     void run(); // main loop. Read inputs, react and set outputs.
     void timer1Task_1ms();
@@ -78,12 +81,10 @@ private:
                             m_Mp3Prompt,
                             m_PwrCtrl,
                             m_MessageHandler};
-
     // nfc
     MFRC522_implementation m_Mfrc522;
     Nfc_implementation m_Nfc{m_Mfrc522, m_MessageHandler};
     NfcControl m_NfcControl{m_Nfc, m_MessageHandler};
-
     // voicemenu
     VoiceMenu m_VoiceMenu{m_Mp3Play,
                           m_Mp3Prompt,
@@ -92,11 +93,11 @@ private:
                           m_PwrCtrl,
                           m_MenuTimer};
     // userInput
-    UserInput_factory m_UserInputFactory{m_Mp3Prompt, m_MessageHandler};
-    UserInput_interface *m_pUserInput{nullptr};
-    Tonuino *m_pTonuino{nullptr};
+    UserInput_factory m_UserInput{m_Mp3Prompt, m_MessageHandler};
 
-    const uint16_t MSTOSEC{1000};
-    uint16_t m_timer1msTicks{0};
+    // APPLICATION
+    Tonuino m_Tonuino{m_UserInput, m_NfcControl, m_Mp3Control, m_VoiceMenu};
+
+    volatile uint16_t m_timer1msTicks{0};
 };
 #endif // LOADER_H
