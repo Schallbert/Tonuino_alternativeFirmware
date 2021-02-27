@@ -19,28 +19,30 @@ public:
         SPI.begin();
         m_Mfrc522.PCD_Init();
         m_Mfrc522.PCD_DumpVersionToSerial();
-    };
-    void softPowerDown() override { m_Mfrc522.PCD_SoftPowerDown(); };
-    void softPowerUp() override { m_Mfrc522.PCD_SoftPowerUp(); };
-    bool getTagUid() override { return m_Mfrc522.PICC_ReadCardSerial(); };
+    }
+
+    void softPowerDown() override { m_Mfrc522.PCD_SoftPowerDown(); }
+    void softPowerUp() override { m_Mfrc522.PCD_SoftPowerUp(); }
+    bool getTagUid() override { return m_Mfrc522.PICC_ReadCardSerial(); }
     bool tagLogin(byte blockAddress) override
     {
         return (m_Mfrc522.PCD_Authenticate(m_command, blockAddress, &m_key, &m_Mfrc522.uid) == MFRC522::STATUS_OK);
-    };
-    void tagHalt() override { m_Mfrc522.PICC_HaltA(); };
-    void tagLogoff() override { m_Mfrc522.PCD_StopCrypto1(); };
+    }
+    void tagHalt() override { m_Mfrc522.PICC_HaltA(); }
+    void tagLogoff() override { m_Mfrc522.PCD_StopCrypto1(); }
     eTagType getTagType() override { return static_cast<eTagType>(m_Mfrc522.PICC_GetType(m_Mfrc522.uid.sak)); }; // most likely cast needed
 
     bool tagRead(byte blockAddress, byte *buffer, byte bufferSize) override
     {
         return (m_Mfrc522.MIFARE_Read(blockAddress, buffer, &bufferSize) == MFRC522::STATUS_OK);
-    };
+    }
+
     bool tagWrite(byte blockAddress, byte *buffer, byte bufferSize) override
     {
         return (m_Mfrc522.MIFARE_Write(blockAddress, buffer, bufferSize) == MFRC522::STATUS_OK);
-    };
+    }
 
-    bool setTagActive() override { return m_Mfrc522.PICC_IsNewCardPresent(); };
+    bool setTagActive() override { return m_Mfrc522.PICC_IsNewCardPresent(); }
     bool isTagPresent() override
     {
         byte bufferATQA[2];
@@ -49,7 +51,7 @@ public:
         MFRC522::StatusCode result = m_Mfrc522.PICC_WakeupA(bufferATQA, &bufferSize);
         m_Mfrc522.PICC_HaltA();
         return (result == MFRC522::STATUS_OK || result == MFRC522::STATUS_COLLISION);
-    };
+    }
 
 private:
     MFRC522 m_Mfrc522{SS_PIN, RST_PIN};

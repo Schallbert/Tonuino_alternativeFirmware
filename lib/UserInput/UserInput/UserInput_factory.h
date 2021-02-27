@@ -10,10 +10,6 @@
 class UserInput_factory : public UserInput_interface
 {
 public:
-    /* explicit UserInput_factory(Mp3Prompt_interface &rPrompt,
-                               MessageHander_interface &rMessageHandler) : m_rPrompt(rPrompt),
-                                                                           m_rMessageHandler(rMessageHandler) {} */
-
 #if (USERINPUT_VARIANT == three_buttons)
     explicit UserInput_factory(Mp3Prompt_interface &rPrompt,
                                MessageHander_interface &rMessageHandler) : m_concreteInputVariant{rPrompt,
