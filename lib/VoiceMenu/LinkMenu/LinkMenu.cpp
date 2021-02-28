@@ -19,7 +19,7 @@ void LinkMenu::writeTag()
 {
     if (!m_rNfcControl.writeFolderToTag(m_menuState.getResult()))
     {
-        m_prompt.reset(VoicePrompt::MSG_ERROR_CARDWRITE, true);
+        m_prompt.reset(VoicePrompt::MSG_ERROR_CARDWRITE, false);
         playPrompt();
         m_menuState.abort();
     }
@@ -33,7 +33,8 @@ bool LinkMenu::isComplete()
 void LinkMenu::abort()
 {
     m_menuState.abort();
-    m_prompt.reset(VoicePrompt::MSG_ABORTED, true);
+    m_prompt.reset(VoicePrompt::MSG_ABORTED, false);
+    playPrompt();
 }
 
 void LinkMenu::selectNext()

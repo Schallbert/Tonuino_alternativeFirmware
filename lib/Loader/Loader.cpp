@@ -11,8 +11,6 @@ void Loader::init()
     m_DfMini.init();
     m_Mp3Play.init();
     m_NfcControl.init();
-    Serial.println("DEBUG: userInput?");
-    _delay_ms(50);
     m_UserInput.init();
     notifyStartup();
 }

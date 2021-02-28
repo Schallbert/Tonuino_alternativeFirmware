@@ -24,7 +24,7 @@ public:
                                          m_rNfcControl(rNfcCtrl),
                                          m_rMessageHandler(rMessageHandler),
                                          m_rPowerManager(rPowerMgr),
-                                         m_rMenuTimer(rMenuTimer){};
+                                         m_rMenuTimer(rMenuTimer){}
     ~VoiceMenu() = default;
     VoiceMenu(const VoiceMenu &cpy) = delete;
 
@@ -45,11 +45,11 @@ private:
     void dispatchInputs();
 
     // dispatch specific methods
-    void none() { return; };
-    void conf() { m_pMenuInstance->confirm(); };
-    void abrt() { m_pMenuInstance->abort(); };
-    void next() { m_pMenuInstance->selectNext(); };
-    void prev() { m_pMenuInstance->selectPrev(); };
+    void none() { return; }
+    void conf() { m_pMenuInstance->confirm(); }
+    void abrt() { m_pMenuInstance->abort(); }
+    void next() { m_pMenuInstance->selectNext(); }
+    void prev() { m_pMenuInstance->selectPrev(); }
 
 private:
     Mp3Play_interface &m_rMp3Play;

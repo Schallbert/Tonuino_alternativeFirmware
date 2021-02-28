@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #include "Tonuino_config.h"
 #include "Mp3Prompt_implementation.h"
 
@@ -8,8 +6,6 @@ void Mp3Prompt::playPrompt(const VoicePrompt &prompt)
     if (isNewPrompt(prompt))
     {
         m_rDfMiniMp3.playMp3FolderTrack(prompt.getId());
-        Serial.println("DEBUG: playTrack called");
-        _delay_ms(50);
         waitForPromptToStart();
         if (!prompt.getSkip())
         {
@@ -40,8 +36,6 @@ void Mp3Prompt::waitForPromptToStart()
     m_rDfMiniPromptTimer.start(WAIT_DFMINI_READY);
     while (!m_rDfMiniMp3.isPlaying() && !m_rDfMiniPromptTimer.isElapsed())
     {
-                Serial.println("DEBUG: looping");
-        _delay_ms(50);
         m_rDfMiniMp3.loop(); //wait for track to start (until timeout kicks in)
     }
     m_rDfMiniPromptTimer.stop();

@@ -60,8 +60,8 @@ void VoiceMenu::enterMenu()
     if (m_pMenuInstance != nullptr)
     {
         m_pMenuInstance->confirm();
-        m_rMenuTimer.start(MENU_TIMEOUT_SECS);
     }
+    m_rMenuTimer.start(MENU_TIMEOUT_SECS);
 }
 
 void VoiceMenu::checkEnterDeleteMenu()
@@ -84,6 +84,7 @@ void VoiceMenu::checkLeaveMenu()
     // Could be completed or aborted
     if (isComplete() || !isActive())
     {
+        m_rMenuTimer.stop();
         m_pMenuInstance = nullptr;
     }
 }
@@ -104,8 +105,15 @@ void VoiceMenu::dispatchInputs()
     static const dispatcher dispatchTable[IN_REQUEST_OPTIONS] =
         {
             &VM::none, &VM::conf, &VM::abrt, &VM::next, &VM::none, &VM::prev, &VM::none, &VM::none};
-    dispatcher dispatchExecutor = dispatchTable[static_cast<uint8_t>(m_userInput) & 0x0F]; // 
+    dispatcher dispatchExecutor = dispatchTable[static_cast<uint8_t>(m_userInput) & 0x0F]; //
     (this->*dispatchExecutor)();
+
+    //restart menu timer on button press
+    if (m_userInput != Message::INPUTNONE)
+    {
+        m_rMenuTimer.stop();
+        m_rMenuTimer.start(MENU_TIMEOUT_SECS);
+    }
 }
 
 void VoiceMenu::checkTimerElapsed()
