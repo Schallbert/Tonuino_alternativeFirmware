@@ -71,13 +71,17 @@ void Nfc_implementation::setTagOffline()
 
 bool Nfc_implementation::setTagOnline()
 {
-    bool status{true};
     // Try to set card active, obtain Id and type
-    status &= m_rMfrc522.isTagPresent();
-    status &= m_rMfrc522.setTagActive();
-    status &= m_rMfrc522.getTagUid();
+    if (!m_rMfrc522.getTagUid())
+    {
+        m_rMessageHandler.printMessage(Message::NOTAG);
+        return false;
+    }
     m_pConcreteTag = m_NfcTagFactory.getInstance(m_rMfrc522);
-    status &= (m_pConcreteTag != nullptr); // Not implemented if factory cannot respond OK
-    printNotification(status, Message::ONLINE, Message::ERRORTYPE);
-    return status;
+    if (m_pConcreteTag == nullptr)
+    {
+        m_rMessageHandler.printMessage(Message::ERRORTYPE);
+        return false;
+    }
+    return true;
 }

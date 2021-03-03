@@ -22,9 +22,9 @@
 #define MAXFOLDERCOUNT 99 // up to 255 supported by player
 #define MAXTRACKSPERFOLDER 32 // up to 255 supported by player BUT limited due to RAM constraints!
 
-#define VOLUME_MAX 22                                          // Absolute max: 30
-#define VOLUME_MIN 2                                           // Absolute min: 0
-#define VOLUME_INIT 7                                          // Start volume. Anything between 0 and 30.
+#define VOLUME_MAX 15                                          // Absolute max: 30
+#define VOLUME_MIN 1                                           // Absolute min: 0
+#define VOLUME_INIT 5                                          // Start volume. Anything between 0 and 30.
 #define DFMINI_EQ_SETTING DfMiniMp3_interface::DfMp3_Eq_Normal
 
 //Timer1 interrupt task
@@ -32,7 +32,7 @@
 #define IDLE_TIMEOUT_SECS 20             // System will automatically switch off when paused
 #define LULLABYE_TIMEOUT_ACTIVE true     // will shut the system down after a pre-defined time
 #define LULLABYE_TIMEOUT_SECS 20 * 60    // default is 20 minutes (effective when track finished)
-#define MENU_TIMEOUT_SECS 20             // menu will be automatically aborted if no input within this time
+#define MENU_TIMEOUT_SECS 40             // menu will be automatically aborted if no input within this time
 
 //MP3 defines
 #define WAIT_DFMINI_READY 2      // sec

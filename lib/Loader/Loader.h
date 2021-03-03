@@ -93,7 +93,7 @@ private:
                           m_PwrCtrl,
                           m_MenuTimer};
     // userInput
-    UserInput_factory m_UserInput{m_Mp3Prompt, m_MessageHandler};
+    UserInput_factory m_UserInput; //{m_Mp3Prompt, m_MessageHandler};
 
     // APPLICATION
     Tonuino m_Tonuino{m_UserInput, m_NfcControl, m_Mp3Control, m_VoiceMenu};

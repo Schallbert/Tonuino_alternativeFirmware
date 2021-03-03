@@ -25,7 +25,7 @@ Message::eMessageContent NfcControl::getTagPresence()
 bool NfcControl::writeFolderToTag(const Folder &sourceFolder)
 {
     m_oFolder = sourceFolder; // Copy source folder to member object
-    if (!m_oFolder.isValid())
+    if (!m_oFolder.isInitiated())
     {
         m_oFolder = Folder(); // re-init to empty object
         return false;

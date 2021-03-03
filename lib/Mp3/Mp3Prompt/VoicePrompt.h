@@ -13,6 +13,7 @@ public:
         MSG_ERROR_CARDREAD = 411,
         MSG_ERROR_FOLDER = 412,
         MSG_ERROR_TOOMANYTRACKS = 413,
+        MSG_ERROR_NO_TAG = 414, // TODO: Record!
         MSG_BUTTONLOCK = 426,
         MSG_BUTTONFREE = 427,
         MSG_STARTUP = 500,
