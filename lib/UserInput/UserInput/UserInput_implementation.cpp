@@ -3,7 +3,7 @@
 void UserInput_ClickEncoder::init()
     {
         isInitiated = true;
-        m_rMessageHandler.printMessage(Message::INPUTONLINE);
+        //m_rMessageHandler.printMessage(Message::INPUTONLINE);
     }
 
 void UserInput_ClickEncoder::userinputServiceIsr()
@@ -28,14 +28,14 @@ Message::eMessageContent UserInput_ClickEncoder::getUserRequest()
         if (UserInput_interface::isLocked)
         {
             UserInput_interface::isLocked = false;
-            VoicePrompt locked{VoicePrompt::MSG_BUTTONFREE, true};
-            m_rPrompt.playPrompt(locked);
+            //VoicePrompt locked{VoicePrompt::MSG_BUTTONFREE, true};
+            //m_rPrompt.playPrompt(locked);
         }
         else
         {
             UserInput_interface::isLocked = true;
-            VoicePrompt unlocked{VoicePrompt::MSG_BUTTONLOCK, true};
-            m_rPrompt.playPrompt(unlocked);
+            //VoicePrompt unlocked{VoicePrompt::MSG_BUTTONLOCK, true};
+            //m_rPrompt.playPrompt(unlocked);
         }
     }
 
@@ -80,7 +80,7 @@ Message::eMessageContent UserInput_ClickEncoder::getUserRequest()
         result = Message::INPUTNONE;
     }
 
-    m_rMessageHandler.printMessage(result);
+    //m_rMessageHandler.printMessage(result);
     return result;
 }
 
@@ -92,7 +92,7 @@ Message::eMessageContent UserInput_ClickEncoder::getUserRequest()
 void UserInput_3Buttons::init()
     {
         isInitiated = true;
-        m_rMessageHandler.printMessage(Message::INPUTONLINE);
+        //m_rMessageHandler.printMessage(Message::INPUTONLINE);
     }
 
 void UserInput_3Buttons::userinputServiceIsr()
@@ -121,14 +121,14 @@ Message::eMessageContent UserInput_3Buttons::getUserRequest()
         if (UserInput_interface::isLocked)
         {
             UserInput_interface::isLocked = false;
-            VoicePrompt locked{VoicePrompt::MSG_BUTTONFREE, false};
-            m_rPrompt.playPrompt(locked);
+            //VoicePrompt locked{VoicePrompt::MSG_BUTTONFREE, false};
+            //m_rPrompt.playPrompt(locked);
         }
         else
         {
             UserInput_interface::isLocked = true;
-            VoicePrompt unlocked{VoicePrompt::MSG_BUTTONLOCK, false};
-            m_rPrompt.playPrompt(unlocked);
+            //VoicePrompt unlocked{VoicePrompt::MSG_BUTTONLOCK, false};
+            //m_rPrompt.playPrompt(unlocked);
         }
     }
 
@@ -165,7 +165,7 @@ Message::eMessageContent UserInput_3Buttons::getUserRequest()
         result = Message::INPUTNONE;
     }
 
-    m_rMessageHandler.printMessage(result);
+    //m_rMessageHandler.printMessage(result);
     return result;
 }
 

@@ -11,13 +11,17 @@ class UserInput_factory : public UserInput_interface
 {
 public:
 #if (USERINPUT_VARIANT == three_buttons)
+    /*
     explicit UserInput_factory(Mp3Prompt_interface &rPrompt,
                                MessageHander_interface &rMessageHandler) : m_concreteInputVariant{rPrompt,
-                                                                                                  rMessageHandler} {}
+                                                                                                  rMessageHandler} {} */
+    UserInput_factory() = default;
 #elif (USERINPUT_VARIANT == one_encoder)
     explicit UserInput_factory(Mp3Prompt_interface &rPrompt,
                                MessageHander_interface &rMessageHandler) : m_concreteInputVariant{rPrompt,
-                                                                                                  rMessageHandler} {}
+                                                                                                  rMessageHandler}
+    {
+    }
 #else
 #error No valid UserInput Variant selected!
 #endif

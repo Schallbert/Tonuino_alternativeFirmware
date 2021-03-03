@@ -61,10 +61,10 @@ class UserInput_3Buttons : public UserInput_interface
     //  ToggleLockInput = plpsButton Doubleclick
 
 public:
-    UserInput_3Buttons(Mp3Prompt_interface &rPrompt,
+    /*UserInput_3Buttons(Mp3Prompt_interface &rPrompt,
                        MessageHander_interface &rMessageHandler) : m_rPrompt(rPrompt),
-                                                                   m_rMessageHandler(rMessageHandler)
-
+                                                                   m_rMessageHandler(rMessageHandler)*/
+    UserInput_3Buttons()
     {
         m_PlpsButton.setDoubleClickEnabled(true);
         m_NextButton.setLongPressRepeatEnabled(true);
@@ -77,8 +77,8 @@ public:
     Message::eMessageContent getUserRequest() override;
 
 private:
-    Mp3Prompt_interface &m_rPrompt;
-    MessageHander_interface &m_rMessageHandler;
+    //Mp3Prompt_interface &m_rPrompt;
+    //MessageHander_interface &m_rMessageHandler;
 
     Button m_PlpsButton{PINPLPS, USERINPUTACTIVE_STATE};
     Button m_NextButton{PINNEXT, USERINPUTACTIVE_STATE};
