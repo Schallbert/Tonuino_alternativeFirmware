@@ -42,15 +42,20 @@ public:
         return (m_Mfrc522.MIFARE_Write(blockAddress, buffer, bufferSize) == MFRC522::STATUS_OK);
     }
 
-    bool setTagActive() override { return m_Mfrc522.PICC_IsNewCardPresent(); }
-    bool isTagPresent() override
+    bool setTagActive() override 
     {
         byte bufferATQA[2];
         byte bufferSize = sizeof(bufferATQA);
 
         MFRC522::StatusCode result = m_Mfrc522.PICC_WakeupA(bufferATQA, &bufferSize);
-        m_Mfrc522.PICC_HaltA();
         return (result == MFRC522::STATUS_OK || result == MFRC522::STATUS_COLLISION);
+    }
+
+    bool isTagPresent() override
+    {
+        bool result{setTagActive()};
+        m_Mfrc522.PICC_HaltA(); // set to "sleep"
+        return result;
     }
 
 private:

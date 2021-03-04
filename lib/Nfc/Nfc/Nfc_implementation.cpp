@@ -71,10 +71,15 @@ void Nfc_implementation::setTagOffline()
 
 bool Nfc_implementation::setTagOnline()
 {
-    // Try to set card active, obtain Id and type
-    if (!m_rMfrc522.getTagUid())
+    // Try to set card active, obtain Id and type, then fetch the right access method
+    if(!m_rMfrc522.setTagActive())
     {
         m_rMessageHandler.printMessage(Message::NOTAG);
+        return false;
+    }
+    if (!m_rMfrc522.getTagUid())
+    {
+        m_rMessageHandler.printMessage(Message::ERRORREAD);
         return false;
     }
     m_pConcreteTag = m_NfcTagFactory.getInstance(m_rMfrc522);
