@@ -42,7 +42,7 @@ void PowerManager::setDeleteMenu()
 void PowerManager::setLinkMenu()
 {
     m_rIdleTimer.stop();
-    m_led.set_led_behavior(StatusLed::flash_slow); // Link Menu
+    m_led.set_led_behavior(StatusLed::dim); // Link Menu
 }
 
 void PowerManager::notify1sTimer()
