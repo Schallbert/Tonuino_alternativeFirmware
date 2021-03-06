@@ -30,8 +30,6 @@ public:
 private:
     uint16_t m_count{0};
     uint16_t m_timeout{0};
-    bool m_elapsed{false};
-    bool m_running{false};
 };
 
 #endif // SIMPLETIMER_H
