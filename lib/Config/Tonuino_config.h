@@ -15,8 +15,8 @@
 #define USERINPUT_VARIANT three_buttons
 
 //StatusLEDs interaction outputs
-#define FLASHSLOWMS 500
-#define FLASHQUICKMS 200
+#define FLASHSLOWMS 1000
+#define FLASHQUICKMS 400
 
 //Folder specific data
 #define MAXFOLDERCOUNT 99 // up to 255 supported by player
