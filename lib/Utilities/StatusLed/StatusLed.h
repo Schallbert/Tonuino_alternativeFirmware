@@ -41,10 +41,10 @@ private:
 
 private:
     Arduino_interface_pins &m_rPinControl;
-    uint8_t m_ui8LedPinId{0};
-    bool m_bPinAciveState{false};
-    uint16_t m_ui16MsFlashSlow{0};
-    uint16_t m_ui16MsFlashQuick{0};
+    const uint8_t m_ui8LedPinId;
+    const bool m_bPinAciveState;
+    const uint16_t m_ui16MsFlashSlow;
+    const uint16_t m_ui16MsFlashQuick;
 
     void (StatusLed::*perform)(); //class method pointer
     volatile uint16_t m_ui16TickInternal{0};

@@ -72,10 +72,10 @@ TEST_F(StatusLedTest, setLed_dim_workingCorrectly)
     m_StatusLed.set_led_behavior(StatusLed::dim);
     {
         InSequence seq;
-        EXPECT_CALL(pinCtrl, digital_write(_, !pinActiveState)).Times(8);
+        EXPECT_CALL(pinCtrl, digital_write(_, !pinActiveState)).Times(7);
         EXPECT_CALL(pinCtrl, digital_write(_, pinActiveState)).Times(1);
     }
-    for (uint8_t i = 0; i < 9; ++i)
+    for (uint8_t i = 0; i < 8; ++i)
     {
         m_StatusLed.led_service();
     }
