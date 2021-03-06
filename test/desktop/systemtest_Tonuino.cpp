@@ -54,7 +54,7 @@ protected:
         m_pNfcControl = new NfcControl(*m_pNfc, m_MessageHandlerMock);
 
         m_pVoiceMenu = new VoiceMenu(*m_pMp3Play, *m_pMp3Prompt, *m_pNfcControl, m_MessageHandlerMock, *m_pPwrCtrl, m_MenuTimer);
-        m_pTonuino = new Tonuino(&m_UserInputMock, *m_pNfcControl, *m_pMp3Control, *m_pVoiceMenu);
+        m_pTonuino = new Tonuino(m_UserInputMock, *m_pNfcControl, *m_pMp3Control, *m_pVoiceMenu);
     }
 
     virtual void TearDown()

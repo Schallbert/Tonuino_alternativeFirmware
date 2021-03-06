@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+/*#include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
 #include "mocks/unittest_ClickEncoder_mocks.h"
@@ -262,3 +262,4 @@ TEST_F(UserInput_3ButtonsTest, prevLongPressRepeat_willReturnDecVolume)
     ON_CALL(m_prevMock, getButton()).WillByDefault(Return(ClickEncoder_interface::LongPressRepeat));
     ASSERT_EQ(m_UserInput.getUserRequest(), Message::INPUTPREVLP);
 }
+*/

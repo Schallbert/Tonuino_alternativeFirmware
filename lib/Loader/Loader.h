@@ -14,7 +14,7 @@
 #include "../Mp3/Mp3Control/Mp3Control_implementation.h"
 #include "../Mp3/Mp3Prompt/Mp3Prompt_implementation.h"
 // USER INPUT
-#include "UserInput/UserInput_factory.h"
+#include "UserInput_factory.h"
 //#include "Arduino_config.h"
 //#include "UserInput/justEncoder.h"
 // MISC

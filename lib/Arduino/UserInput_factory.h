@@ -4,7 +4,7 @@
 #include "Mp3Prompt/Mp3Prompt_interface.h"
 #include "MessageHandler_interface.h"
 
-#include "UserInput_interface.h"
+#include "UserInput/UserInput_interface.h"
 #include "UserInput_implementation.h"
 
 class UserInput_factory : public UserInput_interface
