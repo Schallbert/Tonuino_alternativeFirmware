@@ -47,7 +47,7 @@ TEST(simpleTimer, timerStop_doesNotElapse)
     EXPECT_FALSE(testTimer.isElapsed());
 }
 
-TEST(simpleTimer, timerStart_updateThreshold_notElapsed)
+TEST(simpleTimer, timerStart_increaseThreshold_notElapsed)
 {
     SimpleTimer testTimer;
     testTimer.start(2);
@@ -59,12 +59,12 @@ TEST(simpleTimer, timerStart_updateThreshold_notElapsed)
     EXPECT_TRUE(testTimer.isElapsed());
 }
 
-TEST(simpleTimer, timerStart_elapses_updateThreshold_staysElapsed)
+TEST(simpleTimer, timerStart_decreaseThreshold_elapsed)
 {
     SimpleTimer testTimer;
-    testTimer.start(1);
+    testTimer.start(2);
     testTimer.timerTick();
-    EXPECT_TRUE(testTimer.isElapsed());
-    testTimer.start(3);
+    EXPECT_FALSE(testTimer.isElapsed());
+    testTimer.start(1);
     EXPECT_TRUE(testTimer.isElapsed()); 
 }

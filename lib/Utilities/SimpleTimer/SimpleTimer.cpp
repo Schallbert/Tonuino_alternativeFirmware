@@ -27,7 +27,7 @@ void SimpleTimer::stop()
 
 bool SimpleTimer::isElapsed()
 {
-    return (m_count == m_timeout);
+    return (m_timeout && (m_count >= m_timeout));
 }
 
 bool SimpleTimer::isRunning()
