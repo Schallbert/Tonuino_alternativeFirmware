@@ -17,6 +17,7 @@ void VoiceMenu::loop()
 {
     if (isActive())
     {
+        handlePromptStatus();
         dispatchInputs();
         m_pMenuInstance->setStatusLed();
         m_pMenuInstance->setTagState(m_tagState);
@@ -28,6 +29,14 @@ void VoiceMenu::loop()
     {
         checkEnterLinkMenu();
         checkEnterDeleteMenu();
+    }
+}
+
+void VoiceMenu::handlePromptStatus()
+{
+    if ((m_userInput != Message::INPUTNONE))
+    {
+        m_rMp3Prompt.stopPrompt();
     }
 }
 

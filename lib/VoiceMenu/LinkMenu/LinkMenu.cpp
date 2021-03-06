@@ -56,13 +56,13 @@ void LinkMenu::setStatusLed()
 
 void LinkMenu::handlePlayback()
 {
-    playPrompt();
-    playPreview();
-}
-
-bool LinkMenu::isActive()
-{
-    return (m_menuState.getMenuStateMessage() != 0);
+    static VoicePrompt lastPrompt;
+    if (m_prompt != lastPrompt)
+    {
+        playPrompt();
+        playPreview();
+        lastPrompt = m_prompt;
+    }
 }
 
 void LinkMenu::playPrompt()
@@ -77,4 +77,9 @@ void LinkMenu::playPreview()
     {
         m_rMp3Play.playFolder(preview);
     }
+}
+
+bool LinkMenu::isActive()
+{
+    return (m_menuState.getMenuStateMessage() != 0);
 }

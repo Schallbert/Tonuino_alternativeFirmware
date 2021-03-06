@@ -9,5 +9,6 @@ public:
     virtual ~Mp3Prompt_interface(){};
 
     virtual void playPrompt(const VoicePrompt &message) = 0;
+    virtual void stopPrompt() = 0;
 };
 #endif // MP3PROMPT_INTERFACE_H

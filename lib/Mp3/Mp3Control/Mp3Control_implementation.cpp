@@ -16,22 +16,30 @@ void Mp3Control::playFolder(Folder &folder)
 
 void Mp3Control::loop()
 {
+    handlePromptStatus();
     handleUserInput();
     m_rPowerManager.setPlayback(m_rDfMiniMp3.isPlaying());
     m_rMp3Player.autoplay();
     m_rDfMiniMp3.printStatus();
 }
 
+void Mp3Control::handlePromptStatus()
+{
+    if (m_userInput != Message::INPUTNONE)
+    {
+        m_rMp3Prompt.stopPrompt();
+    }
+}
+
 void Mp3Control::handleUserInput()
 {
     // initialize array of function pointers to address state-event transitions
     // Order MUST be inline with INxxx of Message
-    
+
     typedef Mp3Control PC;
     static const dispatcher dispatchTable[IN_REQUEST_OPTIONS] =
         {
-            &PC::none, &PC::plPs, &PC::help, &PC::next, &PC::incV, &PC::prev, &PC::decV, &PC::none
-        };
+            &PC::none, &PC::plPs, &PC::help, &PC::next, &PC::incV, &PC::prev, &PC::decV, &PC::none};
     dispatcher dispatchExecutor = dispatchTable[static_cast<uint8_t>(m_userInput) & 0x0F];
     (this->*dispatchExecutor)();
 }

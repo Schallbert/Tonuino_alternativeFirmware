@@ -15,6 +15,11 @@ void Mp3Prompt::playPrompt(const VoicePrompt &prompt)
     }
 }
 
+void Mp3Prompt::stopPrompt()
+{
+    return m_rDfMiniMp3.stopMp3FolderTrack();
+}
+
 bool Mp3Prompt::isNewPrompt(const VoicePrompt &prompt)
 {
     bool result{false};

@@ -38,6 +38,7 @@ public:
 
 private:
     void handleUserInput();
+    void handlePromptStatus();
     void autoplay();
 
     void none(){};

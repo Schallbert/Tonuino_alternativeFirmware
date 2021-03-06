@@ -15,6 +15,7 @@ public:
     Mp3Prompt(const Mp3Prompt &cpy) = delete;
 
     void playPrompt(const VoicePrompt &prompt) override;
+    void stopPrompt()override;
 
 private:
     bool isNewPrompt(const VoicePrompt &prompt);

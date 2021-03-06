@@ -145,6 +145,7 @@ public:
     {
         m_dfMiniMp3.loop();
         m_dfMiniMp3.playMp3FolderTrack(trackId);
+        m_playsMp3Folder = true;
     }
 
     uint8_t getFolderTrackCount(uint8_t folderId) override
@@ -169,6 +170,16 @@ public:
         return !(digitalRead(DFMINI_PIN_ISIDLE));
     }
 
+    void  stopMp3FolderTrack() override
+    {
+        if (isPlaying() && m_playsMp3Folder)
+        {
+            m_dfMiniMp3.stop();
+            m_dfMiniMp3.loop();
+            m_playsMp3Folder = false;
+        }
+    }
+
     void printStatus() const override
     {
         m_rMessageHandler.printMessage(Mp3Notify::getMessage());
@@ -182,5 +193,7 @@ private:
     //because compiler interprets this as a class method call. Using curly braces also solves "Most Vexing Parse problem."
     SoftwareSerial m_Mp3SwSerial{DFMINI_RX, DFMINI_TX};
     DFMiniMp3<SoftwareSerial, Mp3Notify> m_dfMiniMp3{m_Mp3SwSerial};
+
+    bool m_playsMp3Folder{false};
 };
 #endif // DFMINIMP3_IMPLEMENTATION_H

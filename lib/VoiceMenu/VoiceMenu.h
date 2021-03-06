@@ -2,10 +2,10 @@
 #define VOICEMENU_H
 
 #include "Menu_factory.h"
+#include "Mp3Prompt/Mp3Prompt_interface.h"
 #include "Menu_interface.h"
 
 class Mp3Play_interface;
-class Mp3Prompt_interface;
 class SimpleTimer;
 
 // Owns the concrete voice menu instance using a factory.
@@ -40,6 +40,7 @@ private:
     void enterMenu();
     void checkLeaveMenu();
     void checkTimerElapsed();
+    void handlePromptStatus();
 
     bool isComplete();
     void dispatchInputs();
