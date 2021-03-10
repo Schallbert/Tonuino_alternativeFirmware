@@ -21,6 +21,7 @@ public:
 
 private:
     void checkAndRectifyBlockAddress(byte &blockAddress) override;
+    uint8_t determineBlockCount();
 
 private:
     MFRC522_interface &m_rMfrc522;

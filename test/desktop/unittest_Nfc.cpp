@@ -143,8 +143,8 @@ TEST_F(Nfc_write, tagWriteError_returnsError)
     uint8_t dataToWrite[16] = {};
 
     Sequence seq;
-    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::ONLINE)));
-    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::ERRORWRITE)));
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::TAGONLINE)));
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::TAGERRORWRITE)));
     m_pNfc->writeTag(4, dataToWrite);
 }
 
@@ -159,8 +159,8 @@ TEST_F(Nfc_write, tagWriteSuccess_returnsSuccessNotification)
     uint8_t dataToWrite[16] = {};
 
     Sequence seq;
-    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::ONLINE)));
-    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::WRITEOK)));
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::TAGONLINE)));
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::TAGWRITEOK)));
     m_pNfc->writeTag(4, dataToWrite);
 }
 
@@ -208,10 +208,10 @@ TEST_F(Nfc_read, tagReadError_returnsError)
     ON_CALL(m_mfrcMock, tagRead(_, _, _)).WillByDefault(Return(false));
     uint8_t readData[16] = {};
 
-    // setOnline will return READOK, tagRead will fail with ERRORREAD
+    // setOnline will return TAGREADOK, tagRead will fail with TAGERRORREAD
     Sequence seq;
-    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::ONLINE)));
-    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::ERRORREAD)));
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::TAGONLINE)));
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::TAGERRORREAD)));
     m_pNfc->readTag(4, readData);
 }
 
@@ -226,7 +226,7 @@ TEST_F(Nfc_read, tagReadSuccess_returnsSuccessNotification)
     uint8_t readData[16] = {};
 
     Sequence seq;
-    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::ONLINE)));
-    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::READOK)));
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::TAGONLINE)));
+    EXPECT_CALL(m_messageHandlerMock, printMessage(identicalMessage(Message::TAGREADOK)));
     m_pNfc->readTag(4, readData);
 }

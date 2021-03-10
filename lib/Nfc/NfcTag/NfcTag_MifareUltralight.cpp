@@ -5,18 +5,18 @@
 bool NfcTag_MifareUltralight::readTag(byte blockAddress, byte *readResult)
 {
     bool status{true};
-    byte ui8_bufSize = NFCTAG_MEMORY_TO_OCCUPY + 2; // Account for checksum
-    byte buffer[ui8_bufSize] = {};
+    byte buffer[determineBlockCount() * MIFARE_UL_BLOCK_SIZE] = {};
 
     checkAndRectifyBlockAddress(blockAddress);
     if (!m_rMfrc522.tagLogin(ULTRALIGHTSTARTPAGE))
     {
         return false;
     }
-    for (uint8_t i = 0; i < (NFCTAG_MEMORY_TO_OCCUPY / MIFARE_UL_BLOCK_SIZE); ++i)
+
+    for (uint8_t i{0}; i < determineBlockCount(); ++i)
     {
-        status &= m_rMfrc522.tagRead(blockAddress + i, buffer + (i * MIFARE_UL_BLOCK_SIZE), ui8_bufSize);
-        // copy 4byte block from buffer2 to buffer
+        status &= m_rMfrc522.tagRead(blockAddress + i, buffer + (i * MIFARE_UL_BLOCK_SIZE), MIFARE_UL_BLOCK_SIZE);
+        // copy 4byte blocks to buffer
     }
 
     if (status)
@@ -37,15 +37,25 @@ bool NfcTag_MifareUltralight::writeTag(byte blockAddress, byte *dataToWrite)
         return false;
     }
 
-    for (uint8_t i = 0; i < (NFCTAG_MEMORY_TO_OCCUPY / MIFARE_UL_BLOCK_SIZE); ++i)
+    for (uint8_t i = 0; i < determineBlockCount(); ++i)
     {
-        byte buffer[NFCTAG_MEMORY_TO_OCCUPY] = {}; // initialize with 0s
+        byte buffer[MIFARE_UL_BLOCK_SIZE] = {}; // initialize with 0s
         NfcTag_interface::copyArray(buffer, dataToWrite + (i * MIFARE_UL_BLOCK_SIZE), MIFARE_UL_BLOCK_SIZE); // write 4 bytes to buffer
         // only the first 4 bytes are actually written. Rest is kept 0.
-        status &= m_rMfrc522.tagWrite(blockAddress + i , buffer, NFCTAG_MEMORY_TO_OCCUPY);
+        status &= m_rMfrc522.tagWrite(blockAddress + i, buffer, MIFARE_UL_BLOCK_SIZE);
     }
     m_rMfrc522.tagHalt();
     return status;
+}
+
+uint8_t NfcTag_MifareUltralight::determineBlockCount()
+{
+    uint8_t numberOfBlocks{NFCTAG_MEMORY_TO_OCCUPY / MIFARE_UL_BLOCK_SIZE};
+    if(NFCTAG_MEMORY_TO_OCCUPY % MIFARE_UL_BLOCK_SIZE)
+    {
+        ++numberOfBlocks; // account for integer division
+    }
+    return numberOfBlocks;
 }
 
 void NfcTag_MifareUltralight::checkAndRectifyBlockAddress(byte &blockAddress)
@@ -55,8 +65,8 @@ void NfcTag_MifareUltralight::checkAndRectifyBlockAddress(byte &blockAddress)
     {
         blockAddress = ULTRALIGHTSTARTPAGE;
     }
-    else if (blockAddress > ULTRALIGHTSTOPPAGE)
+    else if (blockAddress > (ULTRALIGHTSTOPPAGE - determineBlockCount()))
     {
-        blockAddress = ULTRALIGHTSTOPPAGE;
+        blockAddress = ULTRALIGHTSTOPPAGE - determineBlockCount();
     }
 }

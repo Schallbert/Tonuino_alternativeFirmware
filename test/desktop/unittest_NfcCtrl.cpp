@@ -146,7 +146,6 @@ TEST_F(NfcCtrlRead, Read_Successful_bufferSet_returnsCorrectFolderData)
 
     EXPECT_EQ(m_TestFolder.getFolderId(), resultFolder.getFolderId());
     EXPECT_EQ(m_TestFolder.getPlayMode(), resultFolder.getPlayMode());
-    EXPECT_EQ(m_TestFolder.getTrackCount(), resultFolder.getTrackCount());
 }
 
 TEST_F(NfcCtrlTagPresence, noTag_returnsNoTag)
@@ -181,7 +180,7 @@ TEST_F(NfcCtrlTagPresence, newTag_simulateKnown_returnsKnownTag)
 
 TEST_F(NfcCtrlTagPresence, OutOfRange_returnsOutOfRange)
 {
-    Message::eMessageContent tagPresence = Message::READERINIT; // Out of Range
+    Message::eMessageContent tagPresence = Message::TAGREADERINIT; // Out of Range
     ON_CALL(m_nfcMock, getTagPresence()).WillByDefault(Return(tagPresence));
     ASSERT_EQ(tagPresence, m_NfcControl.getTagPresence());
 }

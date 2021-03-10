@@ -1,4 +1,5 @@
 #include "Tonuino_config.h"
+#include "NfcTag/NfcTag_MifareUltralight.h"
 #include "Folder.h"
 
 #include "unittest_Nfc_mocks.h"
@@ -17,14 +18,14 @@ bool Fake_Nfc::writeTag(byte blockAddress, byte *dataToWrite)
 }
 bool Fake_Nfc::readTag(byte blockAddress, byte *readResult)
 {
-    for (int i = 0; i < NFCTAG_MEMORY_TO_OCCUPY; ++i) // 7-15: Empty
+    for (int i = 0; i < NFCTAG_MEMORY_TO_OCCUPY; ++i)
     {
         *(readResult + i) = fakeBufferData[i];
     }
     return true;
 }
 
-bool Fake_MFRC522_MifareMini1k4k::tagRead(byte blockAddress, byte *buffer, byte bufferSize) 
+bool Fake_MFRC522_MifareMini1k4k::tagRead(byte blockAddress, byte *buffer, byte bufferSize)
 {
     for (int i = 0; i < bufferSize; ++i)
     {
@@ -33,27 +34,17 @@ bool Fake_MFRC522_MifareMini1k4k::tagRead(byte blockAddress, byte *buffer, byte 
     return true;
 }
 
-bool Fake_MFRC522_MifareUltralight::tagRead(byte blockAddress, byte *buffer, byte bufferSize) 
+bool Fake_MFRC522_MifareUltralight::tagRead(byte blockAddress, byte *buffer, byte bufferSize)
 {
-    static uint8_t lastBlockNr{0};
-    const uint8_t BLOCK_SIZE{4}; // Mifare UL's data block size
-    const uint8_t NROFITERATIONS{NFCTAG_MEMORY_TO_OCCUPY/BLOCK_SIZE};
-    for (int i = 0; i < BLOCK_SIZE; ++i)
+    for (int i = 0; i < MIFARE_UL_BLOCK_SIZE; ++i)
     {
-        *(buffer + i) = fakeBufferData[(lastBlockNr * BLOCK_SIZE) + i];
-    }
-    lastBlockNr++;
-    if (lastBlockNr == NROFITERATIONS)
-    {
-        lastBlockNr = 0; // buffer read complete.
+        *(buffer + i) = fakeBufferData[MIFARE_UL_BLOCK_SIZE * (blockAddress - ULTRALIGHTSTARTPAGE) + i];
     }
     return true;
 }
 
-
-
 // RESULT CHECKER
-bool resultArrayByteCompare(const byte* compareSrc, byte* compareTgt, uint8_t size)
+bool resultArrayByteCompare(const byte *compareSrc, byte *compareTgt, uint8_t size)
 {
     bool status{true};
     for (int i = 0; i < size; ++i)

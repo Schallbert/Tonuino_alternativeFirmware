@@ -67,11 +67,6 @@ void NfcControl::folder_to_buffer()
     m_pBuffer[3] = (byte)(TAG_MAGIC_COOKIE & 0xFF);         // 3: magic cookie to identify our nfc tags
     m_pBuffer[4] = (byte)m_oFolder.getFolderId();         // 4: folder picked by the user
     m_pBuffer[5] = (byte)m_oFolder.getPlayMode();         // 5: playback mode picked by the user
-    m_pBuffer[6] = (byte)m_oFolder.getTrackCount();       // 6: track count of that m_oFolder
-    for (int i = 7; i < NFCTAG_MEMORY_TO_OCCUPY; ++i)       // 7-15: Empty
-    {
-        m_pBuffer[i] = 0x00;
-    }
 }
 
 void NfcControl::buffer_to_folder()
@@ -83,10 +78,8 @@ void NfcControl::buffer_to_folder()
                        (uint32_t)m_pBuffer[3];
     uint8_t folderId = (uint8_t)m_pBuffer[4];
     Folder::ePlayMode playMode = (Folder::ePlayMode)m_pBuffer[5];
-    uint8_t trackCount = (uint8_t)m_pBuffer[6];
     // Set m_oFolder object.
     m_oFolder = Folder(folderId, playMode);
-    m_oFolder.setTrackCount(trackCount);
 }
 
 bool NfcControl::is_known_card()
