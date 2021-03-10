@@ -3,7 +3,7 @@
 
 void Nfc_implementation::initNfc()
 {
-    m_rMessageHandler.printMessage(Message::READERINIT);
+    m_rMessageHandler.printMessage(Message::TAGREADERINIT);
     m_rMfrc522.init(); // Init MFRC522
 }
 
@@ -37,7 +37,7 @@ bool Nfc_implementation::writeTag(byte blockAddress, byte *dataToWrite)
         status = m_pConcreteTag->writeTag(blockAddress, dataToWrite);
     }
     setTagOffline();
-    printNotification(status, Message::WRITEOK, Message::ERRORWRITE);
+    printNotification(status, Message::TAGWRITEOK, Message::TAGERRORWRITE);
     return status;
 }
 
@@ -49,7 +49,7 @@ bool Nfc_implementation::readTag(byte blockAddress, byte *readResult)
         status = m_pConcreteTag->readTag(blockAddress, readResult);
     }
     setTagOffline();
-    printNotification(status, Message::READOK, Message::ERRORREAD);
+    printNotification(status, Message::TAGREADOK, Message::TAGERRORREAD);
     return status;
 }
 
@@ -79,14 +79,16 @@ bool Nfc_implementation::setTagOnline()
     }
     if (!m_rMfrc522.getTagUid())
     {
-        m_rMessageHandler.printMessage(Message::ERRORREAD);
+        m_rMessageHandler.printMessage(Message::TAGERRORREAD);
         return false;
     }
     m_pConcreteTag = m_NfcTagFactory.getInstance(m_rMfrc522);
     if (m_pConcreteTag == nullptr)
     {
-        m_rMessageHandler.printMessage(Message::ERRORTYPE);
+        m_rMessageHandler.printMessage(Message::TAGERRORTYPE);
         return false;
     }
+
+    m_rMessageHandler.printMessage(Message::TAGONLINE);
     return true;
 }

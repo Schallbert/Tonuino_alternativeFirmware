@@ -28,12 +28,12 @@ const char s_ctt13[] PROGMEM = "Previous track";
 const char s_ctt14[] PROGMEM = "Play";
 const char s_ctt15[] PROGMEM = "Pause";
 
-const char s_ctt20[] PROGMEM = "Error: folder invalid!";
-const char s_ctt21[] PROGMEM = "Folder detected. Play";
-const char s_ctt22[] PROGMEM = "Autoplay complete. Pause";
+const char s_ctt20[] PROGMEM = "folder invalid!";
+const char s_ctt21[] PROGMEM = "Folder: Play";
+const char s_ctt22[] PROGMEM = "Autoplay complete";
 const char s_ctt23[] PROGMEM = "Autoplay next";
 
-const char s_ctt30[] PROGMEM = "Finished playing track";
+const char s_ctt30[] PROGMEM = "Finished track";
 const char s_ctt31[] PROGMEM = "SD card online";
 const char s_ctt32[] PROGMEM = "SD card inserted";
 const char s_ctt33[] PROGMEM = "SD Card removed";
@@ -49,7 +49,7 @@ const char s_ctt51[] PROGMEM = "Tag Write Success";
 const char s_ctt52[] PROGMEM = "Tag Read Success";
 const char s_ctt53[] PROGMEM = "Tag write Error";
 const char s_ctt54[] PROGMEM = "Tag read Error";
-const char s_ctt55[] PROGMEM = "Tag type not implemented";
+const char s_ctt55[] PROGMEM = "Tag type Error";
 const char s_ctt56[] PROGMEM = "Tag online";
 
 const char s_ctt60[] PROGMEM = "Mode Lullabye";
@@ -67,7 +67,7 @@ const char s_ctt75[] PROGMEM = "Prev";
 const char s_ctt76[] PROGMEM = "PrevLong";
 const char s_ctt77[] PROGMEM = "Locked";
 
-const char s_error[] PROGMEM = "UNDEFINED MESSAGE!";
+const char s_error[] PROGMEM = "MESSAGE ERROR!";
 
 const char s_sep[] PROGMEM = ": ";
 

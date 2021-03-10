@@ -4,7 +4,7 @@
 //DEBUG OUTPUT [just write "false" to disable debug output on serial]
 #define DEBUGSERIAL true
 #define DEBUGSERIAL_BAUDRATE 9600
-#define DEBUG_MAXMESSAGELENGTH 38 // max number of characters in a message
+#define DEBUG_MAXMESSAGELENGTH 32 // max number of characters in a message
 
 // This is the selector of input variants.
 // Change it to your preferred variant
@@ -20,7 +20,7 @@
 
 //Folder specific data
 #define MAXFOLDERCOUNT 99 // up to 255 supported by player
-#define MAXTRACKSPERFOLDER 32 // up to 255 supported by player BUT limited due to RAM constraints!
+#define MAXTRACKSPERFOLDER 22 // up to 255 supported by player BUT limited due to RAM constraints!
 
 #define VOLUME_MAX 15                                          // Absolute max: 30
 #define VOLUME_MIN 1                                           // Absolute min: 0
@@ -39,7 +39,7 @@
 #define TIMEOUT_PROMPT_PLAYED 10 // sec
 
 //NFC defines
-#define NFCTAG_MEMORY_TO_OCCUPY 16 //bytes
+#define NFCTAG_MEMORY_TO_OCCUPY 6 //bytes
 
 //Clickencoder / button defines
 #define ENC_STEPSPERNOTCH 4             // resolution of encoder.
