@@ -93,7 +93,7 @@ TEST_F(LinkMenuTest, menuComplete_writesConfigToCardFails_promptsError)
     linkMenu->confirm();
     linkMenu->selectNext();
 
-    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ERROR_CARDWRITE, true)};
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ERROR_CARDWRITE, false)};
 
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
     linkMenu->confirm();
@@ -265,45 +265,38 @@ TEST_F(LinkMenuTest, selectPlayMode_testRollover_getPrompt_returnsSAVEPROGRESS)
 
 TEST_F(LinkMenuTest, noInit_abort_noPromptSet)
 {
-    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ABORTED, true)};
-
-    linkMenu->abort();
-
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ABORTED, false)};
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
-    linkMenu->handlePlayback();
+    linkMenu->abort();
 }
 
 TEST_F(LinkMenuTest, folderId1Selected_abort_promptsAborted)
 {
-    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ABORTED, true)};
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ABORTED, false)};
 
     linkMenu->confirm();
     linkMenu->selectNext();
 
-    linkMenu->abort();
-
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
-    linkMenu->handlePlayback();
+    linkMenu->abort();
 }
 
 TEST_F(LinkMenuTest, folderIdAndPlayModeSelected_abort_promptsAborted)
 {
-    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ABORTED, true)};
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ABORTED, false)};
 
     linkMenu->confirm();
     linkMenu->selectNext();
     linkMenu->confirm();
     linkMenu->selectNext();
-
-    linkMenu->abort();
 
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
-    linkMenu->handlePlayback();
+    linkMenu->abort();
 }
 
 TEST_F(LinkMenuTest, menuCompleted_abort_promptsAborted)
 {
-    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ABORTED, true)};
+    VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ABORTED, false)};
 
     linkMenu->confirm();
     linkMenu->selectNext();

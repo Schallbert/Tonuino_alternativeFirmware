@@ -25,7 +25,7 @@ void Mp3Control::loop()
 
 void Mp3Control::handlePromptStatus()
 {
-    if (m_userInput != Message::INPUTNONE)
+    if (m_userInput != Message::INPUTNONE )
     {
         m_rMp3Prompt.stopPrompt();
     }
