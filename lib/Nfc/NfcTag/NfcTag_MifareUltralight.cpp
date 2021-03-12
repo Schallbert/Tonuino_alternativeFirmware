@@ -4,24 +4,21 @@
 
 bool NfcTag_MifareUltralight::readTag(byte blockAddress, byte *readResult)
 {
-    bool status{true};
-    byte buffer[determineBlockCount() * MIFARE_UL_BLOCK_SIZE] = {};
+    bool status{false};
+    const uint8_t BYTES_TO_TRANSFER{18}; // Account for checksum MFRC522.cpp
+    byte buffer[BYTES_TO_TRANSFER] = {};
 
     checkAndRectifyBlockAddress(blockAddress);
     if (!m_rMfrc522.tagLogin(ULTRALIGHTSTARTPAGE))
     {
-        return false;
+        return status;
     }
 
-    for (uint8_t i{0}; i < determineBlockCount(); ++i)
-    {
-        status &= m_rMfrc522.tagRead(blockAddress + i, buffer + (i * MIFARE_UL_BLOCK_SIZE), MIFARE_UL_BLOCK_SIZE);
-        // copy 4byte blocks to buffer
-    }
+    status = m_rMfrc522.tagRead(blockAddress, buffer, BYTES_TO_TRANSFER); // reads consecutive blocks
 
     if (status)
     {
-        NfcTag_interface::copyArray(readResult, buffer, NFCTAG_MEMORY_TO_OCCUPY); // ignores checksum bytes
+        NfcTag_interface::copyArray(readResult, buffer, NFCTAG_BYTES_TO_WRITE); // ignores checksum bytes
     }
     m_rMfrc522.tagHalt();
     return status;
@@ -30,6 +27,7 @@ bool NfcTag_MifareUltralight::readTag(byte blockAddress, byte *readResult)
 bool NfcTag_MifareUltralight::writeTag(byte blockAddress, byte *dataToWrite)
 {
     bool status{true};
+    const uint8_t BYTES_TO_TRANSFER{16}; // See MFRC522.cpp documentation
 
     checkAndRectifyBlockAddress(blockAddress);
     if (!m_rMfrc522.tagLogin(ULTRALIGHTSTARTPAGE))
@@ -39,10 +37,11 @@ bool NfcTag_MifareUltralight::writeTag(byte blockAddress, byte *dataToWrite)
 
     for (uint8_t i = 0; i < determineBlockCount(); ++i)
     {
-        byte buffer[MIFARE_UL_BLOCK_SIZE] = {}; // initialize with 0s
-        NfcTag_interface::copyArray(buffer, dataToWrite + (i * MIFARE_UL_BLOCK_SIZE), MIFARE_UL_BLOCK_SIZE); // write 4 bytes to buffer
+        byte buffer[BYTES_TO_TRANSFER] = {};
+        // write 4 bytes to buffer's least significant bits
+        NfcTag_interface::copyArray(buffer, dataToWrite + (i * MIFARE_UL_BLOCK_SIZE), MIFARE_UL_BLOCK_SIZE); 
         // only the first 4 bytes are actually written. Rest is kept 0.
-        status &= m_rMfrc522.tagWrite(blockAddress + i, buffer, MIFARE_UL_BLOCK_SIZE);
+        status &= m_rMfrc522.tagWrite(blockAddress + i, buffer, BYTES_TO_TRANSFER);
     }
     m_rMfrc522.tagHalt();
     return status;
@@ -50,8 +49,8 @@ bool NfcTag_MifareUltralight::writeTag(byte blockAddress, byte *dataToWrite)
 
 uint8_t NfcTag_MifareUltralight::determineBlockCount()
 {
-    uint8_t numberOfBlocks{NFCTAG_MEMORY_TO_OCCUPY / MIFARE_UL_BLOCK_SIZE};
-    if(NFCTAG_MEMORY_TO_OCCUPY % MIFARE_UL_BLOCK_SIZE)
+    uint8_t numberOfBlocks{NFCTAG_BYTES_TO_WRITE / MIFARE_UL_BLOCK_SIZE};
+    if(NFCTAG_BYTES_TO_WRITE % MIFARE_UL_BLOCK_SIZE)
     {
         ++numberOfBlocks; // account for integer division
     }
