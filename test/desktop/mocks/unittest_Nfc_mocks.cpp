@@ -27,7 +27,7 @@ bool Fake_Nfc::readTag(byte blockAddress, byte *readResult)
 
 bool Fake_MFRC522_MifareMini1k4k::tagRead(byte blockAddress, byte *buffer, byte bufferSize)
 {
-    for (int i = 0; i < bufferSize; ++i)
+    for (int i = 0; i < NFCTAG_BYTES_TO_WRITE; ++i)
     {
         *(buffer + i) = fakeBufferData[i];
     }
@@ -36,9 +36,9 @@ bool Fake_MFRC522_MifareMini1k4k::tagRead(byte blockAddress, byte *buffer, byte 
 
 bool Fake_MFRC522_MifareUltralight::tagRead(byte blockAddress, byte *buffer, byte bufferSize)
 {
-    for (int i = 0; i < MIFARE_UL_BLOCK_SIZE; ++i)
+     for (int i = 0; i < NFCTAG_BYTES_TO_WRITE; ++i)
     {
-        *(buffer + i) = fakeBufferData[MIFARE_UL_BLOCK_SIZE * (blockAddress - ULTRALIGHTSTARTPAGE) + i];
+        *(buffer + i) = fakeBufferData[i];
     }
     return true;
 }

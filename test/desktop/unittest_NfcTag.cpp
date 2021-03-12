@@ -12,7 +12,7 @@ using ::testing::_;
 using ::testing::NiceMock;
 using ::testing::Return;
 
-constexpr uint8_t BUFFERSIZE{NFCTAG_BYTES_TO_WRITE + 2}; // account for checksum
+constexpr uint8_t READBUFFERSIZE{18}; // 4*4 bytes + 2 to account for checksum
 
 // TEST FIXTURE
 class NfcTag_getInstance : public ::testing::Test
@@ -31,14 +31,14 @@ class NfcTag_writeTag : public NfcTag_getInstance
     virtual void SetUp()
     {
         // get around constness
-        for (uint8_t i = 0; i < BUFFERSIZE; ++i)
+        for (uint8_t i = 0; i < NFCTAG_BYTES_TO_WRITE; ++i)
         {
             writeBuffer[i] = fakeBufferData[i];
         }
     }
 
 protected:
-    byte writeBuffer[BUFFERSIZE] = {};
+    byte writeBuffer[READBUFFERSIZE - 2] = {};
 };
 
 TEST_F(NfcTag_getInstance, TagTypeUNKNOWN_returnsNullptr)
@@ -124,7 +124,7 @@ TEST_F(NfcTag_readTag, MifareMini1k4k_setOnlineFails_returnsFalse)
     m_Mfrc.DelegateToFakeMini1k4k();
     ON_CALL(m_Mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     NfcTag_interface *nfcInstance = m_NfcTagFactory.getInstance(m_Mfrc);
-    byte tgtArray[BUFFERSIZE] = {};
+    byte tgtArray[READBUFFERSIZE] = {};
     byte *buffer{tgtArray};
     ON_CALL(m_Mfrc, tagLogin(_)).WillByDefault(Return(false));
     EXPECT_CALL(m_Mfrc, tagRead(_, _, _)).Times(0);
@@ -136,10 +136,10 @@ TEST_F(NfcTag_readTag, MifareMini1k4k_tagReadCalledWithCorrectArguments)
     m_Mfrc.DelegateToFakeMini1k4k();
     ON_CALL(m_Mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     NfcTag_interface *nfcInstance = m_NfcTagFactory.getInstance(m_Mfrc);
-    byte tgtArray[BUFFERSIZE] = {};
+    byte tgtArray[READBUFFERSIZE] = {};
     byte *buffer{tgtArray};
     ON_CALL(m_Mfrc, tagLogin(_)).WillByDefault(Return(true));
-    EXPECT_CALL(m_Mfrc, tagRead(1, _, BUFFERSIZE));
+    EXPECT_CALL(m_Mfrc, tagRead(1, _, READBUFFERSIZE));
     nfcInstance->readTag(1, buffer);
 }
 
@@ -150,7 +150,7 @@ TEST_F(NfcTag_readTag, MifareMini1k4k_wrongBlockAddress_automaticallyCorrected)
     m_Mfrc.DelegateToFakeMini1k4k();
     ON_CALL(m_Mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     NfcTag_interface *nfcInstance = m_NfcTagFactory.getInstance(m_Mfrc);
-    byte tgtArray[BUFFERSIZE] = {};
+    byte tgtArray[READBUFFERSIZE] = {};
     byte *buffer{tgtArray};
     ON_CALL(m_Mfrc, tagLogin(_)).WillByDefault(Return(true));
     EXPECT_CALL(m_Mfrc, tagRead(automaticallyCorrectedBlockAddress, _, _));
@@ -164,7 +164,7 @@ TEST_F(NfcTag_readTag, MifareMini1k4k_tryOverwriteTrailerBlock_autoCorrectedOnLo
     m_Mfrc.DelegateToFakeMini1k4k();
     ON_CALL(m_Mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     NfcTag_interface *nfcInstance = m_NfcTagFactory.getInstance(m_Mfrc);
-    byte tgtArray[BUFFERSIZE] = {};
+    byte tgtArray[READBUFFERSIZE] = {};
     byte *buffer{tgtArray};
     EXPECT_CALL(m_Mfrc, tagLogin(automaticallyCorrectedTrailerBlock)).WillOnce(Return(false));
     nfcInstance->readTag(wrongBlockAddress, buffer);
@@ -177,7 +177,7 @@ TEST_F(NfcTag_readTag, MifareMini1k4k_tryOverwriteTrailerBlock_automaticallyCorr
     m_Mfrc.DelegateToFakeMini1k4k();
     ON_CALL(m_Mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     NfcTag_interface *nfcInstance = m_NfcTagFactory.getInstance(m_Mfrc);
-    byte tgtArray[BUFFERSIZE] = {};
+    byte tgtArray[READBUFFERSIZE] = {};
     byte *buffer{tgtArray};
     ON_CALL(m_Mfrc, tagLogin(_)).WillByDefault(Return(true));
     EXPECT_CALL(m_Mfrc, tagRead(automaticallyCorrectedBlockAddress, _, _));
@@ -189,7 +189,7 @@ TEST_F(NfcTag_readTag, MifareMini1k4k_tagReadCalledReturnsTrue)
     m_Mfrc.DelegateToFakeMini1k4k();
     ON_CALL(m_Mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     NfcTag_interface *nfcInstance = m_NfcTagFactory.getInstance(m_Mfrc);
-    byte tgtArray[BUFFERSIZE] = {};
+    byte tgtArray[READBUFFERSIZE] = {};
     byte *buffer{tgtArray};
     ON_CALL(m_Mfrc, tagLogin(_)).WillByDefault(Return(true));
     EXPECT_TRUE(nfcInstance->readTag(1, buffer));
@@ -200,7 +200,7 @@ TEST_F(NfcTag_readTag, MifareMini1k4k_tagReadCalled_ReturnsCorrectBufferData)
     m_Mfrc.DelegateToFakeMini1k4k();
     ON_CALL(m_Mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     NfcTag_interface *nfcInstance = m_NfcTagFactory.getInstance(m_Mfrc);
-    byte tgtArray[BUFFERSIZE] = {};
+    byte tgtArray[READBUFFERSIZE] = {};
     byte *buffer{tgtArray};
     ON_CALL(m_Mfrc, tagLogin(_)).WillByDefault(Return(true));
     nfcInstance->readTag(1, buffer);
@@ -212,7 +212,7 @@ TEST_F(NfcTag_readTag, MifareMini1k4k_tagReadCalled_callsTagHaltOnCompletion)
     m_Mfrc.DelegateToFakeMini1k4k();
     ON_CALL(m_Mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     NfcTag_interface *nfcInstance = m_NfcTagFactory.getInstance(m_Mfrc);
-    byte tgtArray[BUFFERSIZE] = {};
+    byte tgtArray[READBUFFERSIZE] = {};
     byte *buffer{tgtArray};
     ON_CALL(m_Mfrc, tagLogin(_)).WillByDefault(Return(true));
     EXPECT_CALL(m_Mfrc, tagHalt());
@@ -224,9 +224,10 @@ TEST_F(NfcTag_readTag, MifareUltralight_setOnlineFails_returnsFalse)
     m_Mfrc.DelegateToFakeUltralight();
     ON_CALL(m_Mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_UL));
     NfcTag_interface *nfcInstance = m_NfcTagFactory.getInstance(m_Mfrc);
-    byte tgtArray[BUFFERSIZE] = {};
+    byte tgtArray[READBUFFERSIZE] = {};
     byte *buffer{tgtArray};
     ON_CALL(m_Mfrc, tagLogin(_)).WillByDefault(Return(false));
+
     EXPECT_CALL(m_Mfrc, tagRead(_, _, _)).Times(0);
     ASSERT_EQ(false, nfcInstance->readTag(4, buffer));
 }
@@ -236,12 +237,11 @@ TEST_F(NfcTag_readTag, MifareUltralight_tagReadCalledWithCorrectArguments)
     m_Mfrc.DelegateToFakeUltralight();
     ON_CALL(m_Mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_UL));
     NfcTag_interface *nfcInstance = m_NfcTagFactory.getInstance(m_Mfrc);
-    byte tgtArray[BUFFERSIZE] = {};
+    byte tgtArray[READBUFFERSIZE] = {};
     byte *buffer{tgtArray};
     ON_CALL(m_Mfrc, tagLogin(_)).WillByDefault(Return(true));
-    // read 2 consecutive 4 byte blocks
-    EXPECT_CALL(m_Mfrc, tagRead(ULTRALIGHTSTARTPAGE, _, MIFARE_UL_BLOCK_SIZE));
-    EXPECT_CALL(m_Mfrc, tagRead(ULTRALIGHTSTARTPAGE + 1, _, MIFARE_UL_BLOCK_SIZE));
+
+    EXPECT_CALL(m_Mfrc, tagRead(ULTRALIGHTSTARTPAGE, _, READBUFFERSIZE));
     nfcInstance->readTag(4, buffer);
 }
 
@@ -252,11 +252,11 @@ TEST_F(NfcTag_readTag, MifareUltralight_wrongBlockAddress_automaticallyCorrected
     m_Mfrc.DelegateToFakeMini1k4k();
     ON_CALL(m_Mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_UL));
     NfcTag_interface *nfcInstance = m_NfcTagFactory.getInstance(m_Mfrc);
-    byte tgtArray[BUFFERSIZE] = {};
+    byte tgtArray[READBUFFERSIZE] = {};
     byte *buffer{tgtArray};
     ON_CALL(m_Mfrc, tagLogin(_)).WillByDefault(Return(true));
+
     EXPECT_CALL(m_Mfrc, tagRead(automaticallyCorrectedBlockAddress, _, _));
-    EXPECT_CALL(m_Mfrc, tagRead(automaticallyCorrectedBlockAddress + 1, _, _));
     nfcInstance->readTag(wrongBlockAddress, buffer);
 }
 
@@ -270,8 +270,8 @@ TEST_F(NfcTag_readTag, MifareUltralight_outOfRangeBlockAddress_automaticallyCorr
     byte tgtArray[NFCTAG_BYTES_TO_WRITE] = {};
     byte *buffer{tgtArray};
     ON_CALL(m_Mfrc, tagLogin(_)).WillByDefault(Return(true));
+
     EXPECT_CALL(m_Mfrc, tagRead(automaticallyCorrectedBlockAddress, _, _));
-    EXPECT_CALL(m_Mfrc, tagRead(automaticallyCorrectedBlockAddress + 1, _, _));
     nfcInstance->readTag(wrongBlockAddress, buffer);
 }
 
@@ -280,9 +280,10 @@ TEST_F(NfcTag_readTag, MifareUltralight_tagReadCalledReturnsTrue)
     m_Mfrc.DelegateToFakeUltralight();
     ON_CALL(m_Mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_UL));
     NfcTag_interface *nfcInstance = m_NfcTagFactory.getInstance(m_Mfrc);
-    byte tgtArray[BUFFERSIZE] = {};
+    byte tgtArray[READBUFFERSIZE] = {};
     byte *buffer{tgtArray};
     ON_CALL(m_Mfrc, tagLogin(_)).WillByDefault(Return(true));
+
     EXPECT_TRUE(nfcInstance->readTag(4, buffer));
 }
 
@@ -291,10 +292,11 @@ TEST_F(NfcTag_readTag, MifareUltralight_tagReadCalled_returnsCorrectBufferData)
     m_Mfrc.DelegateToFakeUltralight();
     ON_CALL(m_Mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_UL));
     NfcTag_interface *nfcInstance = m_NfcTagFactory.getInstance(m_Mfrc);
-    byte tgtArray[BUFFERSIZE] = {};
+    byte tgtArray[READBUFFERSIZE] = {};
     byte *buffer{tgtArray};
     ON_CALL(m_Mfrc, tagLogin(_)).WillByDefault(Return(true));
     nfcInstance->readTag(4, buffer);
+
     EXPECT_TRUE(resultArrayByteCompare(fakeBufferData, buffer, NFCTAG_BYTES_TO_WRITE));
 }
 
@@ -303,9 +305,10 @@ TEST_F(NfcTag_readTag, MifareUltralight_tagReadCalled_callsTagHaltOnCompletion)
     m_Mfrc.DelegateToFakeUltralight();
     ON_CALL(m_Mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_UL));
     NfcTag_interface *nfcInstance = m_NfcTagFactory.getInstance(m_Mfrc);
-    byte tgtArray[BUFFERSIZE] = {};
+    byte tgtArray[READBUFFERSIZE] = {};
     byte *buffer{tgtArray};
     ON_CALL(m_Mfrc, tagLogin(_)).WillByDefault(Return(true));
+
     EXPECT_CALL(m_Mfrc, tagHalt());
     nfcInstance->readTag(4, buffer);
 }
@@ -314,7 +317,7 @@ TEST_F(NfcTag_writeTag, MifareMini1k4k_tagLoginFails_writeReturnsFalse)
 {
     ON_CALL(m_Mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     NfcTag_interface *nfcInstance = m_NfcTagFactory.getInstance(m_Mfrc);
-    byte tgtArray[BUFFERSIZE] = {};
+    byte tgtArray[READBUFFERSIZE] = {};
     byte *buffer{tgtArray};
     ON_CALL(m_Mfrc, tagLogin(_)).WillByDefault(Return(false));
     EXPECT_CALL(m_Mfrc, tagWrite).Times(0);
@@ -327,7 +330,7 @@ TEST_F(NfcTag_writeTag, MifareMini1k4k_tagWriteCalled_withCorrectArguments)
     ON_CALL(m_Mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     NfcTag_interface *nfcInstance = m_NfcTagFactory.getInstance(m_Mfrc);
     ON_CALL(m_Mfrc, tagLogin(_)).WillByDefault(Return(true));
-    EXPECT_CALL(m_Mfrc, tagWrite(1, _, NFCTAG_BYTES_TO_WRITE));
+    EXPECT_CALL(m_Mfrc, tagWrite(1, _, READBUFFERSIZE - 2));
     nfcInstance->writeTag(1, writeBuffer);
 }
 
@@ -375,10 +378,10 @@ TEST_F(NfcTag_writeTag, MifareUltralight_tagWriteCalled_withCorrectArguments)
     ON_CALL(m_Mfrc, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_UL));
     NfcTag_interface *nfcInstance = m_NfcTagFactory.getInstance(m_Mfrc);
     ON_CALL(m_Mfrc, tagLogin(_)).WillByDefault(Return(true));
-    // writes 2 consecutive 4 byte blocks
-    EXPECT_CALL(m_Mfrc, tagWrite(ULTRALIGHTSTARTPAGE, _, MIFARE_UL_BLOCK_SIZE));
-    EXPECT_CALL(m_Mfrc, tagWrite(ULTRALIGHTSTARTPAGE + 1, _, MIFARE_UL_BLOCK_SIZE));
-
+    
+    // writes 2 consecutive 4 byte blocks (although actually sending 2 16byte blocks)
+    EXPECT_CALL(m_Mfrc, tagWrite(ULTRALIGHTSTARTPAGE, _, READBUFFERSIZE - 2));
+    EXPECT_CALL(m_Mfrc, tagWrite(ULTRALIGHTSTARTPAGE + 1, _, READBUFFERSIZE - 2));
     nfcInstance->writeTag(4, writeBuffer);
 }
 
