@@ -25,25 +25,10 @@ Message::eMessageContent UserInput_ClickEncoder::getUserRequest()
 
     if (buttonState == Button::DoubleClicked)
     {
-        if (UserInput_interface::isLocked)
-        {
-            UserInput_interface::isLocked = false;
-            //VoicePrompt locked{VoicePrompt::MSG_BUTTONFREE, true};
-            //m_rPrompt.playPrompt(locked);
-        }
-        else
-        {
-            UserInput_interface::isLocked = true;
-            //VoicePrompt unlocked{VoicePrompt::MSG_BUTTONLOCK, true};
-            //m_rPrompt.playPrompt(unlocked);
-        }
+        return Message::INPUTPLPSDC;
     }
 
-    if (UserInput_interface::isLocked)
-    {
-        result = Message::INPUTLOCK;
-    }
-    else if (buttonState == Button::Clicked)
+    if (buttonState == Button::Clicked)
     {
         result = Message::INPUTPLPS;
     }
@@ -115,26 +100,9 @@ Message::eMessageContent UserInput_3Buttons::getUserRequest()
     Button::eButtonStates nextButtonState{m_NextButton.getButton()};
     Button::eButtonStates prevButtonState{m_PrevButton.getButton()};
 
-    // TODO: ISSUE: SOMEHOW THE VOICEPROMT MAY NOT BE CALLED HERE (REF ISSUE?) IT WILL BREAK WHEN I DO THAT
     if (plpsButtonState == Button::DoubleClicked)
     {
-        if (UserInput_interface::isLocked)
-        {
-            UserInput_interface::isLocked = false;
-            //VoicePrompt locked{VoicePrompt::MSG_BUTTONFREE, false};
-            //m_rPrompt.playPrompt(locked);
-        }
-        else
-        {
-            UserInput_interface::isLocked = true;
-            //VoicePrompt unlocked{VoicePrompt::MSG_BUTTONLOCK, false};
-            //m_rPrompt.playPrompt(unlocked);
-        }
-    }
-
-    if (UserInput_interface::isLocked)
-    {
-        result = Message::INPUTLOCK;
+        return Message::INPUTPLPSDC;
     }
     else if (plpsButtonState == Button::Clicked)
     {

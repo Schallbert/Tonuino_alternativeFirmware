@@ -25,7 +25,7 @@ void Mp3Control::loop()
 
 void Mp3Control::handlePromptStatus()
 {
-    if (m_userInput != Message::INPUTNONE )
+    if (m_userInput != Message::INPUTNONE)
     {
         m_rMp3Prompt.stopPrompt();
     }
@@ -33,15 +33,45 @@ void Mp3Control::handlePromptStatus()
 
 void Mp3Control::handleUserInput()
 {
+    handleLocked();
+
     // initialize array of function pointers to address state-event transitions
     // Order MUST be inline with INxxx of Message
-
     typedef Mp3Control PC;
     static const dispatcher dispatchTable[IN_REQUEST_OPTIONS] =
         {
-            &PC::none, &PC::plPs, &PC::help, &PC::next, &PC::incV, &PC::prev, &PC::decV, &PC::none};
+            &PC::none, &PC::plPs, &PC::help, &PC::none, &PC::next, &PC::incV, &PC::prev, &PC::decV};
     dispatcher dispatchExecutor = dispatchTable[static_cast<uint8_t>(m_userInput) & 0x0F];
     (this->*dispatchExecutor)();
+}
+
+void Mp3Control::handleLocked()
+{
+    // Toggle lock status with doubleClick
+    if (m_userInput == Message::INPUTPLPSDC)
+    {
+        if (m_isLocked)
+        {
+            m_isLocked = false;
+            m_rMp3Prompt.playPrompt(VoicePrompt{VoicePrompt::MSG_BUTTONFREE, false});
+        }
+        else
+        {
+            m_isLocked = true;
+            m_rMp3Prompt.playPrompt(VoicePrompt{VoicePrompt::MSG_BUTTONLOCK, false});
+            // make sure the system is locked when playback is active
+        }
+    }
+
+    if (!m_rDfMiniMp3.isPlaying())
+    {
+        play();
+    }
+
+    if (m_isLocked)
+    {
+        m_userInput = Message::INPUTNONE;
+    }
 }
 
 void Mp3Control::plPs()

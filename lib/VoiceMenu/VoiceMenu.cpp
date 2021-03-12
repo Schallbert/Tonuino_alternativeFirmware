@@ -76,7 +76,7 @@ void VoiceMenu::enterMenu()
 void VoiceMenu::checkEnterDeleteMenu()
 {
     if ((m_tagState == Message::ACTIVETAG) &&
-        (m_userInput == Message::INPUTPLPSLP))
+        (m_userInput == Message::INPUTPLPSDC))
     {
         m_pMenuInstance = m_MenuFactory.getInstance(Menu_factory::DELETE_MENU,
                                                     m_rNfcControl,
@@ -113,7 +113,7 @@ void VoiceMenu::dispatchInputs()
     typedef VoiceMenu VM;
     static const dispatcher dispatchTable[IN_REQUEST_OPTIONS] =
         {
-            &VM::none, &VM::conf, &VM::abrt, &VM::next, &VM::none, &VM::prev, &VM::none, &VM::none};
+            &VM::none, &VM::conf, &VM::abrt, &VM::none, &VM::next, &VM::none, &VM::prev, &VM::none};
     dispatcher dispatchExecutor = dispatchTable[static_cast<uint8_t>(m_userInput) & 0x0F]; //
     (this->*dispatchExecutor)();
 

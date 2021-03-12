@@ -38,6 +38,7 @@ public:
 
 private:
     void handleUserInput();
+    void handleLocked();
     void handlePromptStatus();
     void autoplay();
 
@@ -62,6 +63,7 @@ private:
 
     Message::eMessageContent m_userInput{Message::INPUTNONE};
     Message::eMessageContent m_tagState{Message::NOTAG};
+    bool m_isLocked{false};
     typedef void (Mp3Control::*dispatcher)(); // table of function pointers
 };
 

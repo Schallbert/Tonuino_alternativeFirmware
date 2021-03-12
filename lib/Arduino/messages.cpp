@@ -61,11 +61,11 @@ const char s_ctt64[] PROGMEM = "Mode OneLargeTrack";
 const char s_ctt70[] PROGMEM = "None";
 const char s_ctt71[] PROGMEM = "PlPs";
 const char s_ctt72[] PROGMEM = "PlPsLong";
-const char s_ctt73[] PROGMEM = "Next";
-const char s_ctt74[] PROGMEM = "NextLong";
-const char s_ctt75[] PROGMEM = "Prev";
-const char s_ctt76[] PROGMEM = "PrevLong";
-const char s_ctt77[] PROGMEM = "Locked";
+const char s_ctt73[] PROGMEM = "PlPsDbl";
+const char s_ctt74[] PROGMEM = "Next";
+const char s_ctt75[] PROGMEM = "NextLong";
+const char s_ctt76[] PROGMEM = "Prev";
+const char s_ctt77[] PROGMEM = "PrevLong";
 
 const char s_error[] PROGMEM = "MESSAGE ERROR!";
 
