@@ -18,7 +18,7 @@ bool Fake_Nfc::writeTag(byte blockAddress, byte *dataToWrite)
 }
 bool Fake_Nfc::readTag(byte blockAddress, byte *readResult)
 {
-    for (int i = 0; i < NFCTAG_MEMORY_TO_OCCUPY; ++i)
+    for (int i = 0; i < NFCTAG_BYTES_TO_WRITE; ++i)
     {
         *(readResult + i) = fakeBufferData[i];
     }

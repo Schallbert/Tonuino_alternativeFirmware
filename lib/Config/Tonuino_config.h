@@ -39,7 +39,7 @@
 #define TIMEOUT_PROMPT_PLAYED 10 // sec
 
 //NFC defines
-#define NFCTAG_MEMORY_TO_OCCUPY 6 //bytes
+#define NFCTAG_BYTES_TO_WRITE 6 //bytes
 
 //Clickencoder / button defines
 #define ENC_STEPSPERNOTCH 4             // resolution of encoder.

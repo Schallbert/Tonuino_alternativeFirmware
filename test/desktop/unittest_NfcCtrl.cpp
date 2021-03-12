@@ -72,7 +72,7 @@ TEST_F(NfcCtrlWrite, validFolder_IsCalledWithCorrectPayload)
 {
     EXPECT_CALL(m_nfcMock, writeTag(_, arrayByteCompare(
                                            fakeBufferData,
-                                           NFCTAG_MEMORY_TO_OCCUPY)))
+                                           NFCTAG_BYTES_TO_WRITE)))
         .Times(1);
     m_NfcControl.writeFolderToTag(m_TestFolder);
 }
@@ -86,10 +86,10 @@ TEST_F(NfcCtrlWrite, validFolder_writeSuccess)
 TEST_F(NfcCtrlWrite, EraseTag)
 {
     // Compare if input of writeTag buffer is really 0
-    byte emptyBuffer[NFCTAG_MEMORY_TO_OCCUPY] = {};
+    byte emptyBuffer[NFCTAG_BYTES_TO_WRITE] = {};
     EXPECT_CALL(m_nfcMock, writeTag(_, arrayByteCompare(
                                            emptyBuffer,
-                                           NFCTAG_MEMORY_TO_OCCUPY)));
+                                           NFCTAG_BYTES_TO_WRITE)));
     m_NfcControl.eraseTag();
 }
 
@@ -119,7 +119,7 @@ TEST_F(NfcCtrlRead, isCalledWithCorrectPayload)
     Folder resultFolder;
     EXPECT_CALL(m_nfcMock, readTag(_, arrayByteCompare(
                                           fakeBufferData,
-                                          NFCTAG_MEMORY_TO_OCCUPY)));
+                                          NFCTAG_BYTES_TO_WRITE)));
     // sets buffer to a certain value
     m_NfcControl.writeFolderToTag(m_TestFolder);
     // read with this buffer sets correct argument at readTag

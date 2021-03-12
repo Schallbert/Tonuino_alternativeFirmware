@@ -51,7 +51,7 @@ private:
     MessageHander_interface &m_rMessageHandler;
 
     uint32_t m_ui32CardCookie{0};                    //Cookie read from card to compare against magic ID
-    uint8_t m_pBuffer[NFCTAG_MEMORY_TO_OCCUPY]{};    // Buffer to read/write from/to tag reader
+    uint8_t m_pBuffer[NFCTAG_BYTES_TO_WRITE]{};    // Buffer to read/write from/to tag reader
     Folder m_oFolder;                                //Uninitialized!
 };
 

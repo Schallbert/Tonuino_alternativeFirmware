@@ -37,7 +37,7 @@ bool NfcControl::writeFolderToTag(const Folder &sourceFolder)
 
 bool NfcControl::eraseTag()
 {
-    for (int i = 0; i < NFCTAG_MEMORY_TO_OCCUPY; ++i) // 7-15: Empty
+    for (int i = 0; i < NFCTAG_BYTES_TO_WRITE; ++i) // 7-15: Empty
     {
         m_pBuffer[i] = 0x00;
     }

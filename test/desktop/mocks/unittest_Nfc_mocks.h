@@ -12,7 +12,7 @@ bool resultArrayByteCompare(const byte *compareSrc, byte *compareTgt, uint8_t si
 
 // FAKES
 // Fake buffer data for NFC tag read
-static const byte fakeBufferData[NFCTAG_MEMORY_TO_OCCUPY + 2]{
+static const byte fakeBufferData[NFCTAG_BYTES_TO_WRITE + 2]{
     (byte)(TAG_MAGIC_COOKIE >> 24),          // 0
     (byte)((TAG_MAGIC_COOKIE >> 16) & 0xFF), // 1
     (byte)((TAG_MAGIC_COOKIE >> 8) & 0xFF),  // 2
