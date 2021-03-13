@@ -12,6 +12,15 @@ void Mp3Control::setUserInput(Message::eMessageContent input)
 void Mp3Control::playFolder(Folder &folder)
 {
     m_rMp3Player.playFolder(folder);
+    playIfPaused();
+}
+
+void Mp3Control::playIfPaused()
+{
+    if (!m_rDfMiniMp3.isPlaying())
+    {
+        play();
+    }
 }
 
 void Mp3Control::loop()
@@ -50,6 +59,7 @@ void Mp3Control::handleLocked()
     // Toggle lock status with doubleClick
     if (m_userInput == Message::INPUTPLPSDC)
     {
+        playIfPaused();
         if (m_isLocked)
         {
             m_isLocked = false;

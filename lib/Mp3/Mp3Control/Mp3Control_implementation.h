@@ -41,6 +41,7 @@ private:
     void handleLocked();
     void handlePromptStatus();
     void autoplay();
+    void playIfPaused();
 
     void none(){};
     void play();
