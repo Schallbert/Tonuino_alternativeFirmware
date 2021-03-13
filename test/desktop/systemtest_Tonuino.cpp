@@ -147,7 +147,7 @@ TEST_F(SystemTest, NoTag_ppLongPress_playsHelp)
     ON_CALL(m_DfMiniMp3Mock, isPlaying()).WillByDefault(Return(false)); // not playing
     ON_CALL(m_DfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_DfMiniPromptTimer, &SimpleTimer::timerTick));
 
-    EXPECT_CALL(m_DfMiniMp3Mock, playMp3FolderTrack(static_cast<uint16_t>(VoicePrompt::MSG_HELP)));
+    EXPECT_CALL(m_DfMiniMp3Mock, playPrompt(static_cast<uint16_t>(VoicePrompt::MSG_HELP)));
     m_pTonuino->run();
 }
 
@@ -182,11 +182,11 @@ TEST_F(SystemTest, NewUnknownTag_InvokesLinkMenu)
 
     m_pTonuino->run(); // enters Link Menu
 
-    EXPECT_CALL(m_DfMiniMp3Mock, playMp3FolderTrack(static_cast<uint16_t>(VoicePrompt::MSG_SELECT_FOLDERID)));
+    EXPECT_CALL(m_DfMiniMp3Mock, playPrompt(static_cast<uint16_t>(VoicePrompt::MSG_SELECT_FOLDERID)));
     m_pTonuino->run(); // once entered, prompt will play in next call
 }
 
-TEST_F(SystemTest, ActiveTag_ppLongPress_InvokesDeleteMenu)
+TEST_F(SystemTest, ActiveTag_ppDoubleClick_InvokesDeleteMenu)
 {
     // Should return "KNOWNTAG" on MIFARE_1k, will respond with fake tag on read() call.
     ON_CALL(m_Mfrc522Mock, isTagPresent()).WillByDefault(Return(true));
@@ -196,16 +196,16 @@ TEST_F(SystemTest, ActiveTag_ppLongPress_InvokesDeleteMenu)
     ON_CALL(m_Mfrc522Mock, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     m_Mfrc522Mock.DelegateToFakeMini1k4k(); // Should default to "known TAG"
     ON_CALL(m_DfMiniMp3Mock, getFolderTrackCount(_)).WillByDefault(Return(5));
-    ON_CALL(m_UserInputMock, getUserRequest()).WillByDefault(Return(Message::INPUTPLPSLP));
 
     // Simulate player behavior to satisfy voiceprompt block loop
     ON_CALL(m_DfMiniMp3Mock, isPlaying()).WillByDefault(Return(true));
 
     m_pTonuino->run(); // New Tag detected (will try to Play Folder)
+    ON_CALL(m_UserInputMock, getUserRequest()).WillByDefault(Return(Message::INPUTPLPSDC));
     m_pTonuino->run(); // Active Tag, enters Delete Menu
     ON_CALL(m_UserInputMock, getUserRequest()).WillByDefault(Return(Message::INPUTNONE));
 
-    EXPECT_CALL(m_DfMiniMp3Mock, playMp3FolderTrack(static_cast<uint16_t>(VoicePrompt::MSG_DELETETAG)));
+    EXPECT_CALL(m_DfMiniMp3Mock, playPrompt(static_cast<uint16_t>(VoicePrompt::MSG_DELETETAG)));
     m_pTonuino->run(); // once entered, prompt will play in next call
 }
 
@@ -225,5 +225,5 @@ TEST_F(SystemTest, VoiceMenuActive_blocksNormalPlayback)
     m_pTonuino->run(); // enters Link Menu
 
     EXPECT_CALL(m_DfMiniMp3Mock, isTrackFinished()).Times(0); // only autoplay within Mp3Play will call this
-    m_pTonuino->run(); // once entered, VoiceMenu will block playback
+    m_pTonuino->run();                                        // once entered, VoiceMenu will block playback
 }

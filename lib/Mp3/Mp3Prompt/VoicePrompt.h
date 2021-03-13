@@ -27,31 +27,38 @@ public:
         MSG_ABORTED = 802
     };
 
+    enum ePlayback
+    {
+        ALLOWSKIP = 0,
+        NOSKIP,
+        RESUMEPLAYBACK
+    };
+
 public:
     VoicePrompt() = default;
     VoicePrompt(uint16_t promptId,
-                bool allowSkip) : m_promptId(static_cast<uint16_t>(promptId)),
-                                  m_allowSkip(allowSkip){};
+                ePlayback playback) : m_promptId(static_cast<uint16_t>(promptId)),
+                                  m_playback(playback){};
     VoicePrompt(ePromptIds promptId,
-                bool allowSkip) : m_promptId(static_cast<uint16_t>(promptId)),
-                                  m_allowSkip(allowSkip){};
+                ePlayback playback) : m_promptId(static_cast<uint16_t>(promptId)),
+                                  m_playback(playback){};
     ~VoicePrompt() = default;
     VoicePrompt(const VoicePrompt &cpyPrompt)
     {
         m_promptId = cpyPrompt.m_promptId;
-        m_allowSkip = cpyPrompt.m_allowSkip;
+        m_playback = cpyPrompt.m_playback;
     }
 
     VoicePrompt &operator=(const VoicePrompt &cpyPrompt)
     {
         m_promptId = cpyPrompt.m_promptId;
-        m_allowSkip = cpyPrompt.m_allowSkip;
+        m_playback = cpyPrompt.m_playback;
         return *this;
     }
 
     bool operator==(VoicePrompt const &prompt) const
     {
-        return ((m_promptId == prompt.m_promptId) && (m_allowSkip == prompt.m_allowSkip));
+        return ((m_promptId == prompt.m_promptId) && (m_playback == prompt.m_playback));
     }
 
     bool operator!=(VoicePrompt const &prompt) const
@@ -59,18 +66,19 @@ public:
         return (!operator==(prompt));
     }
 
-    void reset(uint16_t promptId, bool allowSkip)
+    void reset(uint16_t promptId, ePlayback playback)
     {
         m_promptId = promptId;
-        m_allowSkip = allowSkip;
+        m_playback = playback;
     }
 
     uint16_t getId() const { return m_promptId; }
-    bool getSkip() const { return m_allowSkip; }
+    bool isAdvertisement() const { return (m_playback == RESUMEPLAYBACK); }
+    bool isNoSkip() const { return (m_playback == NOSKIP); }
 
 private:
     uint16_t m_promptId{0};
-    bool m_allowSkip{true};
+    ePlayback m_playback{NOSKIP};
 };
 
 #endif // PROMPTS_H

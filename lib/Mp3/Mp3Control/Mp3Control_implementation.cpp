@@ -53,18 +53,15 @@ void Mp3Control::handleLocked()
         if (m_isLocked)
         {
             m_isLocked = false;
-            m_rMp3Prompt.playPrompt(VoicePrompt{VoicePrompt::MSG_BUTTONFREE, false});
+            m_rMp3Prompt.playPrompt(VoicePrompt{VoicePrompt::MSG_BUTTONFREE,
+                                                VoicePrompt::RESUMEPLAYBACK});
         }
         else
         {
             m_isLocked = true;
-            m_rMp3Prompt.playPrompt(VoicePrompt{VoicePrompt::MSG_BUTTONLOCK, false});
+            m_rMp3Prompt.playPrompt(VoicePrompt{VoicePrompt::MSG_BUTTONLOCK,
+                                                VoicePrompt::RESUMEPLAYBACK});
             // make sure the system is locked when playback is active
-        }
-
-        if (!m_rDfMiniMp3.isPlaying())
-        {
-            play();
         }
     }
 
@@ -130,6 +127,6 @@ void Mp3Control::decV()
 
 void Mp3Control::help()
 {
-    VoicePrompt helpMessage(VoicePrompt::MSG_HELP, true);
+    VoicePrompt helpMessage(VoicePrompt::MSG_HELP, VoicePrompt::ALLOWSKIP);
     m_rMp3Prompt.playPrompt(helpMessage);
 }

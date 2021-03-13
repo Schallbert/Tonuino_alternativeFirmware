@@ -142,11 +142,27 @@ public:
         Mp3Notify::clearMessage(); // to clear "finished playing Track" mesage from buffer
     }
 
-    void playMp3FolderTrack(uint16_t trackId) override
+    void playPrompt(uint16_t trackId) override
     {
         m_dfMiniMp3.loop();
         m_dfMiniMp3.playMp3FolderTrack(trackId);
-        m_playsMp3Folder = true;
+        m_playsPrompt = true;
+    }
+
+    void stopPrompt() override
+    {
+        if (isPlaying() && m_playsPrompt)
+        {
+            m_dfMiniMp3.stop();
+            m_dfMiniMp3.loop();
+            m_playsPrompt = false;
+        }
+    }
+
+    void playAdvertisement(uint16_t trackId) override
+    {
+         m_dfMiniMp3.loop();
+        m_dfMiniMp3.playAdvertisement(trackId);
     }
 
     uint8_t getFolderTrackCount(uint8_t folderId) override
@@ -171,16 +187,6 @@ public:
         return !(digitalRead(DFMINI_PIN_ISIDLE));
     }
 
-    void  stopMp3FolderTrack() override
-    {
-        if (isPlaying() && m_playsMp3Folder)
-        {
-            m_dfMiniMp3.stop();
-            m_dfMiniMp3.loop();
-            m_playsMp3Folder = false;
-        }
-    }
-
     void printStatus() const override
     {
         m_rMessageHandler.printMessage(Mp3Notify::getMessage());
@@ -195,6 +201,6 @@ private:
     SoftwareSerial m_Mp3SwSerial{DFMINI_RX, DFMINI_TX};
     DFMiniMp3<SoftwareSerial, Mp3Notify> m_dfMiniMp3{m_Mp3SwSerial};
 
-    bool m_playsMp3Folder{false};
+    bool m_playsPrompt{false};
 };
 #endif // DFMINIMP3_IMPLEMENTATION_H

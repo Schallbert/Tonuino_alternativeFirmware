@@ -153,7 +153,7 @@ TEST_F(VoiceMenuTest, linkMenu_linkPreview_isInvoked)
 TEST_F(VoiceMenuTest, initDeleteMenu_isActive_returnsTrue)
 {
     m_pVoiceMenu->setTagState(Message::ACTIVETAG);
-    m_pVoiceMenu->setUserInput(Message::INPUTPLPSLP);
+    m_pVoiceMenu->setUserInput(Message::INPUTPLPSDC);
 
     m_pVoiceMenu->loop(); // entry conditions for Delete menu met
 
@@ -163,7 +163,7 @@ TEST_F(VoiceMenuTest, initDeleteMenu_isActive_returnsTrue)
 TEST_F(VoiceMenuTest, deleteMenuRunning_isActive_returnsTrue)
 {
     m_pVoiceMenu->setTagState(Message::ACTIVETAG);
-    m_pVoiceMenu->setUserInput(Message::INPUTPLPSLP);
+    m_pVoiceMenu->setUserInput(Message::INPUTPLPSDC);
     m_pVoiceMenu->loop(); // enter
     m_pVoiceMenu->setTagState(Message::NEWKNOWNTAG);
     m_pVoiceMenu->setUserInput(Message::INPUTNONE);
@@ -175,7 +175,7 @@ TEST_F(VoiceMenuTest, deleteMenuRunning_isActive_returnsTrue)
 TEST_F(VoiceMenuTest, deleteMenuComplete_isActive_returnsFalse)
 {
     m_pVoiceMenu->setTagState(Message::ACTIVETAG);
-    m_pVoiceMenu->setUserInput(Message::INPUTPLPSLP);
+    m_pVoiceMenu->setUserInput(Message::INPUTPLPSDC);
     m_pVoiceMenu->loop(); // enter
     m_pVoiceMenu->setUserInput(Message::INPUTNONE);
     m_pVoiceMenu->setTagState(Message::NEWKNOWNTAG);
@@ -189,7 +189,7 @@ TEST_F(VoiceMenuTest, deleteMenuComplete_isActive_returnsFalse)
 TEST_F(VoiceMenuTest, initdeleteMenu_loop_invokesPrompt)
 {
     m_pVoiceMenu->setTagState(Message::ACTIVETAG);
-    m_pVoiceMenu->setUserInput(Message::INPUTPLPSLP);
+    m_pVoiceMenu->setUserInput(Message::INPUTPLPSDC);
     m_pVoiceMenu->loop();                                       // enter
     m_pVoiceMenu->setUserInput(Message::INPUTNONE); // if it stays PP_LONGPRESS that will abort the menu
 
@@ -202,7 +202,7 @@ TEST_F(VoiceMenuTest, deleteMenu_deletePreview_isInvoked)
     ON_CALL(m_NfcControlMock, readFolderFromTag(_)).WillByDefault(Return(true));
 
     m_pVoiceMenu->setTagState(Message::ACTIVETAG);
-    m_pVoiceMenu->setUserInput(Message::INPUTPLPSLP);
+    m_pVoiceMenu->setUserInput(Message::INPUTPLPSDC);
     m_pVoiceMenu->loop(); // enter
     m_pVoiceMenu->setTagState(Message::NEWKNOWNTAG);
     m_pVoiceMenu->setUserInput(Message::INPUTNONE); // if it stays PP_LONGPRESS that will abort the menu

@@ -3,21 +3,33 @@
 
 void Mp3Prompt::playPrompt(const VoicePrompt &prompt)
 {
-    if (isNewPrompt(prompt))
+    if (!isNewPrompt(prompt))
     {
-        m_rDfMiniMp3.playMp3FolderTrack(prompt.getId());
+        return;
+    }
+
+    if(prompt.isAdvertisement())
+    {
+        m_rDfMiniMp3.playAdvertisement(prompt.getId());
         waitForPromptToStart();
-        if (!prompt.getSkip())
+        waitForPromptToFinish();
+    }
+    else
+    {
+        m_rDfMiniMp3.playPrompt(prompt.getId());
+        waitForPromptToStart();
+        if (prompt.isNoSkip())
         {
             waitForPromptToFinish();
         }
-        m_rDfMiniMp3.printStatus();
     }
+
+     m_rDfMiniMp3.printStatus();
 }
 
 void Mp3Prompt::stopPrompt()
 {
-    return m_rDfMiniMp3.stopMp3FolderTrack();
+    return m_rDfMiniMp3.stopPrompt();
 }
 
 bool Mp3Prompt::isNewPrompt(const VoicePrompt &prompt)

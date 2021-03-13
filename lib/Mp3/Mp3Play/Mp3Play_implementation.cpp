@@ -30,7 +30,7 @@ bool Mp3Play_implementation::prepareFolderToPlay(Folder &folder)
     countValid = folder.setTrackCount(getTrackCountOfFolderOnSdCard(folder));
     if (!countValid)
     {
-        VoicePrompt tooManyTracks(VoicePrompt::MSG_ERROR_TOOMANYTRACKS, true);
+        VoicePrompt tooManyTracks(VoicePrompt::MSG_ERROR_TOOMANYTRACKS, VoicePrompt::ALLOWSKIP);
         m_rMp3Prompt.playPrompt(tooManyTracks);
     }
     check &= isFolderValid(folder);
@@ -63,7 +63,7 @@ bool Mp3Play_implementation::isFolderValid(Folder &folder)
     else
     {
         m_rMessageHandler.printMessage(Message::ERRORFOLDER);
-         VoicePrompt folderErrorPrompt(VoicePrompt::MSG_ERROR_FOLDER, false);
+         VoicePrompt folderErrorPrompt(VoicePrompt::MSG_ERROR_FOLDER, VoicePrompt::NOSKIP);
         m_rMp3Prompt.playPrompt(folderErrorPrompt);
         result = false;
     }

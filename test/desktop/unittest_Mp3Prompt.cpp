@@ -37,13 +37,13 @@ protected:
 TEST_F(Mp3PromptTest, PromptMessage_Undefined_WillNotPrompt)
 {
     VoicePrompt undefined;
-    EXPECT_CALL(m_dfMiniMp3Mock, playMp3FolderTrack(_)).Times(0);
+    EXPECT_CALL(m_dfMiniMp3Mock, playPrompt(_)).Times(0);
     m_pMp3Prompt->playPrompt(undefined);
 }
 
 TEST_F(Mp3PromptTest, PromptMessage_noSkipNotPlaying_Timeout)
 {
-    VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_HELP, false)};
+    VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_HELP, VoicePrompt::ALLOWSKIP)};
 
     ON_CALL(m_dfMiniMp3Mock, isPlaying()).WillByDefault(Return(false)); // not playing
     ON_CALL(m_dfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_messageTimer, &SimpleTimer::timerTick));
@@ -54,9 +54,9 @@ TEST_F(Mp3PromptTest, PromptMessage_noSkipNotPlaying_Timeout)
 
 TEST_F(Mp3PromptTest, PromptMessage_noSkipNotFinishing_Timeout)
 {
-    VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_ABORTED, false)};
+    VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_ABORTED, VoicePrompt::NOSKIP)};
 
-    ON_CALL(m_dfMiniMp3Mock, isPlaying()).WillByDefault(Return(true)); // not playing
+    ON_CALL(m_dfMiniMp3Mock, isPlaying()).WillByDefault(Return(true));
     ON_CALL(m_dfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_messageTimer, &SimpleTimer::timerTick));
 
     EXPECT_CALL(m_dfMiniMp3Mock, loop()).Times(TIMEOUT_PROMPT_PLAYED); // timeout kicks in. to wait system calls MP3's loop
@@ -65,7 +65,7 @@ TEST_F(Mp3PromptTest, PromptMessage_noSkipNotFinishing_Timeout)
 
 TEST_F(Mp3PromptTest, PromptMessage_noSkipPlaying_onlyStartTimeout)
 {
-    VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_STARTUP, false)};
+    VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_STARTUP, VoicePrompt::NOSKIP)};
     // timeout not elapsing
     EXPECT_CALL(m_dfMiniMp3Mock, isPlaying())
         .Times(3)
@@ -78,19 +78,19 @@ TEST_F(Mp3PromptTest, PromptMessage_noSkipPlaying_onlyStartTimeout)
 
 TEST_F(Mp3PromptTest, PromptMessage_playStarts_willCallPrompt)
 {
-    VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_HELP, true)};
+    VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_HELP, VoicePrompt::ALLOWSKIP)};
 
     ON_CALL(m_dfMiniMp3Mock, isPlaying()).WillByDefault(Return(true));
-    EXPECT_CALL(m_dfMiniMp3Mock, playMp3FolderTrack(_));
+    EXPECT_CALL(m_dfMiniMp3Mock, playPrompt(_));
     m_pMp3Prompt->playPrompt(prompt);
 }
 
 TEST_F(Mp3PromptTest, PromptMessage_callTwice_wontPlayAgain)
 {
-    VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_ABORTED, true)};
+    VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_ABORTED, VoicePrompt::ALLOWSKIP)};
 
     ON_CALL(m_dfMiniMp3Mock, isPlaying()).WillByDefault(Return(true));
-    EXPECT_CALL(m_dfMiniMp3Mock, playMp3FolderTrack(_)).Times(1);
+    EXPECT_CALL(m_dfMiniMp3Mock, playPrompt(_)).Times(1);
     m_pMp3Prompt->playPrompt(prompt);
     m_pMp3Prompt->playPrompt(prompt);
 }
