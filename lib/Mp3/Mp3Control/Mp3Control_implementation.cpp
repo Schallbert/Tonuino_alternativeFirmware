@@ -61,11 +61,11 @@ void Mp3Control::handleLocked()
             m_rMp3Prompt.playPrompt(VoicePrompt{VoicePrompt::MSG_BUTTONLOCK, false});
             // make sure the system is locked when playback is active
         }
-    }
 
-    if (!m_rDfMiniMp3.isPlaying())
-    {
-        play();
+        if (!m_rDfMiniMp3.isPlaying())
+        {
+            play();
+        }
     }
 
     if (m_isLocked)

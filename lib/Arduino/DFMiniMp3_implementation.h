@@ -139,6 +139,7 @@ public:
     {
         m_dfMiniMp3.playFolderTrack(folderId, trackId);
         m_dfMiniMp3.loop();
+        Mp3Notify::clearMessage(); // to clear "finished playing Track" mesage from buffer
     }
 
     void playMp3FolderTrack(uint16_t trackId) override
