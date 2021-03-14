@@ -139,14 +139,8 @@ public:
     {
         m_dfMiniMp3.playFolderTrack(folderId, trackId);
         m_dfMiniMp3.loop();
+        m_playsPrompt = false;
         Mp3Notify::clearMessage(); // to clear "finished playing Track" mesage from buffer
-    }
-
-    void playPrompt(uint16_t trackId) override
-    {
-        m_dfMiniMp3.loop();
-        m_dfMiniMp3.playMp3FolderTrack(trackId);
-        m_playsPrompt = true;
     }
 
     void stopPrompt() override
@@ -159,10 +153,11 @@ public:
         }
     }
 
-    void playAdvertisement(uint16_t trackId) override
+    void playPrompt(uint16_t trackId) override
     {
-         m_dfMiniMp3.loop();
+        m_dfMiniMp3.loop();
         m_dfMiniMp3.playAdvertisement(trackId);
+        m_playsPrompt = true;
     }
 
     uint8_t getFolderTrackCount(uint8_t folderId) override

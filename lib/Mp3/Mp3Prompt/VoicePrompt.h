@@ -13,7 +13,6 @@ public:
         MSG_ERROR_CARDREAD = 411,
         MSG_ERROR_FOLDER = 412,
         MSG_ERROR_TOOMANYTRACKS = 413,
-        MSG_ERROR_NO_TAG = 414, // TODO: Record!
         MSG_BUTTONLOCK = 426,
         MSG_BUTTONFREE = 427,
         MSG_STARTUP = 500,
@@ -38,10 +37,10 @@ public:
     VoicePrompt() = default;
     VoicePrompt(uint16_t promptId,
                 ePlayback playback) : m_promptId(static_cast<uint16_t>(promptId)),
-                                  m_playback(playback){};
+                                      m_playback(static_cast<uint8_t>(playback)){};
     VoicePrompt(ePromptIds promptId,
                 ePlayback playback) : m_promptId(static_cast<uint16_t>(promptId)),
-                                  m_playback(playback){};
+                                      m_playback(static_cast<uint8_t>(playback)){};
     ~VoicePrompt() = default;
     VoicePrompt(const VoicePrompt &cpyPrompt)
     {
@@ -69,16 +68,16 @@ public:
     void reset(uint16_t promptId, ePlayback playback)
     {
         m_promptId = promptId;
-        m_playback = playback;
+        m_playback = static_cast<uint8_t>(playback);
     }
 
     uint16_t getId() const { return m_promptId; }
-    bool isAdvertisement() const { return (m_playback == RESUMEPLAYBACK); }
-    bool isNoSkip() const { return (m_playback == NOSKIP); }
+    bool isResumePlayback() const { return (static_cast<uint8_t>(m_playback) == RESUMEPLAYBACK); }
+    bool isNoSkip() const { return (static_cast<uint8_t>(m_playback) == NOSKIP); }
 
 private:
     uint16_t m_promptId{0};
-    ePlayback m_playback{NOSKIP};
+    uint8_t m_playback{0};
 };
 
 #endif // PROMPTS_H

@@ -8,23 +8,31 @@ void Mp3Prompt::playPrompt(const VoicePrompt &prompt)
         return;
     }
 
-    if(prompt.isAdvertisement())
+    if (prompt.isResumePlayback())
     {
-        m_rDfMiniMp3.playAdvertisement(prompt.getId());
+        m_rDfMiniMp3.playPrompt(prompt.getId());
         waitForPromptToStart();
         waitForPromptToFinish();
     }
     else
     {
+        // play dummy silence track to make advertisement playable
+        const uint8_t ZEROFOLDER{0};
+        const uint8_t SILENCETRACK{1};
+        m_rDfMiniMp3.playFolderTrack(ZEROFOLDER, SILENCETRACK);
+
         m_rDfMiniMp3.playPrompt(prompt.getId());
         waitForPromptToStart();
+
         if (prompt.isNoSkip())
         {
             waitForPromptToFinish();
         }
+        // stop playback of silenceTrack
+        m_rDfMiniMp3.stop();
     }
 
-     m_rDfMiniMp3.printStatus();
+    m_rDfMiniMp3.printStatus();
 }
 
 void Mp3Prompt::stopPrompt()
