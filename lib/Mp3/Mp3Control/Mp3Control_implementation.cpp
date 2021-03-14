@@ -71,7 +71,6 @@ void Mp3Control::handleLocked()
             m_isLocked = true;
             m_rMp3Prompt.playPrompt(VoicePrompt{VoicePrompt::MSG_BUTTONLOCK,
                                                 VoicePrompt::RESUMEPLAYBACK});
-            // make sure the system is locked when playback is active
         }
     }
 
