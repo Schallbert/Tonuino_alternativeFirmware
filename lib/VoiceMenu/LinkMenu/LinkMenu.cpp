@@ -13,7 +13,6 @@ void LinkMenu::confirm()
         writeTag();
         menuStateMessage.reset(m_menuState.getMenuStateMessage(), VoicePrompt::PROMPT_NOSKIP);
     }
-
     m_rMp3Prompt.playPrompt(menuStateMessage);
 }
 
