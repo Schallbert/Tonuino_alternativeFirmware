@@ -40,6 +40,7 @@ public:
 
 private:
     void playPreview() override;
+    void playStateMessage();
 
     void eraseTag();
     void handleTagStateChanges();

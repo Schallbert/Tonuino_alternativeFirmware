@@ -11,7 +11,12 @@ void DeleteMenu::confirm()
     {
         eraseTag();
     }
-    VoicePrompt prompt{m_menuState.getMenuStateMessage(), VoicePrompt::PROMPT_ALLOWSKIP};
+    playStateMessage();
+}
+
+void DeleteMenu::playStateMessage()
+{
+    VoicePrompt prompt{m_menuState.getMenuStateMessage(), VoicePrompt::PROMPT_NOSKIP};
     m_rMp3Prompt.playPrompt(prompt);
 }
 
@@ -60,6 +65,7 @@ void DeleteMenu::handleTagStateChanges()
     if (m_tagState == Message::NEWKNOWNTAG)
     {
         m_menuState.setTagToDeleteDetected();
+        playStateMessage();
         playPreview();
     }
 }

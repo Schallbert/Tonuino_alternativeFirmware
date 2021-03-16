@@ -14,12 +14,18 @@ void Mp3Prompt::playPrompt(const VoicePrompt &prompt)
     }
     else
     {
+        // stop current track (if playing)
+        m_rDfMiniMp3.stop();
+        waitForPromptToFinish();
+        // Now play prompt
         m_rDfMiniMp3.playPrompt(prompt.getId());
         waitForPromptToStart();
         if (prompt.isNoSkip())
         {
             waitForPromptToFinish();
         }
+        // make sure that playing is not automatically resumed after prompt completes
+        m_rDfMiniMp3.stop();
     }
     m_rDfMiniMp3.printStatus();
 }

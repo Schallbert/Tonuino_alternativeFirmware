@@ -7,12 +7,14 @@ void LinkMenu::confirm()
 {
     m_menuState.confirm();
     VoicePrompt menuStateMessage{m_menuState.getMenuStateMessage(), VoicePrompt::PROMPT_ALLOWSKIP};
-    m_rMp3Prompt.playPrompt(menuStateMessage);
 
     if (isComplete())
     {
         writeTag();
+        menuStateMessage.reset(m_menuState.getMenuStateMessage(), VoicePrompt::PROMPT_NOSKIP);
     }
+
+    m_rMp3Prompt.playPrompt(menuStateMessage);
 }
 
 void LinkMenu::writeTag()
