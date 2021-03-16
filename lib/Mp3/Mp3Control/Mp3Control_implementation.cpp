@@ -57,7 +57,7 @@ void Mp3Control::handleUserInput()
 void Mp3Control::handleLocked()
 {
     // Toggle lock status with doubleClick
-    if (m_userInput == Message::INPUTPLPSDC)
+    if ((m_userInput == Message::INPUTPLPSDC) && (m_tagState == Message::ACTIVETAG))
     {
         playIfPaused();
         if (m_isLocked)

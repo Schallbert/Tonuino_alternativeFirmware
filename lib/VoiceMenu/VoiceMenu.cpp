@@ -74,7 +74,7 @@ void VoiceMenu::enterMenu()
 
 void VoiceMenu::checkEnterDeleteMenu()
 {
-    if ((m_tagState == Message::ACTIVETAG) &&
+    if ((m_tagState == Message::NOTAG) &&
         (m_userInput == Message::INPUTPLPSDC))
     {
         m_pMenuInstance = m_MenuFactory.getInstance(Menu_factory::DELETE_MENU,
