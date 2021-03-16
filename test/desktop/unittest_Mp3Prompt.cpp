@@ -43,7 +43,7 @@ TEST_F(Mp3PromptTest, PromptMessage_Undefined_WillNotPrompt)
 
 TEST_F(Mp3PromptTest, PromptMessage_noSkipNotPlaying_Timeout)
 {
-    VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_HELP, VoicePrompt::ALLOWSKIP)};
+    VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_HELP, VoicePrompt::PROMPT_ALLOWSKIP)};
 
     ON_CALL(m_dfMiniMp3Mock, isPlaying()).WillByDefault(Return(false)); // not playing
     ON_CALL(m_dfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_messageTimer, &SimpleTimer::timerTick));
@@ -54,7 +54,7 @@ TEST_F(Mp3PromptTest, PromptMessage_noSkipNotPlaying_Timeout)
 
 TEST_F(Mp3PromptTest, PromptMessage_noSkipNotFinishing_Timeout)
 {
-    VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_ABORTED, VoicePrompt::NOSKIP)};
+    VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_ABORTED, VoicePrompt::PROMPT_NOSKIP)};
 
     ON_CALL(m_dfMiniMp3Mock, isPlaying()).WillByDefault(Return(true));
     ON_CALL(m_dfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_messageTimer, &SimpleTimer::timerTick));
@@ -65,7 +65,7 @@ TEST_F(Mp3PromptTest, PromptMessage_noSkipNotFinishing_Timeout)
 
 TEST_F(Mp3PromptTest, PromptMessage_noSkipPlaying_onlyStartTimeout)
 {
-    VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_STARTUP, VoicePrompt::NOSKIP)};
+    VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_STARTUP, VoicePrompt::PROMPT_NOSKIP)};
     // timeout not elapsing
     EXPECT_CALL(m_dfMiniMp3Mock, isPlaying())
         .Times(3)
@@ -78,7 +78,7 @@ TEST_F(Mp3PromptTest, PromptMessage_noSkipPlaying_onlyStartTimeout)
 
 TEST_F(Mp3PromptTest, PromptMessage_playStarts_willCallPrompt)
 {
-    VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_HELP, VoicePrompt::ALLOWSKIP)};
+    VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_HELP, VoicePrompt::PROMPT_ALLOWSKIP)};
 
     ON_CALL(m_dfMiniMp3Mock, isPlaying()).WillByDefault(Return(true));
     EXPECT_CALL(m_dfMiniMp3Mock, playPrompt(_));
@@ -87,7 +87,7 @@ TEST_F(Mp3PromptTest, PromptMessage_playStarts_willCallPrompt)
 
 TEST_F(Mp3PromptTest, PromptMessage_callTwice_wontPlayAgain)
 {
-    VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_ABORTED, VoicePrompt::ALLOWSKIP)};
+    VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_ABORTED, VoicePrompt::PROMPT_ALLOWSKIP)};
 
     ON_CALL(m_dfMiniMp3Mock, isPlaying()).WillByDefault(Return(true));
     EXPECT_CALL(m_dfMiniMp3Mock, playPrompt(_)).Times(1);

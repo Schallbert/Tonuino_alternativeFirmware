@@ -171,7 +171,7 @@ TEST_F(Mp3ControlTest, plpsDoubleClick_buttonsLocked_unlocksButtons)
 
 TEST_F(Mp3ControlTest, plpsDoubleClick_buttonsLocked_playsLockPrompt)
 {
-    VoicePrompt expect{VoicePrompt::MSG_BUTTONLOCK, VoicePrompt::RESUMEPLAYBACK};
+    VoicePrompt expect{VoicePrompt::MSG_BUTTONLOCK, VoicePrompt::ANNOUNCEMENT};
     m_pMp3Control->setUserInput(Message::INPUTPLPSDC);
 
     EXPECT_CALL(m_mp3PromptMock, playPrompt(expect));
@@ -180,7 +180,7 @@ TEST_F(Mp3ControlTest, plpsDoubleClick_buttonsLocked_playsLockPrompt)
 
 TEST_F(Mp3ControlTest, plpsDoubleClick_buttonsUnlocked_playsUnlockPrompt)
 {
-    VoicePrompt expect{VoicePrompt::MSG_BUTTONFREE, VoicePrompt::RESUMEPLAYBACK};
+    VoicePrompt expect{VoicePrompt::MSG_BUTTONFREE, VoicePrompt::ANNOUNCEMENT};
     m_pMp3Control->setUserInput(Message::INPUTPLPSDC);
     m_pMp3Control->loop();
 

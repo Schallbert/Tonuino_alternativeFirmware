@@ -34,9 +34,6 @@ Menu_interface *Menu_factory::getInstance(eMenuType menuType,
 
 void Menu_factory::removeInstance()
 {
-    if (m_instance != nullptr)
-    {
-        delete m_instance;
-        m_instance = nullptr;
-    }
+    delete m_instance;
+    m_instance = nullptr;
 }

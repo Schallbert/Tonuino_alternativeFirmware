@@ -31,9 +31,6 @@ NfcTag_interface *NfcTag_factory::getInstance(MFRC522_interface &pMfrc522)
 
 void NfcTag_factory::removeInstance()
 {
-    if (m_instance != nullptr)
-    {
-        delete m_instance;
-        m_instance = nullptr;
-    }
+    delete m_instance;
+    m_instance = nullptr;
 }
