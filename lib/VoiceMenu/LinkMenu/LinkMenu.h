@@ -29,7 +29,6 @@ public:
 public:
     void setStatusLed() override;
     void setTagState(Message::eMessageContent input) override{};
-    void handlePlayback() override;
 
     void confirm() override;
     void abort() override;
@@ -40,9 +39,7 @@ public:
     bool isComplete() override;
 
 private:
-    void playPrompt() override;
     void playPreview() override;
-
     void writeTag();
 
 private:
@@ -54,7 +51,6 @@ private:
 
     LinkMenu_StateManager m_menuState{};
     Message::eMessageContent m_tagState{Message::NOTAG};
-    VoicePrompt m_prompt{};
 };
 
 #endif // LINKMENU_H

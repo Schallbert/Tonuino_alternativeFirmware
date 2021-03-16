@@ -6,10 +6,13 @@
 void DeleteMenu::confirm()
 {
     m_menuState.confirm();
+
     if (isComplete())
     {
         eraseTag();
     }
+    VoicePrompt prompt{m_menuState.getMenuStateMessage(), VoicePrompt::PROMPT_ALLOWSKIP};
+    m_rMp3Prompt.playPrompt(prompt);
 }
 
 void DeleteMenu::eraseTag()
@@ -43,19 +46,13 @@ void DeleteMenu::selectPrev()
 
 void DeleteMenu::setStatusLed()
 {
-        m_rPowerManager.setDeleteMenu();
+    m_rPowerManager.setDeleteMenu();
 }
 
 void DeleteMenu::setTagState(Message::eMessageContent input)
 {
     m_tagState = input;
-}
-
-void DeleteMenu::handlePlayback()
-{
     handleTagStateChanges();
-    playPrompt();
-    playPreview();
 }
 
 void DeleteMenu::handleTagStateChanges()
@@ -63,6 +60,7 @@ void DeleteMenu::handleTagStateChanges()
     if (m_tagState == Message::NEWKNOWNTAG)
     {
         m_menuState.setTagToDeleteDetected();
+        playPreview();
     }
 }
 
@@ -71,20 +69,16 @@ bool DeleteMenu::isActive()
     return m_menuState.isActive();
 }
 
-void DeleteMenu::playPrompt()
-{
-    m_prompt.reset(m_menuState.getMenuStateMessage(), VoicePrompt::PROMPT_ALLOWSKIP);
-    m_rMp3Prompt.playPrompt(m_prompt);
-}
-
 void DeleteMenu::playPreview()
 {
-    if (m_menuState.isPendingConfirmDelete())
+    if (!m_menuState.isPendingConfirmDelete())
     {
-        Folder preview;
-        if (m_rNfcControl.readFolderFromTag(preview))
-        {
-            m_rMp3Play.playFolder(preview);
-        }
+        return;
+    }
+
+    Folder preview;
+    if (m_rNfcControl.readFolderFromTag(preview))
+    {
+        m_rMp3Play.playFolder(preview);
     }
 }

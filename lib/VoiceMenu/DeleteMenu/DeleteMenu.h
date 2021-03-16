@@ -29,7 +29,6 @@ public:
 
     void setStatusLed() override;
     void setTagState(Message::eMessageContent input) override;
-    void handlePlayback() override;
 
     void confirm() override;
     void abort() override;
@@ -40,7 +39,6 @@ public:
     bool isComplete() override;
 
 private:
-    void playPrompt() override;
     void playPreview() override;
 
     void eraseTag();
@@ -56,7 +54,6 @@ private:
     DeleteMenu_StateManager m_menuState{};
     Message::eMessageContent m_tagState{Message::NOTAG};
 
-    VoicePrompt m_prompt{};
     bool m_tagToDeleteDetected{false};
 };
 

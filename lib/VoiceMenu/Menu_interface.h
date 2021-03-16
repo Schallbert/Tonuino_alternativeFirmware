@@ -10,7 +10,6 @@ public:
     // Handler
     virtual void setStatusLed() = 0;
     virtual void setTagState(Message::eMessageContent input) = 0;
-    virtual void handlePlayback() = 0;
 
     // Events
     virtual void confirm() = 0;
@@ -22,7 +21,6 @@ public:
     virtual bool isComplete() = 0;
 
 private:
-    virtual void playPrompt() = 0;
     virtual void playPreview() = 0;
 };
 

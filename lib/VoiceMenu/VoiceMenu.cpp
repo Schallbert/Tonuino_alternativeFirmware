@@ -21,7 +21,6 @@ void VoiceMenu::loop()
         dispatchInputs();
         m_pMenuInstance->setStatusLed();
         m_pMenuInstance->setTagState(m_tagState);
-        m_pMenuInstance->handlePlayback();
         checkTimerElapsed();
         checkLeaveMenu();
     }

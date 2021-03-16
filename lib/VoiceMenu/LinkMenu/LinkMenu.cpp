@@ -7,7 +7,7 @@ void LinkMenu::confirm()
 {
     m_menuState.confirm();
     VoicePrompt menuStateMessage{m_menuState.getMenuStateMessage(), VoicePrompt::PROMPT_ALLOWSKIP};
-    m_prompt = menuStateMessage;
+    m_rMp3Prompt.playPrompt(menuStateMessage);
 
     if (isComplete())
     {
@@ -19,55 +19,33 @@ void LinkMenu::writeTag()
 {
     if (!m_rNfcControl.writeFolderToTag(m_menuState.getResult()))
     {
-        m_prompt.reset(VoicePrompt::MSG_ERROR_CARDWRITE, VoicePrompt::PROMPT_NOSKIP);
-        playPrompt();
+        VoicePrompt error{VoicePrompt::MSG_ERROR_CARDWRITE, VoicePrompt::PROMPT_NOSKIP};
+        m_rMp3Prompt.playPrompt(error);
         m_menuState.abort();
     }
-}
-
-bool LinkMenu::isComplete()
-{
-    return (m_menuState.getMenuStateMessage() == VoicePrompt::MSG_TAGCONFSUCCESS);
 }
 
 void LinkMenu::abort()
 {
     m_menuState.abort();
-    m_prompt.reset(VoicePrompt::MSG_ABORTED, VoicePrompt::PROMPT_NOSKIP);
-    playPrompt();
+    VoicePrompt abort{VoicePrompt::MSG_ABORTED, VoicePrompt::PROMPT_NOSKIP};
+    m_rMp3Prompt.playPrompt(abort);
 }
 
 void LinkMenu::selectNext()
 {
     m_menuState.incrementSelection();
-    m_prompt.reset(m_menuState.getCurrentSelection(), VoicePrompt::PROMPT_NOSKIP);
+    VoicePrompt next{m_menuState.getCurrentSelection(), VoicePrompt::PROMPT_NOSKIP};
+    m_rMp3Prompt.playPrompt(next);
+    playPreview();
 }
 
 void LinkMenu::selectPrev()
 {
     m_menuState.decrementSelection();
-    m_prompt.reset(m_menuState.getCurrentSelection(), VoicePrompt::PROMPT_NOSKIP);
-}
-
-void LinkMenu::setStatusLed()
-{
-    m_rPowerManager.setLinkMenu();
-}
-
-void LinkMenu::handlePlayback()
-{
-    static VoicePrompt lastPrompt;
-    if (m_prompt != lastPrompt)
-    {
-        playPrompt();
-        playPreview();
-        lastPrompt = m_prompt;
-    }
-}
-
-void LinkMenu::playPrompt()
-{
-    m_rMp3Prompt.playPrompt(m_prompt);
+    VoicePrompt prev{m_menuState.getCurrentSelection(), VoicePrompt::PROMPT_NOSKIP};
+    m_rMp3Prompt.playPrompt(prev);
+    playPreview();
 }
 
 void LinkMenu::playPreview()
@@ -79,7 +57,17 @@ void LinkMenu::playPreview()
     }
 }
 
+void LinkMenu::setStatusLed()
+{
+    m_rPowerManager.setLinkMenu();
+}
+
 bool LinkMenu::isActive()
 {
     return (m_menuState.getMenuStateMessage() != 0);
+}
+
+bool LinkMenu::isComplete()
+{
+    return (m_menuState.getMenuStateMessage() == VoicePrompt::MSG_TAGCONFSUCCESS);
 }
