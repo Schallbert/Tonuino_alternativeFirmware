@@ -28,9 +28,9 @@ public:
 
     enum ePlayback
     {
-        ALLOWSKIP = 0,
-        NOSKIP,
-        RESUMEPLAYBACK
+        PROMPT_ALLOWSKIP = 0,
+        PROMPT_NOSKIP,
+        ANNOUNCEMENT
     };
 
 public:
@@ -72,8 +72,8 @@ public:
     }
 
     uint16_t getId() const { return m_promptId; }
-    bool isResumePlayback() const { return (static_cast<uint8_t>(m_playback) == RESUMEPLAYBACK); }
-    bool isNoSkip() const { return (static_cast<uint8_t>(m_playback) == NOSKIP); }
+    bool isAnnouncement() const { return (static_cast<uint8_t>(m_playback) == ANNOUNCEMENT); }
+    bool isNoSkip() const { return (static_cast<uint8_t>(m_playback) == PROMPT_NOSKIP); }
 
 private:
     uint16_t m_promptId{0};

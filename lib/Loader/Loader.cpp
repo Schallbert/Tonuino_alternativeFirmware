@@ -18,7 +18,7 @@ void Loader::init()
 void Loader::notifyStartup()
 {
     m_MessageHandler.printMessage(Message::STARTUP);
-    VoicePrompt startup{VoicePrompt::MSG_STARTUP, VoicePrompt::NOSKIP};
+    VoicePrompt startup{VoicePrompt::MSG_STARTUP, VoicePrompt::PROMPT_NOSKIP};
     m_Mp3Prompt.playPrompt(startup);
 }
 
@@ -42,7 +42,7 @@ void Loader::shutdown()
 void Loader::notifyShutdown()
 {
     m_MessageHandler.printMessage(Message::HALT);
-    VoicePrompt shutdown{VoicePrompt::MSG_SHUTDOWN,  VoicePrompt::NOSKIP};
+    VoicePrompt shutdown{VoicePrompt::MSG_SHUTDOWN,  VoicePrompt::PROMPT_NOSKIP};
     m_Mp3Prompt.playPrompt(shutdown);
 }
 

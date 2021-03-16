@@ -37,6 +37,8 @@ public:
     // plays specified file on sd:/mp3/####fileId
     virtual void playPrompt(uint16_t trackId) = 0;
     virtual void stopPrompt() = 0;
+    // plays specified file on sd:/advert/####fileId, pausing current track and resuming it afterwards
+    virtual void playAnnouncement(uint16_t trackId) = 0;
     virtual uint8_t getFolderTrackCount(uint8_t folderId) = 0;
 
     virtual bool isTrackFinished() const = 0;

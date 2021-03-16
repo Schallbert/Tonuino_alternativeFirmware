@@ -6,7 +6,7 @@
 void LinkMenu::confirm()
 {
     m_menuState.confirm();
-    VoicePrompt menuStateMessage{m_menuState.getMenuStateMessage(), VoicePrompt::ALLOWSKIP};
+    VoicePrompt menuStateMessage{m_menuState.getMenuStateMessage(), VoicePrompt::PROMPT_ALLOWSKIP};
     m_prompt = menuStateMessage;
 
     if (isComplete())
@@ -19,7 +19,7 @@ void LinkMenu::writeTag()
 {
     if (!m_rNfcControl.writeFolderToTag(m_menuState.getResult()))
     {
-        m_prompt.reset(VoicePrompt::MSG_ERROR_CARDWRITE, VoicePrompt::NOSKIP);
+        m_prompt.reset(VoicePrompt::MSG_ERROR_CARDWRITE, VoicePrompt::PROMPT_NOSKIP);
         playPrompt();
         m_menuState.abort();
     }
@@ -33,20 +33,20 @@ bool LinkMenu::isComplete()
 void LinkMenu::abort()
 {
     m_menuState.abort();
-    m_prompt.reset(VoicePrompt::MSG_ABORTED, VoicePrompt::NOSKIP);
+    m_prompt.reset(VoicePrompt::MSG_ABORTED, VoicePrompt::PROMPT_NOSKIP);
     playPrompt();
 }
 
 void LinkMenu::selectNext()
 {
     m_menuState.incrementSelection();
-    m_prompt.reset(m_menuState.getCurrentSelection(), VoicePrompt::NOSKIP);
+    m_prompt.reset(m_menuState.getCurrentSelection(), VoicePrompt::PROMPT_NOSKIP);
 }
 
 void LinkMenu::selectPrev()
 {
     m_menuState.decrementSelection();
-    m_prompt.reset(m_menuState.getCurrentSelection(), VoicePrompt::NOSKIP);
+    m_prompt.reset(m_menuState.getCurrentSelection(), VoicePrompt::PROMPT_NOSKIP);
 }
 
 void LinkMenu::setStatusLed()

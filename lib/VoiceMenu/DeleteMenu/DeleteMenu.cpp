@@ -73,7 +73,7 @@ bool DeleteMenu::isActive()
 
 void DeleteMenu::playPrompt()
 {
-    m_prompt.reset(m_menuState.getMenuStateMessage(), VoicePrompt::ALLOWSKIP);
+    m_prompt.reset(m_menuState.getMenuStateMessage(), VoicePrompt::PROMPT_ALLOWSKIP);
     m_rMp3Prompt.playPrompt(m_prompt);
 }
 

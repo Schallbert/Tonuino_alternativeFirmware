@@ -156,8 +156,14 @@ public:
     void playPrompt(uint16_t trackId) override
     {
         m_dfMiniMp3.loop();
-        m_dfMiniMp3.playAdvertisement(trackId);
+        m_dfMiniMp3.playMp3FolderTrack(trackId);
         m_playsPrompt = true;
+    }
+
+    void playAnnouncement(uint16_t trackId) override
+    {
+        m_dfMiniMp3.loop();
+        m_dfMiniMp3.playAdvertisement(trackId);
     }
 
     uint8_t getFolderTrackCount(uint8_t folderId) override

@@ -64,13 +64,13 @@ void Mp3Control::handleLocked()
         {
             m_isLocked = false;
             m_rMp3Prompt.playPrompt(VoicePrompt{VoicePrompt::MSG_BUTTONFREE,
-                                                VoicePrompt::RESUMEPLAYBACK});
+                                                VoicePrompt::ANNOUNCEMENT});
         }
         else
         {
             m_isLocked = true;
             m_rMp3Prompt.playPrompt(VoicePrompt{VoicePrompt::MSG_BUTTONLOCK,
-                                                VoicePrompt::RESUMEPLAYBACK});
+                                                VoicePrompt::ANNOUNCEMENT});
         }
     }
 
@@ -136,6 +136,6 @@ void Mp3Control::decV()
 
 void Mp3Control::help()
 {
-    VoicePrompt helpMessage(VoicePrompt::MSG_HELP, VoicePrompt::ALLOWSKIP);
+    VoicePrompt helpMessage(VoicePrompt::MSG_HELP, VoicePrompt::PROMPT_ALLOWSKIP);
     m_rMp3Prompt.playPrompt(helpMessage);
 }
