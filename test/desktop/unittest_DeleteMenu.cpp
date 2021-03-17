@@ -66,9 +66,8 @@ TEST_F(DeleteMenuTest, menuComplete_isActive_returnsTrue)
 {
     ON_CALL(m_nfcControlMock, eraseTag()).WillByDefault(Return(true));
     deleteMenu->setTagState(Message::NEWKNOWNTAG);
-    deleteMenu->confirm();        // enter
-    deleteMenu->handlePlayback(); // detects tag to delete
-    deleteMenu->confirm();        //confirms deletion
+    deleteMenu->confirm(); // enter
+    deleteMenu->confirm(); //confirms deletion
 
     ASSERT_TRUE((deleteMenu->isActive()));
 }
@@ -85,9 +84,8 @@ TEST_F(DeleteMenuTest, menuComplete_setStatusLed_statusLedChangeRequested)
 {
     ON_CALL(m_nfcControlMock, eraseTag()).WillByDefault(Return(true));
     deleteMenu->setTagState(Message::NEWKNOWNTAG);
-    deleteMenu->confirm();        // enter
-    deleteMenu->handlePlayback(); // detects tag to delete
-    deleteMenu->confirm();        //confirms deletion
+    deleteMenu->confirm(); // enter
+    deleteMenu->confirm(); //confirms deletion
 
     EXPECT_CALL(m_powerManagerMock, setDeleteMenu());
     deleteMenu->setStatusLed();
@@ -99,131 +97,104 @@ TEST_F(DeleteMenuTest, menuComplete_callsEraseCard)
 
     deleteMenu->confirm(); // enter
     deleteMenu->setTagState(Message::NEWKNOWNTAG);
-    deleteMenu->handlePlayback(); // detects tag to delete
-    deleteMenu->confirm();        //confirms deletion
+    deleteMenu->confirm(); //confirms deletion
 }
 
 // PROMPT tests
-TEST_F(DeleteMenuTest, noInit_noPromptSet)
-{
-    EXPECT_CALL(m_mp3PromptMock, playPrompt(invalidPrompt()));
-    deleteMenu->handlePlayback();
-}
-
 TEST_F(DeleteMenuTest, init_getPrompt_promptsDeleteTag)
 {
-    VoicePrompt expect{VoicePrompt::MSG_DELETETAG, VoicePrompt::PROMPT_ALLOWSKIP};
-    deleteMenu->confirm();
+    VoicePrompt expect{VoicePrompt::MSG_DELETETAG, VoicePrompt::PROMPT_NOSKIP};
 
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
-    deleteMenu->handlePlayback();
+    deleteMenu->confirm();
 }
 
 TEST_F(DeleteMenuTest, init2x_getPrompt_promptsDeleteTag)
 {
-    VoicePrompt expect{VoicePrompt::MSG_DELETETAG, VoicePrompt::PROMPT_ALLOWSKIP};
-
-    deleteMenu->confirm();
+    VoicePrompt expect{VoicePrompt::MSG_DELETETAG, VoicePrompt::PROMPT_NOSKIP};
     deleteMenu->confirm();
 
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
-    deleteMenu->handlePlayback();
+    deleteMenu->confirm();
 }
 
 TEST_F(DeleteMenuTest, placedTagToDelete_getPrompt_promptsWaitForConfirm)
 {
-    deleteMenu->setTagState(Message::NEWKNOWNTAG);
-    VoicePrompt expect{VoicePrompt::MSG_CONFIRM_DELETION, VoicePrompt::PROMPT_ALLOWSKIP};
-
+    VoicePrompt expect{VoicePrompt::MSG_CONFIRM_DELETION, VoicePrompt::PROMPT_NOSKIP};
     deleteMenu->confirm();
 
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
-    deleteMenu->handlePlayback();
+    deleteMenu->setTagState(Message::NEWKNOWNTAG);
 }
 
 TEST_F(DeleteMenuTest, placedTagToDelete_confirmDeletion_promptsTagConfigurationComplete)
 {
     ON_CALL(m_nfcControlMock, eraseTag()).WillByDefault(Return(true));
+    VoicePrompt expect{VoicePrompt::MSG_TAGCONFSUCCESS, VoicePrompt::PROMPT_NOSKIP};
+
+    deleteMenu->confirm(); // enter
     deleteMenu->setTagState(Message::NEWKNOWNTAG);
-    VoicePrompt expect{VoicePrompt::MSG_TAGCONFSUCCESS, VoicePrompt::PROMPT_ALLOWSKIP};
-
-    deleteMenu->confirm();        // enter
-    deleteMenu->handlePlayback(); // detects tag to delete
-    deleteMenu->confirm();        //confirms deletion
 
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
-    deleteMenu->handlePlayback();
+    deleteMenu->confirm(); //confirms deletion
 }
 
-TEST_F(DeleteMenuTest, noInit_abort_noPromptSet)
+TEST_F(DeleteMenuTest, noInit_abort_abortPromptSet)
 {
-    VoicePrompt expect{VoicePrompt::MSG_ABORTED, VoicePrompt::PROMPT_ALLOWSKIP};
-
+    VoicePrompt expect{VoicePrompt::MSG_ABORTED, VoicePrompt::PROMPT_NOSKIP};
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
     deleteMenu->abort();
-
-    EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
-    deleteMenu->handlePlayback();
 }
 
-TEST_F(DeleteMenuTest, entered_abort_noPromptSet)
+TEST_F(DeleteMenuTest, entered_abort_abortPromptSet)
 {
-    VoicePrompt expect{VoicePrompt::MSG_ABORTED, VoicePrompt::PROMPT_ALLOWSKIP};
-
+    VoicePrompt expect{VoicePrompt::MSG_ABORTED, VoicePrompt::PROMPT_NOSKIP};
     deleteMenu->confirm();
-    deleteMenu->abort();
 
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
-    deleteMenu->handlePlayback();
+    deleteMenu->abort();
 }
 
 TEST_F(DeleteMenuTest, tagToDeleteDetected_abort_noPromptSet)
 {
-    deleteMenu->setTagState(Message::NEWKNOWNTAG);
-    VoicePrompt expect{VoicePrompt::MSG_ABORTED, VoicePrompt::PROMPT_ALLOWSKIP};
+    VoicePrompt expect{VoicePrompt::MSG_ABORTED, VoicePrompt::PROMPT_NOSKIP};
 
     deleteMenu->confirm();
-    deleteMenu->handlePlayback();
-    deleteMenu->abort();
+    deleteMenu->setTagState(Message::NEWKNOWNTAG);
 
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
-    deleteMenu->handlePlayback();
+    deleteMenu->abort();
 }
 
 TEST_F(DeleteMenuTest, menuComplete_abort_reentry_promptsDeleteTag)
 {
-    deleteMenu->setTagState(Message::NEWKNOWNTAG);
-    VoicePrompt expect{VoicePrompt::MSG_CONFIRM_DELETION, VoicePrompt::PROMPT_ALLOWSKIP};
+    VoicePrompt expect{VoicePrompt::MSG_DELETETAG, VoicePrompt::PROMPT_NOSKIP};
 
     deleteMenu->confirm();
-    deleteMenu->handlePlayback();
+    deleteMenu->setTagState(Message::NEWKNOWNTAG);
     deleteMenu->abort();
 
-    deleteMenu->confirm();
-
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
-    deleteMenu->handlePlayback();
+    deleteMenu->confirm();
 }
 
 // PREVIEW tests
 TEST_F(DeleteMenuTest, cardToDeleteDetected_cardPresent_playsPreview)
 {
     ON_CALL(m_nfcControlMock, readFolderFromTag(_)).WillByDefault(Return(true));
-    deleteMenu->setTagState(Message::NEWKNOWNTAG);
     Folder expect; // did not delegate to fake so read method will not do anything
 
     deleteMenu->confirm();
-
     EXPECT_CALL(m_mp3PlayMock, playFolder(identicalFolder(expect)));
-    deleteMenu->handlePlayback();
+    deleteMenu->setTagState(Message::NEWKNOWNTAG);
 }
 
 TEST_F(DeleteMenuTest, cardToDeleteDetected_noCard_noPreviewPlayed)
 {
     ON_CALL(m_nfcControlMock, readFolderFromTag(_)).WillByDefault(Return(false));
-    deleteMenu->setTagState(Message::NEWKNOWNTAG);
 
     deleteMenu->confirm();
 
     EXPECT_CALL(m_mp3PlayMock, playFolder(_)).Times(0);
-    deleteMenu->handlePlayback();
+    deleteMenu->setTagState(Message::NEWKNOWNTAG);
 }

@@ -37,6 +37,7 @@ bool DeleteMenu::isComplete()
 void DeleteMenu::abort()
 {
     m_menuState.abort();
+    playStateMessage();
 }
 
 void DeleteMenu::selectNext()
@@ -77,11 +78,6 @@ bool DeleteMenu::isActive()
 
 void DeleteMenu::playPreview()
 {
-    if (!m_menuState.isPendingConfirmDelete())
-    {
-        return;
-    }
-
     Folder preview;
     if (m_rNfcControl.readFolderFromTag(preview))
     {

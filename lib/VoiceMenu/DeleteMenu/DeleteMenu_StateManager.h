@@ -22,7 +22,6 @@ public:
     uint16_t getMenuStateMessage();
 
     bool isActive();
-    bool isPendingConfirmDelete();
     bool isComplete();
 
 private:

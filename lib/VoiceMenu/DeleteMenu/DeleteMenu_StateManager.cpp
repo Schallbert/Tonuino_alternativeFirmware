@@ -57,8 +57,3 @@ bool DeleteMenu_StateManager::isComplete()
 {
     return (menuState == COMPLETE);
 }
-
-bool DeleteMenu_StateManager::isPendingConfirmDelete()
-{
-    return (menuState == CONFIRM_DELETE);
-}
