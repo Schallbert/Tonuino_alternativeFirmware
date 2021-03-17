@@ -96,7 +96,7 @@ TEST_F(VoiceMenuTest, initLinkMenu_isActive_returnsTrue)
 TEST_F(VoiceMenuTest, linkMenuRunning_isActive_returnsTrue)
 {
     m_pVoiceMenu->setTagState(Message::UNKNOWNTAG);
-    m_pVoiceMenu->loop();                                        // enters Menu: select folderId
+    m_pVoiceMenu->loop();                           // enters Menu: select folderId
     m_pVoiceMenu->setUserInput(Message::INPUTPLPS); // enters (invalid) folderId
     m_pVoiceMenu->loop();
 
@@ -106,10 +106,10 @@ TEST_F(VoiceMenuTest, linkMenuRunning_isActive_returnsTrue)
 TEST_F(VoiceMenuTest, linkMenuComplete_isActive_returnsFalse)
 {
     m_pVoiceMenu->setTagState(Message::UNKNOWNTAG);
-    m_pVoiceMenu->loop();                                        // enters Menu: select folderId
+    m_pVoiceMenu->loop();                           // enters Menu: select folderId
     m_pVoiceMenu->setUserInput(Message::INPUTPLPS); // provides (invalid) confirmation
-    m_pVoiceMenu->loop();                                        // selects folder Id
-    m_pVoiceMenu->loop();                                        // selects playmode and completes Menu
+    m_pVoiceMenu->loop();                           // selects folder Id
+    m_pVoiceMenu->loop();                           // selects playmode and completes Menu
 
     ASSERT_FALSE(m_pVoiceMenu->isActive());
 }
@@ -117,10 +117,10 @@ TEST_F(VoiceMenuTest, linkMenuComplete_isActive_returnsFalse)
 TEST_F(VoiceMenuTest, linkMenuCompleteAndCalledAgain_isActive_returnsTrue)
 {
     m_pVoiceMenu->setTagState(Message::UNKNOWNTAG);
-    m_pVoiceMenu->loop();                                        // enters Menu: select folderId
+    m_pVoiceMenu->loop();                           // enters Menu: select folderId
     m_pVoiceMenu->setUserInput(Message::INPUTPLPS); // provides (invalid) confirmation
-    m_pVoiceMenu->loop();                                        // selects folder Id
-    m_pVoiceMenu->loop();                                        // selects playmode and completes Menu
+    m_pVoiceMenu->loop();                           // selects folder Id
+    m_pVoiceMenu->loop();                           // selects playmode and completes Menu
 
     m_pVoiceMenu->loop(); // call again
 
@@ -142,7 +142,7 @@ TEST_F(VoiceMenuTest, linkMenu_linkPreview_isInvoked)
     ON_CALL(m_NfcControlMock, readFolderFromTag(_)).WillByDefault(Return(true));
     m_pVoiceMenu->setTagState(Message::UNKNOWNTAG);
 
-    m_pVoiceMenu->loop();                                        // enter
+    m_pVoiceMenu->loop();                           // enter
     m_pVoiceMenu->setUserInput(Message::INPUTNEXT); // if it stays PP_LONGPRESS that will abort the menu
 
     EXPECT_CALL(m_Mp3PlayMock, playFolder(_));
@@ -152,7 +152,7 @@ TEST_F(VoiceMenuTest, linkMenu_linkPreview_isInvoked)
 // Delete Menu specifics --------------------------
 TEST_F(VoiceMenuTest, initDeleteMenu_isActive_returnsTrue)
 {
-    m_pVoiceMenu->setTagState(Message::ACTIVETAG);
+    m_pVoiceMenu->setTagState(Message::NOTAG);
     m_pVoiceMenu->setUserInput(Message::INPUTPLPSDC);
 
     m_pVoiceMenu->loop(); // entry conditions for Delete menu met
@@ -162,46 +162,43 @@ TEST_F(VoiceMenuTest, initDeleteMenu_isActive_returnsTrue)
 
 TEST_F(VoiceMenuTest, deleteMenuRunning_isActive_returnsTrue)
 {
-    m_pVoiceMenu->setTagState(Message::ACTIVETAG);
+    m_pVoiceMenu->setTagState(Message::NOTAG);
     m_pVoiceMenu->setUserInput(Message::INPUTPLPSDC);
     m_pVoiceMenu->loop(); // enter
     m_pVoiceMenu->setTagState(Message::NEWKNOWNTAG);
-    m_pVoiceMenu->setUserInput(Message::INPUTNONE);
-    m_pVoiceMenu->loop(); // state: please confirm deletion
+    m_pVoiceMenu->setUserInput(Message::INPUTNONE); // state: please confirm deletion
 
     ASSERT_TRUE(m_pVoiceMenu->isActive());
 }
 
 TEST_F(VoiceMenuTest, deleteMenuComplete_isActive_returnsFalse)
 {
-    m_pVoiceMenu->setTagState(Message::ACTIVETAG);
+    m_pVoiceMenu->setTagState(Message::NOTAG);
     m_pVoiceMenu->setUserInput(Message::INPUTPLPSDC);
     m_pVoiceMenu->loop(); // enter
     m_pVoiceMenu->setUserInput(Message::INPUTNONE);
     m_pVoiceMenu->setTagState(Message::NEWKNOWNTAG);
-    m_pVoiceMenu->loop();                                        // register known tag
+     m_pVoiceMenu->loop();
     m_pVoiceMenu->setUserInput(Message::INPUTPLPS); // provides (invalid) confirmation
-    m_pVoiceMenu->loop();                                        // completes menu
+    m_pVoiceMenu->loop();                           // completes menu
 
     ASSERT_FALSE(m_pVoiceMenu->isActive());
 }
 
 TEST_F(VoiceMenuTest, initdeleteMenu_loop_invokesPrompt)
 {
-    m_pVoiceMenu->setTagState(Message::ACTIVETAG);
+    m_pVoiceMenu->setTagState(Message::NOTAG);
     m_pVoiceMenu->setUserInput(Message::INPUTPLPSDC);
-    m_pVoiceMenu->loop();                                       // enter
-    m_pVoiceMenu->setUserInput(Message::INPUTNONE); // if it stays PP_LONGPRESS that will abort the menu
 
     EXPECT_CALL(m_Mp3PromptMock, playPrompt(_));
-    m_pVoiceMenu->loop();
+    m_pVoiceMenu->loop(); // enter
 }
 
 TEST_F(VoiceMenuTest, deleteMenu_deletePreview_isInvoked)
 {
     ON_CALL(m_NfcControlMock, readFolderFromTag(_)).WillByDefault(Return(true));
 
-    m_pVoiceMenu->setTagState(Message::ACTIVETAG);
+    m_pVoiceMenu->setTagState(Message::NOTAG);
     m_pVoiceMenu->setUserInput(Message::INPUTPLPSDC);
     m_pVoiceMenu->loop(); // enter
     m_pVoiceMenu->setTagState(Message::NEWKNOWNTAG);

@@ -40,7 +40,7 @@ public:
 
 private:
     void playPreview() override;
-    void writeTag();
+    void promptWriteFailed();
 
 private:
     NfcControl_interface &m_rNfcControl;

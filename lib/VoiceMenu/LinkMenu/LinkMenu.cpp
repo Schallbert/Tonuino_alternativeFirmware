@@ -6,24 +6,26 @@
 void LinkMenu::confirm()
 {
     m_menuState.confirm();
-    VoicePrompt menuStateMessage{m_menuState.getMenuStateMessage(), VoicePrompt::PROMPT_ALLOWSKIP};
 
     if (isComplete())
     {
-        writeTag();
-        menuStateMessage.reset(m_menuState.getMenuStateMessage(), VoicePrompt::PROMPT_NOSKIP);
+        bool writeSuccess = m_rNfcControl.writeFolderToTag(m_menuState.getResult());
+        if (!writeSuccess)
+        {
+            promptWriteFailed();
+            return;
+        }
     }
+
+    VoicePrompt menuStateMessage{m_menuState.getMenuStateMessage(), VoicePrompt::PROMPT_ALLOWSKIP};
     m_rMp3Prompt.playPrompt(menuStateMessage);
 }
 
-void LinkMenu::writeTag()
+void LinkMenu::promptWriteFailed()
 {
-    if (!m_rNfcControl.writeFolderToTag(m_menuState.getResult()))
-    {
-        VoicePrompt error{VoicePrompt::MSG_ERROR_CARDWRITE, VoicePrompt::PROMPT_NOSKIP};
-        m_rMp3Prompt.playPrompt(error);
-        m_menuState.abort();
-    }
+    VoicePrompt error{VoicePrompt::MSG_ERROR_CARDWRITE, VoicePrompt::PROMPT_NOSKIP};
+    m_rMp3Prompt.playPrompt(error);
+    m_menuState.abort();
 }
 
 void LinkMenu::abort()

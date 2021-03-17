@@ -94,7 +94,6 @@ TEST_F(LinkMenuTest, menuComplete_writesConfigToCardFails_promptsError)
     linkMenu->selectNext();
 
     VoicePrompt expect{VoicePrompt(VoicePrompt::MSG_ERROR_CARDWRITE, VoicePrompt::PROMPT_NOSKIP)};
-
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
     linkMenu->confirm();
 }
@@ -146,31 +145,21 @@ TEST_F(LinkMenuTest, menuComplete_setStatusLed_statusLedChangeRequested)
 }
 
 // Prompt tests
-TEST_F(LinkMenuTest, noInit_noPromptSet)
-{
-    EXPECT_CALL(m_mp3PromptMock, playPrompt(invalidPrompt()));
-    linkMenu->handlePlayback();
-}
-
 TEST_F(LinkMenuTest, selectFolderId_noSelection_getPrompt_FolderIdAndAllowSkip)
 {
     VoicePrompt expect{VoicePrompt::MSG_SELECT_FOLDERID, VoicePrompt::PROMPT_ALLOWSKIP};
 
-    linkMenu->confirm();
-
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
-    linkMenu->handlePlayback();
+    linkMenu->confirm();
 }
 
 TEST_F(LinkMenuTest, selectPlayMode_noSelection_getPrompt_PlayModeAndAllowSkip)
 {
     VoicePrompt expect{VoicePrompt::MSG_SELECT_PLAYMODE, VoicePrompt::PROMPT_ALLOWSKIP};
-
-    linkMenu->confirm();
     linkMenu->confirm();
 
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
-    linkMenu->handlePlayback();
+    linkMenu->confirm();
 }
 
 TEST_F(LinkMenuTest, menuComplete_noSelection_getPrompt_TagConfigSuccess)
@@ -180,10 +169,9 @@ TEST_F(LinkMenuTest, menuComplete_noSelection_getPrompt_TagConfigSuccess)
 
     linkMenu->confirm();
     linkMenu->confirm();
-    linkMenu->confirm();
 
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
-    linkMenu->handlePlayback();
+    linkMenu->confirm();
 }
 
 TEST_F(LinkMenuTest, menuComplete_noSelection_confirmAgainAndGetPrompt_noPromptSet)
@@ -192,10 +180,9 @@ TEST_F(LinkMenuTest, menuComplete_noSelection_confirmAgainAndGetPrompt_noPromptS
     linkMenu->confirm();
     linkMenu->confirm();
     linkMenu->confirm();
-    linkMenu->confirm();
 
     EXPECT_CALL(m_mp3PromptMock, playPrompt(invalidPrompt()));
-    linkMenu->handlePlayback();
+    linkMenu->confirm();
 }
 
 TEST_F(LinkMenuTest, selectFolderId1_getPrompt_returns1)
@@ -203,10 +190,9 @@ TEST_F(LinkMenuTest, selectFolderId1_getPrompt_returns1)
     VoicePrompt expect{1, VoicePrompt::PROMPT_NOSKIP};
 
     linkMenu->confirm();
-    linkMenu->selectNext();
 
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
-    linkMenu->handlePlayback();
+    linkMenu->selectNext();
 }
 
 TEST_F(LinkMenuTest, selectFolderIdMAX_getPrompt_returnsMAX)
@@ -214,10 +200,9 @@ TEST_F(LinkMenuTest, selectFolderIdMAX_getPrompt_returnsMAX)
     VoicePrompt expect{MAXFOLDERCOUNT, VoicePrompt::PROMPT_NOSKIP};
 
     linkMenu->confirm();
-    linkMenu->selectPrev();
 
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
-    linkMenu->handlePlayback();
+    linkMenu->selectPrev();
 }
 
 TEST_F(LinkMenuTest, selectPlayMode1_getPrompt_returnsALBUM)
@@ -228,10 +213,9 @@ TEST_F(LinkMenuTest, selectPlayMode1_getPrompt_returnsALBUM)
 
     linkMenu->confirm();
     linkMenu->confirm();
-    linkMenu->selectNext();
 
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
-    linkMenu->handlePlayback();
+    linkMenu->selectNext();
 }
 
 TEST_F(LinkMenuTest, selectPlayModeMAX_getPrompt_returnsONELARGETRACK)
@@ -242,10 +226,9 @@ TEST_F(LinkMenuTest, selectPlayModeMAX_getPrompt_returnsONELARGETRACK)
 
     linkMenu->confirm();
     linkMenu->confirm();
-    linkMenu->selectPrev();
 
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
-    linkMenu->handlePlayback();
+    linkMenu->selectPrev();
 }
 
 TEST_F(LinkMenuTest, selectPlayMode_testRollover_getPrompt_returnsSAVEPROGRESS)
@@ -257,10 +240,9 @@ TEST_F(LinkMenuTest, selectPlayMode_testRollover_getPrompt_returnsSAVEPROGRESS)
     linkMenu->confirm();
     linkMenu->confirm();
     linkMenu->selectPrev();
-    linkMenu->selectPrev();
 
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
-    linkMenu->handlePlayback();
+    linkMenu->selectPrev();
 }
 
 TEST_F(LinkMenuTest, noInit_abort_noPromptSet)
@@ -304,10 +286,10 @@ TEST_F(LinkMenuTest, menuCompleted_abort_promptsAborted)
     linkMenu->selectNext();
     linkMenu->confirm();
 
-    linkMenu->abort();
+
 
     EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
-    linkMenu->handlePlayback();
+    linkMenu->abort();
 }
 
 // Folder Preview Tests
@@ -316,10 +298,9 @@ TEST_F(LinkMenuTest, selectFolderId1_getPreview_returnsPreviewFolder1)
     Folder expect{1, Folder::ONELARGETRACK};
 
     linkMenu->confirm();
-    linkMenu->selectNext();
 
     EXPECT_CALL(m_mp3PlayMock, playFolder(identicalFolder(expect)));
-    linkMenu->handlePlayback();
+    linkMenu->selectNext();
 }
 
 TEST_F(LinkMenuTest, selectFolderIdMAX_getPreview_returnsPreviewFolderMAX)
@@ -327,8 +308,7 @@ TEST_F(LinkMenuTest, selectFolderIdMAX_getPreview_returnsPreviewFolderMAX)
     Folder expect{MAXFOLDERCOUNT, Folder::ONELARGETRACK};
 
     linkMenu->confirm();
-    linkMenu->selectPrev();
 
     EXPECT_CALL(m_mp3PlayMock, playFolder(identicalFolder(expect)));
-    linkMenu->handlePlayback();
+    linkMenu->selectPrev();
 }
