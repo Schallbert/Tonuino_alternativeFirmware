@@ -85,7 +85,6 @@ const char *const s_cttTable[] PROGMEM = {
 char *MessageToString::getStringFromMessage(const Message::eMessageContent msg)
 {
     // SUCCESS: proven that the guards prevent segfault when called with nonexistant content.
-    // TODO: Acceptance test case for this behavior.
     m_completeMessage[0] = 0; //delete string
     Message message{Message(msg)};
     uint8_t content = message.getContentInt();

@@ -63,7 +63,7 @@ bool Mp3Play_implementation::isFolderValid(Folder &folder)
     else
     {
         m_rMessageHandler.printMessage(Message::ERRORFOLDER);
-         VoicePrompt folderErrorPrompt(VoicePrompt::MSG_ERROR_FOLDER, VoicePrompt::PROMPT_NOSKIP);
+        VoicePrompt folderErrorPrompt(VoicePrompt::MSG_ERROR_FOLDER, VoicePrompt::PROMPT_NOSKIP);
         m_rMp3Prompt.playPrompt(folderErrorPrompt);
         result = false;
     }
@@ -98,7 +98,7 @@ bool Mp3Play_implementation::shouldPlaybackStop() const
     {
         shouldStop = true;
     }
-
+    
     if (LULLABYE_TIMEOUT_ACTIVE && m_rLullabyeTimer.isElapsed())
     {
         shouldStop = true;

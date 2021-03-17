@@ -19,7 +19,7 @@ public:
         MSG_ERROR_CARDREAD = 411,
         MSG_ERROR_FOLDER = 412,
         MSG_ERROR_TOOMANYTRACKS = 413,
-        MSG_HELP = 420, // TODO HOW TO SELECT UserInput variant?
+        MSG_HELP = USERINPUT_VARIANT,
         MSG_BUTTONLOCK = 426,
         MSG_BUTTONFREE = 427,
         MSG_STARTUP = 500,

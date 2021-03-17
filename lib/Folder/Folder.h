@@ -13,9 +13,9 @@ public:
     {
         UNDEFINED = 0,     // Not implemented
         ALBUM = 1,         // Play tracks in order on SD card (1,2,3...), endless, rollover.
-        RANDOM = 2,        // Like ALBUM but with shuffled non-repeating queue. TODO: RECORD VOICE OUTPUT
-        SAVEPROGRESS = 3,  // like ALBUM but saves track that is currently active. TODO: RE-RECORD VOICE OUTPUT
-        ONELARGETRACK = 4, // So-called Hörspielmodus. Queue like ALBUM but stops playback after finishing track. TODO: RE-RECORD VOICE OUTPUT.
+        RANDOM = 2,        // Like ALBUM but with shuffled non-repeating queue.
+        SAVEPROGRESS = 3,  // like ALBUM but saves track that is currently active
+        ONELARGETRACK = 4, // So-called Hörspielmodus. Queue like ALBUM but stops playback after finishing track.
         ENUM_COUNT = 4     // Last entry of enum to allow iteration (no value for content)
     };
 

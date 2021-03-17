@@ -32,7 +32,7 @@ Message::eMessageContent UserInput_ClickEncoder::getUserRequest()
     {
         result = Message::INPUTPLPS;
     }
-    else if (encoderDiff > 0) // TODO: Check in INTEGRATION TEST if this really is a good idea. Alternative: take position.
+    else if (encoderDiff > 0)
     {
         //encoder turned right
         if (buttonState == Button::Held || buttonState == Button::Closed)

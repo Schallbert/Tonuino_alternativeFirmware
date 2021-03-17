@@ -40,5 +40,5 @@ void timer1Task_1ms()
 
 // - FEATURE: implement power save (arduino, nfc, etc.)
 // - FEATURE: Card must be placed permanently or can be removed while playing? Config?
-// - FEATURE: VoiceMenu for configuration items that currently require reprogramming
+// - FEATURE: VoiceMenu for configuration items that currently require reprogramming (Lullabye time, init volume, max volume...)
 // - FEAUTRE: Lullaybe time per Card (currently System level only)
