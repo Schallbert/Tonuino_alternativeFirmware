@@ -2,7 +2,7 @@
 #define TONUINO_CONFIG_H
 
 //DEBUG OUTPUT [just write "false" to disable debug output on serial]
-#define DEBUGSERIAL true
+#define DEBUGSERIAL false
 #define DEBUGSERIAL_BAUDRATE 9600
 #define DEBUG_MAXMESSAGELENGTH 33 // max number of characters in a message
 

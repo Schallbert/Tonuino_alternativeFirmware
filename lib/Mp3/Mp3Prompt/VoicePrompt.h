@@ -1,6 +1,7 @@
 #ifndef PROMPTS_H
 #define PROMPTS_H
 
+#include "Tonuino_config.h"
 #include "Arduino_types.h"
 
 class VoicePrompt

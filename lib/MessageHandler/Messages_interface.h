@@ -96,7 +96,7 @@ class MessageToString_interface
 {
 public:
     virtual ~MessageToString_interface(){};
-    virtual char *getStringFromMessage(const Message::eMessageContent message) = 0;
+    virtual const char *getStringFromMessage(const Message::eMessageContent message) = 0;
 };
 
 #endif // MESSAGES_INTERFACE_H

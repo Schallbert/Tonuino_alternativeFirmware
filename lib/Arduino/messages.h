@@ -11,7 +11,7 @@ public:
     ~MessageToString() = default;
     MessageToString(const MessageToString &cpy) = delete;
 
-    char *getStringFromMessage(const Message::eMessageContent message) override;
+    const char *getStringFromMessage(const Message::eMessageContent message) override;
 
 private:
     char m_completeMessage[DEBUG_MAXMESSAGELENGTH]{};

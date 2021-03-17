@@ -7,7 +7,7 @@ void MessageHandler::printMessage(const Message::eMessageContent message)
 {
     if (isNewMessage(message))
     {
-        char *buffer = m_rMessages.getStringFromMessage(message);
+        const char *buffer = m_rMessages.getStringFromMessage(message);
         if (buffer)
         {
             m_rSerial.com_println(buffer);

@@ -6,6 +6,8 @@
 // WARNING:
 // Custom Message s_gr + ": " + s_ctt may not count
 // more letters than DEBUG_MAXMESSAGELENGTH -1 or there will be SEGFAULTs!
+const char s_error[] PROGMEM = "MESSAGE ERROR!";
+
 #if DEBUGSERIAL
 const char s_gr0[] PROGMEM = "System";
 const char s_gr1[] PROGMEM = "Mp3Control";
@@ -67,8 +69,6 @@ const char s_ctt75[] PROGMEM = "NextLong";
 const char s_ctt76[] PROGMEM = "Prev";
 const char s_ctt77[] PROGMEM = "PrevLong";
 
-const char s_error[] PROGMEM = "MESSAGE ERROR!";
-
 const char s_sep[] PROGMEM = ": ";
 
 const char *const s_grTable[] PROGMEM = {s_gr0, s_gr1, s_gr2, s_gr3, s_gr4, s_gr5, s_gr6, s_gr7};
@@ -82,7 +82,7 @@ const char *const s_cttTable[] PROGMEM = {
     s_ctt60, s_ctt61, s_ctt62, s_ctt63, s_ctt64, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error,
     s_ctt70, s_ctt71, s_ctt72, s_ctt73, s_ctt74, s_ctt75, s_ctt76, s_ctt77, s_ctt35, s_ctt03, s_error, s_error, s_error, s_error, s_error, s_error};
 
-char *MessageToString::getStringFromMessage(const Message::eMessageContent msg)
+const char *MessageToString::getStringFromMessage(const Message::eMessageContent msg)
 {
     // SUCCESS: proven that the guards prevent segfault when called with nonexistant content.
     m_completeMessage[0] = 0; //delete string
@@ -107,7 +107,7 @@ char *MessageToString::getStringFromMessage(const Message::eMessageContent msg)
     return m_completeMessage;
 }
 #else
-char *MessageToString::getStringFromMessage(const Message &message)
+const char *MessageToString::getStringFromMessage(const Message::eMessageContent msg)
 {
     return s_error;
 }
