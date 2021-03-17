@@ -63,7 +63,6 @@ private:
     MessageHander_interface &m_rMessageHandler;
 
     Message::eMessageContent m_userInput{Message::INPUTNONE};
-    Message::eMessageContent m_tagState{Message::NOTAG};
     bool m_isLocked{false};
     typedef void (Mp3Control::*dispatcher)(); // table of function pointers
 };

@@ -180,33 +180,23 @@ TEST_F(SystemTest, NewUnknownTag_InvokesLinkMenu)
     ON_CALL(m_DfMiniMp3Mock, isPlaying()).WillByDefault(Return(false)); // not playing
     ON_CALL(m_DfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_DfMiniPromptTimer, &SimpleTimer::timerTick));
 
-    m_pTonuino->run(); // enters Link Menu
-
     EXPECT_CALL(m_DfMiniMp3Mock, playPrompt(static_cast<uint16_t>(VoicePrompt::MSG_SELECT_FOLDERID)));
-    m_pTonuino->run(); // once entered, prompt will play in next call
+    m_pTonuino->run(); // enters Link Menu
 }
 
 TEST_F(SystemTest, ActiveTag_ppDoubleClick_InvokesDeleteMenu)
 {
     // Should return "KNOWNTAG" on MIFARE_1k, will respond with fake tag on read() call.
-    ON_CALL(m_Mfrc522Mock, isTagPresent()).WillByDefault(Return(true));
-    ON_CALL(m_Mfrc522Mock, setTagActive()).WillByDefault(Return(true));
-    ON_CALL(m_Mfrc522Mock, getTagUid()).WillByDefault(Return(true));
-    ON_CALL(m_Mfrc522Mock, tagLogin(_)).WillByDefault(Return(true));
-    ON_CALL(m_Mfrc522Mock, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
-    m_Mfrc522Mock.DelegateToFakeMini1k4k(); // Should default to "known TAG"
-    ON_CALL(m_DfMiniMp3Mock, getFolderTrackCount(_)).WillByDefault(Return(5));
+    ON_CALL(m_Mfrc522Mock, isTagPresent()).WillByDefault(Return(false));
 
     // Simulate player behavior to satisfy voiceprompt block loop
-    ON_CALL(m_DfMiniMp3Mock, isPlaying()).WillByDefault(Return(true));
+    ON_CALL(m_DfMiniMp3Mock, isPlaying()).WillByDefault(Return(false));
+    ON_CALL(m_DfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_DfMiniPromptTimer, &SimpleTimer::timerTick));
 
-    m_pTonuino->run(); // New Tag detected (will try to Play Folder)
     ON_CALL(m_UserInputMock, getUserRequest()).WillByDefault(Return(Message::INPUTPLPSDC));
-    m_pTonuino->run(); // Active Tag, enters Delete Menu
-    ON_CALL(m_UserInputMock, getUserRequest()).WillByDefault(Return(Message::INPUTNONE));
 
     EXPECT_CALL(m_DfMiniMp3Mock, playPrompt(static_cast<uint16_t>(VoicePrompt::MSG_DELETETAG)));
-    m_pTonuino->run(); // once entered, prompt will play in next call
+    m_pTonuino->run(); // will enter menu, thus call prompt
 }
 
 TEST_F(SystemTest, VoiceMenuActive_blocksNormalPlayback)
