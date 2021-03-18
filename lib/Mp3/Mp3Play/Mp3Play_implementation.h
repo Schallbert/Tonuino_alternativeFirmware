@@ -38,7 +38,7 @@ private:
 
     bool prepareFolderToPlay(Folder &folder);
     bool isFolderNew(const Folder &folder) const;
-    bool isFolderValid(Folder &folder);
+    bool checkFolder(Folder &folder);
     uint8_t getTrackCountOfFolderOnSdCard(const Folder &folder) const;
 
 private:

@@ -103,7 +103,7 @@ TEST_F(Mp3Play, autoplay_trackPlaying_nop)
     ON_CALL(m_dfMiniMock, isTrackFinished()).WillByDefault(Return(false));
 
     EXPECT_CALL(m_dfMiniMock, playFolderTrack(_, _)).Times(0);
-    EXPECT_CALL(m_dfMiniMock, stop()).Times(0);
+    EXPECT_CALL(m_dfMiniMock, pause()).Times(0);
 
     m_pMp3Play->autoplay();
 }
@@ -112,7 +112,7 @@ TEST_F(Mp3Play, autoplay_noFolder_nop)
 {
     ON_CALL(m_dfMiniMock, isTrackFinished()).WillByDefault(Return(true));
     // No Folder existing!
-    EXPECT_CALL(m_dfMiniMock, stop());
+    EXPECT_CALL(m_dfMiniMock, pause());
     m_pMp3Play->autoplay();
 }
 
@@ -136,7 +136,7 @@ TEST_F(Mp3Play, autoplay_ONELARGETRACK_trackFinished_stop)
 
     ON_CALL(m_dfMiniMock, isTrackFinished()).WillByDefault(Return(true));
 
-    EXPECT_CALL(m_dfMiniMock, stop()); // autoplay calls stop
+    EXPECT_CALL(m_dfMiniMock, pause()); // autoplay calls stop
     m_pMp3Play->autoplay();
 }
 
@@ -193,7 +193,7 @@ TEST_F(Mp3Play, autoplay_LULLABYE_trackFinished_timeout_stop)
         m_lullabyeTimer.timerTick();
     }
 
-    EXPECT_CALL(m_dfMiniMock, stop()); // autoplay calls stop
+    EXPECT_CALL(m_dfMiniMock, pause()); // autoplay calls stop
     m_pMp3Play->autoplay();
 }
 

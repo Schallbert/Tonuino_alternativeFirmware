@@ -22,24 +22,29 @@ void Mp3Play_implementation::playFolder(Folder &folder)
 
 bool Mp3Play_implementation::prepareFolderToPlay(Folder &folder)
 {
-    bool check{true};
-    bool countValid{true};
-    check &= isFolderNew(folder);
-
     folder.setupDependencies(&m_rArduinoHal, &m_rMessageHandler);
-    countValid = folder.setTrackCount(getTrackCountOfFolderOnSdCard(folder));
+    bool countValid = folder.setTrackCount(getTrackCountOfFolderOnSdCard(folder));
+
     if (!countValid)
     {
         VoicePrompt tooManyTracks(VoicePrompt::MSG_ERROR_TOOMANYTRACKS, VoicePrompt::PROMPT_ALLOWSKIP);
         m_rMp3Prompt.playPrompt(tooManyTracks);
     }
-    check &= isFolderValid(folder);
-    return check;
-}
 
-bool Mp3Play_implementation::isFolderNew(const Folder &folder) const
-{
-    return (m_currentFolder.getFolderId() != folder.getFolderId());
+    if (!checkFolder(folder))
+    {
+        return false;
+    }
+
+    // Folder already cached?
+    if (folder.getFolderId() == m_currentFolder.getFolderId())
+    {
+        return false;
+    }
+    
+    m_currentFolder = folder;
+
+    return true;
 }
 
 uint8_t Mp3Play_implementation::getTrackCountOfFolderOnSdCard(const Folder &folder) const
@@ -53,40 +58,37 @@ void Mp3Play_implementation::restartLullabyeTimer()
     m_rLullabyeTimer.start(LULLABYE_TIMEOUT_SECS);
 }
 
-bool Mp3Play_implementation::isFolderValid(Folder &folder)
+bool Mp3Play_implementation::checkFolder(Folder &folder)
 {
-    bool result{true};
-    if (folder.isValid())
-    {
-        m_currentFolder = folder;
-    }
-    else
+    if (!folder.isValid())
     {
         m_rMessageHandler.printMessage(Message::ERRORFOLDER);
         VoicePrompt folderErrorPrompt(VoicePrompt::MSG_ERROR_FOLDER, VoicePrompt::PROMPT_NOSKIP);
         m_rMp3Prompt.playPrompt(folderErrorPrompt);
-        result = false;
+        return false;
     }
-    return result;
+    return true;
 }
 
 void Mp3Play_implementation::autoplay()
 {
-    if (m_rDfMiniMp3.isTrackFinished())
+    if (!m_rDfMiniMp3.isTrackFinished())
     {
-        Message::eMessageContent autoplayInfo{Message::AUTOPLAYPAUSE};
-        if (shouldPlaybackStop())
-        {
-            m_rMessageHandler.printMessage(autoplayInfo);
-            m_rDfMiniMp3.stop();
-            restartLullabyeTimer(); // Lullabye timer gets restarted until a track is playing.
-        }
-        else
-        {
-            autoplayInfo = Message::AUTOPLAYNEXT;
-            m_rMessageHandler.printMessage(autoplayInfo);
-            playNext();
-        }
+        return;
+    }
+
+    Message::eMessageContent autoplayInfo{Message::AUTOPLAYPAUSE};
+    if (shouldPlaybackStop())
+    {
+        m_rMessageHandler.printMessage(autoplayInfo);
+        m_rDfMiniMp3.pause();
+        restartLullabyeTimer(); // Lullabye timer gets restarted until a track is playing.
+    }
+    else
+    {
+        autoplayInfo = Message::AUTOPLAYNEXT;
+        m_rMessageHandler.printMessage(autoplayInfo);
+        playNext();
     }
 }
 
@@ -98,7 +100,7 @@ bool Mp3Play_implementation::shouldPlaybackStop() const
     {
         shouldStop = true;
     }
-    
+
     if (LULLABYE_TIMEOUT_ACTIVE && m_rLullabyeTimer.isElapsed())
     {
         shouldStop = true;
@@ -114,18 +116,20 @@ bool Mp3Play_implementation::shouldPlaybackStop() const
 
 void Mp3Play_implementation::playNext()
 {
-    if (isFolderValid(m_currentFolder))
+    if (checkFolder(m_currentFolder))
     {
         m_rDfMiniMp3.playFolderTrack(m_currentFolder.getFolderId(),
                                      m_currentFolder.getNextTrack());
+        restartLullabyeTimer();
     }
 }
 
 void Mp3Play_implementation::playPrev()
 {
-    if (isFolderValid(m_currentFolder))
+    if (checkFolder(m_currentFolder))
     {
         m_rDfMiniMp3.playFolderTrack(m_currentFolder.getFolderId(),
                                      m_currentFolder.getPrevTrack());
+        restartLullabyeTimer();
     }
 }
