@@ -41,7 +41,7 @@ bool Mp3Play_implementation::prepareFolderToPlay(Folder &folder)
     {
         return false;
     }
-    
+
     m_currentFolder = folder;
 
     return true;
@@ -94,29 +94,19 @@ void Mp3Play_implementation::autoplay()
 
 bool Mp3Play_implementation::shouldPlaybackStop() const
 {
-    bool shouldStop{false};
-
-    if (!m_currentFolder.isInitiated())
+    if (!m_currentFolder.isInitiated() ||
+        (LULLABYE_TIMEOUT_ACTIVE && m_rLullabyeTimer.isElapsed()) ||
+        (m_currentFolder.getPlayMode() == Folder::ONELARGETRACK))
     {
-        shouldStop = true;
+        return true;
     }
 
-    if (LULLABYE_TIMEOUT_ACTIVE && m_rLullabyeTimer.isElapsed())
-    {
-        shouldStop = true;
-    }
-
-    if (m_currentFolder.getPlayMode() == Folder::ONELARGETRACK)
-    {
-        shouldStop = true;
-    }
-
-    return shouldStop;
+    return false;
 }
 
 void Mp3Play_implementation::playNext()
 {
-    if (checkFolder(m_currentFolder))
+    if (m_currentFolder.isValid())
     {
         m_rDfMiniMp3.playFolderTrack(m_currentFolder.getFolderId(),
                                      m_currentFolder.getNextTrack());
@@ -126,7 +116,7 @@ void Mp3Play_implementation::playNext()
 
 void Mp3Play_implementation::playPrev()
 {
-    if (checkFolder(m_currentFolder))
+    if (m_currentFolder.isValid())
     {
         m_rDfMiniMp3.playFolderTrack(m_currentFolder.getFolderId(),
                                      m_currentFolder.getPrevTrack());
