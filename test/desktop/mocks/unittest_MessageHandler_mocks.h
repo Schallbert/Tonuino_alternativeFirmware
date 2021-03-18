@@ -27,7 +27,7 @@ public:
 class Mock_MessageToString : public MessageToString_interface
 {
 public:
-    MOCK_METHOD(char *, getStringFromMessage, (const Message::eMessageContent message), (override));
+    MOCK_METHOD(const char *, getStringFromMessage, (const Message::eMessageContent message), (override));
 };
 
 MATCHER_P(identicalMessage, comp, "")

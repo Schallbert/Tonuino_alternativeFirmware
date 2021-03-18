@@ -35,6 +35,7 @@ protected:
 };
 
 // PRINT MESSAGE ///////////////////////////////////////////////////////////////
+#if DEBUGSERIAL
 TEST_F(MessageHandlerTest, PrintMessage_normal_willParseToString)
 {
     EXPECT_CALL(m_messagesMock, getStringFromMessage(_));
@@ -89,3 +90,4 @@ TEST_F(MessageHandlerTest, PrintMessage_offset_ParsesCorrectMessage)
     EXPECT_CALL(m_messagesMock, getStringFromMessage(identicalMessage(testOffset.getContent())));
     m_pMessageHandler->printMessage(testOffset.getContent());
 }
+#endif // DEBUGSERIAL
