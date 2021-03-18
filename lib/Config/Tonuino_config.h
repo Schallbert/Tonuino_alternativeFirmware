@@ -1,7 +1,7 @@
 #ifndef TONUINO_CONFIG_H
 #define TONUINO_CONFIG_H
 
-//DEBUG OUTPUT [just write "false" to disable debug output on serial]
+//DEBUG OUTPUT [just write "true" to enable debug output on serial]
 #define DEBUGSERIAL false
 #define DEBUGSERIAL_BAUDRATE 9600
 #define DEBUG_MAXMESSAGELENGTH 33 // max number of characters in a message
@@ -19,12 +19,12 @@
 #define FLASHQUICKMS 400
 
 //Folder specific data
-#define MAXFOLDERCOUNT 99 // up to 255 supported by player
+#define MAXFOLDERCOUNT 99     // up to 255 supported by player
 #define MAXTRACKSPERFOLDER 22 // up to 255 supported by player BUT limited due to RAM constraints!
 
-#define VOLUME_MAX 15                                          // Absolute max: 30
-#define VOLUME_MIN 1                                           // Absolute min: 0
-#define VOLUME_INIT 5                                          // Start volume. Anything between 0 and 30.
+#define VOLUME_MAX 15 // Absolute max: 30
+#define VOLUME_MIN 1  // Absolute min: 0
+#define VOLUME_INIT 5 // Start volume. Anything between 0 and 30.
 #define DFMINI_EQ_SETTING DfMiniMp3_interface::DfMp3_Eq_Normal
 
 //Timer1 interrupt task
@@ -35,14 +35,14 @@
 #define MENU_TIMEOUT_SECS 30             // menu will be automatically aborted if no input within this time
 
 //MP3 defines
-#define WAIT_DFMINI_READY 2      // sec
-#define TIMEOUT_PROMPT_PLAYED 15 // sec
+#define WAIT_DFMINI_READY 2     // sec
+#define TIMEOUT_PROMPT_PLAYED 6 // sec
 
 //NFC defines
 #define NFCTAG_BYTES_TO_WRITE 6 //bytes
 
 //Clickencoder / button defines
-#define ENC_STEPSPERNOTCH 4             // resolution of encoder.
-#define USERINPUTACTIVE_STATE LOW       // button's "pressed" state
+#define ENC_STEPSPERNOTCH 4       // resolution of encoder.
+#define USERINPUTACTIVE_STATE LOW // button's "pressed" state
 
 #endif // TONUINO_CONFIG_H

@@ -5,6 +5,7 @@
 
 void MessageHandler::printMessage(const Message::eMessageContent message)
 {
+#if DEBUGSERIAL
     if (isNewMessage(message))
     {
         const char *buffer = m_rMessages.getStringFromMessage(message);
@@ -13,6 +14,7 @@ void MessageHandler::printMessage(const Message::eMessageContent message)
             m_rSerial.com_println(buffer);
         }
     }
+#endif
 }
 
 bool MessageHandler::isNewMessage(const Message::eMessageContent msg)
