@@ -35,8 +35,8 @@
 #define MENU_TIMEOUT_SECS 30             // menu will be automatically aborted if no input within this time
 
 //MP3 defines
-#define WAIT_DFMINI_READY 2     // sec
-#define TIMEOUT_PROMPT_PLAYED 6 // sec
+#define WAIT_DFMINI_READY 2      // sec
+#define TIMEOUT_PROMPT_PLAYED 10 // sec
 
 //NFC defines
 #define NFCTAG_BYTES_TO_WRITE 6 //bytes

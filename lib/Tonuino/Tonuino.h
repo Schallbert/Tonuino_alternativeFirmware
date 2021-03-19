@@ -1,7 +1,6 @@
 #ifndef TONUINO_H
 #define TONUINO_H
 
-//#include "UserInput/justEncoder.h"
 #include "UserInput/UserInput_interface.h"
 #include "NfcControl/NfcControl_interface.h"
 #include "Mp3Control/Mp3Control_interface.h"
@@ -26,7 +25,6 @@ private:
 
 private:
     UserInput_interface &m_rUserInput;
-    //ThreeButtons &m_rUserInput;
     NfcControl_interface &m_rNfcControl;
     Mp3Control_interface &m_rMp3Control;
     VoiceMenu &m_rVoiceMenu;

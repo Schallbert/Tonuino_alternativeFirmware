@@ -125,6 +125,7 @@ TEST_F(SystemTest, NewKnownTag_noUserInput_playsFolder)
     ON_CALL(m_DfMiniMp3Mock, getFolderTrackCount(_)).WillByDefault(Return(5));
     m_Mfrc522Mock.DelegateToFakeMini1k4k();
 
+    ON_CALL(m_DfMiniMp3Mock, isPlaying()).WillByDefault(Return(true)); // otherwise follow-up autoplay will request next song
     EXPECT_CALL(m_DfMiniMp3Mock, playFolderTrack(fakeBufferData[4], 1));
     m_pTonuino->run();
 }
@@ -163,7 +164,7 @@ TEST_F(SystemTest, NewKnownTag_WontInvokeLinkMenu)
 
     m_pTonuino->run(); // Will not enter Link Menu
 
-    EXPECT_CALL(m_DfMiniMp3Mock, isPlaying());
+    EXPECT_CALL(m_DfMiniMp3Mock, isPlaying()).Times(2); // once for ledStatus, once for autoplay()
     m_pTonuino->run(); // Thus, won't block normal operation
 }
 
@@ -214,6 +215,6 @@ TEST_F(SystemTest, VoiceMenuActive_blocksNormalPlayback)
 
     m_pTonuino->run(); // enters Link Menu
 
-    EXPECT_CALL(m_DfMiniMp3Mock, isTrackFinished()).Times(0); // only autoplay within Mp3Play will call this
+    EXPECT_CALL(m_DfMiniMp3Mock, isPlaying()).Times(0); // only autoplay within Mp3Play will call this
     m_pTonuino->run();                                        // once entered, VoiceMenu will block playback
 }

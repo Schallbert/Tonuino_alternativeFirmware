@@ -1,5 +1,4 @@
 #include "Mp3Play_implementation.h"
-
 #include "Arduino_config.h"
 
 void Mp3Play_implementation::init()
@@ -72,7 +71,7 @@ bool Mp3Play_implementation::checkFolder(Folder &folder)
 
 void Mp3Play_implementation::autoplay()
 {
-    if (!m_rDfMiniMp3.isTrackFinished())
+    if (m_rDfMiniMp3.isPlaying())
     {
         return;
     }
@@ -106,7 +105,7 @@ bool Mp3Play_implementation::shouldPlaybackStop() const
 
 void Mp3Play_implementation::playNext()
 {
-    if (m_currentFolder.isValid())
+    if (checkFolder(m_currentFolder))
     {
         m_rDfMiniMp3.playFolderTrack(m_currentFolder.getFolderId(),
                                      m_currentFolder.getNextTrack());
@@ -116,7 +115,7 @@ void Mp3Play_implementation::playNext()
 
 void Mp3Play_implementation::playPrev()
 {
-    if (m_currentFolder.isValid())
+    if (checkFolder(m_currentFolder))
     {
         m_rDfMiniMp3.playFolderTrack(m_currentFolder.getFolderId(),
                                      m_currentFolder.getPrevTrack());

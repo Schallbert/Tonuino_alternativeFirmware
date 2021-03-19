@@ -140,7 +140,7 @@ public:
         m_dfMiniMp3.playFolderTrack(folderId, trackId);
         m_dfMiniMp3.loop();
         m_playsPrompt = false;
-        Mp3Notify::clearMessage(); // to clear "finished playing Track" mesage from buffer
+        Mp3Notify::clearMessage(); // to clear "finished playing Track" message from buffer
     }
 
     void stopPrompt() override
