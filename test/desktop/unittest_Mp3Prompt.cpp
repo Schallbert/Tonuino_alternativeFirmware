@@ -67,12 +67,13 @@ TEST_F(Mp3PromptTest, PromptMessage_noSkipPlaying_onlyStartTimeout)
 {
     VoicePrompt prompt{VoicePrompt(VoicePrompt::MSG_STARTUP, VoicePrompt::PROMPT_NOSKIP)};
     // timeout not elapsing
-    EXPECT_CALL(m_dfMiniMp3Mock, isPlaying())
+    ON_CALL(m_dfMiniMp3Mock, isPlaying()).WillByDefault(Return(true));
+    EXPECT_CALL(m_dfMiniMp3Mock, isTrackFinished())
         .Times(3)
-        .WillOnce(Return(true))                    // Called by WaitForPromptToStart()
-        .WillOnce(Return(true))                    // All following(s) called by WaitForPromptToFinish();
-        .WillRepeatedly(Return(false));            // Finishing before timeout
-    EXPECT_CALL(m_dfMiniMp3Mock, loop()).Times(1); //called once before isplaying returns true
+        .WillOnce(Return(false))                    // Called by WaitForPromptToStart()
+        .WillOnce(Return(false))                    // All following(s) called by WaitForPromptToFinish();
+        .WillRepeatedly(Return(true));            // Finishing before timeout
+    EXPECT_CALL(m_dfMiniMp3Mock, loop()).Times(2); //called before isplaying returns true
     m_pMp3Prompt->playPrompt(prompt);
 }
 

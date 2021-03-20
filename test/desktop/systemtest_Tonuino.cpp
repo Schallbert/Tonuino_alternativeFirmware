@@ -47,7 +47,7 @@ protected:
         m_pPwrCtrl = new PowerManager(m_ArduinoHalMock.getPins(), m_IdleTimer);
 
         m_pMp3Prompt = new Mp3Prompt(m_DfMiniMp3Mock, m_DfMiniCommandTimer);
-        m_pMp3Play = new Mp3Play_implementation(m_ArduinoHalMock, m_DfMiniMp3Mock, *m_pMp3Prompt, m_LullabyeTimer, m_MessageHandlerMock);
+        m_pMp3Play = new Mp3Play_implementation(m_ArduinoHalMock, m_DfMiniMp3Mock, *m_pMp3Prompt, m_LullabyeTimer, m_DfMiniCommandTimer, m_MessageHandlerMock);
         m_pMp3Control = new Mp3Control(m_DfMiniMp3Mock, *m_pMp3Play, *m_pMp3Prompt, *m_pPwrCtrl, m_MessageHandlerMock);
 
         m_pNfc = new Nfc_implementation(m_Mfrc522Mock, m_MessageHandlerMock);
@@ -161,11 +161,14 @@ TEST_F(SystemTest, NewKnownTag_WontInvokeLinkMenu)
     ON_CALL(m_Mfrc522Mock, getTagType()).WillByDefault(Return(MFRC522_interface::PICC_TYPE_MIFARE_1K));
     m_Mfrc522Mock.DelegateToFakeMini1k4k(); // Should default to "known TAG"
     ON_CALL(m_DfMiniMp3Mock, getFolderTrackCount(_)).WillByDefault(Return(5));
+    ON_CALL(m_DfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_DfMiniCommandTimer, &SimpleTimer::timerTick));
 
     m_pTonuino->run(); // Will not enter Link Menu
 
-    EXPECT_CALL(m_DfMiniMp3Mock, isPlaying()).Times(2); // once for ledStatus, once for autoplay()
-    m_pTonuino->run(); // Thus, won't block normal operation
+    EXPECT_CALL(m_DfMiniMp3Mock, isPlaying())
+        .Times(2)                     // once for ledStatus, once for autoplay()
+        .WillRepeatedly(Return(true)); // to satisfy waitForPlaybackToStart
+    m_pTonuino->run();                // Thus, won't block normal operation
 }
 
 TEST_F(SystemTest, NewUnknownTag_InvokesLinkMenu)
@@ -216,5 +219,5 @@ TEST_F(SystemTest, VoiceMenuActive_blocksNormalPlayback)
     m_pTonuino->run(); // enters Link Menu
 
     EXPECT_CALL(m_DfMiniMp3Mock, isPlaying()).Times(0); // only autoplay within Mp3Play will call this
-    m_pTonuino->run();                                        // once entered, VoiceMenu will block playback
+    m_pTonuino->run();                                  // once entered, VoiceMenu will block playback
 }
