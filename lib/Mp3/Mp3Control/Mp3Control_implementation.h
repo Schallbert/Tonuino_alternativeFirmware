@@ -40,8 +40,6 @@ private:
     void handleUserInput();
     void handleLocked();
     void handlePromptStatus();
-    void autoplay();
-    void playIfPaused();
 
     void none(){};
     void play();
@@ -63,7 +61,8 @@ private:
     MessageHander_interface &m_rMessageHandler;
 
     Message::eMessageContent m_userInput{Message::INPUTNONE};
-    bool m_isLocked{false};
+    bool m_locked{false};
+    bool m_autoplaySuspended{false};
     typedef void (Mp3Control::*dispatcher)(); // table of function pointers
 };
 

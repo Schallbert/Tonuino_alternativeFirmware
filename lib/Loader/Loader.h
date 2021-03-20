@@ -60,7 +60,7 @@ private:
     SimpleTimer m_MenuTimer;
     SimpleTimer m_LullabyeTimer;
     SimpleTimer m_IdleTimer;
-    SimpleTimer m_DfMiniPromptTimer;
+    SimpleTimer m_DfMiniCommandTimer;
 
     // UTILITIES
     PowerManager m_PwrCtrl{m_ArduinoHal.getPins(), m_IdleTimer};
@@ -70,11 +70,12 @@ private:
     // PERIPHERY
     // mp3
     DfMini m_DfMini{m_MessageHandler};
-    Mp3Prompt m_Mp3Prompt{m_DfMini, m_DfMiniPromptTimer};
+    Mp3Prompt m_Mp3Prompt{m_DfMini, m_DfMiniCommandTimer};
     Mp3Play_implementation m_Mp3Play{m_ArduinoHal,
                                      m_DfMini,
                                      m_Mp3Prompt,
                                      m_LullabyeTimer,
+                                     m_DfMiniCommandTimer,
                                      m_MessageHandler};
     Mp3Control m_Mp3Control{m_DfMini,
                             m_Mp3Play,

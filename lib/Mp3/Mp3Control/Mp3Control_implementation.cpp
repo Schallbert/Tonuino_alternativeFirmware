@@ -12,23 +12,17 @@ void Mp3Control::setUserInput(Message::eMessageContent input)
 void Mp3Control::playFolder(Folder &folder)
 {
     m_rMp3Player.playFolder(folder);
-    playIfPaused();
-}
-
-void Mp3Control::playIfPaused()
-{
-    if (!m_rDfMiniMp3.isPlaying())
-    {
-        play();
-    }
 }
 
 void Mp3Control::loop()
 {
+    if (!m_autoplaySuspended)
+    {
+        m_rMp3Player.autoplay();
+    }
     handlePromptStatus();
     handleUserInput();
     m_rPowerManager.setPlayback(m_rDfMiniMp3.isPlaying());
-    m_rMp3Player.autoplay();
     m_rDfMiniMp3.printStatus();
 }
 
@@ -59,22 +53,23 @@ void Mp3Control::handleLocked()
     // Toggle lock status with doubleClick
     if (m_userInput == Message::INPUTPLPSDC)
     {
-        playIfPaused();
-        if (m_isLocked)
+        play(); // make sure the system is not in pause.
+        m_autoplaySuspended = false;
+        if (m_locked)
         {
-            m_isLocked = false;
+            m_locked = false;
             m_rMp3Prompt.playPrompt(VoicePrompt{VoicePrompt::MSG_BUTTONFREE,
                                                 VoicePrompt::ANNOUNCEMENT});
         }
         else
         {
-            m_isLocked = true;
+            m_locked = true;
             m_rMp3Prompt.playPrompt(VoicePrompt{VoicePrompt::MSG_BUTTONLOCK,
                                                 VoicePrompt::ANNOUNCEMENT});
         }
     }
-
-    if (m_isLocked)
+    
+    if (m_locked)
     {
         m_userInput = Message::INPUTNONE;
     }
@@ -94,12 +89,17 @@ void Mp3Control::plPs()
 
 void Mp3Control::play()
 {
-    m_rDfMiniMp3.start(); // Only successful if a track is entered.
-    m_rMessageHandler.printMessage(Message::PLAY);
+    m_autoplaySuspended = false;
+    if (!m_rDfMiniMp3.isPlaying())
+    {
+        m_rDfMiniMp3.start(); // Only successful if a track is entered.
+        m_rMessageHandler.printMessage(Message::PLAY);
+    }
 }
 
 void Mp3Control::pause()
 {
+    m_autoplaySuspended = true;
     m_rDfMiniMp3.pause();
     m_rMessageHandler.printMessage(Message::PAUSE);
 }

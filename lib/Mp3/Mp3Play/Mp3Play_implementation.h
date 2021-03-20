@@ -18,10 +18,12 @@ public:
                            DfMiniMp3_interface &rDfMini,
                            Mp3Prompt_interface &rPrompt,
                            SimpleTimer &rLullabyeTimer,
+                           SimpleTimer &rDfMiniCommandTimer,
                            MessageHander_interface &rMessage) : m_rArduinoHal(rArduinoHal),
                                                                 m_rDfMiniMp3(rDfMini),
                                                                 m_rMp3Prompt(rPrompt),
                                                                 m_rLullabyeTimer(rLullabyeTimer),
+                                                                m_rDfMiniCommandTimer(rDfMiniCommandTimer),
                                                                 m_rMessageHandler(rMessage){};
     ~Mp3Play_implementation() = default;
     Mp3Play_implementation(const Mp3Play_implementation &cpy) = delete;
@@ -35,9 +37,9 @@ public:
 private:
     bool shouldPlaybackStop() const;
     void restartLullabyeTimer();
+    void waitForPlaybackToStart();
 
     bool prepareFolderToPlay(Folder &folder);
-    bool isFolderNew(const Folder &folder) const;
     bool checkFolder(Folder &folder);
     uint8_t getTrackCountOfFolderOnSdCard(const Folder &folder) const;
 
@@ -46,6 +48,7 @@ private:
     DfMiniMp3_interface &m_rDfMiniMp3;
     Mp3Prompt_interface &m_rMp3Prompt;
     SimpleTimer &m_rLullabyeTimer;
+    SimpleTimer &m_rDfMiniCommandTimer;
     MessageHander_interface &m_rMessageHandler;
 
     Folder m_currentFolder{};

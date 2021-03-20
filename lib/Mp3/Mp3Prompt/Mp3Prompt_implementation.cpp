@@ -11,6 +11,7 @@ void Mp3Prompt::playPrompt(const VoicePrompt &prompt)
     if (prompt.isAnnouncement())
     {
         m_rDfMiniMp3.playAnnouncement(prompt.getId());
+        waitForPromptToFinish();
     }
     else
     {
@@ -63,7 +64,7 @@ void Mp3Prompt::waitForPromptToStart()
 void Mp3Prompt::waitForPromptToFinish()
 {
     m_rDfMiniPromptTimer.start(TIMEOUT_PROMPT_PLAYED);
-    while (m_rDfMiniMp3.isPlaying() && !m_rDfMiniPromptTimer.isElapsed())
+    while (!m_rDfMiniMp3.isTrackFinished() && !m_rDfMiniPromptTimer.isElapsed())
     {
         m_rDfMiniMp3.loop(); //wait for track to finish
     }

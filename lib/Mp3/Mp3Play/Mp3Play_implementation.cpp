@@ -9,13 +9,15 @@ void Mp3Play_implementation::init()
 
 void Mp3Play_implementation::playFolder(Folder &folder)
 {
-    if (prepareFolderToPlay(folder))
+    if (!prepareFolderToPlay(folder))
     {
-        // Start playing folder: first track of current folder.
-        m_rDfMiniMp3.playFolderTrack(m_currentFolder.getFolderId(),
-                                     m_currentFolder.getCurrentTrack());
-        m_rMessageHandler.printMessage(Message::FOLDEROKPLAY);
+        return;
     }
+
+    m_rDfMiniMp3.playFolderTrack(m_currentFolder.getFolderId(),
+                                 m_currentFolder.getCurrentTrack());
+    waitForPlaybackToStart();
+    m_rMessageHandler.printMessage(Message::FOLDEROKPLAY);
     restartLullabyeTimer();
 }
 
@@ -35,14 +37,7 @@ bool Mp3Play_implementation::prepareFolderToPlay(Folder &folder)
         return false;
     }
 
-    // Folder already cached?
-    if (folder.getFolderId() == m_currentFolder.getFolderId())
-    {
-        return false;
-    }
-
     m_currentFolder = folder;
-
     return true;
 }
 
@@ -109,6 +104,7 @@ void Mp3Play_implementation::playNext()
     {
         m_rDfMiniMp3.playFolderTrack(m_currentFolder.getFolderId(),
                                      m_currentFolder.getNextTrack());
+        waitForPlaybackToStart();
         restartLullabyeTimer();
     }
 }
@@ -119,6 +115,17 @@ void Mp3Play_implementation::playPrev()
     {
         m_rDfMiniMp3.playFolderTrack(m_currentFolder.getFolderId(),
                                      m_currentFolder.getPrevTrack());
+        waitForPlaybackToStart();
         restartLullabyeTimer();
     }
+}
+
+void Mp3Play_implementation::waitForPlaybackToStart()
+{
+    m_rDfMiniCommandTimer.start(WAIT_DFMINI_READY);
+    while (!m_rDfMiniMp3.isPlaying() && !m_rDfMiniCommandTimer.isElapsed())
+    {
+        m_rDfMiniMp3.loop(); //wait for track to start (until timeout kicks in)
+    }
+    m_rDfMiniCommandTimer.stop();
 }

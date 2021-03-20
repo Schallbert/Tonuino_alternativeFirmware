@@ -46,7 +46,7 @@ protected:
         // Use production code implementation for business logic system tests
         m_pPwrCtrl = new PowerManager(m_ArduinoHalMock.getPins(), m_IdleTimer);
 
-        m_pMp3Prompt = new Mp3Prompt(m_DfMiniMp3Mock, m_DfMiniPromptTimer);
+        m_pMp3Prompt = new Mp3Prompt(m_DfMiniMp3Mock, m_DfMiniCommandTimer);
         m_pMp3Play = new Mp3Play_implementation(m_ArduinoHalMock, m_DfMiniMp3Mock, *m_pMp3Prompt, m_LullabyeTimer, m_MessageHandlerMock);
         m_pMp3Control = new Mp3Control(m_DfMiniMp3Mock, *m_pMp3Play, *m_pMp3Prompt, *m_pPwrCtrl, m_MessageHandlerMock);
 
@@ -95,7 +95,7 @@ protected:
     SimpleTimer m_MenuTimer;
     SimpleTimer m_LullabyeTimer;
     SimpleTimer m_IdleTimer;
-    SimpleTimer m_DfMiniPromptTimer;
+    SimpleTimer m_DfMiniCommandTimer;
 
     // Real implementations that depend on initialized objects (realized as pointers)
     PowerManager *m_pPwrCtrl{nullptr};
@@ -146,7 +146,7 @@ TEST_F(SystemTest, NoTag_ppLongPress_playsHelp)
     ON_CALL(m_UserInputMock, getUserRequest()).WillByDefault(Return(Message::INPUTPLPSLP));
     // Simulate player behavior and timeout for non-skippable voice prompts
     ON_CALL(m_DfMiniMp3Mock, isPlaying()).WillByDefault(Return(false)); // not playing
-    ON_CALL(m_DfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_DfMiniPromptTimer, &SimpleTimer::timerTick));
+    ON_CALL(m_DfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_DfMiniCommandTimer, &SimpleTimer::timerTick));
 
     EXPECT_CALL(m_DfMiniMp3Mock, playPrompt(static_cast<uint16_t>(VoicePrompt::MSG_HELP)));
     m_pTonuino->run();
@@ -179,7 +179,7 @@ TEST_F(SystemTest, NewUnknownTag_InvokesLinkMenu)
 
     // Simulate player behavior and timeout for non-skippable voice prompts
     ON_CALL(m_DfMiniMp3Mock, isPlaying()).WillByDefault(Return(false)); // not playing
-    ON_CALL(m_DfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_DfMiniPromptTimer, &SimpleTimer::timerTick));
+    ON_CALL(m_DfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_DfMiniCommandTimer, &SimpleTimer::timerTick));
 
     EXPECT_CALL(m_DfMiniMp3Mock, playPrompt(static_cast<uint16_t>(VoicePrompt::MSG_SELECT_FOLDERID)));
     m_pTonuino->run(); // enters Link Menu
@@ -192,7 +192,7 @@ TEST_F(SystemTest, ActiveTag_ppDoubleClick_InvokesDeleteMenu)
 
     // Simulate player behavior to satisfy voiceprompt block loop
     ON_CALL(m_DfMiniMp3Mock, isPlaying()).WillByDefault(Return(false));
-    ON_CALL(m_DfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_DfMiniPromptTimer, &SimpleTimer::timerTick));
+    ON_CALL(m_DfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_DfMiniCommandTimer, &SimpleTimer::timerTick));
 
     ON_CALL(m_UserInputMock, getUserRequest()).WillByDefault(Return(Message::INPUTPLPSDC));
 
@@ -211,7 +211,7 @@ TEST_F(SystemTest, VoiceMenuActive_blocksNormalPlayback)
 
     // Simulate player behavior and timeout for non-skippable voice prompts
     ON_CALL(m_DfMiniMp3Mock, isPlaying()).WillByDefault(Return(false)); // not playing
-    ON_CALL(m_DfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_DfMiniPromptTimer, &SimpleTimer::timerTick));
+    ON_CALL(m_DfMiniMp3Mock, loop()).WillByDefault(InvokeWithoutArgs(&m_DfMiniCommandTimer, &SimpleTimer::timerTick));
 
     m_pTonuino->run(); // enters Link Menu
 
