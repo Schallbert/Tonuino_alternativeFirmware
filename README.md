@@ -2,7 +2,7 @@
 # "TonUINO alternative firmware"
 
 Idea and fantastic execution found on Thorsten Voß's blog, 
-re-wrote the code from scratch for better structure, readability, maintainability, and extensibility.
+re-wrote the code from scratch for even better structure, readability, maintainability, and extensibility.
 Does not support advanced config features (yet) like preset lullabye timer, init volume etc.
 
 ## Features:
@@ -50,16 +50,16 @@ Config | System configuration parameters
 Folder | Playlist and playmode business logic
 Loader | Dependency Injection Framework
 MessageHandler | System messages and Debug Framework
-Mp3	Mp3 control | (Status, Folder, Prompts, Advertisements)
-Nfc	Tag control | (Status, Read, Write, Delete)
-PowerManager | Manager for Status Led and Keep Alive 
+Mp3 | Mp3 control (Status, Folder, Prompts, Advertisements)
+Nfc | Tag control (Status, Read, Write, Delete)
+PowerManager | Control Status Led and Keep Alive based on system state
 Tonuino | Main task scheduler
 UserInput | Button or Encoder input handling
 Utilities | Timers, Led Control, Pin control
 VoiceMenu | Link / Delete / Config menu business logic
 
 ## External Libraries
-![platformio.ini lib section](https://github.com/Schallbert/Tonuino_alternativeFirmware/edit/master/docs/LibrariesUsed.png "platformio.ini")
+[platformio.ini lib section](https://github.com/Schallbert/Tonuino_alternativeFirmware/edit/master/docs/LibrariesUsed.png "platformio.ini")
 
 ## Class Diagrams
 Yeah, this is still TODO :/
