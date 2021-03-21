@@ -1,0 +1,59 @@
+# Text To Speech Site: https://www.naturalreaders.com/online/
+# German voice: Claudia
+
+# messages GERMAN
+MSG_SELECT_FOLDERID = 300,
+Oh, ich kenne diese Karte gar nicht! Ich starte den Anlernvorgang. Bitte wähle einen Ordner aus. Ich sage dir dann die Nummer des Ordners an und spiele eine Vorschau ab.
+Wenn du den gewählten Ordner bestätigen möchtest, drücke kurz die Wiedergabetaste. Zum Abbrechen halte die Wiedergabetaste gedrückt.
+        MSG_SELECT_PLAYMODE = 400,
+Alles klar. Wähle jetzt bitte den gewünschten Wiedergabemodus aus.
+        MSG_PLAYMODE_ALBUM = 401,
+Albummodus. Die Titel werden der Reihe nach abgespielt.
+        MSG_PLAYMODE_RANDOM = 402,
+Zufallsmodus. Es wird eine zufällige Wiedergabeliste erstellt und abgespielt.
+        MSG_PLAYMODE_SAVEPROGRESS = 403, 
+Hörbuchmodus. Ich speichere den aktuellen Titel, sodass die Wiedergabe bei Neustart fortgesetzt werden kann.
+        MSG_PLAYMODE_ONELARGETRACK = 404,
+Einzelmodus. Ich gebe nur einen Titel wieder und mache danach Pause.
+MSG_ERROR_CARDWRITE = 410,
+Schade. Ich kann die Karte nicht beschreiben, vielleicht ist sie nicht aufgelegt?
+        MSG_ERROR_CARDREAD = 411,
+Hmm, komisch, Ich kann die Karte zwar erkennen aber nicht lesen. Vielleicht probierst du sie nochmal zu löschen und neu anzulernen?
+        MSG_ERROR_FOLDER = 412,
+Ups, ich habe den gewünschten Titel nicht gefunden.
+        MSG_ERROR_TOOMANYTRACKS = 413,
+Oh, der gewünschte Ordner hat mehr Titel als ich unterstütze. Ich kann leider nur einen Teil der Titel wiedergeben.
+        MSG_HELP = 420, // USERINPUT_3_BUTTONS
+Hier ist die Hilfe zur Bedienung:
+Zum Abspielen eine Karte auflegen.
+Um den nächsten oder vorherigen Titel abzuspielen, die entsprechende Taste kurz drücken.
+Zum Pausieren eines Titels die Wiedergabetaste kurz drücken. Wird die Wiedergabe nicht fortgesetzt, schalte ich mich nach kurzer Zeit ab.
+Um die Lautstärke zu erhöhen oder zu senken, die vor- oder zurück Taste gedrückt halten.
+Um eine neue Karte anzulernen, die neue Karte auflegen und dem Sprachmenü folgen.
+Wenn du die Tastensperre benutzen möchtest, bei aufgelegter Karte die Wiedergabetaste doppelklicken.
+Um eine Karte zu löschen, die Wiedergabetaste bei nicht aufgelegter Karte doppelklicken und dem Sprachmenü folgen.
+    MSG_HELP = 425, // USERINPUT_3_BUTTONS
+Hier ist die Hilfe zur Bedienung:
+Zum Abspielen eine Karte auflegen.
+Um den nächsten oder vorherigen Titel abzuspielen, die Wiedergabetaste in die gewünschte Richtung drehen.
+Zum Pausieren eines Titels die Wiedergabetaste kurz drücken. Wird die Wiedergabe nicht fortgesetzt, schaltet sich das System nach kurzer Zeit ab.
+Um die Lautstärke zu erhöhen oder zu senken, die Wiedergabetaste gedrückt halten und in die gewünschte Richtung drehen.
+Um eine neue Karte anzulernen, die neue Karte auflegen und dem Sprachmenü folgen.
+Wenn du die Tastensperre benutzen möchtest, bei aufgelegter Karte die Wiedergabetaste doppelklicken.
+Um eine Karte zu löschen, die Wiedergabetaste bei nicht aufgelegter Karte doppelklicken und dem Sprachmenü folgen.
+        MSG_BUTTONLOCK = 426,
+OK, ich habe die Tasten gesperrt.
+        MSG_BUTTONFREE = 427,
+OK, ich habe die Tasten wieder freigegeben.
+        MSG_STARTUP = 500,
+Ich bin wach!
+        MSG_SHUTDOWN = 501,
+Ich gehe schlafen. Bis bald!
+        MSG_DELETETAG = 700,
+Aha, du möchtest also eine Karte löschen? Kein Problem, lege sie einfach auf. Zum Abbrechen halte die Wiedergabetaste gedrückt.
+        MSG_CONFIRM_DELETION = 701,
+Ich habe eine Karte gefunden! Wenn du sie wirklich löschen möchtest, drücke die Wiedergabetaste. Zum Abbrechen halte die Wiedergabetaste gedrückt.
+        MSG_TAGCONFSUCCESS = 702,
+Prima, ich habe die Karte konfiguriert!
+        MSG_ABORTED = 802
+OK, ich habe den Vorgang abgebrochen.
