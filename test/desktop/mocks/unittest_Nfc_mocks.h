@@ -26,6 +26,8 @@ class Fake_Nfc : public Nfc_interface
 public:
     virtual ~Fake_Nfc(){}; // MUST BE DEFINED; ELSE VTABLE INCLUDE ERRORS
     void initNfc() override;
+    void nfcWakeup() override;
+    void nfcSleep() override;
     Message::eMessageContent getTagPresence() override;
     // returns true, simulating successful write
     bool writeTag(byte blockAddress, byte *dataToWrite) override;
@@ -36,10 +38,10 @@ public:
 class Fake_MFRC522_MifareMini1k4k : public MFRC522_interface
 {
 public:
-    void init() override { return; };
-    void softPowerDown() override { return; };
-    void softPowerUp() override { return; };
-    bool getTagUid() override { return false; };
+    void init() override { return; }
+    void softPowerDown() override { return; }
+    void softPowerUp() override { return; }
+    bool getTagUid() override { return false; }
     bool tagLogin(byte blockAddress) override
     {
         return false;
@@ -56,10 +58,10 @@ public:
 class Fake_MFRC522_MifareUltralight : public MFRC522_interface
 {
 public:
-    void init() override { return; };
-    void softPowerDown() override { return; };
-    void softPowerUp() override { return; };
-    bool getTagUid() override { return false; };
+    void init() override { return; }
+    void softPowerDown() override { return; }
+    void softPowerUp() override { return; }
+    bool getTagUid() override { return false; }
     bool tagLogin(byte blockAddress) override
     {
         return false;
@@ -81,6 +83,8 @@ public:
     // Method:  output name   input   overrides functionality of interface
     // IF THE METHOD IS INPUTS VOID; JUST WRITE () NEVER WRITE (void) !!!
     MOCK_METHOD(void, initNfc, (), (override));
+    MOCK_METHOD(void, nfcWakeup, (), (override));
+    MOCK_METHOD(void, nfcSleep, (), (override));
     MOCK_METHOD(Message::eMessageContent, getTagPresence, (), (override));
     MOCK_METHOD(bool, writeTag, (byte blockAddress, byte *dataToWrite), (override));
     MOCK_METHOD(bool, readTag, (byte blockAddress, byte *readResult), (override));

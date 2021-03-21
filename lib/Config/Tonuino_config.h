@@ -14,6 +14,9 @@
 #define one_encoder 425
 #define USERINPUT_VARIANT three_buttons
 
+// Power save feature: Set Nfc reader / Arduino to sleep for x ms
+#define SLEEP_MS 400
+
 //StatusLEDs interaction outputs
 #define FLASHSLOWMS 1000
 #define FLASHQUICKMS 400

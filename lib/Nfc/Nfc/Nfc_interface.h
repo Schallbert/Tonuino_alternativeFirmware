@@ -13,6 +13,9 @@ public:
 public:
     // initializes the NFC reader (serial etc.)
     virtual void initNfc() = 0;
+    // power save methods
+    virtual void nfcSleep() = 0;
+    virtual void nfcWakeup() = 0;
     // returns presence state of NFC tag
     virtual Message::eMessageContent getTagPresence() = 0;
     // Returns true on successful write of data to a sector->block of the tag

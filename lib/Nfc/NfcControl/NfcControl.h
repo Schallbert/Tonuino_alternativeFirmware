@@ -24,6 +24,8 @@ public:
 public:
     // initializes communication with the tag reader.
     void init() override;
+    void sleep() override { m_rNfc.nfcSleep(); }
+    void wakeup() override { m_rNfc.nfcWakeup(); }
     // Returns tag state of presence to requesting entity.
     Message::eMessageContent getTagPresence() override;
     // takes a reference to an existing folder and copies the card's saved data into that object

@@ -12,6 +12,8 @@ public:
 
 public:
     virtual void init() = 0;
+    virtual void sleep() = 0;
+    virtual void wakeup() = 0;
     virtual Message::eMessageContent getTagPresence() = 0;
     virtual bool readFolderFromTag(Folder &targetFolder) = 0;
     virtual bool writeFolderToTag(const Folder &sourceFolder) = 0;

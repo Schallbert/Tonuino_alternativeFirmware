@@ -15,8 +15,6 @@
 #include "../Mp3/Mp3Prompt/Mp3Prompt_implementation.h"
 // USER INPUT
 #include "UserInput_factory.h"
-//#include "Arduino_config.h"
-//#include "UserInput/justEncoder.h"
 // MISC
 #include "../PowerManager/PowerManager_implementation.h"
 #include "../Arduino/messages.h"
@@ -52,6 +50,7 @@ private:
     void notifyStartup();
     void notifyShutdown();
     void shutdown();
+    void sleep_ms();
 
 private:
     // Arduino Hardware Abstraction Layer
@@ -61,6 +60,7 @@ private:
     SimpleTimer m_LullabyeTimer;
     SimpleTimer m_IdleTimer;
     SimpleTimer m_DfMiniCommandTimer;
+    SimpleTimer m_ArduSleepTimer;
 
     // UTILITIES
     PowerManager m_PwrCtrl{m_ArduinoHal.getPins(), m_IdleTimer};

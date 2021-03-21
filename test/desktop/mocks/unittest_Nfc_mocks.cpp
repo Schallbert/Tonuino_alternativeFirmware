@@ -8,6 +8,17 @@ void Fake_Nfc::initNfc()
 {
     return;
 }
+
+void Fake_Nfc::nfcWakeup()
+{
+    return;
+}
+
+void Fake_Nfc::nfcSleep()
+{
+    return;
+}
+
 Message::eMessageContent Fake_Nfc::getTagPresence()
 {
     return Message::ACTIVETAG;

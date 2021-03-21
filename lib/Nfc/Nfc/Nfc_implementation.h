@@ -21,6 +21,9 @@ public:
 
 public:
     void initNfc() override;
+    void nfcSleep() override { m_rMfrc522.softPowerDown(); }
+    void nfcWakeup() override { m_rMfrc522.softPowerUp(); }
+
     Message::eMessageContent getTagPresence() override;
     bool writeTag(byte blockAddress, byte *dataToWrite) override;
     bool readTag(byte blockAddress, byte *readResult) override;
