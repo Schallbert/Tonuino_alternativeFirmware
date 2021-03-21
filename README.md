@@ -3,7 +3,7 @@
 
 Idea and fantastic execution found on Thorsten Voß's blog, 
 re-wrote the code from scratch for better structure, readability, maintainability, and extensibility.
-Does not support adcanved config features (yet) like preset lullabye timer, init volume etc.
+Does not support advanced config features (yet) like preset lullabye timer, init volume etc.
 
 ## Features:
 * Configurable user input (buttons or encoder)
@@ -39,3 +39,36 @@ When battery powered, I'd propose to use a bi-stable relay so the Tonuino 2.0 ca
 Only tested 1k Mifare Nfc tags, 4k and Mini will also work, Ultralight SHOULD work (but not integration tested).
 
 # Documentation
+The Project is written almost exclusively in C++ and build for Arduino Framework - tested on an Arduino nano board - using the [PlatformIO IDE](https://platformio.org/).
+The following sections show the structure and the libraries needed (which will be pulled in automatically once trying to build by the PlatformIO).
+## Project Module overview
+Folder name in `/lib` | Purpose
+--- | ---
+Arduino	| minimalistic close-to-Hardware implementations, not unit-testable
+Arduino_HardwareAbstraction	| Hardware abstraction to enable portability and testing
+Config | System configuration parameters
+Folder | Playlist and playmode business logic
+Loader | Dependency Injection Framework
+MessageHandler | System messages and Debug Framework
+Mp3	Mp3 control | (Status, Folder, Prompts, Advertisements)
+Nfc	Tag control | (Status, Read, Write, Delete)
+PowerManager | Manager for Status Led and Keep Alive 
+Tonuino | Main task scheduler
+UserInput | Button or Encoder input handling
+Utilities | Timers, Led Control, Pin control
+VoiceMenu | Link / Delete / Config menu business logic
+
+## External Libraries
+![platformio.ini lib section](https://github.com/Schallbert/Tonuino_alternativeFirmware/edit/master/docs/LibrariesUsed.png "platformio.ini")
+
+## Class Diagrams
+Yeah, this is still TODO :/
+
+## Unit tests
+Are configured an can be built and run using `pio test -e desktop -f desktop` in the PlatformIO CLI terminal. Note that *googletest* will require `gcc` with some libraries to be installed, how to can be found [here](https://community.platformio.org/t/unit-testing-with-gtest-gmock-on-env-desktop-on-arduino-platform/14354). 
+
+# Hardware
+## Material
+TODO
+## Schematics
+TODO
