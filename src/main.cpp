@@ -28,17 +28,10 @@ void timer1Task_1ms()
     loader.timer1Task_1ms();
 }
 
-// TODO:::::::
-// - create well-readable README.md
-// - solve all TODOS.
-// - rename Folder to PlayList
-
-// - add debug messages to other modules (?)
+// @Schallbert TODO:::::::
+// - rename Folder to PlayList (for clarity)
 // - create namespaces to solve Arduino_Hal namings (low Priority)
 
-// - BIG TASK: Integration testing on device
-
-// - FEATURE: implement power save (arduino, nfc, etc.)
 // - FEATURE: Card must be placed permanently or can be removed while playing? Config?
-// - FEATURE: VoiceMenu for configuration items that currently require reprogramming (Lullabye time, init volume, max volume...)
-// - FEAUTRE: Lullaybe time per Card (currently System level only)
+// - FEATURE: VoiceMenu for configuration items that currently require reprogramming (Lullabye time, init volume, max volume, card presence...)
+// - FEAUTRE: Lullaybe time per Card? (Currently System level only)
