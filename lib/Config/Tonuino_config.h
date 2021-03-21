@@ -32,7 +32,7 @@
 
 //Timer1 interrupt task
 #define TIMERONE_TASK_INTERVAL_USEC 1000 // 1ms
-#define IDLE_TIMEOUT_SECS 60             // System will automatically switch off when paused
+#define IDLE_TIMEOUT_SECS 60             // System will automatically switch off when paused after elapse
 #define LULLABYE_TIMEOUT_ACTIVE true     // will shut the system down after a pre-defined time
 #define LULLABYE_TIMEOUT_SECS 30 * 60    // default is x minutes (effective when track finished)
 #define MENU_TIMEOUT_SECS 30             // menu will be automatically aborted if no input within this time

@@ -13,10 +13,6 @@ void timer1Task_1ms();
 // ARDUINO SETUP ----------
 void setup()
 {
-    // Do a little power save
-    ADCSRA &= ~(1 << ADEN); //Disable ADC
-    ACSR = (1 << ACD);      //Disable the analog comparator
-
     timer1.initialize(TIMERONE_TASK_INTERVAL_USEC);
     timer1.attachInterrupt(timer1Task_1ms); // only allowed for "free" functions, NO METHODS :/
     loader.init();
