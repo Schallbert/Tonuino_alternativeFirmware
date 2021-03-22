@@ -24,6 +24,7 @@ Does not support advanced config features (yet) like preset lullabye timer, init
 My first real OO C++ project, and, maybe, it was a little big to start with.
 All these concepts of clean code, writing to an interface, first-time usage of Platformio as IDE,
 utilizing the googletest unit test framework, using coding patterns like factory or Dependency Injection took nearly a year of evenings before this project could be completed. And there's always something left to refactor and to improve :P
+
 ### Quick facts
 * 400+ hours of total development time...
 * Unit test suite of 250+ test cases
@@ -40,7 +41,8 @@ Only tested 1k Mifare Nfc tags, 4k and Mini will also work, Ultralight SHOULD wo
 
 # Documentation
 The Project is written almost exclusively in C++ and build for Arduino Framework - tested on an Arduino nano board - using the [PlatformIO IDE](https://platformio.org/).
-The following sections show the structure and the libraries needed (which will be pulled in automatically once trying to build by the PlatformIO).
+The following sections show the structure.
+
 ## Project Module overview
 Folder name in `/lib` | Purpose
 --- | ---
@@ -59,16 +61,20 @@ Utilities | Timers, Led Control, Pin control
 VoiceMenu | Link / Delete / Config menu business logic
 
 ## External Libraries
-[platformio.ini lib section](https://github.com/Schallbert/Tonuino_alternativeFirmware/edit/master/docs/LibrariesUsed.png "platformio.ini")
+![platformio.ini lib section](docs/LibrariesUsed.png "platformio.ini")
+Auto-install through Platformio on initial build.
 
 ## Class Diagrams
-Yeah, this is still TODO :/
+![Module overview](docs/ProjectModulesOverview.png) Class diagrams would have been too much non-automated work...
 
 ## Unit tests
 Are configured an can be built and run using `pio test -e desktop -f desktop` in the PlatformIO CLI terminal. Note that *googletest* will require `gcc` with some libraries to be installed, how to can be found [here](https://community.platformio.org/t/unit-testing-with-gtest-gmock-on-env-desktop-on-arduino-platform/14354). 
 
 # Hardware
 ## Material
-TODO
+Same as for the "original" project; Alternatively buy one rotary encoder instead of push buttons and configure the project to use it. 
+As the system is optimized for battery usage, take a bi-stable relay or a JFET transistor (with low gate voltage and low Source-Drain voltage drop) for keepAlive functionality mitigating additional current add through always-on relay coils. A cheap powerbank will last for hours. Alternatively, e.g. 3xAA batteries can be used - but the Mp3player is will be really noisy if not enough current can be supplied.
+Add an LED of your choice and a 220Ohm resistor to get system status information.
+
 ## Schematics
 TODO
