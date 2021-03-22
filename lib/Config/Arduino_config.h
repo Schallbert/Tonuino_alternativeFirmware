@@ -9,15 +9,20 @@
 // MFRC522
 #define RST_PIN 9 // PB1 15
 #define SS_PIN 10 // PB2 16
+//   Uses HW SPI
+//      MOSI 11
+//      MISO 12
+//      SCK 13
+//      IRQ not connected
 //MP3
 #define DFMINI_PIN_ISIDLE 4 // PD4 7
 #define DFMINI_RX 2         // PD2 5
 #define DFMINI_TX 3         // PD3 6
-                            //Serial
-                            // RX 0  PD0 2
-                            // TX 1  PD1 3
-                            //HMI inputs
+//SERIAL
+// RX 0  PD0 2
+// TX 1  PD1 3
 
+//HMI inputs
 // USERINPUT VARIANT : CLICK_ENCODER
 #define ENCA 14  // PC0 23 A0
 #define ENCB 15  // PC1 24 A1
