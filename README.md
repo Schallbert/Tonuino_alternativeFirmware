@@ -72,9 +72,28 @@ Are configured an can be built and run using `pio test -e desktop -f desktop` in
 
 # Hardware
 ## Material
+Minimal discrete parts approach :)
+Amount | Item | Purpose
+--- | --- | ---
+1 | Arduino (e.g. Nano) | Brains
+1 | Dfplayer Mini Mp3 Player | Mouth
+1 | Micro SD Card | Memory
+1 | MFRC522 Nfc Reader | Psi-Sense
+1 | Bistable Relay 5V, e.g. HFE20 | Coffee - no sleep
+2 | Diodes e.g. 1n4007 | vene valve
+1 | PNP Transistor e.g. BC327 | Coffee maker switch
+2 | Resistors 1k | blood-stream conditioner
+1 | Resistor 220 | dim blink strength
+1 | LED, color of choice | blink
+1 | Powerbank/ 5V supply | Food
+3 | push buttons, e.g. cherry MX keys | pressure sensors
+1 | speaker, e.g.5W@4Ohms | Lungs
+1 | USB-A plug | Straw
+1 | housing | Body
+
+Jumper wires, PCB, Sockets, and expendable materials as you deem fit
 Same as for the "original" project; Alternatively buy one rotary encoder instead of push buttons and configure the project to use it. 
-As the system is optimized for battery usage, take a bi-stable relay or a JFET transistor (with low gate voltage and low Source-Drain voltage drop) for keepAlive functionality mitigating additional current add through always-on relay coils. A cheap powerbank will last for hours. Alternatively, e.g. 3xAA batteries can be used - but the Mp3player is will be really noisy if not enough current can be supplied.
-Add an LED of your choice and a 220Ohm resistor to get system status information.
+As the system is optimized for battery usage, take a bi-stable relay or a JFET transistor (with low gate voltage and low Source-Drain voltage drop) for keepAlive functionality mitigating additional current add through always-on relay coils. A cheap powerbank will last for many hours. Alternatively, e.g. 3xAA batteries can be used - but the Dfmini will be really noisy if not enough current can be supplied (and may even get bricked through current surges and running resets, so beware).
 
 ## Schematics
-TODO
+![Circuit Diagram](docs/CircuitDiagram.png)
