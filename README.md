@@ -23,7 +23,7 @@ Does not support advanced config features (yet) like preset lullabye timer, init
 ## So much work...
 My first real OO C++ project, and, maybe, it was a little big to start with.
 All these concepts of clean code, writing to an interface, first-time usage of Platformio as IDE,
-utilizing the googletest unit test framework, using coding patterns like factory or Dependency Injection took nearly a year of evenings before this project could be completed. And there's always something left to refactor and to improve :P
+utilizing the googletest unit test framework, using coding patterns like factory or Dependency Injection took nearly a year of evenings before this project could be completed. And there's always something left to refactor and to improve.
 
 ### Quick facts
 * 400+ hours of total development time...
@@ -67,12 +67,73 @@ Auto-install through Platformio on initial build.
 ## Class Diagrams
 ![Module overview](docs/ProjectModulesOverview.png) Class diagrams would have been too much non-automated work...
 
+## Acceptance tests
+ ##### Switching ON 
+ System Pre: System is OFF 
+ Action | Expectation
+ --- | --- 
+ press Play/Pause button | LED flashes slowly?
+ press Play/pause button | Welcome prompt plays?
+ 
+ ##### Switching OFF 
+ System Pre: System is ON
+ Action | Expectation
+  --- | --- 
+ Playback on pause, no button input | System switches off after a time?
+ System shutdown | Farewell prompt plays?
+ System shutdown | LED switched off?
+ 
+ ##### Play Help Prompt 
+ System Pre: System is ON
+ Action | Expectation
+  --- | --- 
+ Long press Play/Pause button | Help prompt plays?
+ Help prompty playing | Can be interrupted with any button press?
+ 
+ ##### Behavior without Tag
+ System Pre: System is ON, no Tag present
+  Action | Expectation
+  --- | --- 
+  press Play/Pause button | prompts "couldn't find track" error?
+  press Next button | prompts "couldn't find track" error?
+  press Prev button | prompts "couldn't find track" error?
+  doubleclick Play/Pause button | Delete Menu prompt played?
+  
+   ##### Behavior with Tag
+  System Pre: System is ON, linked Tag available
+  Precondition | Action | Expectation
+  --- | --- | ---
+  no Tag placed | place known Tag | starts Playback of correct Folder?
+  active playback | press Next button | plays next track?
+  active playback | press Next button | next track in accordance with selected playMode of Folder?
+  active playback | long press Next button | increases volume?
+  active playback | press Prev button | plays previous track?
+  active playback | press Prev button | previous track in accordance with selected playMode of Folder?
+  active playback | long press Prev button | decreases volume?
+  active playback | press Play/Pause button | pauses track?
+  paused playback | press Play/Pause button | resumes track?
+  active playback | doubleclick Play/Pause button | Lock prompt played?
+  active playback | doubleclick Play/Pause button | Playback resumes after Lock prompt played?
+  active playback | doubleclick Play/Pause button | locks button input?
+  locked button input | doubleclick Play/Pause button | Unlock prompt played?
+  locked button input | doubleclick Play/Pause button | Playback resumes after Unlock prompt played?
+  locked button input | doubleclick Play/Pause button | unlocks button input?
+  paused playback | doubleclick Play/Pause button | Playback resumes after Lock prompt played?
+  
+  ##### Behavior with unlinked Tag
+  System Pre: System is ON
+  Action | Expectation
+  --- | ---
+  place unlinked Tag | plays LinkMenu Prompt?
+  TODO: continue here...
+ 
+
 ## Unit tests
 Are configured an can be built and run using `pio test -e desktop -f desktop` in the PlatformIO CLI terminal. Note that *googletest* will require `gcc` with some libraries to be installed, how to can be found [here](https://community.platformio.org/t/unit-testing-with-gtest-gmock-on-env-desktop-on-arduino-platform/14354). 
 
 # Hardware
 ## Material
-Minimal discrete parts approach :)
+Minimal discrete parts approach
 Amount | Item | Purpose
 --- | --- | ---
 1 | Arduino (e.g. Nano) | Brains
