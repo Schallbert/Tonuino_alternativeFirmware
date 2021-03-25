@@ -125,8 +125,8 @@ Auto-install through Platformio on initial build.
   Action | Expectation
   --- | ---
   place unlinked Tag | plays LinkMenu Prompt?
-  TODO: continue here...
- 
+  navigate through LinkMenu | plays Configuration Success Prompt?
+  place Tag again | plays linked folder? 
 
 ## Unit tests
 Are configured an can be built and run using `pio test -e desktop -f desktop` in the PlatformIO CLI terminal. Note that *googletest* will require `gcc` with some libraries to be installed, how to can be found [here](https://community.platformio.org/t/unit-testing-with-gtest-gmock-on-env-desktop-on-arduino-platform/14354). 
