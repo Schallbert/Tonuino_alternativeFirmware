@@ -57,7 +57,7 @@ bool Mp3Play_implementation::checkFolder(Folder &folder)
     if (!folder.isValid())
     {
         m_rMessageHandler.printMessage(Message::ERRORFOLDER);
-        VoicePrompt folderErrorPrompt(VoicePrompt::MSG_ERROR_FOLDER, VoicePrompt::PROMPT_NOSKIP);
+        VoicePrompt folderErrorPrompt(VoicePrompt::MSG_ERROR_FOLDER, VoicePrompt::PROMPT_ALLOWSKIP);
         m_rMp3Prompt.playPrompt(folderErrorPrompt);
         return false;
     }

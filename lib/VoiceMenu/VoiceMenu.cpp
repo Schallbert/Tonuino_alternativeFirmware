@@ -112,7 +112,7 @@ void VoiceMenu::dispatchInputs()
     typedef VoiceMenu VM;
     static const dispatcher dispatchTable[IN_REQUEST_OPTIONS] =
         {
-            &VM::none, &VM::conf, &VM::abrt, &VM::none, &VM::next, &VM::none, &VM::prev, &VM::none};
+            &VM::none, &VM::conf, &VM::abrt, &VM::none, &VM::next, &VM::nexn, &VM::prev, &VM::prep};
     dispatcher dispatchExecutor = dispatchTable[static_cast<uint8_t>(m_userInput) & 0x0F]; //
     (this->*dispatchExecutor)();
 

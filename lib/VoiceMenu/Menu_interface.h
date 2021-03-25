@@ -15,7 +15,10 @@ public:
     virtual void confirm() = 0;
     virtual void abort() = 0;
     virtual void selectNext() = 0;
+    virtual void selectNN() = 0;
     virtual void selectPrev() = 0;
+    virtual void selectPP() = 0;
+
 
     virtual bool isActive() = 0;
     virtual bool isComplete() = 0;

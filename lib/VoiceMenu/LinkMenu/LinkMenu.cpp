@@ -43,12 +43,30 @@ void LinkMenu::selectNext()
     playPreview();
 }
 
+void LinkMenu::selectNN()
+{
+    for(uint8_t i = 0; i < 9; ++i)
+    {
+        m_menuState.incrementSelection();
+    }
+    selectNext();
+}
+
 void LinkMenu::selectPrev()
 {
     m_menuState.decrementSelection();
     VoicePrompt prev{m_menuState.getCurrentSelection(), VoicePrompt::PROMPT_NOSKIP};
     m_rMp3Prompt.playPrompt(prev);
     playPreview();
+}
+
+void LinkMenu::selectPP()
+{
+    for(uint8_t i = 0; i < 9; ++i)
+    {
+        m_menuState.decrementSelection();
+    }
+    selectPrev();
 }
 
 void LinkMenu::playPreview()

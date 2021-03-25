@@ -33,7 +33,9 @@ public:
     void confirm() override;
     void abort() override;
     void selectNext() override;
+    void selectNN() override;
     void selectPrev() override;
+    void selectPP() override;
 
     bool isActive() override;
     bool isComplete() override;

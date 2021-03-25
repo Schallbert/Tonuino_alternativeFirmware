@@ -40,16 +40,6 @@ void DeleteMenu::abort()
     playStateMessage();
 }
 
-void DeleteMenu::selectNext()
-{
-    return;
-}
-
-void DeleteMenu::selectPrev()
-{
-    return;
-}
-
 void DeleteMenu::setStatusLed()
 {
     m_rPowerManager.setDeleteMenu();
@@ -83,4 +73,24 @@ void DeleteMenu::playPreview()
     {
         m_rMp3Play.playFolder(preview);
     }
+}
+
+void DeleteMenu::selectNext()
+{
+    return;
+}
+
+void DeleteMenu::selectNN()
+{
+    return;
+}
+
+void DeleteMenu::selectPrev()
+{
+    return;
+}
+
+void DeleteMenu::selectPP()
+{ 
+    return;
 }

@@ -195,6 +195,26 @@ TEST_F(LinkMenuTest, selectFolderId1_getPrompt_returns1)
     linkMenu->selectNext();
 }
 
+TEST_F(LinkMenuTest, selectFolderId10_getPrompt_returns10)
+{
+    VoicePrompt expect{10, VoicePrompt::PROMPT_NOSKIP};
+
+    linkMenu->confirm();
+
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
+    linkMenu->selectNN();
+}
+
+TEST_F(LinkMenuTest, selectFolderMAXminus10_getPrompt_returnsMAXminus10)
+{
+    VoicePrompt expect{MAXFOLDERCOUNT - 9, VoicePrompt::PROMPT_NOSKIP};
+
+    linkMenu->confirm();
+
+    EXPECT_CALL(m_mp3PromptMock, playPrompt(identicalPrompt(expect)));
+    linkMenu->selectPP();
+}
+
 TEST_F(LinkMenuTest, selectFolderIdMAX_getPrompt_returnsMAX)
 {
     VoicePrompt expect{MAXFOLDERCOUNT, VoicePrompt::PROMPT_NOSKIP};
