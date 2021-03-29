@@ -1,9 +1,11 @@
 ### Nfc-Tag controlled Mp3 player
+![Fabrication Example: Bird's house](docs/BirdsHouse_Collage.png)
+Fabrication example: A wooden bird's house that contains all components, Nfc tags woven in "birds".
 # "TonUINO alternative firmware"
 
 Idea and fantastic execution found on Thorsten Voß's blog, 
 re-wrote the code from scratch for even better structure, readability, maintainability, and extensibility.
-Does not support advanced config features (yet) like preset lullabye timer, init volume etc.
+Does not support advanced config menu features (yet) like preset lullabye timer, init volume etc.
 
 ## Features:
 * Configurable user input (buttons or encoder)
@@ -36,7 +38,7 @@ utilizing the googletest unit test framework, using coding patterns like factory
 
 ## Additional notes:
 RAM usage of >75% will likely cause segfaults (been through that!)
-When battery powered, I'd propose to use a bi-stable relay so the Tonuino 2.0 can keep alive without using additional power for coils and - when finished - cut its own power supply.
+When battery powered, I'd propose to use a bi-stable relay or TTL so the System can keep alive without continuously using power for relay coils and - when finished - cut its own power supply.
 Only tested 1k Mifare Nfc tags, 4k and Mini will also work, Ultralight SHOULD work (but not integration tested).
 
 # Documentation
