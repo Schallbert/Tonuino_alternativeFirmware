@@ -76,7 +76,6 @@ void Mp3Play_implementation::autoplay()
     {
         m_rMessageHandler.printMessage(autoplayInfo);
         m_rDfMiniMp3.pause();
-        restartLullabyeTimer(); // Lullabye timer gets restarted until a track is playing.
     }
     else
     {
