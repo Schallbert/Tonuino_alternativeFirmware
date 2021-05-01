@@ -13,10 +13,7 @@ Message::eMessageContent NfcControl::getTagPresence()
     Message::eMessageContent tagPresence = m_rNfc.getTagPresence();
     if (tagPresence == Message::UNKNOWNTAG)
     {
-        if (is_known_card())
-        {
-            tagPresence = Message::NEWKNOWNTAG;
-        }
+        tagPresence = identifyTag();
     }
     m_rMessageHandler.printMessage(tagPresence);
     return tagPresence;
@@ -82,16 +79,22 @@ void NfcControl::buffer_to_folder()
     m_oFolder = Folder(folderId, playMode);
 }
 
-bool NfcControl::is_known_card()
+
+Message::eMessageContent NfcControl::identifyTag()
 {
     Folder dummy;
     if (readFolderFromTag(dummy)) // gets magic cookie.
     {
-        return (m_ui32CardCookie == TAG_MAGIC_COOKIE);
+        if(dummy.getFolderId() == m_oFolder.getFolderId())
+        {
+            return Message::SAMEKNOWNTAG;
+        }
+        else if (m_ui32CardCookie == TAG_MAGIC_COOKIE)
+        {
+            return Message::NEWKNOWNTAG;
+        }
     }
-    else
-    {
-        return false;
-    }
+
+    return  Message::UNKNOWNTAG;
     // if false Card has never been written with Magic Cookie, thus is unknown to the system
 }

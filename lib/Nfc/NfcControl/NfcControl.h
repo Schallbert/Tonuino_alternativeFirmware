@@ -46,7 +46,7 @@ private:
     void folder_to_buffer();
     // Returns true if the current card is known to the system
     // if it has the "magic cookie" equal to system's
-    bool is_known_card();
+    Message::eMessageContent identifyTag();
 
 private:
     Nfc_interface &m_rNfc; // NfcReader object to interact with

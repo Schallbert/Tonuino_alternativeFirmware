@@ -24,6 +24,10 @@ Message::eMessageContent Nfc_implementation::getTagPresence()
     }
     else
     {
+        if  (m_wasTagPresent)
+        {
+            returnValue = Message::REMOVEDTAG;
+        }
         m_wasTagPresent = false;
     }
     return returnValue;

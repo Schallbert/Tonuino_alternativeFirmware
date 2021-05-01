@@ -44,8 +44,10 @@ const char s_ctt35[] PROGMEM = "Init";
 
 const char s_ctt40[] PROGMEM = "No Tag";
 const char s_ctt41[] PROGMEM = "Active Tag";
-const char s_ctt42[] PROGMEM = "New Tag";
-const char s_ctt43[] PROGMEM = "Unknown Tag";
+const char s_ctt42[] PROGMEM = "Same Tag";
+const char s_ctt43[] PROGMEM = "New Tag";
+const char s_ctt44[] PROGMEM = "Unknown Tag";
+const char s_ctt45[] PROGMEM = "Removed Tag";
 
 const char s_ctt51[] PROGMEM = "Tag Write Success";
 const char s_ctt52[] PROGMEM = "Tag Read Success";
@@ -77,7 +79,7 @@ const char *const s_cttTable[] PROGMEM = {
     s_ctt10, s_ctt11, s_ctt12, s_ctt13, s_ctt14, s_ctt15, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error,
     s_ctt20, s_ctt21, s_ctt22, s_ctt23, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error,
     s_ctt30, s_ctt31, s_ctt32, s_ctt33, s_ctt34, s_ctt35, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error,
-    s_ctt40, s_ctt41, s_ctt42, s_ctt43, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error,
+    s_ctt40, s_ctt41, s_ctt42, s_ctt43, s_ctt44, s_ctt45, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error,
     s_ctt35, s_ctt51, s_ctt52, s_ctt53, s_ctt54, s_ctt55, s_ctt56, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error,
     s_ctt60, s_ctt61, s_ctt62, s_ctt63, s_ctt64, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error, s_error,
     s_ctt70, s_ctt71, s_ctt72, s_ctt73, s_ctt74, s_ctt75, s_ctt76, s_ctt77, s_ctt35, s_ctt03, s_error, s_error, s_error, s_error, s_error, s_error};
