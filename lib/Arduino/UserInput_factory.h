@@ -10,22 +10,7 @@
 class UserInput_factory : public UserInput_interface
 {
 public:
-#if (USERINPUT_VARIANT == three_buttons)
-    /*
-    explicit UserInput_factory(Mp3Prompt_interface &rPrompt,
-                               MessageHander_interface &rMessageHandler) : m_concreteInputVariant{rPrompt,
-                                                                                                  rMessageHandler} {} */
     UserInput_factory() = default;
-#elif (USERINPUT_VARIANT == one_encoder)
-    explicit UserInput_factory(Mp3Prompt_interface &rPrompt,
-                               MessageHander_interface &rMessageHandler) : m_concreteInputVariant{rPrompt,
-                                                                                                  rMessageHandler}
-    {
-    }
-#else
-#error No valid UserInput Variant selected!
-#endif
-
     ~UserInput_factory() = default;
     UserInput_factory(const UserInput_factory &cpy) = delete;
 
@@ -38,6 +23,8 @@ private:
     UserInput_3Buttons m_concreteInputVariant;
 #elif (USERINPUT_VARIANT == one_encoder)
     UserInput_ClickEncoder m_concreteInputVariant;
+#elif (USERINPUT_VARIANT == two_buttons)
+    UserInput_2Buttons m_concreteInputVariant;
 #endif
 };
 

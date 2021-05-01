@@ -11,8 +11,9 @@
 // and make sure the pin selection below is
 // according to your wishes.
 #define three_buttons 420
+#define two_buttons 421
 #define one_encoder 425
-#define USERINPUT_VARIANT three_buttons
+#define USERINPUT_VARIANT two_buttons
 
 // Power save feature: Set Nfc reader / Arduino to sleep for x ms
 #define SLEEP_MS 400

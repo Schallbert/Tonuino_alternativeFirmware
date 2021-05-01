@@ -3,7 +3,6 @@
 void UserInput_ClickEncoder::init()
     {
         isInitiated = true;
-        //m_rMessageHandler.printMessage(Message::INPUTONLINE);
     }
 
 void UserInput_ClickEncoder::userinputServiceIsr()
@@ -64,8 +63,6 @@ Message::eMessageContent UserInput_ClickEncoder::getUserRequest()
     {
         result = Message::INPUTNONE;
     }
-
-    //m_rMessageHandler.printMessage(result);
     return result;
 }
 
@@ -77,7 +74,6 @@ Message::eMessageContent UserInput_ClickEncoder::getUserRequest()
 void UserInput_3Buttons::init()
     {
         isInitiated = true;
-        //m_rMessageHandler.printMessage(Message::INPUTONLINE);
     }
 
 void UserInput_3Buttons::userinputServiceIsr()
@@ -132,9 +128,61 @@ Message::eMessageContent UserInput_3Buttons::getUserRequest()
     {
         result = Message::INPUTNONE;
     }
-
-    //m_rMessageHandler.printMessage(result);
     return result;
 }
 
 // USERINPUT___3BUTTONS     ---------------------------------------------------------------
+
+// USERINPUT___2BUTTONS     ---------------------------------------------------------------
+
+void UserInput_2Buttons::init()
+    {
+        isInitiated = true;
+    }
+
+void UserInput_2Buttons::userinputServiceIsr()
+{
+    m_NextButton.service();
+    m_PrevButton.service();
+}
+
+Message::eMessageContent UserInput_2Buttons::getUserRequest()
+{
+    Message::eMessageContent result{Message::INPUTNONE};
+    if (!isInitiated)
+    {
+        return result;
+    }
+    
+    //Get current button's states
+    Button::eButtonStates nextButtonState{m_NextButton.getButton()};
+    Button::eButtonStates prevButtonState{m_PrevButton.getButton()};
+
+    if (prevButtonState == Button::DoubleClicked)
+    {
+        return Message::INPUTPLPSDC;
+    }
+    else if (nextButtonState == Button::Clicked)
+    {
+        result = Message::INPUTNEXT;
+    }
+    else if (nextButtonState == Button::LongPressRepeat)
+    {
+        result = Message::INPUTNEXTLP;
+    }
+    else if (prevButtonState == Button::Clicked)
+    {
+        result = Message::INPUTPREV;
+    }
+    else if (prevButtonState == Button::LongPressRepeat)
+    {
+        result = Message::INPUTPREVLP;
+    }
+    else
+    {
+        result = Message::INPUTNONE;
+    }
+    return result;
+}
+
+// USERINPUT___2BUTTONS     ---------------------------------------------------------------
