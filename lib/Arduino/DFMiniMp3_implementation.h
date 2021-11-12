@@ -21,27 +21,31 @@ private:
     Mp3Notify(){};
 
 public:
-    static void OnError(uint16_t errorCode)
+    static void OnError(DFMiniMp3<SoftwareSerial, Mp3Notify>, uint16_t)
     {
         bufferedMessage = Message::ERRORCOM;
     };
 
-    static void OnPlayFinished(DfMp3_PlaySources src, uint16_t track)
+    static void OnPlayFinished(DFMiniMp3<SoftwareSerial, Mp3Notify>, 
+                               DfMp3_PlaySources, uint16_t)
     {
         bufferedMessage = Message::TRACKFINISHED;
     };
 
-    static void OnPlaySourceOnline(uint16_t code)
+    static void OnPlaySourceOnline(DFMiniMp3<SoftwareSerial, Mp3Notify>,
+                                   DfMp3_PlaySources)
     {
         bufferedMessage = Message::SDONLINE;
     };
 
-    static void OnPlaySourceInserted(uint16_t code)
+    static void OnPlaySourceInserted(DFMiniMp3<SoftwareSerial, Mp3Notify>,
+                                   DfMp3_PlaySources)
     {
         bufferedMessage = Message::SDINSERT;
     };
 
-    static void OnPlaySourceRemoved(uint16_t code)
+    static void OnPlaySourceRemoved(DFMiniMp3<SoftwareSerial, Mp3Notify>,
+                                   DfMp3_PlaySources)
     {
         bufferedMessage = Message::SDREMOVE;
     };
